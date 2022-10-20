@@ -1,0 +1,15 @@
+.tippy-box[data-theme~='transparent'] {
+    background-color: transparent;
+}
+
+.tippy-box[data-theme~='retro'] {
+    background-color: white;
+}
+
+.tippy-content[data-theme~='retro'] {
+    padding: 2px 2px;
+}
+
+.tippy-box[data-theme~='dark'] {
+    background-color: #333;
+}
