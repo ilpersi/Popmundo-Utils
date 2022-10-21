@@ -1,7 +1,10 @@
 'use strict';
 
 const JQ = jQuery.noConflict();
-const globalOptions = { 'searchable_tables': true, };
+const globalOptions = {
+    'searchable_tables': true,
+    'move_to_shortcut': true,
+};
 
 function searchableTables() {
     JQ(document).ready(function () {
@@ -66,6 +69,5 @@ function moveToLocaleLink() {
 
 chrome.storage.sync.get(globalOptions, items => {
     if (items.searchable_tables) searchableTables();
+    if (items.move_to_shortcut) moveToLocaleLink();
 });
-
-moveToLocaleLink();
