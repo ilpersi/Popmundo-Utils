@@ -41,7 +41,8 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist",
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Song/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/Song/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Song/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Locale/*"
             ],
             "js": ["common/xpath-helper.js", "common/color.js", "features/scoring-script.js"]
         }
