@@ -28,7 +28,8 @@
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Skills/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*"
             ],
             "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "features/skill-popup-script.js"],
             "css": ["features/skill-popup-script.css"]
