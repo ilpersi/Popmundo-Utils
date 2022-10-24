@@ -29,7 +29,8 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Skills/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Help/SkillType/*"
             ],
             "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "features/skill-popup-script.js"],
             "css": ["features/skill-popup-script.css"]
