@@ -77,8 +77,8 @@ function scoringNumbers() {
             scoreElem.setAttribute('style', scoreElem.getAttribute('style') + ' font-weight: bold;');
 
             // We append the created span elements
-            scoreNode.parentNode.appendChild(spaceElem);
-            scoreNode.parentNode.appendChild(scoreElem);
+            scoreNode.parentNode.insertBefore(scoreElem, scoreNode.nextSibling);
+            scoreNode.parentNode.insertBefore(spaceElem, scoreNode.nextSibling);
         }
 
         // We make sure the regex is working in the next iteration
