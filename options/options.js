@@ -1,4 +1,4 @@
-const checkBoxes = ['searchable_tables', 'progress_bar_percent', 'recent_progress_popup', 'score_highlight', 'move_to_shortcut'];
+const checkBoxes = ['searchable_tables', 'progress_bar_percent', 'recent_progress_popup', 'score_highlight', 'move_to_shortcut', 'redirect_to_login'];
 
 // Saves options to chrome.storage
 function save_options() {

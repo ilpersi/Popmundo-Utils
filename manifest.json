@@ -47,6 +47,12 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/*"
             ],
             "js": ["common/xpath-helper.js", "common/color.js", "features/scoring-script.js"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/Default.aspx"
+            ],
+            "js": ["features/login-redirect.js"]
         }
     ],
 
