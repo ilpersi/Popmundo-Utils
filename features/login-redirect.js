@@ -12,15 +12,20 @@ function redirectToLoginPage() {
         var newDiv = document.createElement('div');
         newDiv.setAttribute("class", "notification-real notification-success");
         newDiv.setAttribute("null", "");
-        newDiv.textContent = "Redirecting to to standard login page in two seconds...";
+        newDiv.textContent = "Redirecting to to standard login page...";
 
-        while (notificationDiv.firstChild) {
-            notificationDiv.removeChild(notificationDiv.lastChild);
+        for(var child=notificationDiv.firstChild; child!==null; child=child.nextSibling) {
+            if ('DIV' === child.tagName) {
+                if (child.getAttribute('style'))
+                    child.setAttribute('style', child.getAttribute('style') + ' display:none;');
+                else
+                child.setAttribute('style', 'display:none;');
+            }
         }
 
         notificationDiv.appendChild(newDiv);
 
-        window.setTimeout(() => { window.location.href = "http://www.popmundo.com"; }, 2000);
+        window.setTimeout(() => { window.location.href = "http://www.popmundo.com"; }, 1000);
     }
 
 }
