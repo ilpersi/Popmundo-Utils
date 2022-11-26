@@ -33,39 +33,74 @@ class Notifications {
         }
     }
 
-    createNotification (level, textContent = null) {
-        
-        var newDiv = document.createElement('div');
+    /**
+     * Notify the user within the game. If it is not possible to find the notificatin bar, a standard alert is raised.
+     *
+     * @param {string} level The type of notification: three possible values: success, error, normal. If wront type is provided, an exception will be triggered.
+     * @param {string} [textContent=null] The text of the notification.
+     * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise.
+     * @memberof Notifications
+     */
+    createNotification(level, textContent = null) {
 
-        if ('success' === level)
-            newDiv.setAttribute("class", "notification-real notification-success");
-        else if ('error' === level) 
-            newDiv.setAttribute("class", "notification-real notification-error");
-        else if ('normal' === level) 
-            newDiv.setAttribute("class", "notification-real notification-normal");
-        else {
-            throw 'Unknown notification level: ' + level;
+        if (this.containerNode) {
+            var newDiv = document.createElement('div');
+
+            if ('success' === level)
+                newDiv.setAttribute("class", "notification-real notification-success");
+            else if ('error' === level)
+                newDiv.setAttribute("class", "notification-real notification-error");
+            else if ('normal' === level)
+                newDiv.setAttribute("class", "notification-real notification-normal");
+            else {
+                throw 'Unknown notification level: ' + level;
+            }
+
+            newDiv.setAttribute("null", "");
+
+            if (textContent)
+                newDiv.textContent = textContent;
+
+            this.containerNode.appendChild(newDiv);
+            debugger;
+
+            return newDiv;
+        } else {
+            alert(textContent);
+            return null;
         }
-        
-        newDiv.setAttribute("null", "");
-        
-        if (textContent)
-            newDiv.textContent = textContent;
-
-        this.containerNode.appendChild(newDiv);
-
-        return newDiv;
     }
 
-    notifySuccess (textContent = null) {
+    /**
+     * Create a success notification: the bar will be green.
+     *
+     * @param {string} [textContent=null] The text of the notification.
+     * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
+     * @memberof Notifications
+     */
+    notifySuccess(textContent = null) {
         return this.createNotification('success', textContent);
     }
 
-    notifyError (textContent = null) {
+    /**
+     * Create an error notification: the bar will be red.
+     *
+     * @param {*} [textContent=null] The text of the notification.
+     * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
+     * @memberof Notifications
+     */
+    notifyError(textContent = null) {
         return this.createNotification('error', textContent);
     }
 
-    notifyNormal (textContent = null) {
+    /**
+     * Create a normal notification: the bar will be gray.
+     *
+     * @param {*} [textContent=null] The text of the notification.
+     * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
+     * @memberof Notifications
+     */
+    notifyNormal(textContent = null) {
         return this.createNotification('normal', textContent);
     }
 }
