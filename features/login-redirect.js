@@ -5,29 +5,11 @@ const loginURLRegex = /\d{2,}\.popmundo.com\/Default.aspx/gm;
 
 function redirectToLoginPage() {
 
-    // We want to be sure that we do not trigger and infinite redirect loop
-    var notificationDiv = document.getElementById('notifications')
+    var notifications = new Notifications();
+    notifications.hideAll();
+    notifications.notifySuccess("Redirecting to to standard login page...");
 
-    if (notificationDiv) {
-        var newDiv = document.createElement('div');
-        newDiv.setAttribute("class", "notification-real notification-success");
-        newDiv.setAttribute("null", "");
-        newDiv.textContent = "Redirecting to to standard login page...";
-
-        for(var child=notificationDiv.firstChild; child!==null; child=child.nextSibling) {
-            if ('DIV' === child.tagName) {
-                if (child.getAttribute('style'))
-                    child.setAttribute('style', child.getAttribute('style') + ' display:none;');
-                else
-                child.setAttribute('style', 'display:none;');
-            }
-        }
-
-        notificationDiv.appendChild(newDiv);
-
-        window.setTimeout(() => { window.location.href = "http://www.popmundo.com"; }, 1000);
-    }
-
+    window.setTimeout(() => { window.location.href = "http://www.popmundo.com"; }, 1000);
 }
 
 // When page is loaded we get value from settings and we trigger the logic if the redirect option is enabled

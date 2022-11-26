@@ -52,7 +52,7 @@
             "matches": [
                 "https://*.popmundo.com/Default.aspx"
             ],
-            "js": ["features/login-redirect.js"]
+            "js": ["common/notifications.js", "features/login-redirect.js"]
         }
     ],
 
