@@ -1,7 +1,7 @@
 const scoringOptionsValues = { 'redirect_to_login': true };
 
 //e.g. https://74.popmundo.com/Default.aspx
-const loginURLRegex = /\d{2,}\.popmundo.com\/Default.aspx/gm;
+const loginURLRegex = /\d{2,}\.popmundo.com\/Default.aspx(\?logout=true){0,1}/gm;
 
 function redirectToLoginPage() {
 
@@ -13,6 +13,7 @@ function redirectToLoginPage() {
 }
 
 // When page is loaded we get value from settings and we trigger the logic if the redirect option is enabled
+debugger;
 if (loginURLRegex.test(window.location.href)) {
     chrome.storage.sync.get(scoringOptionsValues, items => {
         if (items.redirect_to_login) redirectToLoginPage();

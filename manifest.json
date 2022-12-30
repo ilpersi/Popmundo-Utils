@@ -20,7 +20,9 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist",
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Guide/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Interact/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Interact/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/City"
             ],
             "js": ["common/xpath-helper.js", "features/progress-bar-script.js"]
         },
@@ -50,9 +52,27 @@
         },
         {
             "matches": [
-                "https://*.popmundo.com/Default.aspx"
+                "https://*.popmundo.com/Default.aspx*"
             ],
             "js": ["common/notifications.js", "features/login-redirect.js"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character"
+            ],
+            "js": ["common/notifications.js", "features/reminders-script.js"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*"
+            ],
+            "js": ["common/notifications.js", "common/item-timers.js"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*"
+            ],
+            "js": ["common/utils.js", "common/xpath-helper.js", "features/call-all-friends.js"]
         }
     ],
 
