@@ -1,6 +1,12 @@
 class Notifications {
     #containerNode;
 
+    static LEVELS = {
+        ERROR: 'error',
+        SUCCESS: 'success',
+        NORMAL: 'normal',
+    }
+
     constructor() {
         this.containerNode = document.getElementById('notifications');
     }
@@ -46,11 +52,11 @@ class Notifications {
         if (this.containerNode) {
             var newDiv = document.createElement('div');
 
-            if ('success' === level)
+            if (Notifications.LEVELS.SUCCESS === level)
                 newDiv.setAttribute("class", "notification-real notification-success");
-            else if ('error' === level)
+            else if (Notifications.LEVELS.ERROR === level)
                 newDiv.setAttribute("class", "notification-real notification-error");
-            else if ('normal' === level)
+            else if (Notifications.LEVELS.NORMAL === level)
                 newDiv.setAttribute("class", "notification-real notification-normal");
             else {
                 throw 'Unknown notification level: ' + level;
@@ -62,7 +68,6 @@ class Notifications {
                 newDiv.textContent = textContent;
 
             this.containerNode.appendChild(newDiv);
-            debugger;
 
             return newDiv;
         } else {
@@ -79,18 +84,18 @@ class Notifications {
      * @memberof Notifications
      */
     notifySuccess(textContent = null) {
-        return this.createNotification('success', textContent);
+        return this.createNotification(Notifications.LEVELS.SUCCESS, textContent);
     }
 
     /**
      * Create an error notification: the bar will be red.
      *
-     * @param {*} [textContent=null] The text of the notification.
+     * @param {string} [textContent=null] The text of the notification.
      * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
      * @memberof Notifications
      */
     notifyError(textContent = null) {
-        return this.createNotification('error', textContent);
+        return this.createNotification(Notifications.LEVELS.ERROR, textContent);
     }
 
     /**
@@ -101,6 +106,61 @@ class Notifications {
      * @memberof Notifications
      */
     notifyNormal(textContent = null) {
-        return this.createNotification('normal', textContent);
+        return this.createNotification(Notifications.LEVELS.NORMAL, textContent);
+    }
+
+    /**
+     * Get all the notifications currently displayed in the notification bar
+     *
+     * @param {string} level
+     * @return {string[]} 
+     * @memberof Notifications
+     */
+    getNotificationsAsText(level = null) {
+        const CLASS_PREFIX = 'notification-';
+        let results = [];
+
+        let className = CLASS_PREFIX + level;
+        for (var child = this.containerNode.firstChild; child !== null; child = child.nextSibling) {
+            if ('DIV' === child.tagName) {
+                let divClass = child.getAttribute('class');
+
+                if ((level !== null && divClass.includes(className)) || (level === null && divClass.includes(CLASS_PREFIX))) {
+                    results.push(child.textContent);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Get all the success notifications currently present on screen.
+     *
+     * @return {string[]} An array of strings with notifications' text 
+     * @memberof Notifications
+     */
+    getSuccessesAsText() {
+        return this.getNotificationsAsText(Notifications.LEVELS.SUCCESS);
+    }
+
+    /**
+     * Get all the error notifications currently present on screen.
+     *
+     * @return {string[]} An array of strings with notifications' text 
+     * @memberof Notifications
+     */
+    getErrorsAsText() {
+        return this.getNotificationsAsText(Notifications.LEVELS.ERROR);
+    }
+
+    /**
+     * Get all the normal notifications currently present on screen.
+     *
+     * @return {string[]} An array of strings with notifications' text 
+     * @memberof Notifications
+     */
+    getNormalsAsText() {
+        return this.getNotificationsAsText(Notifications.LEVELS.NORMAL);
     }
 }
