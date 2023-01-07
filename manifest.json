@@ -60,13 +60,13 @@
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character"
             ],
-            "js": ["common/notifications.js", "features/reminders-script.js"]
+            "js": ["common/utils.js", "common/notifications.js", "features/reminders-script.js"]
         },
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*"
             ],
-            "js": ["common/notifications.js", "common/item-timers.js"]
+            "js": ["common/utils.js", "common/xpath-helper.js", "common/notifications.js", "features/item-timers.js"]
         },
         {
             "matches": [
@@ -79,6 +79,10 @@
     "web_accessible_resources": [
         {
             "resources": [ "/images/*" ],
+            "matches": [ "https://*.popmundo.com/*" ]
+        },
+        {
+            "resources": [ "/injected-js/reminders-injected.js" ],
             "matches": [ "https://*.popmundo.com/*" ]
         }
     ],
