@@ -1,3 +1,8 @@
+/**
+ * This function will check if any notification with delay is present at the top of the page and it will use it
+ * to generate reminders for users.
+ *
+ */
 function checkForTimer() {
     // Settings KEY
     const TIMERS_STORAGE_VALUE = { 'timers': {} };
@@ -86,4 +91,5 @@ function checkForTimer() {
 
 }
 
+// Notifications may take some seconds to be loaded, so we wait a couple of seconds before checking for them
 window.setTimeout(() => { checkForTimer(); }, 2000);
