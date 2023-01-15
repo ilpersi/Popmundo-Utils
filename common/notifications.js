@@ -43,11 +43,12 @@ class Notifications {
      * Notify the user within the game. If it is not possible to find the notificatin bar, a standard alert is raised.
      *
      * @param {string} level The type of notification: three possible values: success, error, normal. If wront type is provided, an exception will be triggered.
+     * @param {string|int} [id] The id that will be used to create the div
      * @param {string} [textContent=null] The text of the notification.
      * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise.
      * @memberof Notifications
      */
-    createNotification(level, textContent = null) {
+    createNotification(level, id = null, textContent = null) {
 
         if (this.containerNode) {
             var newDiv = document.createElement('div');
@@ -64,6 +65,9 @@ class Notifications {
 
             newDiv.setAttribute("null", "");
 
+            if (id)
+                newDiv.setAttribute('id', id);
+
             if (textContent)
                 newDiv.textContent = textContent;
 
@@ -79,34 +83,37 @@ class Notifications {
     /**
      * Create a success notification: the bar will be green.
      *
+     * @param {string|int} [id] The id that will be used to create the notification div
      * @param {string} [textContent=null] The text of the notification.
      * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
      * @memberof Notifications
      */
-    notifySuccess(textContent = null) {
-        return this.createNotification(Notifications.LEVELS.SUCCESS, textContent);
+    notifySuccess(id = null, textContent = null) {
+        return this.createNotification(Notifications.LEVELS.SUCCESS, id, textContent);
     }
 
     /**
      * Create an error notification: the bar will be red.
      *
+     * @param {string|int} [id] The id that will be used to create the notification div
      * @param {string} [textContent=null] The text of the notification.
      * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
      * @memberof Notifications
      */
-    notifyError(textContent = null) {
-        return this.createNotification(Notifications.LEVELS.ERROR, textContent);
+    notifyError(id = null, textContent = null) {
+        return this.createNotification(Notifications.LEVELS.ERROR, id, textContent);
     }
 
     /**
      * Create a normal notification: the bar will be gray.
      *
+     * @param {string|int} [id] The id that will be used to create the notification div
      * @param {*} [textContent=null] The text of the notification.
      * @return {Element|null} The newly created notification div is the notification bar is available, null otherwise. 
      * @memberof Notifications
      */
-    notifyNormal(textContent = null) {
-        return this.createNotification(Notifications.LEVELS.NORMAL, textContent);
+    notifyNormal(id = null, textContent = null) {
+        return this.createNotification(Notifications.LEVELS.NORMAL, id, textContent);
     }
 
     /**
