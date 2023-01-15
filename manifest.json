@@ -72,7 +72,7 @@
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*"
             ],
-            "js": ["common/utils.js", "common/xpath-helper.js", "features/call-all-friends.js"]
+            "js": ["common/utils.js", "common/xpath-helper.js", "common/notifications.js", "features/call-all-friends.js"]
         }
     ],
 
