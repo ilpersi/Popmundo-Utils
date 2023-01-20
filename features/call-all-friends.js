@@ -1,11 +1,16 @@
-const myID = Utils.getMyID();
-
+/**
+ * This async function is triggered when the user clicks on the "Call all relations" button
+ *
+ */
 async function onSubmitClick() {
-    // console.log('async onclick');
+    // XPATH used to search friend id in the relationship page
     const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
+    // Regex to extract the character friend id from the href of a elems
     const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
-    const CALL_DELAY = 400;
+    // Delaty between each fetch() call
+    const CALL_DELAY = 1000;
 
+    // We search for friend ID in the relationship page
     let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
     let relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
 
@@ -23,24 +28,34 @@ async function onSubmitClick() {
         RELATIONS_ID_RE.lastIndex = 0;
     }
 
-    console.log(friendsID);
-
+    // This array will contain the required friends details
     let friendsDetailsPromises = [];
+
+    // We save the current host so that we can build correct urls to fetch later on
     const hostName = window.location.hostname;
     const interactPath = '/World/Popmundo.aspx/Interact/Details/';
+
+    // The list of fields that we will include in the fetch call when actually calling your friend.
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
 
-    let notifications = new Notifications();
-    notifications.deleteAll();
-    let notificationBar = notifications.notifySuccess('call-all-friends', 'Calling all friends...')
+    // The script will randomly choose one of the following interactions
+    const INTERACTIONS = [
+        24,  // Wazzup call
+        // 26,  // Prank call
+        58,  // SMS funny pic
+        61,  // SMS friendly text
+        121, // Gossip on phone
+    ]
+
+    let statusPElem = document.getElementById('call-all-status-p');
 
     friendsID.forEach((friendID, friendIndex) => {
 
         let friendDetailsPromise = new Promise((resolve, reject) => {
             // To avoid being kicked out, we delay backgroud fetch calls
             setTimeout(() => {
-                notificationBar.textContent = `Checking friend ${friendIndex + 1} out of ${friendsID.length}`;
+                statusPElem.textContent = `Checking friend ${friendIndex + 1} out of ${friendsID.length}.`;
 
                 let interactUrl = `https://${hostName}${interactPath}${friendID}`;
                 fetch(interactUrl, { "method": "GET", })
@@ -55,8 +70,31 @@ async function onSubmitClick() {
                         // Parse the text
                         let doc = parser.parseFromString(html, "text/html");
 
-                        xpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]');
-                        let optionNodes = xpathHelper.getOrderedSnapshot(doc);
+                        // This XPATH makes sure that the Wazzup call option is there
+                        let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]');
+                        let wazzupNode = wazzupXpathHelper.getOrderedSnapshot(doc);
+
+                        // Random interaction is 0 by default, if interactions are available a random value is generated
+                        let randomInteraction = 0;
+                        if (wazzupNode.snapshotLength > 0) {
+                            let availableInteractions = [];
+                            // This is the XPATH for the option values in the interaction select element
+                            let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option')
+                            let interactionNodes = interactionsXpathHelper.getUnorderedNodeSnapshot(doc);
+
+                            // We loop and we push possible values in availableInteractions
+                            for (let i = 0; i < interactionNodes.snapshotLength; i++) {
+                                let interactionOption = interactionNodes.snapshotItem(i);
+                                let value = parseInt(interactionOption.getAttribute('value'));
+                                availableInteractions.push(value);
+                            }
+
+                            // We intersect possible available interactions with possible ones
+                            let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
+
+                            // We finally choose a random interaction
+                            randomInteraction = possibleInteractions.sort(() => 0.5 - Math.random())[0];
+                        }
 
                         // We get the form fields
                         let docForm = doc.getElementById('aspnetForm');
@@ -66,7 +104,7 @@ async function onSubmitClick() {
                         formDataOrig.set('__EVENTTARGET', '');
                         formDataOrig.set('__EVENTARGUMENT', '');
                         formDataOrig.set('ctl00$cphTopColumn$ctl00$btnInteract', 'Interact');
-                        formDataOrig.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', 24); // Whazzup call
+                        formDataOrig.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', randomInteraction);
 
                         // We don't need all the fields, so we make sure to only take the relevant ones
                         let formDataNew = new FormData();
@@ -74,9 +112,10 @@ async function onSubmitClick() {
                             formDataNew.set(key, formDataOrig.get(key));
                         });
 
+                        // The final result of the promise
                         var result = {
                             'id': friendID,
-                            'canCall': (optionNodes.snapshotLength > 0),
+                            'canCall': (wazzupNode.snapshotLength > 0),
                             'formData': formDataNew,
                             'interactUrl': interactUrl,
                         }
@@ -90,58 +129,73 @@ async function onSubmitClick() {
 
     });
 
+    // We make sure that all the promises for friend details are completed
     let friendsDetails = await Promise.all(friendsDetailsPromises);
+    // We filter so to have only callable friends
     let callableFriends = friendsDetails.filter(details => details.canCall)
 
-    notificationBar.textContent = callableFriends.length == 0 ? `No friends to call.` : `Calling ${callableFriends.length} friends out of ${friendsID.length}...`;
-    console.log(callableFriends);
+    if (callableFriends.length == 0) {
+        statusPElem.textContent = `No friends to call.`;
+    } else {
+        statusPElem.textContent = `Calling ${callableFriends.length} friends out of ${friendsID.length}...`;
+        console.log(callableFriends);
 
-    let succesCalls = 0;
+        let succesCalls = 0;
+        let friendCallsPromisses = [];
 
-    callableFriends.forEach((friendDetails, friendIndex) => {
+        callableFriends.forEach((friendDetails, friendIndex) => {
 
-        // To avoid being kicked out, we delay backgroud fetch calls
-        setTimeout(() => {
-            notificationBar.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length}...`;
+            let friendCallPromise = new Promise((resolve, reject) => {
+                // To avoid being kicked out, we delay backgroud fetch calls
+                setTimeout(() => {
+                    statusPElem.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length}...`;
 
-            fetch(friendDetails.interactUrl, {
-                // "headers": {
-                //     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-                //     "accept-language": "en-US,en;q=0.7",
-                //     "cache-control": "max-age=0",
-                //     "content-type": "application/x-www-form-urlencoded",
-                //     "sec-fetch-dest": "document",
-                //     "sec-fetch-mode": "navigate",
-                //     "sec-fetch-site": "same-origin",
-                //     "sec-fetch-user": "?1",
-                //     "sec-gpc": "1",
-                //     "upgrade-insecure-requests": "1",
-                //     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
-                // },
-                // "referrer": friendDetails.interactUrl,
-                // "referrerPolicy": "strict-origin-when-cross-origin",
-                "body": friendDetails.formData,
-                "method": "POST",
-                // "mode": "cors",
-                // "credentials": "include"
-            }).then((response) => {
-                if (response.ok && response.status >= 200 && response.status < 300) {
-                    succesCalls += 1;
-                    return response.text();
-                }
-            }).then((html) => {
-                // debugger;
+                    fetch(friendDetails.interactUrl, {
+                        // "headers": {
+                        //     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+                        //     "accept-language": "en-US,en;q=0.7",
+                        //     "cache-control": "max-age=0",
+                        //     "content-type": "application/x-www-form-urlencoded",
+                        //     "sec-fetch-dest": "document",
+                        //     "sec-fetch-mode": "navigate",
+                        //     "sec-fetch-site": "same-origin",
+                        //     "sec-fetch-user": "?1",
+                        //     "sec-gpc": "1",
+                        //     "upgrade-insecure-requests": "1",
+                        //     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+                        // },
+                        // "referrer": friendDetails.interactUrl,
+                        // "referrerPolicy": "strict-origin-when-cross-origin",
+                        "body": friendDetails.formData,
+                        "method": "POST",
+                        // "mode": "cors",
+                        // "credentials": "include"
+                    }).then((response) => {
+                        if (response.ok && response.status >= 200 && response.status < 300) {
+                            succesCalls += 1;
+                            return response.text();
+                        }
+                    }).then((html) => {
+                        resolve(true);
+                    });
+
+                }, CALL_DELAY * friendIndex);
             });
 
-        }, CALL_DELAY * friendIndex);
-    });
+            friendCallsPromisses.push(friendCallPromise);
+        });
 
-    notificationBar.textContent = `Succesfully called ${succesCalls} out of {callableFriends.length}.`
+        let callDetails = await Promise.all(friendCallsPromisses);
+
+        statusPElem.textContent = `Succesfully called ${succesCalls} friends out of ${callableFriends.length}.`
+    }
 };
 
+/**
+ * This function will inject the required HTML elements to make the "Call all" functionality available in the relations page
+ *
+ */
 function injectCallAllHTML() {
-    // debugger;
-    // console.log('My relations');
     const END_RELATION_XPATH = '//div[@id="ctl00_cphLeftColumn_ctl00_pnlEndMultiple"]';
 
     let endRelationsXPathHelp = new XPathHelper(END_RELATION_XPATH);
@@ -158,6 +212,9 @@ function injectCallAllHTML() {
 
         let callAllP1 = document.createElement('p');
         callAllP1.textContent = 'Call all your friends that have a phone.';
+        let callAllP3 = document.createElement('p');
+        callAllP3.setAttribute('id', 'call-all-status-p');
+        callAllP3.textContent = '';
 
         let callAllP2 = document.createElement('p');
         callAllP2.setAttribute('class', 'actionbuttons');
@@ -172,12 +229,13 @@ function injectCallAllHTML() {
 
         callAllDiv.appendChild(callAllH2);
         callAllDiv.appendChild(callAllP1);
+        callAllDiv.appendChild(callAllP3);
         callAllDiv.appendChild(callAllP2);
 
         endRelationsNode.singleNodeValue.parentNode.insertBefore(callAllDiv, endRelationsNode.singleNodeValue.nextSibling);
     }
 }
 
-if (window.location.href.includes(myID)) {
+if (window.location.href.includes(Utils.getMyID())) {
     injectCallAllHTML();
 }
