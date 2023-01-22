@@ -93,7 +93,8 @@ async function onSubmitClick() {
                             let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
 
                             // We finally choose a random interaction
-                            randomInteraction = possibleInteractions.sort(() => 0.5 - Math.random())[0];
+                            if (possibleInteractions.length > 0)
+                                randomInteraction = possibleInteractions.sort(() => 0.5 - Math.random())[0];
                         }
 
                         // We get the form fields
@@ -115,7 +116,7 @@ async function onSubmitClick() {
                         // The final result of the promise
                         var result = {
                             'id': friendID,
-                            'canCall': (wazzupNode.snapshotLength > 0),
+                            'canCall': (wazzupNode.snapshotLength > 0) && (randomInteraction !== 0),
                             'formData': formDataNew,
                             'interactUrl': interactUrl,
                         }
