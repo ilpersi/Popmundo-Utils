@@ -3,6 +3,36 @@
  *
  */
 async function onSubmitClick() {
+
+    const optionsGet = {
+        'call_all_wazzup': true,   // 24
+        'call_all_prank': false,   // 26
+        'call_all_sms_pic': false, // 58
+        'call_all_sms_txt': false, // 61
+        'call_all_gossip': false,  // 121
+        'call_exclude_id': [],
+    }
+
+    const optionsMap = {
+        'call_all_wazzup': 24,
+        'call_all_prank': 26,
+        'call_all_sms_pic': 58,
+        'call_all_sms_txt': 61,
+        'call_all_gossip': 121,
+    }
+
+    // The script will randomly choose one of the following interactions
+    let INTERACTIONS = [];
+
+    // We build the array of possible interactions based on the saved options
+    let savedOptions = await chrome.storage.sync.get(optionsGet);
+    for (let optionName in optionsMap) {
+        if (savedOptions.hasOwnProperty(optionName)) {
+            if (savedOptions[optionName])
+                INTERACTIONS.push(optionsMap[optionName]);
+        }
+    }
+
     // XPATH used to search friend id in the relationship page
     const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
     // Regex to extract the character friend id from the href of a elems
@@ -21,7 +51,12 @@ async function onSubmitClick() {
 
         var friendMatch = RELATIONS_ID_RE.exec(href);
         if (friendMatch) {
-            friendsID.push(parseInt(friendMatch[1]));
+            // We convert the friend id to integer
+            let friendID = parseInt(friendMatch[1]);
+
+            // We make sure not to include ids in the exclusion list
+            if (!savedOptions.call_exclude_id.includes(friendID))
+                friendsID.push(friendID);
         }
 
         // We make sure the regex is working in the next iteration
@@ -38,15 +73,6 @@ async function onSubmitClick() {
     // The list of fields that we will include in the fetch call when actually calling your friend.
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
-
-    // The script will randomly choose one of the following interactions
-    const INTERACTIONS = [
-        24,  // Wazzup call
-        // 26,  // Prank call
-        58,  // SMS funny pic
-        61,  // SMS friendly text
-        121, // Gossip on phone
-    ]
 
     let statusPElem = document.getElementById('call-all-status-p');
 
