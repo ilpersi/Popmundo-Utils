@@ -7,7 +7,7 @@ function redirectToLoginPage() {
 
     var notifications = new Notifications();
     notifications.hideAll();
-    notifications.notifySuccess("Redirecting to to standard login page...");
+    notifications.notifySuccess("login-redirect", "Redirecting to to standard login page...");
 
     window.setTimeout(() => { window.location.href = "http://www.popmundo.com"; }, 1000);
 }
