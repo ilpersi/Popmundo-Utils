@@ -44,7 +44,7 @@ async function onSubmitClick() {
     let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
     let relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
 
-    let friendsID = [];
+    let friendsInfo = [];
     for (let i = 0; i < relationsNodes.snapshotLength; i++) {
         let barNode = relationsNodes.snapshotItem(i);
         let href = barNode.getAttribute('href');
@@ -52,11 +52,14 @@ async function onSubmitClick() {
         var friendMatch = RELATIONS_ID_RE.exec(href);
         if (friendMatch) {
             // We convert the friend id to integer
-            let friendID = parseInt(friendMatch[1]);
+            let friendData = {
+                'id': parseInt(friendMatch[1]),
+                'name': barNode.textContent,
+            }
 
             // We make sure not to include ids in the exclusion list
-            if (!savedOptions.call_exclude_id.includes(friendID))
-                friendsID.push(friendID);
+            if (!savedOptions.call_exclude_id.includes(friendData.id))
+                friendsInfo.push(friendData);
         }
 
         // We make sure the regex is working in the next iteration
@@ -70,20 +73,20 @@ async function onSubmitClick() {
     const hostName = window.location.hostname;
     const interactPath = '/World/Popmundo.aspx/Interact/Details/';
 
-    // The list of fields that we will include in the fetch call when actually calling your friend.
+    // The list of fields that we will include in the fetch call payload when actually calling your friend.
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
 
     let statusPElem = document.getElementById('call-all-status-p');
 
-    friendsID.forEach((friendID, friendIndex) => {
+    friendsInfo.forEach((friendDict, friendIndex) => {
 
         let friendDetailsPromise = new Promise((resolve, reject) => {
             // To avoid being kicked out, we delay backgroud fetch calls
             setTimeout(() => {
-                statusPElem.textContent = `Checking friend ${friendIndex + 1} out of ${friendsID.length}.`;
+                statusPElem.textContent = `Checking friend ${friendIndex + 1} out of ${friendsInfo.length} (${friendDict.name}).`;
 
-                let interactUrl = `https://${hostName}${interactPath}${friendID}`;
+                let interactUrl = `https://${hostName}${interactPath}${friendDict.id}`;
                 fetch(interactUrl, { "method": "GET", })
                     .then(response => {
                         if (response.ok && response.status >= 200 && response.status < 300) {
@@ -141,7 +144,8 @@ async function onSubmitClick() {
 
                         // The final result of the promise
                         var result = {
-                            'id': friendID,
+                            'id': friendDict.id,
+                            'name': friendDict.name,
                             'canCall': (wazzupNode.snapshotLength > 0) && (randomInteraction !== 0),
                             'formData': formDataNew,
                             'interactUrl': interactUrl,
@@ -164,7 +168,7 @@ async function onSubmitClick() {
     if (callableFriends.length == 0) {
         statusPElem.textContent = `No friends to call.`;
     } else {
-        statusPElem.textContent = `Calling ${callableFriends.length} friends out of ${friendsID.length}...`;
+        statusPElem.textContent = `Calling ${callableFriends.length} friends out of ${friendsInfo.length}...`;
         console.log(callableFriends);
 
         let succesCalls = 0;
@@ -175,7 +179,7 @@ async function onSubmitClick() {
             let friendCallPromise = new Promise((resolve, reject) => {
                 // To avoid being kicked out, we delay backgroud fetch calls
                 setTimeout(() => {
-                    statusPElem.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length}...`;
+                    statusPElem.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length} (${friendDetails.name})...`;
 
                     fetch(friendDetails.interactUrl, {
                         // "headers": {
