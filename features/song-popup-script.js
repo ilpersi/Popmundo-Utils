@@ -1,6 +1,6 @@
 const songOptionsValues = { 'song_popup': true };
 
-var showSongPopUp = true;
+var showSongPopUp = false;
 
 function manageSongTooltips() {
 
@@ -36,9 +36,6 @@ function manageSongTooltips() {
             }
             instance._isFetching = true;
 
-            // Long Regex to find the script tags used to render the stars
-            const scriptRE = /<script type="text\/javascript">drawStarCount\((?<goldStars>[0-5]),\s*(?<whiteStars>[0-5]),\s*(?<greyStars>[0-5]),\s*"(?<starTXT>[^"]+?)",\s*"(?<starClass>[^"]*?)",\s*"(?<imgPath>[^"]*?)",\s*(?<txtOnly>false|true)\s*\);*<\/script>/gm;
-
             // Tippy popup is triggered on mouse Over on song links. To understand the details,
             // we need to know the full of the page containing the song information
             let href = instance.reference.getAttribute('href');
@@ -68,7 +65,7 @@ function manageSongTooltips() {
                         divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
 
                         // we make sure to correctly render the stars
-                        infoHTML = divNode.outerHTML.replace(scriptRE, Utils.createStarCount);
+                        infoHTML = divNode.outerHTML.replace(Utils.scriptRE, Utils.createStarCount);
 
                     } else {
                         // No song info is present
@@ -100,5 +97,19 @@ function manageSongTooltips() {
 
 }
 
+// When settings are changed, we update the global showPopUp varialbe
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+    if (namespace == 'sync') {
+        for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+            if (key == 'song_popup') showSongPopUp = newValue;
+        }
+    }
 
-manageSongTooltips();
+});
+
+// When page is loaded we get value from settings and se start the tippy logic.
+chrome.storage.sync.get(songOptionsValues, items => {
+    showSongPopUp = items.recent_progress_popup;
+
+    manageSongTooltips();
+});
