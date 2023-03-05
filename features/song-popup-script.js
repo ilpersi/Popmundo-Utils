@@ -1,19 +1,15 @@
-const skillOptionsValues = { 'recent_progress_popup': true };
+const songOptionsValues = { 'song_popup': true };
 
-var showSkillPopUp = false;
+var showSongPopUp = true;
 
-/**
- * The main logic for the skill pop-up. This relies on the tippy.js library.
- *
- */
-function manageSkillTooltips() {
+function manageSongTooltips() {
 
     let popupTheme = Utils.getPopupTheme();
 
     // Initialization of the tippy element
-    tippy('a[href^="/World/Popmundo.aspx/Help/SkillType"]', {
+    tippy('a[href^="/World/Popmundo.aspx/Character/Song"]', {
         'arrow': false,
-        'content': showSkillPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
+        'content': showSongPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
         'allowHTML': true,
         'followCursor': true,
         'maxWidth': 500,
@@ -29,7 +25,7 @@ function manageSkillTooltips() {
 
         'onShow': function (instance) {
 
-            if (!showSkillPopUp) {
+            if (!showSongPopUp) {
                 instance.setContent('');
                 return false
             };
@@ -40,8 +36,11 @@ function manageSkillTooltips() {
             }
             instance._isFetching = true;
 
-            // Tippy popup is triggered on mouse Over on skill links. To understand the details,
-            // we need to know the full of the page containing the skill information
+            // Long Regex to find the script tags used to render the stars
+            const scriptRE = /<script type="text\/javascript">drawStarCount\((?<goldStars>[0-5]),\s*(?<whiteStars>[0-5]),\s*(?<greyStars>[0-5]),\s*"(?<starTXT>[^"]+?)",\s*"(?<starClass>[^"]*?)",\s*"(?<imgPath>[^"]*?)",\s*(?<txtOnly>false|true)\s*\);*<\/script>/gm;
+
+            // Tippy popup is triggered on mouse Over on song links. To understand the details,
+            // we need to know the full of the page containing the song information
             let href = instance.reference.getAttribute('href');
 
             let theme = popupTheme.DATA_THEME;
@@ -56,7 +55,7 @@ function manageSkillTooltips() {
 
                     // Parse the text
                     let doc = parser.parseFromString(html, "text/html");
-                    xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr[@class="odd"]/td[4]');
+                    xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr/td');
 
                     let infoHTML = '';
                     let trNodes = xpathHelper.getOrderedSnapshot(doc);
@@ -69,10 +68,10 @@ function manageSkillTooltips() {
                         divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
 
                         // we make sure to correctly render the stars
-                        infoHTML = divNode.outerHTML.replace(Utils.scriptRE, Utils.createStarCount);
+                        infoHTML = divNode.outerHTML.replace(scriptRE, Utils.createStarCount);
 
                     } else {
-                        // No skill info is present
+                        // No song info is present
                         infoHTML = `<span style="color: ${popupTheme.COLOR};">No information available.</span>`;
                         theme = popupTheme.NO_DATA_THEME;
                     }
@@ -92,27 +91,14 @@ function manageSkillTooltips() {
 
         'onHidden': function (instance) {
             instance.setProps({ 'theme': popupTheme.LOADING_THEME });
-            instance.setContent(showSkillPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',);
+            instance.setContent(showSongPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',);
             // Unset these properties so new network requests can be initiated
             instance._src = null;
             instance._error = null;
         },
     })
+
 }
 
-// When settings are changed, we update the global showPopUp varialbe
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (namespace == 'sync') {
-        for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-            if (key == 'recent_progress_popup') showSkillPopUp = newValue;
-        }
-    }
 
-});
-
-// When page is loaded we get value from settings and se start the tippy logic.
-chrome.storage.sync.get(skillOptionsValues, items => {
-    showSkillPopUp = items.recent_progress_popup;
-
-    manageSkillTooltips();
-});
+manageSongTooltips();

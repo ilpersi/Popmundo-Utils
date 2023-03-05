@@ -34,8 +34,17 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/SkillType/*"
             ],
-            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "features/skill-popup-script.js"],
-            "css": ["features/skill-popup-script.css"]
+            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "features/skill-popup-script.js"],
+            "css": ["features/popup-style.css"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Songs/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*"
+            ],
+            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "features/song-popup-script.js"],
+            "css": ["features/popup-style.css"]
         },
         {
             "matches": [
