@@ -41,7 +41,8 @@
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Songs/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Repertoire/*"
             ],
             "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "features/song-popup-script.js"],
             "css": ["features/popup-style.css"]

@@ -109,7 +109,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 // When page is loaded we get value from settings and se start the tippy logic.
 chrome.storage.sync.get(songOptionsValues, items => {
-    showSongPopUp = items.recent_progress_popup;
+    showSongPopUp = items.song_popup;
 
     manageSongTooltips();
 });
