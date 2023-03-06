@@ -12,7 +12,7 @@ class Utils {
      * @static
      * @memberof Utils
      */
-    static get scriptRE() {
+    static get starsJSRE() {
         const returnRE = /<script type="text\/javascript">drawStarCount\((?<goldStars>[0-5]),\s*(?<whiteStars>[0-5]),\s*(?<greyStars>[0-5]),\s*"(?<starTXT>[^"]+?)",\s*"(?<starClass>[^"]*?)",\s*"(?<imgPath>[^"]*?)",\s*(?<txtOnly>false|true)\s*\);*<\/script>/gm;
         return returnRE;
     } 

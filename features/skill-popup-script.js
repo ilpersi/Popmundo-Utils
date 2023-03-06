@@ -69,7 +69,7 @@ function manageSkillTooltips() {
                         divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
 
                         // we make sure to correctly render the stars
-                        infoHTML = divNode.outerHTML.replace(Utils.scriptRE, Utils.createStarCount);
+                        infoHTML = divNode.outerHTML.replace(Utils.starsJSRE, Utils.createStarCount);
 
                     } else {
                         // No skill info is present
