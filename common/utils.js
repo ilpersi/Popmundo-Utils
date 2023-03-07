@@ -15,7 +15,33 @@ class Utils {
     static get starsJSRE() {
         const returnRE = /<script type="text\/javascript">drawStarCount\((?<goldStars>[0-5]),\s*(?<whiteStars>[0-5]),\s*(?<greyStars>[0-5]),\s*"(?<starTXT>[^"]+?)",\s*"(?<starClass>[^"]*?)",\s*"(?<imgPath>[^"]*?)",\s*(?<txtOnly>false|true)\s*\);*<\/script>/gm;
         return returnRE;
-    } 
+    }
+
+    /**
+     * Regular expression to find the javascript code used to draw progress bars in the game
+     *
+     * @readonly
+     * @static
+     * @memberof Utils
+     */
+    static get progressBarJSRE() {
+        // <script type="text/javascript">drawProgressBar(0, false, "0%", "progressBar", false, "0%");</script>
+        const returnRE = /<script type="text\/javascript">drawProgressBar\((?<progressInt>[0-9]{1,3}),\s*(?<bool1>false|true),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool2>false|true),\s*"(?<progressStr2>[^"]+?)"s*\);<\/script>/gm;
+        return returnRE;
+    }
+
+    /**
+     * Regular expression to find the javascript code used to draw plus-minus bars in the game
+     *
+     * @readonly
+     * @static
+     * @memberof Utils
+     */
+    static get plusMinusBarJSRE() {
+        // <script type="text/javascript">drawPlusMinusBar(0, "0%", "plusMinusBar", false, "0%");</script>
+        const returnRE = /<script type="text\/javascript">drawPlusMinusBar\((?<progressInt>[0-9]{1,3}),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool1>false|true),\s*"(?<progressStr2>[^"]+?)"s*\);<\/script>/gm;
+        return returnRE;
+    }
 
     /**
      * Get the id of your own character.
@@ -82,27 +108,27 @@ class Utils {
     }
 
     /**
- * Will take care of rendering the correct stars in the recent activity pop-up.
- * This is to be used a call back for a regex replace. The original logic is inspired
- * by the standard popmundo function createStarCount (hope they don't sue me :D)
- *
- * @param {string} match The full regex matched. Mostly unused
- * @param {number} goldStars How many gold stars should we draw?
- * @param {number} whiteStars How many white stars should we draw? This should always be equal to 1
- * @param {number} greyStars How many grey stars should we draw?
- * @param {string} starTXT The title that will be given to returned div string
- * @param {string} starClass The CSS class to apply to the generated dive string
- * @param {string} imgPath Where to find the images for the stars
- * @param {boolean} txtOnly If set to true, only text is contained in returned div element (no star images)
- * @return {string} The HTML for a div element to include in your DOM model
- */
+     * Will take care of rendering the correct stars from a regex match.
+     * This is to be used a call back for a regex replace. The original logic is inspired
+     * by the standard popmundo function createStarCount (hope they don't sue me :D)
+     *
+     * @param {string} match The full regex matched. Mostly unused
+     * @param {number} goldStars How many gold stars should we draw?
+     * @param {number} whiteStars How many white stars should we draw? This should always be equal to 1
+     * @param {number} greyStars How many grey stars should we draw?
+     * @param {string} starTXT The title that will be given to returned div string
+     * @param {string} starClass The CSS class to apply to the generated dive string
+     * @param {string} imgPath Where to find the images for the stars
+     * @param {boolean} txtOnly If set to true, only text is contained in returned div element (no star images)
+     * @return {string} The HTML for a div element to include in your DOM model
+     */
     static createStarCount(match, goldStars, whiteStars, greyStars, starTXT, starClass, imgPath, txtOnly) {
 
         // We make sure to cast string in boolean
         txtOnly = (txtOnly === 'true');
 
         // Result div tag
-        var result = "<div";
+        let result = "<div";
 
         if (starClass && "" != starClass)
             result += ' class="' + starClass + '"';
@@ -113,7 +139,8 @@ class Utils {
             result += starTXT;
         }
         else {
-            for (var s = 0; s < goldStars; s++)
+            let s;
+            for (s = 0; s < goldStars; s++)
                 result += '<img src="' + imgPath + 'TinyStar_Gold.png" />';
             for (s = 0; s < whiteStars; s++)
                 result += '<img src="' + imgPath + 'TinyStar_White.png" />';
@@ -122,6 +149,133 @@ class Utils {
         }
 
         result += "</div>"
+
+        return result;
+    }
+
+    /**
+     * Will take care of rendering progress bars from a regex match.
+     * This is to be used a call back for a regex replace. The original logic is inspired
+     * by the standard popmundo function createStarCount (yes, this is one more reason to sue me)
+     *
+     * @static
+     * @param {string} match The full regex matched, unused and only present as this is the explected signature
+     * @param {number} progressInt The numeric value of the progress bar
+     * @param {boolean} bool1 When true, the class of the bar is reverted
+     * @param {string} progressStr The string value of the bar progression 
+     * @param {string} style Additional styles for the outer dive element
+     * @param {boolean} bool2 If true an additional inner div is present
+     * @param {string} progressStr2 Only used whe bool2 is true
+     * @return {string} The correct HTML to render the progress bar 
+     * @memberof Utils
+     */
+    static createProgressBar(match, progressInt, bool1, progressStr, style, bool2, progressStr2) {
+
+        // We make sure that boolean values are correctly casted
+        bool1 = (bool1 === 'true');
+        bool2 = (bool2 === 'true');
+
+        let result = "<div";
+
+        if (style && "" != style)
+            result += ' class="' + style + '"';
+
+        result += ' title="' + progressStr + '">';
+
+        if (progressInt > 0) {
+            result += '<div class="';
+
+            if (bool1) {
+                if (progressInt < 31) {
+                    result += "full";
+                } else if (progressInt < 71) {
+                    result += "high";
+                } else if (progressInt < 100) {
+                    result += "med";
+                } else {
+                    result += "low";
+                }
+            } else {
+                if (progressInt < 31) {
+                    result += "low";
+                } else if (progressInt < 71) {
+                    result += "med";
+                } else if (progressInt < 100) {
+                    result += "high";
+                } else {
+                    result += "full";
+                }
+            }
+
+            result += '" style="width: ' + progressInt + '%;">';
+
+            if (bool2)
+                result += "<div>" + progressStr2 + "</div>";
+
+            result += "</div>";
+
+        }
+
+        result += "</div>";
+
+        return result;
+    }
+
+    /**
+     * Will take care of rendering plus-minus bar starting from a regex match
+     *
+     * @static
+     * @param {string} match The full regex matched, unused and only present as this is the explected signature
+     * @param {number} progressInt The integer value of the plus-minus bar percentage
+     * @param {string} progressStr The string representation of the plus-minus bar percentage
+     * @param {string} style Additional class details for the outer div element
+     * @param {boolean} bool1 If true and additional inner DIV element is created
+     * @param {string} progressStr2 Only used whe bool1 is true
+     * @return {string} The exepcted HTML to render the plus-minus bar
+     * @memberof Utils
+     */
+    static createPlusMinusBar(match, progressInt, progressStr, style, bool1, progressStr2) {
+
+        // We make sure that boolean values are correctly casted
+        bool1 = (bool1 === 'true');
+
+        let result = "<div";
+
+        if (style && "" != style)
+            result += ' class="' + style + '"';
+
+        result += ' title="' + progressStr + '">';
+
+        result += '<div class="negholder">';
+        if (progressInt < 0) {
+            result += '<div class="neg" style="width: ' + -progressInt + '%">';
+
+            if (bool1)
+                result += "<div>" + progressStr2 + "</div>";
+
+            result += "</div>";
+        }
+        result += "</div>";
+
+        result += '<div class="posholder">';
+        if (progressInt > 0) {
+            result += '<div class="pos" style="width: ' + progressInt + '%">';
+
+            if (bool1)
+                result += "<div>" + progressStr2 + "</div>";
+
+            result += "</div>"
+
+        } else if (0 == progressInt) {
+            result += '<div class="zero">';
+
+            if (bool1)
+                result += "<div>" + progressStr2 + "</div>";
+
+            result += "</div>"
+        }
+
+        result += "</div></div>";
 
         return result;
     }

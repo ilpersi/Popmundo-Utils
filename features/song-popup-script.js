@@ -64,8 +64,16 @@ function manageSongTooltips() {
                         // We hard-code of the styles to make sure that the tool tip is correctly rendered 
                         divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
 
-                        // we make sure to correctly render the stars
-                        infoHTML = divNode.outerHTML.replace(Utils.starsJSRE, Utils.createStarCount);
+                        // we make sure to correctly render bars and stars
+                        let newInnerHTML = divNode.innerHTML
+                            .replace(Utils.starsJSRE, Utils.createStarCount) // star count
+                            .replace(Utils.progressBarJSRE, Utils.createProgressBar) // progress bar
+                            .replace(Utils.plusMinusBarJSRE, Utils.createPlusMinusBar); // plus/minus bar
+
+                        // we apply the modifications to the original node
+                        divNode.innerHTML = newInnerHTML;
+
+                        infoHTML = divNode.outerHTML;
 
                     } else {
                         // No song info is present
@@ -107,7 +115,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 });
 
-// When page is loaded we get value from settings and se start the tippy logic.
+// When page is loaded we get value from settings and start the tippy logic.
 chrome.storage.sync.get(songOptionsValues, items => {
     showSongPopUp = items.song_popup;
 
