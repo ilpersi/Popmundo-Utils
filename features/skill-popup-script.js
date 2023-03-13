@@ -9,6 +9,7 @@ var showSkillPopUp = false;
 function manageSkillTooltips() {
 
     let popupTheme = Utils.getPopupTheme();
+    let fetcher = new TimedFetch();
 
     // Initialization of the tippy element
     tippy('a[href^="/World/Popmundo.aspx/Help/SkillType"]', {
@@ -45,12 +46,8 @@ function manageSkillTooltips() {
             let href = instance.reference.getAttribute('href');
 
             let theme = popupTheme.DATA_THEME;
-            fetch(href)
-                .then(response => {
-                    if (response.ok && response.status >= 200 && response.status < 300) {
-                        return response.text();
-                    }
-                }).then(html => {
+            fetcher.fetch(href)
+                .then(html => {
                     // Initialize the DOM parser
                     let parser = new DOMParser();
 

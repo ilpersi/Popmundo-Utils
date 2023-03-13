@@ -5,9 +5,10 @@ var showSongPopUp = false;
 function manageSongTooltips() {
 
     let popupTheme = Utils.getPopupTheme();
+    let fetcher = new TimedFetch();
 
     // Initialization of the tippy element
-    tippy('a[href^="/World/Popmundo.aspx/Character/Song"]', {
+    tippy('a[href^="/World/Popmundo.aspx/Character/Song/"]', {
         'arrow': false,
         'content': showSongPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
         'allowHTML': true,
@@ -41,12 +42,8 @@ function manageSongTooltips() {
             let href = instance.reference.getAttribute('href');
 
             let theme = popupTheme.DATA_THEME;
-            fetch(href)
-                .then(response => {
-                    if (response.ok && response.status >= 200 && response.status < 300) {
-                        return response.text();
-                    }
-                }).then(html => {
+            fetcher.fetch(href)
+                .then(html => {
                     // Initialize the DOM parser
                     let parser = new DOMParser();
 
