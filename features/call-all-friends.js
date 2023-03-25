@@ -219,6 +219,11 @@ async function onSubmitClick() {
         let callDetails = await Promise.all(friendCallsPromisses);
 
         statusPElem.textContent = `Succesfully called ${succesCalls} friends out of ${callableFriends.length}.`
+
+        // We reload the page so we get all the notifications prited out in the green banners.
+        if (succesCalls > 0) {
+            location.reload();
+        }
     }
 };
 
