@@ -285,7 +285,7 @@ class Utils {
  * This class is a wrapper around the standard fetch method. Popmundo servers are throttling the requests and if you
  * perform too many requests, you get disconnected. Unders some circumstances (e.g. when showing pop-ups), this can
  * lead to unexpected log-outs. To avoid this, this class is able to delay the fetch calls and it also has a built-in
- * cache logic to minimize the impact on the popmundo servers
+ * cache logic to minimize the impact on the popmundo servers.
  *
  * @class TimedFetch
  */
@@ -339,35 +339,38 @@ class TimedFetch {
             return result;
         } else {
 
-            // let's check if it is the right moment to perform another fetch
-            let timeDiff = Date.now() - this.#lastCall;
+            while (true) {
+                // let's check if it is the right moment to perform another fetch
+                let timeDiff = Date.now() - this.#lastCall;
 
-            if (timeDiff >= this.#delay) {
-                this.#lastCall = Date.now();
+                if (timeDiff >= this.#delay) {
+                    this.#lastCall = Date.now();
 
-                var result = new Promise((resolve, reject) => {
-                    fetch(href)
-                        .then(response => {
-                            if (response.ok && response.status >= 200 && response.status < 300) {
-                                return response.text();
-                            } else {
-                                reject('Bad response status: ' + response.status);
-                            }
-                        }).then(html => {
-                            if (this.#useCache) {
-                                this.#cache[href] = html;
-                            }
-                            resolve(html);
-                        }).catch((error) => {
-                            reject(error);
-                        })
-                });
+                    var result = new Promise((resolve, reject) => {
+                        fetch(href)
+                            .then(response => {
+                                if (response.ok && response.status >= 200 && response.status < 300) {
+                                    return response.text();
+                                } else {
+                                    reject('Bad response status: ' + response.status);
+                                }
+                            }).then(html => {
+                                if (this.#useCache) {
+                                    this.#cache[href] = html;
+                                }
+                                resolve(html);
+                            }).catch((error) => {
+                                reject(error);
+                            })
+                    });
 
-                return result;
+                    return result;
 
-            } else {
-                // If it is not the right moment, we try again in 250 milliseconds
-                setTimeout(this.fetch.bind(this), 250, href);
+                } else {
+                    // If it is not the right moment, we wait 250 milliseconds
+                    await new Promise(r => setTimeout(r, 250));
+                }
+
             }
         }
 
