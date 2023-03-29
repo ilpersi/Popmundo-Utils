@@ -111,7 +111,7 @@ function checkReminders() {
                     let details = {
                         id: itemID,
                         type: 'html',
-                        content: `Your ${itemDetails.name} is ready to be used. <a id='${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, true)'>Use</a> 
+                        content: `Your ${itemDetails.name} is ready to be used. <a id='item-${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, true)'>Use</a> 
                         or <a id='${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, false)'>Dismiss Notification</a>.`,
                     };
 
@@ -126,7 +126,7 @@ function checkReminders() {
                 if ('text' === details.type)
                     notifications.notifySuccess(details.id, details.content);
                 else if ('html' === details.type) {
-                    let notificationNode = notifications.notifySuccess();
+                    let notificationNode = notifications.notifySuccess(details.id);
                     notificationNode.innerHTML = details.content;
                 }
             });
