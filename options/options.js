@@ -14,6 +14,58 @@ const optionDetails = [
     { 'name': 'call_all_sms_txt', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_all_gossip', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_exclude_id', 'default': [], 'save_cb': saveCSVString, 'load_cb': loadCSVstring },
+
+    // mass interact options
+    { 'name': 'mass_interact_greet', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_smile', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_wink', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_insult', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_share_opinions', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_gossip', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_have_profound_discussion', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_comfort', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_talk_to', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_tease', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_fraternize', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_offer_advice', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_please_stop_flirting_with_me', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_say_im_sorry', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_compliment', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_hey_sexy_how_you_doin', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_praise', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_tell_naughty_joke', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_say_i_love_you', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_i_dont_want_to_be_friends', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_share_secrets', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_hang_out', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_play_with', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_pat_on_back', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_braid_hair', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_shake_hands', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_rub_elbows', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_hug', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_tickle', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_buy_a_drink', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_stroll_hand_in_hand', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_flex_biceps', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_caress', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_ask_for_a_dance', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_high_five', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_arm_wrestle', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_kiss_cheeks', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_embrace', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_kiss', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_kiss_passionately', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_give_massage', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_bless', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_do_funny_magic', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_tell_joke', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_seek_apprenticeship', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_sing_to', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_serenade', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_exclude_id', 'default': [], 'save_cb': saveCSVString, 'load_cb': loadCSVstring },
+    { 'name': 'mass_interact_max_chars', 'default': 99, 'save_cb': saveInteger, 'load_cb': loadInteger },
+    
 ]
 
 function saveCSVString(optionName, defaultVaule) {
@@ -73,6 +125,25 @@ function loadCheckBox(optionName, optionValue) {
 
 }
 
+function loadInteger(optionName, optionValue) {
+    let formElem = document.getElementById(optionName);
+
+    if (formElem != null) {
+        formElem.value = parseInt(optionValue);
+    }
+}
+
+function saveInteger(optionName, defaultVaule) {
+    let result = parseInt(defaultVaule);
+
+    let intElem = document.getElementById(optionName);
+    if (intElem != null) {
+        result = parseInt(intElem.value);
+    }
+
+    return result;
+}
+
 // Saves options to chrome.storage
 function save_options() {
     let optionsToSave = {};
@@ -106,7 +177,6 @@ function restore_options() {
             optionsLoadCB[option.name] = option.load_cb;
     });
 
-    // Use default value color = 'red' and likesColor = true.
     chrome.storage.sync.get(defaultOptions, items => {
         for (let option in items) {
             // by default options match the ids of form elements

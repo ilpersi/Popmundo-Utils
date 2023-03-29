@@ -84,6 +84,13 @@
             ],
             "js": ["common/utils.js", "common/xpath-helper.js", "common/notifications.js", "features/call-all-friends.js"]
         }
+    ,
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Locale/CharactersPresent/*"
+            ],
+            "js": ["common/utils.js", "common/xpath-helper.js", "features/mass-interact.js"]
+        }
     ],
 
     "web_accessible_resources": [

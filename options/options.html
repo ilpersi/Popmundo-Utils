@@ -27,7 +27,7 @@
         </label>
     </div>
     <br />
-    
+
     <div>
         <label>
             <input type="checkbox" id="song_popup"> Enable songs popup.
@@ -59,15 +59,83 @@
 
     <fieldset>
         <legend>Call all friends options.</legend>
-        <div>
-            <label>Select the interactions you want to use. The logic will randomly select between the ones checked and the one available for your friends:</label><br/>
-            <input type="checkbox" value="24" id="call_all_wazzup">  <label>Include Wazzup call.</label><br/>
-            <input type="checkbox" value="26" id="call_all_prank">   <label>Include Prank call.</label><br/>
-            <input type="checkbox" value="58" id="call_all_sms_pic"> <label>Include SMS Funny Pic.</label><br/>
-            <input type="checkbox" value="61" id="call_all_sms_txt"> <label>Include SMS Friendly Text.</label><br/>
-            <input type="checkbox" value="121" id="call_all_gossip"> <label>Include Gossip on phone.</label><br/><br/>
-            <label>Comma separated list of characters id to exclude.</label> <input type="text" id="call_exclude_id">
+        <label>Select the thelephone interactions you want to use. The logic will randomly select between the ones
+            checked and the
+            one available for your friends:</label>
+        <br /><br />
+        <div style="column-count: 3;">
+            <input type="checkbox" value="24" id="call_all_wazzup"> <label>Include Wazzup call.</label><br />
+            <input type="checkbox" value="26" id="call_all_prank"> <label>Include Prank call.</label><br />
+            <input type="checkbox" value="58" id="call_all_sms_pic"> <label>Include SMS Funny Pic.</label><br />
+            <input type="checkbox" value="61" id="call_all_sms_txt"> <label>Include SMS Friendly Text.</label><br />
+            <input type="checkbox" value="121" id="call_all_gossip"> <label>Include Gossip on phone.</label><br /><br />
         </div>
+        <br /><br />
+        <label>Comma separated list of characters id to exclude.</label> <input type="text" id="call_exclude_id">
+    </fieldset>
+    <br />
+
+    <fieldset>
+        <legend>Mass interact options.</legend>
+        <label>Select the interactions you want to use. The logic will randomly select between the ones checked and the
+            one available for found characters:</label>
+        <br /><br />
+        <div style="column-count: 4;">
+            <input type="checkbox" value="1" id="mass_interact_greet"> <label>Greet.</label><br/><br/>
+            <input type="checkbox" value="54" id="mass_interact_smile"> <label>Smile.</label><br/><br/>
+            <input type="checkbox" value="161" id="mass_interact_wink"> <label>Wink.</label><br/><br/>
+            <input type="checkbox" value="15" id="mass_interact_insult"> <label>Insult.</label><br/><br/>
+            <input type="checkbox" value="62" id="mass_interact_share_opinions"> <label>Share Opinions.</label><br/><br/>
+            <input type="checkbox" value="65" id="mass_interact_gossip"> <label>Gossip.</label><br/><br/>
+            <input type="checkbox" value="34" id="mass_interact_have_profound_discussion"> <label>Have profound discussion.</label><br/><br/>
+            <input type="checkbox" value="51" id="mass_interact_comfort"> <label>Comfort.</label><br/><br/>
+            <input type="checkbox" value="3" id="mass_interact_talk_to"> <label>Talk to.</label><br/><br/>
+            <input type="checkbox" value="5" id="mass_interact_tease"> <label>Tease.</label><br/><br/>
+            <input type="checkbox" value="57" id="mass_interact_fraternize"> <label>Fraternize.</label><br/><br/>
+            <input type="checkbox" value="68" id="mass_interact_offer_advice"> <label>Offer Advice.</label><br/><br/>
+            <!-- <input type="checkbox" value="154" id="mass_interact_please_stop_flirting_with_me"> <label>Please stop flirting with me.</label><br/><br/> -->
+            <!-- <input type="checkbox" value="166" id="mass_interact_say_im_sorry"> <label>Say I'm sorry.</label><br/><br/> -->
+            <input type="checkbox" value="14" id="mass_interact_compliment"> <label>Compliment.</label><br/><br/>
+            <input type="checkbox" value="71" id="mass_interact_hey_sexy_how_you_doin"> <label>Hey sexy, how you doin'?</label><br/><br/>
+            <input type="checkbox" value="75" id="mass_interact_praise"> <label>Praise.</label><br/><br/>
+            <input type="checkbox" value="76" id="mass_interact_tell_naughty_joke"> <label>Tell naughty joke.</label><br/><br/>
+            <!-- <input type="checkbox" value="77" id="mass_interact_say_i_love_you"> <label>Say I love you.</label><br/><br/> -->
+            <!-- <input type="checkbox" value="156" id="mass_interact_i_dont_want_to_be_friends"> <label>I don't want to be friends.</label><br/><br/> -->
+            <input type="checkbox" value="69" id="mass_interact_share_secrets"> <label>Share secrets.</label><br/><br/>
+            <input type="checkbox" value="70" id="mass_interact_hang_out"> <label>Hang out.</label><br/><br/>
+            <input type="checkbox" value="18" id="mass_interact_play_with"> <label>Play with.</label><br/><br/>
+            <input type="checkbox" value="63" id="mass_interact_pat_on_back"> <label>Pat on back.</label><br/><br/>
+            <input type="checkbox" value="66" id="mass_interact_braid_hair"> <label>Braid Hair.</label><br/><br/>
+            <input type="checkbox" value="55" id="mass_interact_shake_hands"> <label>Shake hands.</label><br/><br/>
+            <input type="checkbox" value="59" id="mass_interact_rub_elbows"> <label>Rub elbows.</label><br/><br/>
+            <input type="checkbox" value="8" id="mass_interact_hug"> <label>Hug.</label><br/><br/>
+            <input type="checkbox" value="12" id="mass_interact_tickle"> <label>Tickle.</label><br/><br/>
+            <input type="checkbox" value="7" id="mass_interact_buy_a_drink"> <label>Buy a drink.</label><br/><br/>
+            <input type="checkbox" value="129" id="mass_interact_stroll_hand_in_hand"> <label>Stroll hand in hand.</label><br/><br/>
+            <input type="checkbox" value="89" id="mass_interact_flex_biceps"> <label>Flex biceps.</label><br/><br/>
+            <input type="checkbox" value="30" id="mass_interact_caress"> <label>Caress.</label><br/><br/>
+            <input type="checkbox" value="35" id="mass_interact_ask_for_a_dance"> <label>Ask for a dance.</label><br/><br/>
+            <input type="checkbox" value="60" id="mass_interact_high_five"> <label>High Five.</label><br/><br/>
+            <input type="checkbox" value="67" id="mass_interact_arm_wrestle"> <label>Arm Wrestle.</label><br/><br/>
+            <input type="checkbox" value="56" id="mass_interact_kiss_cheeks"> <label>Kiss Cheeks.</label><br/><br/>
+            <input type="checkbox" value="64" id="mass_interact_embrace"> <label>Embrace.</label><br/><br/>
+            <input type="checkbox" value="9" id="mass_interact_kiss"> <label>Kiss.</label><br/><br/>
+            <input type="checkbox" value="10" id="mass_interact_kiss_passionately"> <label>Kiss passionately.</label><br/><br/>
+            <input type="checkbox" value="164" id="mass_interact_enjoy_kobe_sutra"> <label>Enjoy Kobe Sutra.</label><br/><br/>
+            <input type="checkbox" value="13" id="mass_interact_5_minute_quickie"> <label>5 minute quickie.</label><br/><br/>
+            <input type="checkbox" value="19" id="mass_interact_tantric_sex"> <label>Tantric Sex.</label><br/><br/>
+            <input type="checkbox" value="11" id="mass_interact_make_love"> <label>Make Love.</label><br/><br/>
+            <input type="checkbox" value="44" id="mass_interact_give_massage"> <label>Give Massage.</label><br/><br/>
+            <input type="checkbox" value="39" id="mass_interact_bless"> <label>Bless.</label><br/><br/>
+            <input type="checkbox" value="33" id="mass_interact_do_funny_magic"> <label>Do funny magic.</label><br/><br/>
+            <input type="checkbox" value="4" id="mass_interact_tell_joke"> <label>Tell joke.</label><br/><br/>
+            <input type="checkbox" value="29" id="mass_interact_seek_apprenticeship"> <label>Seek apprenticeship.</label><br/><br/>
+            <input type="checkbox" value="21" id="mass_interact_sing_to"> <label>Sing to.</label><br/><br/>
+            <input type="checkbox" value="78" id="mass_interact_serenade"> <label>Serenade.</label><br/><br/>
+        </div>
+        <br /><br />
+        <label>Comma separated list of characters id to exclude.</label> <input type="text" id="mass_interact_exclude_id"><br/><br/>
+        <label>Limit the number of characters to interact with (from 1 to 99).</label> <input type="number" id="mass_interact_max_chars" min="1" max="99">
     </fieldset>
     <br />
 
