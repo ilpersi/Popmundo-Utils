@@ -279,6 +279,10 @@ class Utils {
 
         return result;
     }
+
+    static async sleep(delay) {
+        await new Promise(r => setTimeout(r, delay));
+    }
 }
 
 /**
@@ -323,17 +327,20 @@ class TimedFetch {
     /**
      * The main logic around the standard fetch method. This method is also centralizing the logic to manage
      * the status checks and it will either resolve with the html content or reject with an error message.
+     * 
+     * For more details on the parameters, check the offical fetch documentation: https://developer.mozilla.org/en-US/docs/Web/API/fetch
      *
-     * @param {string} href The url to fetch
+     * @param {string} resource The resource to fetch
+     * @param {*} [options={}] An object containing any custom settings that you want to apply to the request.
      * @return {string} The HTML content of the desired page
      * @memberof TimedFetch
      */
-    async fetch(href) {
+    async fetch(resource, options={}) {
 
         // We can use a cached response, let's go for it!
-        if (this.#useCache && this.#cache.hasOwnProperty(href)) {
+        if (this.#useCache && this.#cache.hasOwnProperty(resource)) {
             var result = new Promise((resolve) => {
-                resolve(this.#cache[href]);
+                resolve(this.#cache[resource]);
             });
 
             return result;
@@ -347,7 +354,7 @@ class TimedFetch {
                     this.#lastCall = Date.now();
 
                     var result = new Promise((resolve, reject) => {
-                        fetch(href)
+                        fetch(resource, options)
                             .then(response => {
                                 if (response.ok && response.status >= 200 && response.status < 300) {
                                     return response.text();
@@ -356,7 +363,7 @@ class TimedFetch {
                                 }
                             }).then(html => {
                                 if (this.#useCache) {
-                                    this.#cache[href] = html;
+                                    this.#cache[resource] = html;
                                 }
                                 resolve(html);
                             }).catch((error) => {
@@ -368,7 +375,7 @@ class TimedFetch {
 
                 } else {
                     // If it is not the right moment, we wait 250 milliseconds
-                    await new Promise(r => setTimeout(r, 250));
+                    await Utils.sleep(250);
                 }
 
             }
