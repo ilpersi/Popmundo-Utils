@@ -280,8 +280,45 @@ class Utils {
         return result;
     }
 
+    /**
+     * Get a link path with the correct server number.
+     *
+     * @static
+     * @param {String} urlPath The link path
+     * @return {String} The string with the correct url according to the current server 
+     * @memberof Utils
+     */
+    static getServerLink(urlPath) {
+        // We make sure to have the trailing slash
+        if (!urlPath.endsWith('/')) urlPath += '/';
+
+        return `https://${window.location.hostname}${urlPath}`
+    }
+
+    /**
+     * The old ever-green sleep method implemente using promises
+     *
+     * @static
+     * @param {number} delay
+     * @memberof Utils
+     */
     static async sleep(delay) {
         await new Promise(r => setTimeout(r, delay));
+    }
+
+    /**
+     * Make an iterator returning elements from the iterable
+     * cycle('ABCD') --> A B C D A B C D A B C D ...
+     *
+     * @static
+     * @param {Iterable} iterable Any iterable items that can be looped using the iteration protocol
+     * @memberof Utils
+     */
+    static cycle(iterable) {
+        while (true) {
+            for (element of iterable)
+                yield element
+        }
     }
 }
 
@@ -335,7 +372,7 @@ class TimedFetch {
      * @return {string} The HTML content of the desired page
      * @memberof TimedFetch
      */
-    async fetch(resource, options={}) {
+    async fetch(resource, options = {}) {
 
         // We can use a cached response, let's go for it!
         if (this.#useCache && this.#cache.hasOwnProperty(resource)) {
