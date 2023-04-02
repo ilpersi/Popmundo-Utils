@@ -95,6 +95,13 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/CharactersPresent/*"
             ],
             "js": ["common/utils.js", "common/xpath-helper.js", "features/mass-interact.js"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character"
+            ],
+            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "common/xpath-helper.js", "features/character-popup.js"]
         }
     ],
 
