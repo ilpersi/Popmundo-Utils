@@ -314,11 +314,42 @@ class Utils {
      * @param {Iterable} iterable Any iterable items that can be looped using the iteration protocol
      * @memberof Utils
      */
-    static cycle(iterable) {
+    static * cycle(iterable) {
         while (true) {
-            for (element of iterable)
+            for (let element of iterable)
                 yield element
         }
+    }
+
+    /**
+     * Randomly sort the elements of an input array. 
+     * Original code frome https://stackoverflow.com/a/2450976/1280443
+     *
+     * @static
+     * @param {Array} inputArray
+     * @param {boolean} [deepCopy=true]
+     * @return {Array} 
+     * @memberof Utils
+     */
+    static shuffle(inputArray, deepCopy=true) {
+        // We copy the original array either shallow or deep
+        let result = deepCopy ? JSON.parse(JSON.stringify(inputArray)) : inputArray;
+
+        let currentIndex = result.length, randomIndex;
+
+        // While there remain elements to shuffle.
+        while (currentIndex != 0) {
+
+            // Pick a remaining element.
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [result[currentIndex], result[randomIndex]] = [
+                result[randomIndex], result[currentIndex]];
+        }
+
+        return result;
     }
 }
 
