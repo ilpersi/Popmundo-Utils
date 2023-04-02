@@ -65,7 +65,7 @@ class Utils {
      * @memberof Utils
      */
     static getPopupTheme(contextNode = document) {
-        const SKIN_XPATH = '//link[@rel="stylesheet" and contains(@href,"Theme") and contains(@href,"css") and @type="text/css"]';
+        const SKIN_XPATH = '//link[@rel="stylesheet" and contains(@href,"Theme") and contains(@href,"css") and @type="text/css" and not(contains(@href,"jquery"))]';
 
         let skinCSSResult = document.evaluate(SKIN_XPATH, contextNode, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
 
@@ -81,20 +81,22 @@ class Utils {
         if (skinCSSResult.singleNodeValue) {
             let skinCSSNode = skinCSSResult.singleNodeValue;
 
+            let cssHref = skinCSSNode.getAttribute('href').toLowerCase();
+
             // Based on the used skin, we correctly set the properties
-            if (skinCSSNode.getAttribute('href').includes('Dark')) { // Dark Theme
-                result.DATA_THEME = 'transparent';
+            if (cssHref.includes('dark')) { // Dark Theme
+                result.DATA_THEME = 'dark';
                 result.NO_DATA_THEME = 'dark';
                 result.LOADING_THEME = 'dark';
                 result.COLOR = '#fff';
                 result.FONT_SIZE = '11px';
-            } else if (skinCSSNode.getAttribute('href').includes('Default')) { // Default Theme
+            } else if (cssHref.includes('default')) { // Default Theme
                 result.DATA_THEME = 'transparent';
                 result.NO_DATA_THEME = 'retro';
                 result.LOADING_THEME = 'retro';
                 result.COLOR = '#000';
                 result.FONT_SIZE = '11px';
-            } else if (skinCSSNode.getAttribute('href').includes('Retro')) { // Default Theme
+            } else if (cssHref.includes('retro')) { // Default Theme
                 result.DATA_THEME = 'retro';
                 result.NO_DATA_THEME = 'retro';
                 result.LOADING_THEME = 'retro';
