@@ -44,6 +44,7 @@ async function onSubmitClick() {
     let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
     let relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
 
+    let ignoreCnt = 0;
     let friendsInfo = [];
     for (let i = 0; i < relationsNodes.snapshotLength; i++) {
         let barNode = relationsNodes.snapshotItem(i);
@@ -58,8 +59,11 @@ async function onSubmitClick() {
             }
 
             // We make sure not to include ids in the exclusion list
-            if (!savedOptions.call_exclude_id.includes(friendData.id))
+            if (!savedOptions.call_exclude_id.includes(friendData.id)){
                 friendsInfo.push(friendData);
+            } else {
+                ignoreCnt++;
+            }
         }
 
         // We make sure the regex is working in the next iteration
@@ -79,12 +83,22 @@ async function onSubmitClick() {
 
     let statusPElem = document.getElementById('call-all-status-p');
 
+    // We randomly sort the interactions and create an iterator base on it
+    let interactionIterator = Utils.cycle(Utils.shuffle(INTERACTIONS));
+
     friendsInfo.forEach((friendDict, friendIndex) => {
 
         let friendDetailsPromise = new Promise((resolve, reject) => {
             // To avoid being kicked out, we delay backgroud fetch calls
             setTimeout(() => {
-                statusPElem.textContent = `Checking friend ${friendIndex + 1} out of ${friendsInfo.length} (${friendDict.name}).`;
+                let statusMessage = '';
+                
+                if (ignoreCnt > 0)
+                    statusMessage += `Ignored ${ignoreCnt} friend(s). `;
+                
+                statusMessage += `Checking friend ${friendIndex + 1} out of ${friendsInfo.length} (${friendDict.name}).`;
+
+                statusPElem.textContent = statusMessage;
 
                 let interactUrl = `https://${hostName}${interactPath}${friendDict.id}`;
                 fetch(interactUrl, { "method": "GET", })
@@ -118,12 +132,16 @@ async function onSubmitClick() {
                                 availableInteractions.push(value);
                             }
 
-                            // We intersect possible available interactions with possible ones
+                            // We intersect available interactions with call interactions
                             let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
 
                             // We finally choose a random interaction
-                            if (possibleInteractions.length > 0)
-                                randomInteraction = possibleInteractions.sort(() => 0.5 - Math.random())[0];
+                            if (possibleInteractions.length > 0){
+                                randomInteraction = interactionIterator.next().value;
+
+                                while (!possibleInteractions.includes(randomInteraction))
+                                    randomInteraction = interactionIterator.next().value;
+                            }
                         }
 
                         // We get the form fields
