@@ -326,8 +326,8 @@ class Utils {
      * Original code frome https://stackoverflow.com/a/2450976/1280443
      *
      * @static
-     * @param {Array} inputArray
-     * @param {boolean} [deepCopy=true]
+     * @param {Array} inputArray The input array to shuffle
+     * @param {boolean} [deepCopy=true] If set to false, the array will be sorted in place, otherwise a deep copy will be crated
      * @return {Array} 
      * @memberof Utils
      */
