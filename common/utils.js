@@ -333,7 +333,7 @@ class Utils {
      * @return {Array} 
      * @memberof Utils
      */
-    static shuffle(inputArray, deepCopy=true) {
+    static shuffle(inputArray, deepCopy = true) {
         // We copy the original array either shallow or deep
         let result = deepCopy ? JSON.parse(JSON.stringify(inputArray)) : inputArray;
 
@@ -448,6 +448,178 @@ class TimedFetch {
                     await Utils.sleep(250);
                 }
 
+            }
+        }
+
+    }
+}
+
+/**
+ * Use this class to manage score highlighing and percentages on bars
+ *
+ * @class Scoring
+ */
+class Scoring {
+
+    // Used by scoring system
+    #MAX_SCORED_ID = 26;
+    #rainbowBgColors = [];
+    #textColors = [];
+    #scoringOptionsValues = { 'score_highlight': true };
+
+    // Used by the progress bar logic
+    #progressBarOptions = { 'progress_bar_percent': true };
+
+    /**
+     * Get the rainbow color based on the score id. This is lousely based on chromemungo code by Tommi Rautava
+     *
+     * @param {number} scoreId The value of the score for which we want a color
+     * @return {pm_TextColor} A pm_TextColor object that can be used to generate style definitions
+     */
+    getRainbowColor(scoreId) {
+        var bgColor;
+        var textColor;
+
+        // Return previously calculated color.
+        if (this.#rainbowBgColors[scoreId]) {
+            bgColor = this.#rainbowBgColors[scoreId];
+            textColor = this.#textColors[bgColor];
+
+            return new pm_TextColor(textColor, bgColor);
+        }
+
+        // Calculate background color.
+        var hue = 360 - 330 * (scoreId / this.#MAX_SCORED_ID);
+
+        var rgbObj = pm_Color.convertHsvToRgb(hue, 1, 1);
+        bgColor = rgbObj.toHex();
+
+        // Calculate foreground color.
+        textColor = pm_Color.idealTextColor(rgbObj.R, rgbObj.G, rgbObj.B);
+
+        // Store colors.
+        this.#rainbowBgColors[scoreId] = bgColor;
+        this.#textColors[bgColor] = textColor;
+
+        return new pm_TextColor(textColor, bgColor);
+
+    }
+
+    /**
+     * The main logic to manage the scoring highlight. It will search for scoring nodes and
+     * apply the proper formatting on place.
+     *
+     * @param {*} [domTree=document] The dom tree used to apply the score highliting logic
+     * @memberof Scoring
+     */
+    async applyScoringNumbers(domTree = document) {
+        let items = await chrome.storage.sync.get(this.#scoringOptionsValues);
+
+        if (items.score_highlight) {
+
+            // Regex used to get the score value from the a element title
+            const TITLE_RE = /(\d{1,2})\/26/gm;
+
+            // The XPATH to get scores from
+            const SCORE_LINK_XPATH = '//a[contains(@href, "Scoring")]';
+
+            // Let's get the scoring nodes
+            let xpathHelper = new XPathHelper(SCORE_LINK_XPATH);
+            let scoreNodes = xpathHelper.getOrderedSnapshot(domTree);
+
+            for (let i = 0; i < scoreNodes.snapshotLength; i++) {
+                let scoreNode = scoreNodes.snapshotItem(i);
+
+                // Using the regex, we get the score value
+                var titleMatch = TITLE_RE.exec(scoreNode.getAttribute('title'));
+                if (titleMatch) {
+                    let scoreInt = parseInt(titleMatch[1]);
+                    let textColor = this.getRainbowColor(scoreInt);
+
+                    // Empty span element to make sure we have some space between the name of the score and the numeric value
+                    let spaceElem = domTree.createElement('span');
+                    spaceElem.textContent = ' ';
+
+                    // The span with the numbering value
+                    let scoreElem = domTree.createElement('span');
+                    scoreElem.innerHTML = '&nbsp;' + scoreInt + '&nbsp;';
+                    scoreElem.setAttribute('style', textColor.toString());
+                    scoreElem.setAttribute('style', scoreElem.getAttribute('style') + ' font-weight: bold;');
+
+                    // We append the created span elements
+                    scoreNode.parentNode.insertBefore(scoreElem, scoreNode.nextSibling);
+                    scoreNode.parentNode.insertBefore(spaceElem, scoreNode.nextSibling);
+                }
+
+                // We make sure the regex is working in the next iteration
+                TITLE_RE.lastIndex = 0;
+            }
+        }
+
+    }
+
+    /**
+     * The main logic to write the percentage value on progress bars.
+     *
+     * @param {*} [domTree=document] The dom tree used to apply the score highliting logic
+     * @memberof Scoring
+     */
+    async applyBarPercentage(domTree = document) {
+
+        let items = await chrome.storage.sync.get(this.#progressBarOptions);
+
+        if (items.progress_bar_percent) {
+
+            // The Xpath for the bars mostly used on char and artis pages
+            const PROGRESS_BAR_PATH = '//div[contains(@class, "rogressBar")]';
+
+            let xpathHelper = new XPathHelper(PROGRESS_BAR_PATH);
+            let barNodes = xpathHelper.getOrderedSnapshot(domTree);
+
+            for (let i = 0; i < barNodes.snapshotLength; i++) {
+                let node = barNodes.snapshotItem(i);
+                let percentage = node.getAttribute('title');
+
+                node.setAttribute('style', 'display: grid;');
+
+                // When the bar is at 0% there are no child nodes
+                if (node.childNodes.length > 0) {
+                    let childDiv = node.childNodes[0];
+                    childDiv.setAttribute('style', childDiv.getAttribute('style') + " grid-area: 1/1/1/3;");
+
+                    let spanElement = domTree.createElement('span');
+                    spanElement.setAttribute('style', 'grid-area: 1/2/1/2; color: black; font-size: 10px;');
+                    spanElement.textContent = percentage;
+
+                    node.appendChild(spanElement);
+                }
+
+            }
+
+            const PLUS_NEG_HOLDER = '//td/div[@class="plusMinusBar"]';
+            xpathHelper = new XPathHelper(PLUS_NEG_HOLDER);
+            barNodes = xpathHelper.getOrderedSnapshot(domTree);
+
+            for (let i = 0; i < barNodes.snapshotLength; i++) {
+                let node = barNodes.snapshotItem(i);
+                let percentage = node.getAttribute('title');
+
+                // When percentage is zero, we do not write the value
+                if (percentage.startsWith('0')) continue;
+
+                // The parent TD element
+                let tdElem = node.parentNode;
+                tdElem.setAttribute('style', 'display: grid; align-items: center; grid-auto-columns: auto;');
+
+                // The plusMinusBar DIV Element
+                node.setAttribute('style', 'grid-area: 1/1/1/3;');
+
+                // The new SPAN element with the bar value
+                let spanElement = domTree.createElement('span');
+                spanElement.setAttribute('style', 'grid-row: 1/1; color: black; z-index: 1; font-size: 10px; top: 50%; grid-column: 1/3;');
+                spanElement.textContent = percentage;
+                // We append the new SPAN to the TD element
+                tdElem.appendChild(spanElement);
             }
         }
 

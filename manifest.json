@@ -17,7 +17,7 @@
         },
         {
             "matches": ["https://*.popmundo.com/*"],
-            "js": ["libs/jquery-3.6.1.min.js", "libs/jquery.dataTables.min.js", "common/xpath-helper.js", "features/global-content-script.js"]
+            "js": ["libs/jquery-3.6.1.min.js", "libs/jquery.dataTables.min.js", "common/utils.js", "common/xpath-helper.js", "features/global-content-script.js"]
         },
         {
             "matches": [
@@ -99,6 +99,7 @@
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character"
             ],
             "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "common/xpath-helper.js", "features/character-popup.js"]

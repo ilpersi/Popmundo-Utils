@@ -29,7 +29,8 @@ function manageCharacterTooltips() {
         },
 
         'onShow': function (instance) {
-            // We make sure to show the popup only on characters links
+            // We make sure to show the popup only on characters links. This is requirede because
+            // in the character page there are many links matching the css selector.
             let charHref = instance.reference.getAttribute('href');
             if (!/\/World\/Popmundo.aspx\/Character\/\d+/gm.test(charHref)) return false;
 
@@ -49,14 +50,28 @@ function manageCharacterTooltips() {
             let href = instance.reference.getAttribute('href');
 
             let theme = popupTheme.DATA_THEME;
+            
             fetcher.fetch(href)
-                .then(html => {
+                .then(async (html) => {
+
+                    html = html.replace(Utils.progressBarJSRE, Utils.createProgressBar);
+
                     // Initialize the DOM parser
                     let parser = new DOMParser();
 
                     // Parse the text
                     let doc = parser.parseFromString(html, "text/html");
+
+                    // we appry bar percentages
+                    let scoring = new Scoring();
+                    await scoring.applyBarPercentage(doc);
+
+                    debugger;
+
+                    // This xpath is to manage the content we want to display in the popup
                     let divXpathHelper = new XPathHelper('//*[@id="ppm-content"]/div[position()<3]');
+
+                    // This xpath is to make sure that images in pop-up have the right src
                     let imgSrcXpathHelper = new XPathHelper("//img[contains(@src, '../')]");
 
                     let infoHTML = '';
@@ -66,6 +81,7 @@ function manageCharacterTooltips() {
                         for (let i = 0; i < divNodes.snapshotLength; i++) {
                             let divNode = divNodes.snapshotItem(i);
 
+                            // Let's fix images src when required
                             let imgNodes = imgSrcXpathHelper.getOrderedSnapshot(divNode);
                             for (let j = 0; j < imgNodes.snapshotLength; j++) {
                                 let imgNode = imgNodes.snapshotItem(j);
@@ -73,14 +89,14 @@ function manageCharacterTooltips() {
                                 imgNode.setAttribute('src', '/' + imgNode.getAttribute('src').replaceAll('../', '') );
                             }
 
-                            // We hard-code of the styles to make sure that the tool tip is correctly rendered 
+                            // We hard-code the styles to make sure that the tool tip is correctly rendered 
                             divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
    
-                            infoHTML += divNode.outerHTML.replace(Utils.progressBarJSRE, Utils.createProgressBar);
+                            infoHTML += divNode.outerHTML;
                         }
 
                     } else {
-                        // No skill info is present
+                        // No character info is present
                         infoHTML = `<span style="color: ${popupTheme.COLOR};">No information available.</span>`;
                         theme = popupTheme.NO_DATA_THEME;
                     }

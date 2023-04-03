@@ -48,6 +48,8 @@ function manageSkillTooltips() {
             let theme = popupTheme.DATA_THEME;
             fetcher.fetch(href)
                 .then(html => {
+                    html = html.replace(Utils.starsJSRE, Utils.createStarCount);
+
                     // Initialize the DOM parser
                     let parser = new DOMParser();
 
@@ -66,7 +68,7 @@ function manageSkillTooltips() {
                         divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
 
                         // we make sure to correctly render the stars
-                        infoHTML = divNode.outerHTML.replace(Utils.starsJSRE, Utils.createStarCount);
+                        infoHTML = divNode.outerHTML;
 
                     } else {
                         // No skill info is present

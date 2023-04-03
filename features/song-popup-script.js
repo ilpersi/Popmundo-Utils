@@ -43,12 +43,22 @@ function manageSongTooltips() {
 
             let theme = popupTheme.DATA_THEME;
             fetcher.fetch(href)
-                .then(html => {
+                .then(async (html) => {
+                    html = html
+                        .replace(Utils.starsJSRE, Utils.createStarCount) // star count
+                        .replace(Utils.progressBarJSRE, Utils.createProgressBar) // progress bar
+                        .replace(Utils.plusMinusBarJSRE, Utils.createPlusMinusBar); // plus/minus bar
+
                     // Initialize the DOM parser
                     let parser = new DOMParser();
 
                     // Parse the text
                     let doc = parser.parseFromString(html, "text/html");
+
+                    let scoring = new Scoring();
+                    await scoring.applyBarPercentage(doc);
+                    await scoring.applyScoringNumbers(doc);
+
                     xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr/td');
 
                     let infoHTML = '';
@@ -62,10 +72,7 @@ function manageSongTooltips() {
                         divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
 
                         // we make sure to correctly render bars and stars
-                        let newInnerHTML = divNode.innerHTML
-                            .replace(Utils.starsJSRE, Utils.createStarCount) // star count
-                            .replace(Utils.progressBarJSRE, Utils.createProgressBar) // progress bar
-                            .replace(Utils.plusMinusBarJSRE, Utils.createPlusMinusBar); // plus/minus bar
+                        let newInnerHTML = divNode.innerHTML;
 
                         // we apply the modifications to the original node
                         divNode.innerHTML = newInnerHTML;
