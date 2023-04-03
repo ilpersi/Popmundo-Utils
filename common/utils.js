@@ -91,7 +91,7 @@ class Utils {
                 result.COLOR = '#fff';
                 result.FONT_SIZE = '11px';
             } else if (cssHref.includes('default')) { // Default Theme
-                result.DATA_THEME = 'transparent';
+                result.DATA_THEME = 'default';
                 result.NO_DATA_THEME = 'retro';
                 result.LOADING_THEME = 'retro';
                 result.COLOR = '#000';

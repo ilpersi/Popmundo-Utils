@@ -13,3 +13,7 @@
 .tippy-box[data-theme~='dark'] {
     background-color: #222;
 }
+
+.tippy-box[data-theme~='default'] {
+    background-color: #D1D1D1;
+}
