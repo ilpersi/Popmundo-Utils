@@ -66,8 +66,6 @@ function manageCharacterTooltips() {
                     let scoring = new Scoring();
                     await scoring.applyBarPercentage(doc);
 
-                    debugger;
-
                     // This xpath is to manage the content we want to display in the popup
                     let divXpathHelper = new XPathHelper('//*[@id="ppm-content"]/div[position()<3]');
 

@@ -28,7 +28,6 @@ function getDayDetails(date = new Date()) {
 }
 
 function checkReminders() {
-    // debugger;
 
     // Only possible workaround to inject custom scripts via content scripts
     // It is not the best solution, but what happens is that the injected script will trigger a custom deleteAndredirect used later on in the script
@@ -39,7 +38,6 @@ function checkReminders() {
 
     // Custom event triggered by the injected script
     document.addEventListener('deleteAndredirect', function (e) {
-        // debugger;
         let data = e.detail;
 
         chrome.storage.sync.get(TIMERS_STORAGE_VALUE)
@@ -97,7 +95,6 @@ function checkReminders() {
 
     chrome.storage.sync.get(TIMERS_STORAGE_VALUE)
         .then((items) => {
-            // debugger;
 
             let nowTimeStamp = Date.now();
             let myID = Utils.getMyID();
