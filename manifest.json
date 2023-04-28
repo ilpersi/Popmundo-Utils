@@ -11,9 +11,9 @@
     "content_scripts": [
         {
             "matches": [
-                "https://*.popmundo.com/World/Popmundo.aspx/City"
+                "https://*.popmundo.com/World/Popmundo.aspx/City*"
             ],
-            "js": ["common/xpath-helper.js", "features/open-houses.js"]
+            "js": ["common/xpath-helper.js", "common/utils.js", "features/open-houses.js"]
         },
         {
             "matches": ["https://*.popmundo.com/*"],
@@ -48,7 +48,9 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Songs/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Repertoire/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Repertoire/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/PerformanceDetails/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/SongMarketPurchases/*"
             ],
             "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "features/song-popup-script.js"],
             "css": ["features/popup-style.css"]
@@ -100,9 +102,19 @@
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist*",
+                "https://*.popmundo.com/Forum/Popmundo.aspx/Thread/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Company/ShareHolders/*"
             ],
             "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "common/xpath-helper.js", "features/character-popup.js"]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/PerformanceDetails/*"
+            ],
+            "js": ["common/xpath-helper.js", "features/show-message-generator.js"]
         }
     ],
 
