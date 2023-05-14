@@ -3,21 +3,43 @@
     "version": "0.1",
     "name": "Popmundo Utils",
     "description": "Misc utilities for Popmundo",
-    
-    "host_permissions": ["https://*.popmundo.com/*"],
-    
-    "permissions": ["storage"],
+
+    "icons": {
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+
+    "host_permissions": [
+        "https://*.popmundo.com/*"
+    ],
+    "permissions": [
+        "storage"
+    ],
 
     "content_scripts": [
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/City*"
             ],
-            "js": ["common/xpath-helper.js", "common/utils.js", "features/open-houses.js"]
+            "js": [
+                "common/xpath-helper.js",
+                "common/utils.js",
+                "features/open-houses.js"
+            ]
         },
         {
-            "matches": ["https://*.popmundo.com/*"],
-            "js": ["libs/jquery-3.6.1.min.js", "libs/jquery.dataTables.min.js", "common/utils.js", "common/xpath-helper.js", "features/global-content-script.js"]
+            "matches": [
+                "https://*.popmundo.com/*"
+            ],
+            "js": [
+                "libs/jquery-3.6.1.min.js",
+                "libs/jquery.dataTables.min.js",
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/global-content-script.js"
+            ]
         },
         {
             "matches": [
@@ -30,7 +52,10 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/City"
             ],
-            "js": ["common/xpath-helper.js", "features/progress-bar-script.js"]
+            "js": [
+                "common/xpath-helper.js",
+                "features/progress-bar-script.js"
+            ]
         },
         {
             "matches": [
@@ -40,20 +65,30 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/SkillType/*"
             ],
-            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "features/skill-popup-script.js"],
-            "css": ["features/popup-style.css"]
+            "js": [
+                "libs/popper.min.js",
+                "libs/tippy-bundle.umd.min.js",
+                "common/utils.js",
+                "features/skill-popup-script.js"
+            ],
+            "css": [
+                "features/popup-style.css"
+            ]
         },
         {
             "matches": [
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/Songs/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Repertoire/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Artist/PerformanceDetails/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Artist/SongMarketPurchases/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist*"
             ],
-            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "features/song-popup-script.js"],
-            "css": ["features/popup-style.css"]
+            "js": [
+                "libs/popper.min.js",
+                "libs/tippy-bundle.umd.min.js",
+                "common/utils.js",
+                "features/song-popup-script.js"
+            ],
+            "css": [
+                "features/popup-style.css"
+            ]
         },
         {
             "matches": [
@@ -66,37 +101,62 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Song/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/*"
             ],
-            "js": ["common/xpath-helper.js", "common/color.js", "features/scoring-script.js"]
+            "js": [
+                "common/xpath-helper.js",
+                "common/color.js",
+                "features/scoring-script.js"
+            ]
         },
         {
             "matches": [
                 "https://*.popmundo.com/Default.aspx*"
             ],
-            "js": ["common/notifications.js", "features/login-redirect.js"]
+            "js": [
+                "common/notifications.js",
+                "features/login-redirect.js"
+            ]
         },
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character"
             ],
-            "js": ["common/utils.js", "common/notifications.js", "features/reminders-script.js"]
+            "js": [
+                "common/utils.js",
+                "common/notifications.js",
+                "features/reminders-script.js"
+            ]
         },
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*"
             ],
-            "js": ["common/utils.js", "common/xpath-helper.js", "common/notifications.js", "features/item-timers.js"]
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "common/notifications.js",
+                "features/item-timers.js"
+            ]
         },
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*"
             ],
-            "js": ["common/utils.js", "common/xpath-helper.js", "common/notifications.js", "features/call-all-friends.js"]
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "common/notifications.js",
+                "features/call-all-friends.js"
+            ]
         },
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/CharactersPresent/*"
             ],
-            "js": ["common/utils.js", "common/xpath-helper.js", "features/mass-interact.js"]
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/mass-interact.js"
+            ]
         },
         {
             "matches": [
@@ -106,28 +166,46 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist*",
                 "https://*.popmundo.com/Forum/Popmundo.aspx/Thread/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Company/ShareHolders/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Company/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Help/Crew"
             ],
-            "js": ["libs/popper.min.js", "libs/tippy-bundle.umd.min.js", "common/utils.js", "common/xpath-helper.js", "features/character-popup.js"]
+            "js": [
+                "libs/popper.min.js",
+                "libs/tippy-bundle.umd.min.js",
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/character-popup.js"
+            ]
         },
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/PerformanceDetails/*"
             ],
-            "js": ["common/xpath-helper.js", "features/show-message-generator.js"]
+            "js": [
+                "common/xpath-helper.js",
+                "features/show-message-generator.js"
+            ]
         }
     ],
 
     "web_accessible_resources": [
         {
-            "resources": [ "/images/*" ],
-            "matches": [ "https://*.popmundo.com/*" ]
+            "resources": [
+                "/images/*"
+            ],
+            "matches": [
+                "https://*.popmundo.com/*"
+            ]
         },
         {
-            "resources": [ "/injected-js/reminders-injected.js" ],
-            "matches": [ "https://*.popmundo.com/*" ]
+            "resources": [
+                "/injected-js/reminders-injected.js"
+            ],
+            "matches": [
+                "https://*.popmundo.com/*"
+            ]
         }
     ],
-
+    
     "options_page": "options/options.html"
 }

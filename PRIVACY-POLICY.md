@@ -1,6 +1,5 @@
 # Popmundo Utils Privacy Policy
 
-
 ## Data Collection
 
 Popmundo Utils is not collecting any data at all. Since no data is collected, it stands to reason, and is, indeed, the case, that none of your data can be sold to third parties.
