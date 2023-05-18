@@ -185,6 +185,15 @@
                 "common/xpath-helper.js",
                 "features/show-message-generator.js"
             ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Repertoire/*"
+            ],
+            "js": [
+                "common/xpath-helper.js",
+                "features/jam-helper.js"
+            ]
         }
     ],
 

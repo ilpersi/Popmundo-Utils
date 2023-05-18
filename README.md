@@ -20,10 +20,11 @@ At the time of writing the number of features is quite limited. However, as long
 - Progress Percentage: all the progress bar will have the percentage as a text so that you do not have to mouse over to get the value
 - Skill pop-up preview: available in skills page and in your diary. If you hoover your mouse on the skill link, a small pop-up will be displayed showing recent learning history
 - Character pop-up: whenever you hoover a character name, a handy pop-up is diplayed with the main info about that player
-- Open Houses DB: a handy database of all the known open houses available from the city menu. This will make it easier to find them from the city page.
 - Song pop-up: every time you hoover a song, you can get the main details about it in a handy pop-up. Very useful to check composing status or to know more about leading bands repertories.
+- Open Houses DB: a handy database of all the known open houses available from the city menu. This will make it easier to find them from the city page.
 - Login redirect: every time you are logged out, you will be redirected to the standard login page (without numbers in the URL), this will make it easier to log in if you use a password manager.
 - Item reminders: *Only available for english locale* get reminders about items usage.
+- Jam Helper: Select all the non 100% jammed songs in one click from your repertorie
 
 There are also a couple of more features that should be considered as BETA:
 

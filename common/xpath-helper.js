@@ -39,8 +39,13 @@ class XPathHelper {
         return this.#xpathNodes(contextNode, XPathResult.STRING_TYPE); // 2
     }
 
-    getBoolean(contextNode) {
-        return this.#xpathNodes(contextNode, XPathResult.BOOLEAN_TYPE); // 3
+    getBoolean(contextNode, toBool = false) {
+        let result = this.#xpathNodes(contextNode, XPathResult.BOOLEAN_TYPE); // 3
+        
+        if (toBool)
+            result = result.booleanValue;
+        
+        return result; 
     }
 
     getUnorderedNodeIterator(contextNode) {
