@@ -35,8 +35,13 @@ class XPathHelper {
         return this.#xpathNodes(contextNode, XPathResult.NUMBER_TYPE); // 1
     }
 
-    getString(contextNode) {
-        return this.#xpathNodes(contextNode, XPathResult.STRING_TYPE); // 2
+    getString(contextNode, toString = false) {
+        let result = this.#xpathNodes(contextNode, XPathResult.STRING_TYPE); // 2
+
+        if (toString)
+            result = result.stringValue;
+        
+        return result;
     }
 
     getBoolean(contextNode, toBool = false) {
