@@ -1,13 +1,3 @@
-function sanitizeName(name) {
-    let result = String(name);
-    result = result.toLowerCase();
-    result = result.replace(/[^0-9a-zA-Z\s]/g, '');
-    result = result.replace(/\s{2}/g, ' ');
-    result = result.replaceAll(' ', '_');
-
-    return result;
-}
-
 async function onSubmitClick() {
 
     const optionsGet = {
@@ -64,6 +54,7 @@ async function onSubmitClick() {
         "mass_interact_serenade": false,
         'mass_interact_exclude_id': [],
         'mass_interact_max_chars': 99,
+        'mass_interact_ignore_acquaintance': false,
     };
 
     let optionsMap = {
@@ -145,17 +136,148 @@ async function onSubmitClick() {
     // Delaty between each fetch() call
     const INTERACT_DELAY = 1000;
 
+    // We'll use this to log progression and give feedback to the user
+    const statusPElem = document.getElementById('mass-interact-status-p');
+
+    // We'll use this to save the list of current friends
+    let = currentFriendsIDs = [];
+    if (savedOptions.mass_interact_ignore_acquaintance) {
+        // XPATH for the Relations link in the Character Page
+        const RELATIONS_A_XPATH = "//a[contains(@href, '/World/Popmundo.aspx/Character/Relations/')]";
+        let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH);
+
+        // Status update
+        statusPElem.textContent = `Ignore new acquaintances is enabled, checking relations URL...`;
+
+        // We get the content of the Character page
+        let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
+        let charHTML = await fetch(charURL, {
+            "method": "GET"
+        }).then(response => {
+            return response.text();
+        }).then(html => {
+            return html;
+        });
+
+        // We sleep to avoid disconnections
+        await Utils.sleep(INTERACT_DELAY);
+
+        // We parse the character page
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(charHTML, "text/html");
+        let relationANode = relationAXpathHelp.getFirstOrderedNode(doc);
+        let relationURL = Utils.getServerLink(relationANode.singleNodeValue.getAttribute('href'));
+
+        // We assume relations are one page only
+        let isNextPage = false;
+
+        // XPATH used to search friend id in the relationship page
+        const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
+        // XPATH to check if there is another relations page
+        const RELATIONS_NEXT_XPATH = "//a[contains(@href, 'btnGoNext')]";
+
+        // Regex to extract the character friend id from the href of a elems
+        const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
+        const RELATIONS_NEXT_RE = /javascript:__doPostBack\('([^']+?)',''\)/gm;
+
+        let relPageCnt = 1;
+        let eventTarget = '';
+        do {
+
+            // We update the status message
+            statusPElem.textContent = `Analyzing relations page ${relPageCnt} to get current acquaintances...`;
+
+            // If there is more than one page, the logic is doing a postBack, so we save current form info
+            let docForm = doc.getElementById('aspnetForm');
+            let formDataOrig = new FormData(docForm);
+
+            // Standard options
+            let fetchOptions = {
+                "method": "POST"
+            };
+
+            // We mimick the doPostBack call
+            if (isNextPage) {
+                formDataOrig.set('__EVENTTARGET', eventTarget);
+                formDataOrig.set('__EVENTARGUMENT', '');
+
+                fetchOptions.body = formDataOrig;
+            }
+
+            // We finally perform the real fetch
+            let relHTML = await fetch(relationURL, fetchOptions)
+                .then(response => {
+                    return response.text();
+                }).then(html => {
+                    return html;
+                });
+
+            // We sleep to avoid disconnections
+            await Utils.sleep(INTERACT_DELAY);
+
+            doc = parser.parseFromString(relHTML, "text/html");
+
+            // We search for friend ID in the relationship page
+            let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
+            let relationsNodes = relationsXPathHelp.getOrderedSnapshot(doc);
+
+            for (let i = 0; i < relationsNodes.snapshotLength; i++) {
+                let relNode = relationsNodes.snapshotItem(i);
+                let href = relNode.getAttribute('href');
+
+                let friendMatch = RELATIONS_ID_RE.exec(href);
+                if (friendMatch) {
+                    // We convert the friend id to integer and add to the total list
+                    currentFriendsIDs.push(parseInt(friendMatch[1]));
+                }
+
+                // We make sure the regex is working in the next iteration
+                RELATIONS_ID_RE.lastIndex = 0;
+            }
+
+            // We search for next page link
+            let relationsNextXPathHelp = new XPathHelper(RELATIONS_NEXT_XPATH);
+            let relationsNextNode = relationsNextXPathHelp.getFirstOrderedNode(doc);
+
+            // Next page element is found
+            if (relationsNextNode.singleNodeValue) {
+                // console.log('rel next ' + relationsNextNode.singleNodeValue.getAttribute('href'));
+                let nextPageHref = relationsNextNode.singleNodeValue.getAttribute('href');
+
+                // href matches the expected regex
+                let goNextMatch = RELATIONS_NEXT_RE.exec(nextPageHref);
+                if (goNextMatch) {
+                    relPageCnt += 1;
+                    eventTarget = goNextMatch[1];
+                    isNextPage = true;
+
+                    // We make sure the regex is working in the next iteration
+                    RELATIONS_NEXT_RE.lastIndex = 0;
+                }
+
+            } else {
+                isNextPage = false;
+            }
+
+        } while (isNextPage);
+
+        // console.log('Ignore acquitance ' + relationURL);
+    }
+
     // XPath Helpers to search for characters
     let presentCharsTRXPathHelp = new XPathHelper(PRESENT_CHARS_XPATH);
     let interactAXpathHelp = new XPathHelper(INTERACT_A_XPATH);
     let charAXpathHelp = new XPathHelper(CHAR_A_XPATH);
 
-    let charsTRNodes = presentCharsTRXPathHelp.getUnorderedNodeIterator(document);
+    //let charsTRNodes = presentCharsTRXPathHelp.getUnorderedNodeIterator (document);
+    let charsTRNodes = presentCharsTRXPathHelp.getOrderedSnapshot(document);
 
     let charsInfo = [];
     let charTRNode = null;
 
-    while (charTRNode = charsTRNodes.iterateNext()) {
+    for (let charCnt = 0; charCnt < charsTRNodes.snapshotLength; charCnt++) {
+        //while (charTRNode = charsTRNodes.iterateNext()) {
+        charTRNode = charsTRNodes.snapshotItem(charCnt);
         // For some characters (including yourself) the Interact link is not present. When this is the case we skip that character.
         let aNodeSnapshot = interactAXpathHelp.getUnorderedNodeSnapshot(charTRNode);
 
@@ -167,7 +289,7 @@ async function onSubmitClick() {
 
             let href = charANode.getAttribute('href');
 
-            var charMatch = CHAR_ID_RE.exec(href);
+            let charMatch = CHAR_ID_RE.exec(href);
             if (charMatch) {
                 // We convert the char id to integer
                 let charID = parseInt(charMatch[1]);
@@ -178,9 +300,24 @@ async function onSubmitClick() {
                     'href': interactANode.getAttribute('href'),
                 }
 
+                // We check if we allow new acquaintances
+                if (savedOptions.mass_interact_ignore_acquaintance) {
+                    if (!currentFriendsIDs.includes(charID)) {
+                        statusPElem.textContent = `Skipping ${charData.name} as new acquaintances are not allowed...`;
+
+                        // We make sure the regex is working in the next iteration
+                        CHAR_ID_RE.lastIndex = 0;
+
+                        continue;
+                    }
+                }
+
                 // We make sure not to include ids in the exclusion list
-                if (!savedOptions.mass_interact_exclude_id.includes(charData.id))
+                if (!savedOptions.mass_interact_exclude_id.includes(charData.id)) {
                     charsInfo.push(charData);
+                } else {
+                    statusPElem.textContent = `Skipping ${charData.name} as the ID is in the ignore list...`;
+                }
             }
 
             // We make sure the regex is working in the next iteration
@@ -195,9 +332,6 @@ async function onSubmitClick() {
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
 
-    // We'll use this to log progression and give feedback to the user
-    let statusPElem = document.getElementById('mass-interact-status-p');
-
     // This XPATH makes sure that the Interact Select is is there
     let interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH);
 
@@ -206,7 +340,7 @@ async function onSubmitClick() {
 
     // The total counter of interactions performed
     let totalInteractionsCnt = 0;
-    
+
     // We have to manage async requests in sequence, so it is not possible to use forEach: we go old style for :)
     // To avoid any issue with server throtling, the logic is performed in a synchronous serial way with sleep delays.
     for (charIndex = 0; charIndex < charsInfo.length; charIndex++) {
@@ -239,7 +373,7 @@ async function onSubmitClick() {
 
             // The interaction counter for the current character, mainly used to give feedback on the form page.
             let interactionCnt = 1;
-            
+
             while (interactOptionsNodeSnapshot.snapshotLength > 0) {
                 let availableInteractions = [];
 
@@ -283,7 +417,7 @@ async function onSubmitClick() {
                 statusPElem.textContent = `Interacting with friend ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}). Interaction # ${interactionCnt} ...`;
 
                 // Synchronous fetch request
-                response = await fetch(interactUrl, {"body": formDataNew, "method": "POST", });
+                response = await fetch(interactUrl, { "body": formDataNew, "method": "POST", });
                 html = await response.text();
                 await Utils.sleep(INTERACT_DELAY);
 
@@ -291,7 +425,7 @@ async function onSubmitClick() {
                 parser = new DOMParser();
                 doc = parser.parseFromString(html, "text/html");
                 interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
-                
+
                 // We increase the counters
                 interactionCnt++;
                 totalInteractionsCnt++;

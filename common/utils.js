@@ -291,6 +291,9 @@ class Utils {
      * @memberof Utils
      */
     static getServerLink(urlPath) {
+        // We make sure to have the leading slash
+        if (!urlPath.startsWith('/')) urlPath = '/' + urlPath;
+
         // We make sure to have the trailing slash
         if (!urlPath.endsWith('/')) urlPath += '/';
 
