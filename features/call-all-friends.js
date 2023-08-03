@@ -75,7 +75,7 @@ async function onSubmitClick() {
 
     // We save the current host so that we can build correct urls to fetch later on
     const hostName = window.location.hostname;
-    const interactPath = '/World/Popmundo.aspx/Interact/Details/';
+    const interactPath = '/World/Popmundo.aspx/Interact/Phone/';
 
     // The list of fields that we will include in the fetch call payload when actually calling your friend.
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
