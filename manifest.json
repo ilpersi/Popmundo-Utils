@@ -104,6 +104,7 @@
             "js": [
                 "common/xpath-helper.js",
                 "common/color.js",
+                "common/utils.js",
                 "features/scoring-script.js"
             ]
         },
