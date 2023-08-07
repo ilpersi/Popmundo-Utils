@@ -147,7 +147,7 @@ async function onSubmitClick() {
         let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH);
 
         // Status update
-        statusPElem.textContent = `Ignore new acquaintances is enabled, checking relations URL...`;
+        statusPElem.innerHTML = `Ignore new acquaintances is enabled, checking relations URL...`;
 
         // We get the content of the Character page
         let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
@@ -185,7 +185,7 @@ async function onSubmitClick() {
         do {
 
             // We update the status message
-            statusPElem.textContent = `Analyzing relations page ${relPageCnt} to get current acquaintances...`;
+            statusPElem.innerHTML = `Analyzing relations page ${relPageCnt} to get current acquaintances...`;
 
             // If there is more than one page, the logic is doing a postBack, so we save current form info
             let docForm = doc.getElementById('aspnetForm');
@@ -262,7 +262,7 @@ async function onSubmitClick() {
         } while (isNextPage);
 
         // console.log('Ignore acquitance ' + relationURL);
-    }
+    } // if (savedOptions.mass_interact_ignore_acquaintance)
 
     // XPath Helpers to search for characters
     let presentCharsTRXPathHelp = new XPathHelper(PRESENT_CHARS_XPATH);
@@ -271,6 +271,8 @@ async function onSubmitClick() {
 
     //let charsTRNodes = presentCharsTRXPathHelp.getUnorderedNodeIterator (document);
     let charsTRNodes = presentCharsTRXPathHelp.getOrderedSnapshot(document);
+
+    let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
 
     let charsInfo = [];
     let charTRNode = null;
@@ -303,11 +305,13 @@ async function onSubmitClick() {
                 // We check if we allow new acquaintances
                 if (savedOptions.mass_interact_ignore_acquaintance) {
                     if (!currentFriendsIDs.includes(charID)) {
-                        statusPElem.textContent = `Skipping ${charData.name} as new acquaintances are not allowed...`;
+                        statusPElem.innerHTML = `Skipping ${charData.name} as new acquaintances are not allowed...`;
 
                         // We make sure the regex is working in the next iteration
                         CHAR_ID_RE.lastIndex = 0;
 
+                        totalSkip += 1;
+                        newAcqSkip += 1;
                         continue;
                     }
                 }
@@ -316,13 +320,31 @@ async function onSubmitClick() {
                 if (!savedOptions.mass_interact_exclude_id.includes(charData.id)) {
                     charsInfo.push(charData);
                 } else {
-                    statusPElem.textContent = `Skipping ${charData.name} as the ID is in the ignore list...`;
+                    statusPElem.innerHTML = `Skipping ${charData.name} as the ID is in the ignore list...`;
+
+                    totalSkip += 1;
+                    ignoreSkip += 1;
                 }
             }
 
             // We make sure the regex is working in the next iteration
             CHAR_ID_RE.lastIndex = 0;
         }
+    }
+
+    let statusIgnoreTxt = '';
+    if (totalSkip > 0) {
+        statusIgnoreTxt = `Ignored a total of ${totalSkip} present characters.`;
+
+        if (newAcqSkip > 0) {
+            statusIgnoreTxt += ` ${newAcqSkip} new acquaintance(s).`;
+        }
+
+        if (ignoreSkip > 0) {
+            statusIgnoreTxt += ` ${ignoreSkip} ignored character(s).`;
+        }
+
+        statusIgnoreTxt += '<br/><br/>';
     }
 
     // We save the current host so that we can build correct urls to fetch later on
@@ -347,7 +369,9 @@ async function onSubmitClick() {
         let charDict = charsInfo[charIndex];
 
         if (totalCharactersCnt < savedOptions['mass_interact_max_chars']) {
-            statusPElem.textContent = `Checking character ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}).`;
+            let totalInteractionsMsg = `Total performed interactions: ${totalInteractionsCnt}.<br/><br/>`;
+
+            statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}Checking character ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}).`;
 
             let interactUrl = `https://${hostName}${charDict.href}`;
             let response = await fetch(interactUrl, { "method": "GET", });
@@ -414,7 +438,9 @@ async function onSubmitClick() {
                     formDataNew.set(key, formDataOrig.get(key));
                 });
 
-                statusPElem.textContent = `Interacting with friend ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}). Interaction # ${interactionCnt} ...`;
+                totalInteractionsMsg = `Total performed interactions: ${totalInteractionsCnt}.<br/><br/>`;
+
+                statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}Interacting with friend ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}). Interaction # ${interactionCnt} ...`;
 
                 // Synchronous fetch request
                 response = await fetch(interactUrl, { "body": formDataNew, "method": "POST", });
@@ -436,9 +462,9 @@ async function onSubmitClick() {
 
     // Final update message with some statistics
     if (totalInteractionsCnt > 0)
-        statusPElem.textContent = `Interacted a total of ${totalInteractionsCnt} with ${totalCharactersCnt} characters!`;
+        statusPElem.innerHTML = `Interacted a total of ${totalInteractionsCnt} with ${totalCharactersCnt} characters!`;
     else
-        statusPElem.textContent = `No interaction has been performed.`;
+        statusPElem.innerHTML = `No interaction has been performed.`;
 }
 
 /**
