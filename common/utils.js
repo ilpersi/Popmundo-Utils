@@ -39,7 +39,7 @@ class Utils {
      */
     static get plusMinusBarJSRE() {
         // <script type="text/javascript">drawPlusMinusBar(0, "0%", "plusMinusBar", false, "0%");</script>
-        const returnRE = /<script type="text\/javascript">drawPlusMinusBar\((?<progressInt>[0-9]{1,3}),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool1>false|true),\s*"(?<progressStr2>[^"]+?)"s*\);<\/script>/gm;
+        const returnRE = /<script type="text\/javascript">drawPlusMinusBar\((?<progressInt>-{0,1}[0-9]{1,3}),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool1>false|true),\s*"(?<progressStr2>[^"]+?)"s*\);<\/script>/gm;
         return returnRE;
     }
 
@@ -240,6 +240,8 @@ class Utils {
 
         // We make sure that boolean values are correctly casted
         bool1 = (bool1 === 'true');
+        // We make sure that integers are correctly casted
+        progressInt = parseInt(progressInt)
 
         let result = "<div";
 
