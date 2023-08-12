@@ -93,6 +93,9 @@ function manageCharacterTooltips() {
                             infoHTML += divNode.outerHTML;
                         }
 
+                        // We make sure that everything is https. Sometimes old characters still have http:// portraits
+                        infoHTML = infoHTML.replaceAll('http://', 'https://')
+
                     } else {
                         // No character info is present
                         infoHTML = `<span style="color: ${popupTheme.COLOR};">No information available.</span>`;
