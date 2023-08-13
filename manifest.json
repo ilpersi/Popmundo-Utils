@@ -195,6 +195,15 @@
                 "common/xpath-helper.js",
                 "features/jam-helper.js"
             ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Schedule/*"
+            ],
+            "js": [
+                "common/xpath-helper.js",
+                "features/bus-schedule-helper.js"
+            ]
         }
     ],
 
