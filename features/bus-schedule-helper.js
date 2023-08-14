@@ -148,6 +148,14 @@ class ScheduleList {
         return this.scheduleItems.filter(filterCB)
     }
 
+    /**
+     * Get a list of shows filtering based on the index.
+     *
+     * @param {number} [minIndex=0] Minimun index
+     * @param {number} [maxIndex=0] Maximum intex
+     * @return {ScheduleItem[]} 
+     * @memberof ScheduleList
+     */
     getShows(minIndex = 0, maxIndex = 0) {
         return this.filter(item => {
             let condition = item.type === "SHOW" && item.index >= minIndex;
@@ -158,6 +166,27 @@ class ScheduleList {
         });
     }
 
+    /**
+     * Get all the previous shows based on index
+     *
+     * @param {number} showIndex The index to be used as filter
+     * @return {ScheduleItem[]} 
+     * @memberof ScheduleList
+     */
+    getPastShows(showIndex) {
+        return this.filter(item => item.type === "SHOW" && item.index < showIndex);
+    }
+
+    /**
+     * Get a list of transport items filtering by index, city from and city to
+     *
+     * @param {number} [minIndex=0] The minimun index to use as filter
+     * @param {number} [maxIndex=0] The maximum index to use as filter
+     * @param {number} [cityFrom=0] The id of the city the transport is leaving
+     * @param {number} [cityTo=0] The id of the city the transport is going to
+     * @return {ScheduleItem[]} 
+     * @memberof ScheduleList
+     */
     getTransports(minIndex = 0, maxIndex = 0, cityFrom = 0, cityTo = 0) {
         return this.filter(item => {
             let condition = ((item.index >= minIndex && item.index <= maxIndex) && (item.type === "TRANSPORT_LEAVES" || item.type === "TRANSPORT_ARRIVES"));
@@ -171,6 +200,7 @@ class ScheduleList {
     }
 }
 
+// XPaths used to check if we the functionality shoud be available or not
 const BOOKING_ASSISTANT_XPATH = "boolean(count(//a[contains(@href, '/Artist/BookingAssistant')]) >= 1)";
 const BOOK_TRANSPORT_XPATH = "boolean(count(//input[@type = 'submit' and contains(@name, 'BookTransport')]) >= 1)"
 
@@ -226,16 +256,11 @@ if (isBand && canBook) {
 
     // We loop trough all the shows
     scheduleItems.getShows().forEach(currentShow => {
-
-        // We get the minimum and maximun index
-        let previousShowMaxIndex = currentShow.index - 1;
-        let previousShowMinIndex = previousShowMaxIndex - SEARCH_RANGE;
-
-        // We should never get negative integers, if we do it probably is at the beginning of the list
-        if (previousShowMinIndex >= 0 && previousShowMaxIndex > 0) {
+        // If index is 0, it is the first show and we want to skip it
+        if (currentShow.index > 0) {
 
             // We get previous shows
-            let previousShows = scheduleItems.getShows(previousShowMinIndex, previousShowMaxIndex);
+            let previousShows = scheduleItems.getPastShows(currentShow.index);
             if (previousShows.length > 0) {
 
                 // We only get the last previous show
@@ -282,7 +307,7 @@ if (isBand && canBook) {
 
                         // We finally check all the conditions and if they are true, we show the book image in the left TD element
                         if (departureNode && arrivalNode && departureDateNode && departureDateValue !== '' && departureTimeNode && departureTimeValue !== '') {
-                            
+
                             // Travel Icon
                             let imgElem = document.createElement('img');
                             imgElem.setAttribute('src', chrome.runtime.getURL('images/book-transport.png'));
@@ -303,13 +328,10 @@ if (isBand && canBook) {
                     }
                     // Something is wrong with transports?!?!
                     else if (transports.length != 2) {
-                        console.error('Wrong number of booked transports');
+                        console.error('Wrong number of booked transports!!!');
                     }
                 }
             }
         }
     });
-
-    // scheduleItems.getTransports(10, 30, 21, 17).forEach(item => console.log(`${item}`));
-
 }
