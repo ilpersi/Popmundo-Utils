@@ -170,7 +170,8 @@ async function onSubmitClick() {
                         }
 
                         resolve(result);
-                    });
+                    })
+                    .catch(error => console.error(error));
             }, CALL_DELAY * friendIndex);
         });
 
@@ -187,7 +188,7 @@ async function onSubmitClick() {
         statusPElem.textContent = `No friends to call.`;
     } else {
         statusPElem.textContent = `Calling ${callableFriends.length} friends out of ${friendsInfo.length}...`;
-        console.log(callableFriends);
+        // console.log(callableFriends);
 
         let succesCalls = 0;
         let friendCallsPromisses = [];
