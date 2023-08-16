@@ -3,6 +3,7 @@
 const globalOptions = {
     'searchable_tables': true,
     'move_to_shortcut': true,
+    'fast_character_switch': true,
 };
 
 // Let's be sure that there is no JQuery conflict
@@ -71,7 +72,18 @@ function moveToLocaleLink() {
     }
 }
 
+function fastCharSwitch() {
+    let charCombo = document.getElementById('ctl00_ctl08_ucCharacterBar_ddlCurrentCharacter');
+    if (charCombo) {
+        charCombo.addEventListener('change', event => {
+            let charChangeBtn = document.getElementById('ctl00_ctl08_ucCharacterBar_btnChangeCharacter');
+            if (charChangeBtn) charChangeBtn.click();
+        });
+    }
+}
+
 chrome.storage.sync.get(globalOptions, items => {
     if (items.searchable_tables) searchableTables();
     if (items.move_to_shortcut) moveToLocaleLink();
+    if (items.fast_character_switch) fastCharSwitch();
 });
