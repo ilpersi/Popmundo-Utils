@@ -54,6 +54,7 @@
             ],
             "js": [
                 "common/xpath-helper.js",
+                "common/utils.js",
                 "features/progress-bar-script.js"
             ]
         },
