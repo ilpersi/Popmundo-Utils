@@ -73,11 +73,16 @@ function moveToLocaleLink() {
 }
 
 function fastCharSwitch() {
-    let charCombo = document.getElementById('ctl00_ctl08_ucCharacterBar_ddlCurrentCharacter');
-    if (charCombo) {
-        charCombo.addEventListener('change', event => {
-            let charChangeBtn = document.getElementById('ctl00_ctl08_ucCharacterBar_btnChangeCharacter');
-            if (charChangeBtn) charChangeBtn.click();
+    const CHAR_SELECT_XPATH = "//select[contains(@name, 'CurrentCharacter')]";
+    const CHAR_SUBMIT_XPATH = "//input[@type = 'image' and contains(@name, 'ChangeCharacter')]";
+
+    let xpathHelper = new XPathHelper(CHAR_SELECT_XPATH);
+    let selectResult = xpathHelper.getFirstOrderedNode(document);
+    if (selectResult.singleNodeValue) {
+        selectResult.singleNodeValue.addEventListener('change', event => {
+            xpathHelper.xpath = CHAR_SUBMIT_XPATH;
+            let submitResult = xpathHelper.getFirstOrderedNode(document);
+            if (submitResult.singleNodeValue) submitResult.singleNodeValue.click();
         });
     }
 }
