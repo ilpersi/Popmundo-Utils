@@ -205,6 +205,27 @@
                 "common/xpath-helper.js",
                 "features/bus-schedule-helper.js"
             ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/UpcomingPerformances/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/BookShow/*"
+            ],
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/club-popup.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/UpcomingPerformances/*"
+            ],
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/show-details-popup.js"
+            ]
         }
     ],
 
