@@ -9,7 +9,7 @@
 <body>
 
     <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Misc Options</legend>
+        <legend class="w-auto float-none">Misc Options </legend>
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
@@ -33,15 +33,26 @@
                     <label for="searchable_tables">Enable searchable tables.</label>
                 </div>
                 <div class="col">
+                    <input type="checkbox" id="show_msg_helper">
+                    <label for="show_msg_helper">Enable show message helper.</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
                     <input type="checkbox" id="redirect_to_login">
                     <label for="redirect_to_login">Redirect to standard Login Page.</label>
                 </div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col"></div>
             </div>
         </div>
     </fieldset>
 
     <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Popup options </legend>
+        <legend class="w-auto float-none">Popup Options </legend>
         <label>Enable or disable popups on specific game elements.</label>
         <br /><br />
         <div class="container-fluid">
@@ -68,6 +79,35 @@
                 </div>
                 <div class="col">
                 </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
+        <legend class="w-auto float-none">Tour Bus Book Helper Options</legend>
+        <label>Manage the tour bus booking assistant option. This feature will only work for VIP Accounts.</label>
+        <br /><br />
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <input type="checkbox" id="tb_enable">
+                    <label for="tb_enable">Enable Tour Bus Helper.</label>
+                </div>
+                <div class="col">
+                    <label for="tb_book_after" class="form-label float-start align-middle">Book Tour Route
+                        After:</label>
+                    <select class="form-select w-auto float-start ms-3" aria-label="Book Tour Route After"
+                        name="Book After" id="tb_book_after">
+                        <option value="previous_event" selected>Previous Event</option>
+                        <option value="previous_show">Previous Show</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="tb_hour_range" class="float-start">Book after how many hours (1-5)?</label>
+                    <input type="number" class="ms-3 form-control w-auto" id="tb_hour_range" min="1" max="5">
+                </div>
+
+                <div class="col"></div>
             </div>
         </div>
     </fieldset>
@@ -114,7 +154,6 @@
             <div class="col"></div>
         </div>
     </fieldset>
-    <br />
 
     <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
         <legend class="w-auto float-none">Mass interact options</legend>
@@ -338,8 +377,8 @@
                 </div>
                 <div class="col">
                     <label for="mass_interact_max_chars" class="ms-5">Limit the number of characters to interact with
-                        (from 1 to 99).</label>
-                    <input type="number" id="mass_interact_max_chars" min="1" max="99">
+                        (from 1 to 100).</label>
+                    <input type="number" id="mass_interact_max_chars" min="1" max="100">
                 </div>
                 <div class="col">
                     <label for="mass_interact_ignore_acquaintance" class="ms-5">Ignore new acquaintances.</label>
@@ -354,8 +393,7 @@
 
     </fieldset>
 
-    <div id="status" class="mb-3"></div>
-    <br />
+    <div id="status" class="ms-3"></div>
 
     <div>
         <button id="save" class="btn btn-primary ms-3">Save</button>

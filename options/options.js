@@ -6,6 +6,7 @@ const optionDetails = [
     { 'name': 'score_highlight', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'redirect_to_login', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'fast_character_switch', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'show_msg_helper', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     
     // pop up options
     { 'name': 'character_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
@@ -13,6 +14,11 @@ const optionDetails = [
     { 'name': 'recent_progress_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'show_club_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'show_details_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    
+    // tour bus helper options
+    { 'name': 'tb_enable', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'tb_book_after', 'default': 'previous_event', 'save_cb': saveSelect, 'load_cb': loadSelect },
+    { 'name': 'tb_hour_range', 'default': 2, 'save_cb': saveInteger, 'load_cb': loadInteger },
 
     // call all options
     { 'name': 'call_all_wazzup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
@@ -150,6 +156,27 @@ function saveInteger(optionName, defaultVaule) {
     }
 
     return result;
+}
+
+function saveSelect(optionName, optionValue) {
+    let result = String(optionValue);
+
+    let formElem = document.getElementById(optionName);
+    if (formElem != null) {
+        result = String(formElem.value)
+    }
+
+    return result;
+
+}
+
+function loadSelect(optionName, optionValue) {
+    let formElem = document.getElementById(optionName);
+
+    if (formElem != null) {
+        formElem.value = String(optionValue);
+    }
+
 }
 
 // Saves options to chrome.storage

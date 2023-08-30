@@ -90,7 +90,7 @@ async function onSubmitClick() {
 
         let friendDetailsPromise = new Promise((resolve, reject) => {
             // To avoid being kicked out, we delay backgroud fetch calls
-            setTimeout(() => {
+            setTimeout(async () => {
                 let statusMessage = '';
                 
                 if (ignoreCnt > 0)
@@ -101,7 +101,7 @@ async function onSubmitClick() {
                 statusPElem.textContent = statusMessage;
 
                 let interactUrl = `https://${hostName}${interactPath}${friendDict.id}`;
-                fetch(interactUrl, { "method": "GET", })
+                await fetch(interactUrl, { "method": "GET", })
                     .then(response => {
                         if (response.ok && response.status >= 200 && response.status < 300) {
                             return response.text();

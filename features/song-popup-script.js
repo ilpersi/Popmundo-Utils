@@ -1,6 +1,6 @@
 const songOptionsValues = { 'song_popup': true };
 
-var showSongPopUp = false;
+let showSongPopUp = false;
 
 function manageSongTooltips() {
 
