@@ -11,6 +11,8 @@ const optionDetails = [
     { 'name': 'character_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'song_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'recent_progress_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'show_club_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'show_details_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 
     // call all options
     { 'name': 'call_all_wazzup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
