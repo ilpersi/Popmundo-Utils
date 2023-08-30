@@ -220,7 +220,8 @@
         },
         {
             "matches": [
-                "https://*.popmundo.com/World/Popmundo.aspx/Artist/UpcomingPerformances/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/UpcomingPerformances/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist/Schedule/*"
             ],
             "js": [
                 "common/utils.js",
