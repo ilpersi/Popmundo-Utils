@@ -178,6 +178,28 @@ class ScheduleList {
     }
 
     /**
+     * Get events between two shows
+     *
+     * @param {number} previousShowIndex The index of the previous show
+     * @param {number} currentShowIndex The index of the current show
+     * @return {ScheduleItem[]} 
+     * @memberof ScheduleList
+     */
+    getEventsBetweenShows(previousShowIndex, currentShowIndex) {
+        let result = [];
+        let events = this.filter(item => item.index >= previousShowIndex && item.index <= currentShowIndex);
+
+        if (events.at(0).type === "SHOW" && events.at(-1).type === "SHOW") {
+            events.forEach(item => {
+                if (item.type !== 'SHOW')
+                    result.push(item);
+            })
+        }
+
+        return result;
+    }
+
+    /**
      * Get a list of transport items filtering by index, city from and city to
      *
      * @param {number} [minIndex=0] The minimun index to use as filter
@@ -214,8 +236,8 @@ let canBook = canBookXpathHelper.getBoolean(document, true);
 
 if (isBand && canBook) {
     const SCHEDULE_ROWS_XPATH = "//table[@id='tableschedule']/tbody/tr";
-    const SEARCH_RANGE = 10;
     const TIME_DELAY = 2;
+    const SCHEDULE_RELATIVE = 'previous_event' // previous_show or previous_event
 
     let scheduleItems = new ScheduleList();
 
@@ -289,20 +311,46 @@ if (isBand && canBook) {
                         let departureTimeValue = '', departureTimeTxt = '';
                         bookXpathHelper.xpath = DEPARTURE_TIME_VALUE_XPATH;
                         let timeOptionValueNodes = bookXpathHelper.getOrderedSnapshot(document);
-                        for (let i = 0; i < timeOptionValueNodes.snapshotLength; i++) {
-                            let timeOptionNode = timeOptionValueNodes.snapshotItem(i);
-                            let timeValue = timeOptionNode.textContent;
-                            if (timeValue == previousShow.time) {
-                                let valueIndex = i + TIME_DELAY;
 
-                                // This may happen if previous show is at 22:00
-                                if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = i + 1;
+                        // We get events between the two shows so that if there is none, we always use the previous_show logic
+                        let eventsBetween = scheduleItems.getEventsBetweenShows(previousShow.index, currentShow.index);
 
-                                let valueNode = timeOptionValueNodes.snapshotItem(valueIndex);
-                                departureTimeValue = valueNode.getAttribute('value');
-                                departureTimeTxt = valueNode.textContent;
-                                break;
+                        if (SCHEDULE_RELATIVE === 'previous_show' || (SCHEDULE_RELATIVE === 'previous_event' && eventsBetween.length === 0) ) {
+                            for (let i = 0; i < timeOptionValueNodes.snapshotLength; i++) {
+                                let timeOptionNode = timeOptionValueNodes.snapshotItem(i);
+                                let timeValue = timeOptionNode.textContent;
+                                if (timeValue == previousShow.time) {
+                                    let valueIndex = i + TIME_DELAY;
+    
+                                    // This may happen if previous show is at 22:00
+                                    if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = i + 1;
+    
+                                    let valueNode = timeOptionValueNodes.snapshotItem(valueIndex);
+                                    departureTimeValue = valueNode.getAttribute('value');
+                                    departureTimeTxt = valueNode.textContent;
+                                    break;
+                                }
                             }
+                        } else if (SCHEDULE_RELATIVE === 'previous_event' && eventsBetween.length > 0) {                            
+                            let lastEvent = eventsBetween.at(-1);
+
+                            for (let i = 0; i < timeOptionValueNodes.snapshotLength; i++) {
+                                let timeOptionNode = timeOptionValueNodes.snapshotItem(i);
+                                let timeValue = timeOptionNode.textContent;
+                                if (timeValue == lastEvent.time) {
+                                    let valueIndex = i + TIME_DELAY;
+    
+                                    // This may happen if previous show is at 22:00
+                                    if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = timeOptionValueNodes.snapshotLength;
+    
+                                    let valueNode = timeOptionValueNodes.snapshotItem(valueIndex);
+                                    departureTimeValue = valueNode.getAttribute('value');
+                                    departureTimeTxt = valueNode.textContent;
+                                    break;
+                                }
+                            }
+                        } else {
+                            console.error(`Uknown relative logic: ${SCHEDULE_RELATIVE}\n\neventsBetween ${eventsBetween.join('\n')}`)
                         }
 
                         // We finally check all the conditions and if they are true, we show the book image in the left TD element
@@ -328,7 +376,7 @@ if (isBand && canBook) {
                     }
                     // Something is wrong with transports?!?!
                     else if (transports.length != 2) {
-                        console.error('Wrong number of booked transports!!!');
+                        console.warn(`Wrong number of booked transports? ${transports.length}\n\n${transports.join("\n")}`);
                     }
                 }
             }
