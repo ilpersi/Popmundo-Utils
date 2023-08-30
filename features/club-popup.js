@@ -16,9 +16,11 @@ function manageClubTooltips() {
         'arrow': false,
         'content': showClubPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
         'allowHTML': true,
-        'followCursor': true,
+        'followCursor': false,
+        'hideOnClick': false,
+        'interactive': true,
         'maxWidth': 500,
-        //'delay': [0, 500000], // Uncomment if you need to debug the tippy tooltip
+        // 'delay': [0, 500], // We wait a second to hide the tooltip because there may be interesting links to click
         'theme': popupTheme.LOADING_THEME,
 
         'onCreate': function (instance) {
