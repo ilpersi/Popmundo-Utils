@@ -3,7 +3,7 @@ const clubPopUpOptionsValues = { 'show_club_popup': true };
 var showClubPopUp = false;
 
 /**
- * The main logic for the skill pop-up. This relies on the tippy.js library.
+ * The main logic for the club info pop-up. This relies on the tippy.js library.
  *
  */
 function manageClubTooltips() {
@@ -41,8 +41,8 @@ function manageClubTooltips() {
             }
             instance._isFetching = true;
 
-            // Tippy popup is triggered on mouse Over on skill links. To understand the details,
-            // we need to know the full of the page containing the skill information
+            // Tippy popup is triggered on mouse Over on club links. To understand the details,
+            // we need to know the full of the page containing the club information
             let href = instance.reference.getAttribute('href');
 
             let theme = popupTheme.DATA_THEME;
@@ -76,7 +76,7 @@ function manageClubTooltips() {
                             infoHTML += divNode.outerHTML;
                         }
                     } else {
-                        // No skill info is present
+                        // No club info is present
                         infoHTML = `<span style="color: ${popupTheme.COLOR};">No information available.</span>`;
                         theme = popupTheme.NO_DATA_THEME;
                     }
@@ -104,7 +104,7 @@ function manageClubTooltips() {
     })
 }
 
-// When settings are changed, we update the global showPopUp varialbe
+// When settings are changed, we update the global showClubPopUp varialbe
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     if (namespace == 'sync') {
         for (let [key, { oldValue, newValue }] of Object.entries(changes)) {

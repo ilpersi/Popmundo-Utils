@@ -1,9 +1,9 @@
 const showDetailsPopUpOptionsValues = { 'show_details_popup': true };
 
-var showClubPopUp = false;
+var showDetailPopUp = false;
 
 /**
- * The main logic for the skill pop-up. This relies on the tippy.js library.
+ * The main logic for the show details pop-up. This relies on the tippy.js library.
  *
  */
 function manageDetailsTooltips() {
@@ -14,7 +14,7 @@ function manageDetailsTooltips() {
     // Initialization of the tippy element
     tippy('a[href^="/World/Popmundo.aspx/Artist/PerformanceDetails/"]', {
         'arrow': false,
-        'content': showClubPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
+        'content': showDetailPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
         'allowHTML': true,
         'followCursor': true,
         'maxWidth': 500,
@@ -30,7 +30,7 @@ function manageDetailsTooltips() {
 
         'onShow': function (instance) {
 
-            if (!showClubPopUp) {
+            if (!showDetailPopUp) {
                 instance.setContent('');
                 return false
             };
@@ -41,8 +41,8 @@ function manageDetailsTooltips() {
             }
             instance._isFetching = true;
 
-            // Tippy popup is triggered on mouse Over on skill links. To understand the details,
-            // we need to know the full of the page containing the skill information
+            // Tippy popup is triggered on mouse Over on "Details" links. To understand the details,
+            // we need to know the full of the page containing the show details information
             let href = instance.reference.getAttribute('href');
 
             let theme = popupTheme.DATA_THEME;
@@ -76,7 +76,7 @@ function manageDetailsTooltips() {
                             infoHTML += divNode.outerHTML;
                         }
                     } else {
-                        // No skill info is present
+                        // No show details info is present
                         infoHTML = `<span style="color: ${popupTheme.COLOR};">No information available.</span>`;
                         theme = popupTheme.NO_DATA_THEME;
                     }
@@ -96,7 +96,7 @@ function manageDetailsTooltips() {
 
         'onHidden': function (instance) {
             instance.setProps({ 'theme': popupTheme.LOADING_THEME });
-            instance.setContent(showClubPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',);
+            instance.setContent(showDetailPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',);
             // Unset these properties so new network requests can be initiated
             instance._src = null;
             instance._error = null;
@@ -104,11 +104,11 @@ function manageDetailsTooltips() {
     })
 }
 
-// When settings are changed, we update the global showPopUp varialbe
+// When settings are changed, we update the global showDetailPopUp varialbe
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     if (namespace == 'sync') {
         for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-            if (key == 'show_details_popup') showClubPopUp = newValue;
+            if (key == 'show_details_popup') showDetailPopUp = newValue;
         }
     }
 
@@ -116,7 +116,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 // When page is loaded we get value from settings and se start the tippy logic.
 chrome.storage.sync.get(showDetailsPopUpOptionsValues, items => {
-    showClubPopUp = items.show_details_popup;
+    showDetailPopUp = items.show_details_popup;
 
     manageDetailsTooltips();
 });
