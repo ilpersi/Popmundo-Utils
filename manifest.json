@@ -222,7 +222,8 @@
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/UpcomingPerformances/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/Schedule/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Locale/Shows/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Locale/Shows/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Artist"
             ],
             "js": [
                 "common/utils.js",
