@@ -8,10 +8,10 @@ function checkForTimer() {
     const TIMERS_STORAGE_VALUE = { 'timers': {} };
 
     // Timer Regex
-    const minRegex = /(\d{1,})\s+minutes/gi;
-    const hourRegex = /(\d{1,})\s+hours/gi;
-    const daysRegex = /(\d{1,})\s+days/gi;
-    const weeksRegex = /(\d{1,})\s+weeks/gi;
+    const minRegex = new RegExp("(\d{1,})\s+minutes", "gi");
+    const hourRegex = new RegExp("(\d{1,})\s+hours", "gi");
+    const daysRegex = new RegExp("(\d{1,})\s+days", "gi");
+    const weeksRegex = new RegExp("(\d{1,})\s+weeks", "gi");
 
     // Timings
     const SECOND = 1000;
@@ -88,8 +88,49 @@ function checkForTimer() {
 
         });
     }
+}
 
+async function timerOnClick(btnNode) {
+
+    let docForm = document.getElementById('aspnetForm');
+    let formData = new FormData(docForm);
+    formData.set(btnNode.getAttribute('name'), btnNode.getAttribute('value'));
+
+    let bgFetch = await fetch(location.href, {
+        "body": formData,
+        "method": "POST",
+    }).then((response) => {
+        if (response.ok && response.status >= 200 && response.status < 300) {
+            return response.text();
+        }
+    }).then((html) => {
+        console.log(html);
+    });
+    
+    btnNode.click();
+}
+
+async function injectUseAndTimer() {
+    
+
+    const USE_BTN_XPATH = "//input[@type='submit' and contains(@name, 'ItemUse')]";
+    let btnXPathHelper = new XPathHelper(USE_BTN_XPATH);
+    let btnResult = btnXPathHelper.getAnyUnorderedNode(document);
+
+    if (btnResult.singleNodeValue) {
+        let btnNode = btnResult.singleNodeValue;
+
+        let newBtn = document.createElement('input');
+        newBtn.setAttribute('type', 'submit');
+        newBtn.setAttribute('name', btnNode.getAttribute('name'));
+        newBtn.setAttribute('value', btnNode.getAttribute('value') + ' & Timer');
+        newBtn.setAttribute('class', btnNode.getAttribute('class'));
+
+        btnNode.parentNode.insertBefore(newBtn, btnResult.nextSibling);
+        newBtn.onclick = () => { timerOnClick(btnNode); return false; };
+    }
 }
 
 // Notifications may take some seconds to be loaded, so we wait a couple of seconds before checking for them
 window.setTimeout(() => { checkForTimer(); }, 2000);
+injectUseAndTimer();
