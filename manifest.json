@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "0.4.1",
+    "version": "0.4.2",
     "name": "Popmundo Utils",
     "description": "Misc utilities for Popmundo",
 
@@ -229,6 +229,16 @@
                 "common/utils.js",
                 "common/xpath-helper.js",
                 "features/show-details-popup.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"
+            ],
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/item-list-timers.js"
             ]
         }
     ],
