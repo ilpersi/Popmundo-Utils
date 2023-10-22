@@ -8,10 +8,10 @@ function checkForTimer() {
     const TIMERS_STORAGE_VALUE = { 'timers': {} };
 
     // Timer Regex
-    const minRegex = new RegExp("(\d{1,})\s+minutes", "gi");
-    const hourRegex = new RegExp("(\d{1,})\s+hours", "gi");
-    const daysRegex = new RegExp("(\d{1,})\s+days", "gi");
-    const weeksRegex = new RegExp("(\d{1,})\s+weeks", "gi");
+    const minRegex = new RegExp("(\\d{1,})\\s+minutes", "gi");
+    const hourRegex = new RegExp("(\\d{1,})\\s+hours", "gi");
+    const daysRegex = new RegExp("(\\d{1,})\\s+days", "gi");
+    const weeksRegex = new RegExp("(\\d{1,})\\s+weeks", "gi");
 
     // Timings
     const SECOND = 1000;
