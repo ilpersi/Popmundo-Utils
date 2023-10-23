@@ -85,11 +85,17 @@ function checkForTimer() {
 
                 })
             }
-
         });
     }
 }
 
+/**
+ * Onclick event handler for the HTML button injected by the injectUseAndTimer() fundtion. When
+ * this new button is clicked the method will mock a form submission using a fetch call and then
+ * it will click the normal button so that the standard item timer logic is triggered
+ *
+ * @param {*} btnNode - The orginal Use/Tune button.
+ */
 async function timerOnClick(btnNode) {
 
     let docForm = document.getElementById('aspnetForm');
@@ -110,9 +116,13 @@ async function timerOnClick(btnNode) {
     btnNode.click();
 }
 
+/**
+ * This function will inject the "Use & Timer" button on the page
+ *
+ */
 async function injectUseAndTimer() {
-    
 
+    // The standard Use/Tune button
     const USE_BTN_XPATH = "//input[@type='submit' and contains(@name, 'ItemUse')]";
     let btnXPathHelper = new XPathHelper(USE_BTN_XPATH);
     let btnResult = btnXPathHelper.getAnyUnorderedNode(document);
