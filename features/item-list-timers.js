@@ -4,7 +4,8 @@
  */
 async function drawTimerIcon() {
     // Image SRC for the clock Icon
-    const ICON_SRC = chrome.runtime.getURL('images/clock--arrow.png');
+    const TIMER_WARN_ICON_SRC = chrome.runtime.getURL('images/clock--exclamation.png');
+    const TIMER_OK_ICON_SRC = chrome.runtime.getURL('images/clock-select-remain.png');
 
     // XPaths required by the logic
     const ITEM_TR_XPATH = "//tr[contains(@id, 'trItemGroup')]";
@@ -56,11 +57,17 @@ async function drawTimerIcon() {
 
                         if (iconXpathResult.singleNodeValue) {
                             let timerDate = new Date(myTimers[itemID]['timerTimeStamp']);
+                            let nowTime = new Date();
+
+                            let imgSrc = nowTime >= timerDate ? TIMER_WARN_ICON_SRC : TIMER_OK_ICON_SRC;
+                            let imgTXT = "" + timerDate;
+                            if (nowTime >= timerDate) imgTXT = "Timer expired: " + imgTXT;
 
                             let newImg = document.createElement('img');
-                            newImg.setAttribute('src', ICON_SRC);
-                            newImg.setAttribute('alt', timerDate);
-                            newImg.setAttribute('title', timerDate);
+
+                            newImg.setAttribute('src', imgSrc);
+                            newImg.setAttribute('alt', imgTXT);
+                            newImg.setAttribute('title', imgTXT);
                             iconXpathResult.singleNodeValue.appendChild(newImg);
                         }
                     }
