@@ -3,7 +3,7 @@
  * to generate reminders for users.
  *
  */
-function checkForTimer() {
+async function checkForTimer() {
     // Settings KEY
     const TIMERS_STORAGE_VALUE = { 'timers': {} };
 
@@ -38,8 +38,15 @@ function checkForTimer() {
         let idMatch = itemIDRegex.exec(window.location.href);
         itemID = idMatch ? parseInt(idMatch[1]) : 0;
 
+        // My ID
+        let myID = Utils.getMyID();
+
+        // Current saved timers
+        let items = await chrome.storage.sync.get(TIMERS_STORAGE_VALUE);
+        let timers = items.timers;
+
         // We loop trough the notifications searching for timers
-        errors.forEach(errorTxt => {
+        errors.forEach((errorTxt) => {
             let now = new Date();
 
             // We apply all the regexes
@@ -65,27 +72,20 @@ function checkForTimer() {
 
             // Timer was found for the item, we make sure that values are updated in the database
             if (timerTimeStamp > nowTimeStamp) {
-                chrome.storage.sync.get(TIMERS_STORAGE_VALUE, items => {
-                    // My ID
-                    let myID = Utils.getMyID();
 
-                    // We use XPATH to get the item name. This will be used in the notification message.
-                    let xpathHelper = new XPathHelper(ITEM_NAME_XPATH);
-                    let itemNameNode = xpathHelper.getFirstOrderedNode(document);
+                // We use XPATH to get the item name. This will be used in the notification message.
+                let xpathHelper = new XPathHelper(ITEM_NAME_XPATH);
+                let itemNameNode = xpathHelper.getFirstOrderedNode(document);
 
-                    // Saved Timers
-                    let timers = items.timers;
+                // We make sure that a key is present for the current character
+                if (!timers.hasOwnProperty(myID)) timers[myID] = {};
 
-                    // We make sure that a key is present for the current character
-                    if (!timers.hasOwnProperty(myID)) timers[myID] = {};
-
-                    // We update the timer for the current items
-                    timers[myID][itemID] = { 'timerTimeStamp': timerTimeStamp, 'name': itemNameNode.singleNodeValue.textContent, 'now': nowTimeStamp };
-                    chrome.storage.sync.set({ "timers": timers }, null);
-
-                })
+                // We update the timer for the current items
+                timers[myID][itemID] = { 'timerTimeStamp': timerTimeStamp, 'name': itemNameNode.singleNodeValue.textContent, 'now': nowTimeStamp };
             }
         });
+
+        await chrome.storage.sync.set({ "timers": timers });
     }
 }
 
