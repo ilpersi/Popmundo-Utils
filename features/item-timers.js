@@ -57,31 +57,34 @@ async function checkForTimer() {
 
             // We check for values and default to 0
             minutes = minMatch ? parseInt(minMatch[1]) : 0;
-            days = daysMatch ? parseInt(daysMatch[1]) : 0;
             hours = hourMatch ? parseInt(hourMatch[1]) : 0;
+            days = daysMatch ? parseInt(daysMatch[1]) : 0;
             weeks = weeksMatch ? parseInt(weeksMatch[1]) : 0;
 
             // console.log(`Timer for id ${itemID}: ${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes`);
-
-            // We add duration to current time
-            let nowTimeStamp = now.getTime();
-            let timerTimeStamp = nowTimeStamp + (weeks * WEEK) + (days * DAY) + (hours * HOUR) + (minutes * MINUTE);
-
-            // We add a 2 seconds buffer
-            timerTimeStamp += (2 * SECOND);
-
-            // Timer was found for the item, we make sure that values are updated in the database
-            if (timerTimeStamp > nowTimeStamp) {
-
-                // We use XPATH to get the item name. This will be used in the notification message.
-                let xpathHelper = new XPathHelper(ITEM_NAME_XPATH);
-                let itemNameNode = xpathHelper.getFirstOrderedNode(document);
-
-                // We make sure that a key is present for the current character
-                if (!timers.hasOwnProperty(myID)) timers[myID] = {};
-
-                // We update the timer for the current items
-                timers[myID][itemID] = { 'timerTimeStamp': timerTimeStamp, 'name': itemNameNode.singleNodeValue.textContent, 'now': nowTimeStamp };
+            
+            // We only update the timer when we find something
+            if (minutes > 0 || hours > 0 || days > 0 || weeks > 0) {
+                // We add duration to current time
+                let nowTimeStamp = now.getTime();
+                let timerTimeStamp = nowTimeStamp + (weeks * WEEK) + (days * DAY) + (hours * HOUR) + (minutes * MINUTE);
+    
+                // We add a 2 seconds buffer
+                timerTimeStamp += (2 * SECOND);
+    
+                // Timer was found for the item, we make sure that values are updated in the database
+                if (timerTimeStamp > nowTimeStamp) {
+    
+                    // We use XPATH to get the item name. This will be used in the notification message.
+                    let xpathHelper = new XPathHelper(ITEM_NAME_XPATH);
+                    let itemNameNode = xpathHelper.getFirstOrderedNode(document);
+    
+                    // We make sure that a key is present for the current character
+                    if (!timers.hasOwnProperty(myID)) timers[myID] = {};
+    
+                    // We update the timer for the current items
+                    timers[myID][itemID] = { 'timerTimeStamp': timerTimeStamp, 'name': itemNameNode.singleNodeValue.textContent, 'now': nowTimeStamp };
+                }
             }
         });
 
