@@ -62,8 +62,7 @@
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Skills/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character",
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/Diary/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/SkillType/*"
             ],
