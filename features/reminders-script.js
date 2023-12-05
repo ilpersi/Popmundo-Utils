@@ -72,12 +72,12 @@ function checkReminders() {
 
     const REMINDERS = [
         // { dayNumber: 26, reminder: `Test day 26.` },
-        { dayNumber: 27, id: `day-27-${dateDetails.year}`, reminder: `Remember to get Stockholm cemetery to get 2 experince points.` },
-        { dayNumber: 28, id: `day-28-${dateDetails.year}`, reminder: `Is the Day of the Dead!` },
-        { dayNumber: 40, id: `day-40-${dateDetails.year}`, reminder: `Is St Kobe's Day! Investigate the Statues of Celestial Beauty in Johannesburg, Moscow, Singapore, and Tromsø to go on a adventurous quest for improved music genre skills.` },
-        { dayNumber: 48, id: `day-48-${dateDetails.year}`, reminder: `Remember to user your Halloween Horror!` },
-        { dayNumber: 52, id: `day-52-${dateDetails.year}`, reminder: `Is Chirsmast!` },
-        { dayNumber: 54, id: `day-54-${dateDetails.year}`, reminder: `Remember to wear your Marvin T-Shirt to increase your star quality and get one experince point.` },
+        { dayNumber: 27, id: `day-27-${dateDetails.year}`, type: 'html', reminder: `Remember to visit <a href="${Utils.getServerLink('/World/Popmundo.aspx/Locale/4141')}">Stockholm's Graveyard</a> and use the <a href="${Utils.getServerLink('/World/Popmundo.aspx/Locale/ItemDetails/103487217')}">Frank Blomdahl Minneslund</a> Monolith to get 3 experince points.` },
+        { dayNumber: 28, id: `day-28-${dateDetails.year}`, type: 'text', reminder: `Is the Day of the Dead!` },
+        { dayNumber: 40, id: `day-40-${dateDetails.year}`, type: 'text', reminder: `Is St Kobe's Day! Investigate the Statues of Celestial Beauty in Johannesburg, Moscow, Singapore, and Tromsø to go on a adventurous quest for improved music genre skills.` },
+        { dayNumber: 48, id: `day-48-${dateDetails.year}`, type: 'text', reminder: `Remember to user your Halloween Horror!` },
+        { dayNumber: 52, id: `day-52-${dateDetails.year}`, type: 'text', reminder: `Is Chirsmast!` },
+        { dayNumber: 54, id: `day-54-${dateDetails.year}`, type: 'text', reminder: `Remember to wear your Marvin T-Shirt to increase your star quality and get one experince point.` },
     ];
 
     let notificationData = [];
@@ -85,7 +85,7 @@ function checkReminders() {
         if (info.dayNumber == dateDetails.day) {
             let details = {
                 id: info.id,
-                type: 'text',
+                type: info.type,
                 content: `${todayStr} ${info.reminder}`,
             };
 
@@ -117,7 +117,7 @@ function checkReminders() {
             }
 
             let notifications = new Notifications();
-            notifications.deleteAll();
+            // notifications.deleteAll();
 
             notificationData.forEach((details) => {
                 if ('text' === details.type)
