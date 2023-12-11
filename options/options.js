@@ -1,8 +1,23 @@
 const optionDetails = [
+    // enhanced links options
+    // band
+    { 'name': 'band_popularity_shortcut', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'band_upcoming_shows', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    // character
+    { 'name': 'character_send_message', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'character_offer_an_item', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'character_call', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    // city
+    { 'name': 'city_book_regular_flight', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_charter_vip_jet', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_other_vehicles', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    // locale
+    { 'name': 'locale_characters_present', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'move_to_shortcut', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+
     // misc options
     { 'name': 'searchable_tables', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'progress_bar_percent', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
-    { 'name': 'move_to_shortcut', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'score_highlight', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'redirect_to_login', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'fast_character_switch', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },

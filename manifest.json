@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "0.4.5",
+    "version": "0.5",
     "name": "Popmundo Utils",
     "description": "Misc utilities for Popmundo",
 
@@ -17,6 +17,10 @@
     "permissions": [
         "storage"
     ],
+
+    "background": {
+        "service_worker": "background.js"
+      },
 
     "content_scripts": [
         {
@@ -171,7 +175,8 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Company/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/Crew",
-                "https://*.popmundo.com/World/Popmundo.aspx/Conversations/Conversation/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Conversations/Conversation/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Conversations"
             ],
             "js": [
                 "libs/popper.min.js",
@@ -240,6 +245,16 @@
                 "common/utils.js",
                 "common/xpath-helper.js",
                 "features/item-list-timers.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character"
+            ],
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js",
+                "features/local-storage-char-id.js"
             ]
         }
     ],

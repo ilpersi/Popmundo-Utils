@@ -1,11 +1,2 @@
-/*chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (tab && tab.url.includes("popmundo.com") && changeInfo.status === 'complete') {
-        //debugger;
-        console.log("onUpdated: " + tab.url);
-        chrome.scripting.executeScript({
-            target: { tabId: tabId },
-            files: ['global-content-script.js']
-          });
-    }
-});*/
-
+// We allow access to session storage also in content scripts
+chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS'});
