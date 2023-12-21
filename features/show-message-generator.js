@@ -40,9 +40,9 @@ function manageShowArea() {
         let timeTDFirstNode = msgXpathHelper.getFirstOrderedNode(document);
 
         let timeTDNode = timeTDFirstNode.singleNodeValue;
-        let dateArray = timeTDNode.textContent.match(/(\d{2}\/\d{2}\/\d{4}),\s+([0-9:]+)/);
-        let dateString = dateArray[1];
-        let timeString = dateArray[2];
+        let dateArray = timeTDNode.textContent.match(/(\d{1,2}\/\d{1,2}\/\d{4}),\s+([0-9:]+)/);
+        let dateString = (dateArray != null) ? dateArray[1] : 'Unknown date';
+        let timeString = (dateArray != null) ? dateArray[2] : 'Unknown time';
 
         // We get the score details
         msgXpathHelper.xpath = SCORE_A_XPATH;
@@ -52,12 +52,13 @@ function manageShowArea() {
         let fame = scoreANode.href.match(/Scoring\/([0-9]{1,2})/)[1];
         let priceStr = "0 M$";
 
+        // https://docs.google.com/spreadsheets/d/1w50Blx8EbcNBWH7UkIgt9zx6xmcU01CLUCBlZ1r1P5M/pub?hl=de&hl=de&gid=18#
         switch (fame) {
             case "1": //Truly Abysmal
-                priceStr = "5M$";
+                priceStr = "6M$";
                 break;
             case "2": //Abysmal
-                priceStr = "6 M$";
+                priceStr = "6.5 M$";
                 break;
             case "3": //Bottom Dwelling
                 priceStr = "7 M$";
@@ -66,16 +67,16 @@ function manageShowArea() {
                 priceStr = "8 M$";
                 break;
             case "5": //Dreadful
-                priceStr = "10 M$";
+                priceStr = "9 M$";
                 break;
             case "6": //Terrible
-                priceStr = "12 M$";
+                priceStr = "11 M$";
                 break;
             case "7": //Poor
-                priceStr = "14 M$";
+                priceStr = "13 M$";
                 break;
             case "8": //Below Average
-                priceStr = "16 M$";
+                priceStr = "15 M$";
                 break;
             case "9": //Mediocre
                 priceStr = "20 M$";
@@ -93,25 +94,35 @@ function manageShowArea() {
                 priceStr = "45 M$";
                 break;
             case "14": //Good
-                priceStr = "55 M$";
+                priceStr = "50 M$";
                 break;
             case "15": //Sweet
                 priceStr = "65 M$";
                 break;
             case "16": //Splendid
+                priceStr = "60 M$";
+                break;
+            case "17": //Awesome
                 priceStr = "75 M$";
                 break;
-            case "17": //Hard to get here...
-            case "18":
-            case "19":
-            case "20":
-            case "21":
-            case "22":
+            case "18": // Great
+                priceStr = "80 M$";
+                break;
+            case "19": // Terrific
+                priceStr = "85 M$";
+                break;
+            case "20": // Wonderful
+                priceStr = "90 M$";
+                break;
+            case "21": // Incredible
+                priceStr = "95 M$";
+                break;
+            case "22": //Hard to get here...
             case "23":
             case "24":
             case "25":
             case "26":
-                priceStr = "85 M$";
+                priceStr = "100 M$";
                 break;
             default:
                 alert("Something went wrong with the fame level!");
