@@ -59,25 +59,50 @@ function manageSongTooltips() {
                     await scoring.applyBarPercentage(doc);
                     await scoring.applyScoringNumbers(doc);
 
-                    xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr/td');
+                    let xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr/td');
+                    let checkMarketHelper = new XPathHelper("//p[count(a[contains(@href, 'BuySong')]) > 0]");
 
+                    // The HTML content of the popup
                     let infoHTML = '';
+
+                    // If fame is there, it means we do have song info to display
                     let trNodes = xpathHelper.getOrderedSnapshot(doc);
                     if (trNodes.snapshotLength > 0) {
-                        let tdNode = trNodes.snapshotItem(0);
 
-                        let divNode = tdNode.parentNode.parentNode.parentNode.parentNode;
+                        // When song is part of song Market there is one additional div and we want to skip it
+                        let isMaket = checkMarketHelper.getBoolean(doc, true);
 
-                        // We hard-code of the styles to make sure that the tool tip is correctly rendered 
-                        divNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
+                        // We get all the div with relevant information
+                        let songInfoHelper = new XPathHelper("//div[@id='ppm-content']/div[@class='box']");
 
-                        // we make sure to correctly render bars and stars
-                        let newInnerHTML = divNode.innerHTML;
+                        // Main song info
+                        let divPositions = [0];
+                        
+                        // Dominant Instrument based on weater the song is on market or not
+                        if (isMaket)
+                            divPositions.push(2);
+                        else
+                            divPositions.push(1);
 
-                        // we apply the modifications to the original node
-                        divNode.innerHTML = newInnerHTML;
+                        // We get all the divs to filter them later on
+                        let divNodes = songInfoHelper.getOrderedSnapshot(doc)
 
-                        infoHTML = divNode.outerHTML;
+                        // We only add to the popup the correct positions
+                        divPositions.forEach(index => {
+                            let infoNode = divNodes.snapshotItem(index);
+                            // We hard-code some of the styles to make sure that the tool tip is correctly rendered 
+                            infoNode.setAttribute('style', `font-size: ${popupTheme.FONT_SIZE}; color:${popupTheme.COLOR};`);
+
+                            // we make sure to correctly render bars and stars
+                            let newInnerHTML = infoNode.innerHTML;
+
+                            // we apply the modifications to the original node
+                            infoNode.innerHTML = newInnerHTML;
+
+                            // We add HTML to popup content
+                            infoHTML += infoNode.outerHTML;
+                        })
+
 
                     } else {
                         // No song info is present
