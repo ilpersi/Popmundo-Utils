@@ -66,8 +66,8 @@ async function checkForTimer() {
             // We only update the timer when we find something
             if (minutes > 0 || hours > 0 || days > 0 || weeks > 0) {
                 // we round minutes and hours to avoid any false notification
-                minutes = minutes > 0 ? minutes + 1 : minutes;
-                hours = hours > 0 ? hours + 1 : hours;
+                if (minutes > 0) minutes += 1;
+                if (hours > 0) hours += 1;
 
                 // We add duration to current time
                 let nowTimeStamp = now.getTime();
