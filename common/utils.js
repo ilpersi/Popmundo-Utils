@@ -358,6 +358,18 @@ class Utils {
 
         return result;
     }
+
+    /**
+     * Return true if the current character is playing the Great Heist
+     *
+     * @static
+     * @return {Boolean} 
+     * @memberof Utils
+     */
+    static isGreatHeist() {
+        let ghImg = document.querySelector('img[src*="Crime"]');
+        return ghImg != null;
+    }
 }
 
 /**

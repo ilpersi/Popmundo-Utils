@@ -13,6 +13,7 @@ const globalOptions = {
     'city_other_vehicles': false,
     'locale_characters_present': false,
     'move_to_shortcut': true,
+    'crew_top_heist_shortcut': false,
 };
 
 // Let's be sure that there is no JQuery conflict
@@ -48,7 +49,7 @@ function searchableTables() {
  * @param {Number} elemID - The id of the element (can be the char id, a city id, a locale id and so on...)
  * @return {Boolean} - This will return true if additional icons should be rendered, false otherwise
  */
-function checkCharPage(aElem, elemID) {
+function checkCharLinks(aElem, elemID) {
     let result = true;
 
     // To avoid mangling the layout of the conversation page, we do not render char icons there
@@ -76,19 +77,47 @@ function checkCharPage(aElem, elemID) {
 }
 
 /**
+ * Advanced call back to check when to display icons on artist links (Popmundo)
+ *
+ * @param {Node} aElem - The node that contains the link to which we want to add one or more icons
+ * @param {Number} elemID - The id of the element (can be the char id, a city id, a locale id and so on...)
+ * @return {Boolean} - This will return true if additional icons should be rendered, false otherwise
+ */
+function checkBandLinks(aElem, elemID) {
+    let isGH = Utils.isGreatHeist();
+    
+    return !isGH;
+}
+
+/**
+ * Advanced call back to check when to display icons on crew links (The Great Heist)
+ *
+ * @param {Node} aElem - The node that contains the link to which we want to add one or more icons
+ * @param {Number} elemID - The id of the element (can be the char id, a city id, a locale id and so on...)
+ * @return {Boolean} - This will return true if additional icons should be rendered, false otherwise
+ */
+function checkCrewLinks(aElem, elemID) {
+    let isGH = Utils.isGreatHeist();
+
+    return isGH;
+}
+
+/**
  * Takes care of creating all the icon links whenever is is possible
  *
  * @param {option} object - A key/value object with saved options
  */
 function handleIconLink(options) {
     let linkDB = [
-        // Bankd links
-        { 'option': 'band_upcoming_shows', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/UpcomingPerformances/', 'href': '/World/Popmundo.aspx/Artist/UpcomingPerformances/', 'img': 'images/calendar-list.png', 'title': 'Upcoming Shows' },
-        { 'option': 'band_popularity_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'href': '/World/Popmundo.aspx/Artist/Popularity/', 'img': 'images/star.png', 'title': 'Popularity' },
+        // Band links
+        { 'option': 'band_upcoming_shows', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/UpcomingPerformances/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/UpcomingPerformances/', 'img': 'images/calendar-list.png', 'title': 'Upcoming Shows' },
+        { 'option': 'band_popularity_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/Popularity/', 'img': 'images/star.png', 'title': 'Popularity' },
+        // Crew links
+        { 'option': 'crew_top_heist_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Artist/TopHeists/', 'img': 'images/star.png', 'title': 'Top Heists' },
         // Character links
-        { 'option': 'character_send_message', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Conversation/', 'advanceCheckCB': checkCharPage, 'href': '/World/Popmundo.aspx/Conversations/Conversation/', 'img': 'images/mail--arrow.png', 'title': 'Send Message' },
-        { 'option': 'character_offer_an_item', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/OfferItem/', 'advanceCheckCB': checkCharPage, 'href': '/World/Popmundo.aspx/Character/OfferItem/', 'img': 'images/box--arrow.png', 'title': 'Offer an Item' },
-        { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharPage, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'img': 'images/mobile-phone.png', 'title': 'Call' },
+        { 'option': 'character_send_message', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Conversation/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Conversations/Conversation/', 'img': 'images/mail--arrow.png', 'title': 'Send Message' },
+        { 'option': 'character_offer_an_item', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/OfferItem/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Character/OfferItem/', 'img': 'images/box--arrow.png', 'title': 'Offer an Item' },
+        { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'img': 'images/mobile-phone.png', 'title': 'Call' },
         // City links
         { 'option': 'city_other_vehicles', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/RoadTrip/', 'href': '/World/Popmundo.aspx/City/RoadTrip/', 'img': 'images/car--arrow.png', 'title': 'Other Vehicles' },
         { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'img': 'images/paper-plane--plus.png', 'title': 'Charter VIP Jet' },
