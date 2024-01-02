@@ -96,6 +96,11 @@ const optionDetails = [
     { 'name': 'mass_interact_exclude_id', 'default': [], 'save_cb': saveCSVString, 'load_cb': loadCSVstring },
     { 'name': 'mass_interact_max_chars', 'default': 99, 'save_cb': saveInteger, 'load_cb': loadInteger },
     { 'name': 'mass_interact_ignore_acquaintance', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_guide', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_google', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_change_diapers', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_pick_up', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_kiss_on_forehead', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     
 ]
 

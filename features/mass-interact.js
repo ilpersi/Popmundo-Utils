@@ -55,6 +55,11 @@ async function onSubmitClick() {
         'mass_interact_exclude_id': [],
         'mass_interact_max_chars': 99,
         'mass_interact_ignore_acquaintance': false,
+        'mass_interact_guide': false,
+        'mass_interact_google': false,
+        'mass_interact_change_diapers': false,
+        'mass_interact_pick_up': false,
+        'mass_interact_kiss_on_forehead': false,
     };
 
     let optionsMap = {
@@ -108,7 +113,13 @@ async function onSubmitClick() {
         "mass_interact_tell_joke": 4,
         "mass_interact_seek_apprenticeship": 29,
         "mass_interact_sing_to": 21,
-        "mass_interact_serenade": 78
+        "mass_interact_serenade": 78,
+        "mass_interact_guide": 94,
+        "mass_interact_google": 6,
+        "mass_interact_change_diapers": 95,
+        "mass_interact_pick_up": 93,
+        "mass_interact_kiss_on_forehead": 103,
+        
     };
 
     // The script will randomly choose one of the following interactions
