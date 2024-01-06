@@ -85,7 +85,7 @@ function checkCharLinks(aElem, elemID) {
  */
 function checkBandLinks(aElem, elemID) {
     let isGH = Utils.isGreatHeist();
-    
+
     return !isGH;
 }
 
@@ -186,7 +186,7 @@ function handleIconLink(options) {
  *
  * @param {boolean} [autoClick=false]
  */
-function fastCharSwitch(autoClick=false) {
+function fastCharSwitch(autoClick = false) {
     const CHAR_SELECT_XPATH = "//select[contains(@name, 'CurrentCharacter')]";
     const CHAR_SUBMIT_XPATH = "//input[@type = 'image' and contains(@name, 'ChangeCharacter')]";
 
@@ -204,9 +204,10 @@ function fastCharSwitch(autoClick=false) {
 
 /**
  * This code will had a Popmundo menu inside the game. The idea is to have some options available in a handy place.
- *
+ * 
+ * @param {string} install_type - The result of chrome.management.getSelf() method. Used to enable developer options.
  */
-function renderIngameMenu() {
+function renderIngameMenu(install_type) {
     const LAST_BOX_PATH = "//div[@id='ppm-sidemenu']//div[last()][contains(@class, 'box')]";
 
     let divBoxHelper = new XPathHelper(LAST_BOX_PATH);
@@ -224,15 +225,34 @@ function renderIngameMenu() {
         let newH2 = document.createElement('h2');
         newH2.textContent = 'Popmundo Utils';
         newDiv.appendChild(newH2);
-        
+
         // Box Menu
         let newDivMenu = document.createElement('div');
         newDivMenu.setAttribute('class', 'menu');
         newDiv.appendChild(newDivMenu);
-        
+
         // Menu UL
         let newUL = document.createElement('ul');
         newDivMenu.appendChild(newUL);
+
+        // Developer Link - START
+        if (install_type === 'development') {
+            let newLIDeveloper = document.createElement('li');
+            newUL.appendChild(newLIDeveloper);
+
+            let newADeveloper = document.createElement('a');
+            newADeveloper.setAttribute('href', '#');
+            newADeveloper.textContent = 'Developer';
+            newADeveloper.addEventListener('click', (event) => {
+                chrome.runtime.sendMessage(chrome.runtime.id, {
+                    'type': 'cmd',
+                    'payload': 'developer'
+                });
+                return false;
+            });
+            newLIDeveloper.appendChild(newADeveloper);
+        }
+        // Developer Link - END
 
         // Options Link - START
         let newLI = document.createElement('li');
@@ -248,10 +268,10 @@ function renderIngameMenu() {
             });
             return false;
         });
-        newLI.append(newA);
+        newLI.appendChild(newA);
         // Options Link - END
 
-        // Options Link - START
+        // Report Issue Link - START
         let newLIIssue = document.createElement('li');
         newUL.appendChild(newLIIssue);
 
@@ -259,9 +279,9 @@ function renderIngameMenu() {
         newAIssue.setAttribute('href', 'https://github.com/ilpersi/Popmundo-Utils/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=');
         newAIssue.setAttribute('target', '_blank');
         newAIssue.textContent = 'Report an Issue';
-        
-        newLIIssue.append(newAIssue);
-        // Options Link - END
+
+        newLIIssue.appendChild(newAIssue);
+        // Report Issue Link - END
 
         divNode.parentNode.insertBefore(newDiv, divNode.nextSibling);
 
@@ -274,5 +294,20 @@ chrome.storage.sync.get(globalOptions, items => {
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
-    renderIngameMenu();
 });
+
+// This is the logic that takes care of performing the hot-reload of the extention
+chrome.storage.local.get({ 'hot-reload': false, 'install_type': '' }, (local) => {
+    // When hot-reload is true, we open again the developer hot-reload page
+    if (local['hot-reload']) {
+        chrome.storage.local.set({ 'hot-reload': false }, () => {
+            chrome.runtime.sendMessage(chrome.runtime.id, {
+                'type': 'cmd',
+                'payload': 'developer'
+            });
+        })
+    }
+
+    // In the local settings, we also store the install type. We use it to show additional links in game menu
+    renderIngameMenu(local.install_type);
+})
