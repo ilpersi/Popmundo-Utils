@@ -80,6 +80,22 @@ function checkReminders() {
         { dayNumber: 54, id: `day-54-${dateDetails.year}`, type: 'text', reminder: `Remember to wear your Marvin T-Shirt to increase your star quality and get one experince point.` },
     ];
 
+    if (Utils.isGreatHeist()) {
+        let nowDate = new Date();
+        
+        if (nowDate.getDay() == 4) {
+            let cardReminder = {
+                dayNumber: dateDetails.day,
+                id: `tgh-card-day-${dateDetails.year}-${dateDetails.day}`,
+                type: 'text',
+                reminder: `It is Thursday, remember to get your free cards!`,
+            };
+
+            REMINDERS.push(cardReminder);
+        } 
+
+    }
+
     let notificationData = [];
     REMINDERS.forEach((info) => {
         if (info.dayNumber == dateDetails.day) {
