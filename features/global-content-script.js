@@ -181,6 +181,11 @@ function handleIconLink(options) {
 
 }
 
+/**
+ * This method will add a new onChange listner to the character select element. Whenever this is fired, the refers button is automatically clicked.
+ *
+ * @param {boolean} [autoClick=false]
+ */
 function fastCharSwitch(autoClick=false) {
     const CHAR_SELECT_XPATH = "//select[contains(@name, 'CurrentCharacter')]";
     const CHAR_SUBMIT_XPATH = "//input[@type = 'image' and contains(@name, 'ChangeCharacter')]";
@@ -197,9 +202,57 @@ function fastCharSwitch(autoClick=false) {
     }
 }
 
+function renderIngameMenu() {
+    const LAST_BOX_PATH = "//div[@id='ppm-sidemenu']//div[last()][contains(@class, 'box')]";
+
+    let divBoxHelper = new XPathHelper(LAST_BOX_PATH);
+    let divBoxResult = divBoxHelper.getUnorderedNodeSnapshot(document);
+
+    if (divBoxResult.snapshotLength == 1) {
+        let divNode = divBoxResult.snapshotItem(0);
+
+        let newDiv = document.createElement('div');
+        newDiv.setAttribute('class', 'box');
+
+        let newH2 = document.createElement('h2');
+        newH2.textContent = 'Popmundo Utils';
+        newDiv.appendChild(newH2);
+        
+        let newDivMenu = document.createElement('div');
+        newDivMenu.setAttribute('class', 'menu');
+        newDiv.appendChild(newDivMenu);
+        
+        let newUL = document.createElement('ul');
+        newDivMenu.appendChild(newUL);
+
+        let newLI = document.createElement('li');
+        newUL.appendChild(newLI);
+
+        let newA = document.createElement('a');
+        let href = `chrome-extension://?options=${chrome.runtime.id}`
+        newA.setAttribute('href', '#');
+        newA.textContent = 'Options';
+        newA.addEventListener('click', (event) => {
+            chrome.runtime.sendMessage(chrome.runtime.id, {
+                'type': 'cmd',
+                'payload': 'open-options'
+            });
+            return false;
+        });
+        newLI.append(newA);
+
+        divNode.parentNode.insertBefore(newDiv, divNode.nextSibling);
+
+    } else {
+        console.log('divBoxResult.snapshotLength:' + divBoxResult.snapshotLength);
+    }
+
+}
+
 // We initially get the options from the sync storage
 chrome.storage.sync.get(globalOptions, items => {
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
+    renderIngameMenu();
 });
