@@ -6,7 +6,7 @@ function manageShowArea() {
     if (!showMessageArea) return;
 
     // This XPath will make it so that the text area with the message is only displayed for future shows of my Artist
-    const IS_BAND_SHOW_XPATH = "boolean(count(//div[@class='box']) = 6)"
+    const IS_BAND_SHOW_XPATH = "boolean(count(//div[@class='box']) = 7)"
 
     let isBandXpathHelper = new XPathHelper(IS_BAND_SHOW_XPATH);
     let isBandXpath = isBandXpathHelper.getBoolean(document);
