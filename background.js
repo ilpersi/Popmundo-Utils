@@ -1,6 +1,7 @@
 // We allow access to session storage also in content scripts
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
 
+// We save the installType in local options so it can be used across the whole extension to drive the logic
 var install_type = '';
 chrome.management.getSelf(info => {
     install_type = info.installType;

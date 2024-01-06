@@ -24,6 +24,7 @@ const watchChanges = (dir, lastTimestamp) => {
         if (!lastTimestamp || (lastTimestamp === timestamp)) {
             setTimeout (() => watchChanges (dir, timestamp), 1000) // retry after 1s
         } else {
+            // We set the hot-reload property to true so that global-content-script will reopen the developer.html at the next reload.
             chrome.storage.local.set({'hot-reload': true}, () => {
                 chrome.runtime.reload();
             })

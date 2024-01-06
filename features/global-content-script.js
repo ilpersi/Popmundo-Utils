@@ -297,7 +297,11 @@ chrome.storage.sync.get(globalOptions, items => {
 });
 
 // This is the logic that takes care of performing the hot-reload of the extention
-chrome.storage.local.get({ 'hot-reload': false, 'install_type': '' }, (local) => {
+let localStorage = {
+    'hot-reload': false, // check options/developer.js to understand how thi boolean toggle is managed
+    'install_type': '', // check backgroud.js to see how the value is saved
+}
+chrome.storage.local.get(localStorage, (local) => {
     // When hot-reload is true, we open again the developer hot-reload page
     if (local['hot-reload']) {
         chrome.storage.local.set({ 'hot-reload': false }, () => {
@@ -310,4 +314,15 @@ chrome.storage.local.get({ 'hot-reload': false, 'install_type': '' }, (local) =>
 
     // In the local settings, we also store the install type. We use it to show additional links in game menu
     renderIngameMenu(local.install_type);
+});
+
+// We reload the pages once the hot-reload property is set to true
+chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName == 'local') {
+        for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+            if (key == 'hot-reload' && newValue == true ) {
+                location.reload();
+            }
+        }
+    }
 })
