@@ -176,7 +176,8 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Company/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/Crew",
                 "https://*.popmundo.com/World/Popmundo.aspx/Conversations/Conversation/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Conversations"
+                "https://*.popmundo.com/World/Popmundo.aspx/Conversations",
+                "https://*.popmundo.com/World/Popmundo.aspx/Charts/MostAchievementPoints"
             ],
             "js": [
                 "libs/popper.min.js",
