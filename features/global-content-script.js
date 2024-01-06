@@ -202,6 +202,10 @@ function fastCharSwitch(autoClick=false) {
     }
 }
 
+/**
+ * This code will had a Popmundo menu inside the game. The idea is to have some options available in a handy place.
+ *
+ */
 function renderIngameMenu() {
     const LAST_BOX_PATH = "//div[@id='ppm-sidemenu']//div[last()][contains(@class, 'box')]";
 
@@ -209,27 +213,32 @@ function renderIngameMenu() {
     let divBoxResult = divBoxHelper.getUnorderedNodeSnapshot(document);
 
     if (divBoxResult.snapshotLength == 1) {
+        // Last box Node
         let divNode = divBoxResult.snapshotItem(0);
 
+        // New Box Node
         let newDiv = document.createElement('div');
         newDiv.setAttribute('class', 'box');
 
+        // Box Title
         let newH2 = document.createElement('h2');
         newH2.textContent = 'Popmundo Utils';
         newDiv.appendChild(newH2);
         
+        // Box Menu
         let newDivMenu = document.createElement('div');
         newDivMenu.setAttribute('class', 'menu');
         newDiv.appendChild(newDivMenu);
         
+        // Menu UL
         let newUL = document.createElement('ul');
         newDivMenu.appendChild(newUL);
 
+        // Options Link - START
         let newLI = document.createElement('li');
         newUL.appendChild(newLI);
 
         let newA = document.createElement('a');
-        let href = `chrome-extension://?options=${chrome.runtime.id}`
         newA.setAttribute('href', '#');
         newA.textContent = 'Options';
         newA.addEventListener('click', (event) => {
@@ -240,11 +249,22 @@ function renderIngameMenu() {
             return false;
         });
         newLI.append(newA);
+        // Options Link - END
+
+        // Options Link - START
+        let newLIIssue = document.createElement('li');
+        newUL.appendChild(newLIIssue);
+
+        let newAIssue = document.createElement('a');
+        newAIssue.setAttribute('href', 'https://github.com/ilpersi/Popmundo-Utils/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=');
+        newAIssue.setAttribute('target', '_blank');
+        newAIssue.textContent = 'Report an Issue';
+        
+        newLIIssue.append(newAIssue);
+        // Options Link - END
 
         divNode.parentNode.insertBefore(newDiv, divNode.nextSibling);
 
-    } else {
-        console.log('divBoxResult.snapshotLength:' + divBoxResult.snapshotLength);
     }
 
 }
