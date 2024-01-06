@@ -11,6 +11,7 @@ const optionDetails = [
     { 'name': 'city_book_regular_flight', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'city_charter_vip_jet', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'city_other_vehicles', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_find_locales', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     // locale
     { 'name': 'locale_characters_present', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'move_to_shortcut', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },

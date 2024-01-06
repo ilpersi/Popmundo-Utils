@@ -8,6 +8,7 @@
 
 <body>
 
+    <!-- Whenever you add a new option, make sure to update the related logic in options.js -->
     <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
         <legend class="w-auto float-none">Call all friends options</legend>
         <label>Select the thelephone interactions you want to use. The logic will randomly select between the ones
@@ -97,25 +98,26 @@
                     <input type="checkbox" id="city_other_vehicles">
                     <label for="city_other_vehicles">Enable "Other Vehicles" link for cities.</label>
                 </div>
+                <div class="col">
+                    <input type="checkbox" id="city_find_locales">
+                    <label for="city_find_locales">Enable "Find Locales" link for cities.</label>
+                </div>
                 <!-- Locale shortcuts-->
                 <div class="col">
                     <input type="checkbox" id="locale_characters_present">
                     <label for="locale_characters_present">Enable "Characters Present" link for locales.</label>
                 </div>
+            </div>
+
+            <div class="row">
                 <div class="col">
                     <input type="checkbox" id="move_to_shortcut">
                     <label for="move_to_shortcut">Enable "Move to Locale" link for locales.</label>
                 </div>
-            </div>
-
-            <div class="row">
                 <!-- Crew shortcuts-->
                 <div class="col">
                     <input type="checkbox" id="crew_top_heist_shortcut">
                     <label for="crew_top_heist_shortcut">Enable "Top Heists" link for crews.</label>
-                </div>
-                <div class="col">
-                    &nbsp;
                 </div>
                 <div class="col">
                     &nbsp;

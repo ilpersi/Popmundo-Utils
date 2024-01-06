@@ -11,6 +11,7 @@ const globalOptions = {
     'city_book_regular_flight': false,
     'city_charter_vip_jet': false,
     'city_other_vehicles': false,
+    'city_find_locales': false,
     'locale_characters_present': false,
     'move_to_shortcut': true,
     'crew_top_heist_shortcut': false,
@@ -120,6 +121,7 @@ function handleIconLink(options) {
         { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'img': 'images/mobile-phone.png', 'title': 'Call' },
         // City links
         { 'option': 'city_other_vehicles', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/RoadTrip/', 'href': '/World/Popmundo.aspx/City/RoadTrip/', 'img': 'images/car--arrow.png', 'title': 'Other Vehicles' },
+        { 'option': 'city_find_locales', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/City/Locales/', 'href': '/World/Popmundo.aspx/City/Locales/', 'img': 'images/magnifier.png', 'title': 'Find Locales' },
         { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'img': 'images/paper-plane--plus.png', 'title': 'Charter VIP Jet' },
         { 'option': 'city_book_regular_flight', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/BookFlight/', 'href': '/World/Popmundo.aspx/City/BookFlight/', 'img': 'images/paper-plane--arrow.png', 'title': 'Book Regular Flight' },
         // Locale links
