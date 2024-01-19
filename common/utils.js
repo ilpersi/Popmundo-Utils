@@ -595,20 +595,26 @@ class Scoring {
 
             for (let i = 0; i < barNodes.snapshotLength; i++) {
                 let node = barNodes.snapshotItem(i);
+
+                let barClass = node.getAttribute('class');
                 let percentage = node.getAttribute('title');
 
-                node.setAttribute('style', 'display: grid;');
+                // We only apply the percentage logic to bar with percentage. Some bars (e.g. pregnacy ones, have a different logic)
+                if (!barClass.includes('levelBar')) {
 
-                // When the bar is at 0% there are no child nodes
-                if (node.childNodes.length > 0) {
-                    let childDiv = node.childNodes[0];
-                    childDiv.setAttribute('style', childDiv.getAttribute('style') + " grid-area: 1/1/1/3;");
+                    // When the bar is at 0% there are no child nodes
+                    if (node.childNodes.length > 0) {
+                        node.setAttribute('style', 'display: grid;');
 
-                    let spanElement = domTree.createElement('span');
-                    spanElement.setAttribute('style', 'grid-area: 1/2/1/2; color: black; font-size: 10px;');
-                    spanElement.textContent = percentage;
+                        let childDiv = node.childNodes[0];
+                        childDiv.setAttribute('style', childDiv.getAttribute('style') + " grid-area: 1/1/1/3;");
 
-                    node.appendChild(spanElement);
+                        let spanElement = domTree.createElement('span');
+                        spanElement.setAttribute('style', 'grid-area: 1/2/1/2; color: black; font-size: 10px;');
+                        spanElement.textContent = percentage;
+
+                        node.appendChild(spanElement);
+                    }
                 }
 
             }
