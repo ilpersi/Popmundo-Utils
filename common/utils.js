@@ -599,11 +599,12 @@ class Scoring {
                 let barClass = node.getAttribute('class');
                 let percentage = node.getAttribute('title');
 
-                // We only apply the percentage logic to bar with percentage. Some bars (e.g. pregnacy ones, have a different logic)
+                // We only apply the percentage logic to bar with percentage. Some bars (e.g. pregnacy ones, have a different logic based on levels)
                 if (!barClass.includes('levelBar')) {
 
                     // When the bar is at 0% there are no child nodes
                     if (node.childNodes.length > 0) {
+                        percentage = percentage.replaceAll(/[^0-9\-%]/g, "");
                         node.setAttribute('style', 'display: grid;');
 
                         let childDiv = node.childNodes[0];
@@ -614,6 +615,19 @@ class Scoring {
                         spanElement.textContent = percentage;
 
                         node.appendChild(spanElement);
+                    }
+                } else {
+                    // When a level bar is there, to simplify the logic we write the status on the last colored bar of the level bar
+                    const LEVEL_PATH = "./div[contains(@class, 'high')][last()]/div";
+                    let levelHelper = new XPathHelper(LEVEL_PATH);
+
+                    let divNodeSnapshot = levelHelper.getFirstOrderedNode(node);
+                    if (divNodeSnapshot.singleNodeValue) {
+                        let spanElement = domTree.createElement('span');
+                        spanElement.setAttribute('style', 'color: black; font-size: 10px;');
+                        spanElement.textContent = percentage;
+
+                        divNodeSnapshot.singleNodeValue.appendChild(spanElement);
                     }
                 }
 
