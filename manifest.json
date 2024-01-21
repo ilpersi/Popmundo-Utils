@@ -56,7 +56,8 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/City",
                 "https://*.popmundo.com/World/ChooseCharacter.aspx",
-                "https://*.popmundo.com/World/Popmundo.aspx/ChooseCharacter"
+                "https://*.popmundo.com/World/Popmundo.aspx/ChooseCharacter",
+                "https://*.popmundo.com/World/Popmundo.aspx/Company/Locales/*"
             ],
             "js": [
                 "common/xpath-helper.js",
