@@ -485,7 +485,7 @@ class Scoring {
     #scoringOptionsValues = { 'score_highlight': true };
 
     // Used by the progress bar logic
-    #progressBarOptions = { 'progress_bar_percent': true };
+    #progressBarOptions = { 'progress_bar_percent': true, 'strip_percent_txt': false };
 
     /**
      * Get the rainbow color based on the score id. This is lousely based on chromemungo code by Tommi Rautava
@@ -604,7 +604,13 @@ class Scoring {
 
                     // When the bar is at 0% there are no child nodes
                     if (node.childNodes.length > 0) {
-                        percentage = percentage.replaceAll(/[^0-9\-%]/g, "");
+
+                        if (percentage.includes('%') && items.strip_percent_txt) {
+                            let percentageArr = percentage.split('%');
+                            percentage = percentageArr[0].replaceAll(/[^0-9\-%]/g, "");
+                            percentage = String(parseInt(percentage)) + '%';
+                        }
+
                         node.setAttribute('style', 'display: grid;');
 
                         let childDiv = node.childNodes[0];

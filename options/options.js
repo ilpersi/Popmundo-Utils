@@ -25,6 +25,7 @@ const optionDetails = [
     { 'name': 'redirect_to_login', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'fast_character_switch', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'show_msg_helper', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'strip_percent_txt', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     
     // pop up options
     { 'name': 'character_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
