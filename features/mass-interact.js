@@ -151,7 +151,7 @@ async function onSubmitClick() {
     const statusPElem = document.getElementById('mass-interact-status-p');
 
     // We'll use this to save the list of current friends
-    let = currentFriendsIDs = [];
+    let currentFriendsIDs = [];
     if (savedOptions.mass_interact_ignore_acquaintance) {
         // XPATH for the Relations link in the Character Page
         const RELATIONS_A_XPATH = "//a[contains(@href, '/World/Popmundo.aspx/Character/Relations/')]";
