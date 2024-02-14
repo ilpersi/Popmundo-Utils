@@ -624,7 +624,7 @@ class Scoring {
                     }
                 } else {
                     // When a level bar is there, to simplify the logic we write the status on the last colored bar of the level bar
-                    const LEVEL_PATH = "./div[contains(@class, 'high')][last()]/div";
+                    const LEVEL_PATH = "./div[contains(@class, 'high') or contains(@class, 'full')][last()]/div";
                     let levelHelper = new XPathHelper(LEVEL_PATH);
 
                     let divNodeSnapshot = levelHelper.getFirstOrderedNode(node);
