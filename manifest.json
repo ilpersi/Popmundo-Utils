@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "0.6.1",
+    "version": "0.6.2",
     "name": "Popmundo Utils",
     "description": "Misc utilities for Popmundo",
 
@@ -57,7 +57,9 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/City",
                 "https://*.popmundo.com/World/ChooseCharacter.aspx",
                 "https://*.popmundo.com/World/Popmundo.aspx/ChooseCharacter",
-                "https://*.popmundo.com/World/Popmundo.aspx/Company/Locales/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Company/Locales/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Setlist*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Charts*"
             ],
             "js": [
                 "common/xpath-helper.js",
@@ -106,7 +108,8 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Song/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Song/*",
-                "https://*.popmundo.com/World/Popmundo.aspx/Locale/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Locale/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Charts*"
             ],
             "js": [
                 "common/xpath-helper.js",
