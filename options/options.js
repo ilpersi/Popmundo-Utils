@@ -15,6 +15,7 @@ const optionDetails = [
     // locale
     { 'name': 'locale_characters_present', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'move_to_shortcut', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'locale_show_reconnaissance', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     // crew
     { 'name': 'crew_top_heist_shortcut', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 

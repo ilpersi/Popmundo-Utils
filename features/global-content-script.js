@@ -15,6 +15,7 @@ const globalOptions = {
     'locale_characters_present': false,
     'move_to_shortcut': true,
     'crew_top_heist_shortcut': false,
+    'locale_show_reconnaissance': false,
 };
 
 // Let's be sure that there is no JQuery conflict
@@ -125,6 +126,7 @@ function handleIconLink(options) {
         { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'img': 'images/paper-plane--plus.png', 'title': 'Charter VIP Jet' },
         { 'option': 'city_book_regular_flight', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/BookFlight/', 'href': '/World/Popmundo.aspx/City/BookFlight/', 'img': 'images/paper-plane--arrow.png', 'title': 'Book Regular Flight' },
         // Locale links
+        { 'option': 'locale_show_reconnaissance', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Locale/Reconnaissance/', 'img': 'images/binocular.png', 'title': 'Reconnaissance' },
         { 'option': 'move_to_shortcut', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/MoveToLocale/', 'img': 'images/movetolocale.png', 'title': 'Move To Locale' },
         { 'option': 'locale_characters_present', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/CharactersPresent/', 'img': 'images/users.png', 'title': 'Characters Present' },
     ];
