@@ -639,7 +639,7 @@ class Scoring {
 
             }
 
-            const PLUS_NEG_HOLDER = '//td/div[@class="plusMinusBar"]';
+            const PLUS_NEG_HOLDER = '//div[@class="plusMinusBar"]';
             xpathHelper = new XPathHelper(PLUS_NEG_HOLDER);
             barNodes = xpathHelper.getOrderedSnapshot(domTree);
 
@@ -649,6 +649,12 @@ class Scoring {
 
                 // When percentage is zero, we do not write the value
                 if (percentage.startsWith('0')) continue;
+
+                if (percentage.includes('%') && items.strip_percent_txt) {
+                    let percentageArr = percentage.split('%');
+                    percentage = percentageArr[0].replaceAll(/[^0-9\-%]/g, "");
+                    percentage = String(parseInt(percentage)) + '%';
+                }
 
                 // The parent TD element
                 let tdElem = node.parentNode;
