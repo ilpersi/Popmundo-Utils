@@ -117,8 +117,11 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 
 // When page is loaded we get value from settings and se start the tippy logic.
-chrome.storage.sync.get(clubPopUpOptionsValues, items => {
-    showClubPopUp = items.show_club_popup;
-
-    manageClubTooltips();
-});
+// We only apply the logic for popmundo, not for TGH
+if (!Utils.isGreatHeist()) {
+    chrome.storage.sync.get(clubPopUpOptionsValues, items => {
+        showClubPopUp = items.show_club_popup;
+    
+        manageClubTooltips();
+    });
+}
