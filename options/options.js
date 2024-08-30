@@ -27,6 +27,7 @@ const optionDetails = [
     { 'name': 'fast_character_switch', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'show_msg_helper', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'strip_percent_txt', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'score_scale', 'default': '0_26', 'save_cb': saveSelect, 'load_cb': loadSelect },
     
     // pop up options
     { 'name': 'character_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },

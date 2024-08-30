@@ -479,10 +479,10 @@ class TimedFetch {
 class Scoring {
 
     // Used by scoring system
-    #MAX_SCORED_ID = 26;
+    #scoreScale = '0_26'
     #rainbowBgColors = [];
     #textColors = [];
-    #scoringOptionsValues = { 'score_highlight': true };
+    #scoringOptionsValues = { 'score_highlight': true, 'score_scale': '0_26' };
 
     // Used by the progress bar logic
     #progressBarOptions = { 'progress_bar_percent': true, 'strip_percent_txt': false };
@@ -506,7 +506,8 @@ class Scoring {
         }
 
         // Calculate background color.
-        var hue = 360 - 330 * (scoreId / this.#MAX_SCORED_ID);
+        var maxScore = this.#scoreScale == '0_26' ? 26 : 27;
+        var hue = 360 - 330 * (scoreId / maxScore);
 
         var rgbObj = pm_Color.convertHsvToRgb(hue, 1, 1);
         bgColor = rgbObj.toHex();
@@ -531,6 +532,7 @@ class Scoring {
      */
     async applyScoringNumbers(domTree = document) {
         let items = await chrome.storage.sync.get(this.#scoringOptionsValues);
+        this.#scoreScale = items.score_scale;
 
         if (items.score_highlight) {
 
@@ -551,6 +553,10 @@ class Scoring {
                 var titleMatch = TITLE_RE.exec(scoreNode.getAttribute('title'));
                 if (titleMatch) {
                     let scoreInt = parseInt(titleMatch[1]);
+                    
+                    if (this.#scoreScale == '1_27')
+                        scoreInt += 1;
+
                     let textColor = this.getRainbowColor(scoreInt);
 
                     // Empty span element to make sure we have some space between the name of the score and the numeric value
