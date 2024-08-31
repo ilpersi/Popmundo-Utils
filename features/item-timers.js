@@ -4,39 +4,45 @@
  *
  */
 async function checkForTimer() {
-    // Settings KEY
-    const TIMERS_STORAGE_VALUE = { 'timers': {} };
-
-    // Timer Regex
-    const minRegex = new RegExp("(\\d{1,})\\s+minutes", "i");
-    const hourRegex = new RegExp("(\\d{1,})\\s+hours", "i");
-    const daysRegex = new RegExp("(\\d{1,})\\s+days", "i");
-    const weeksRegex = new RegExp("(\\d{1,})\\s+weeks", "i");
-
-    // Timings
-    const SECOND = 1000;
-    const MINUTE = SECOND * 60;
-    const HOUR = MINUTE * 60;
-    const DAY = HOUR * 24;
-    const WEEK = DAY * 7;
-
-    // URL Regex for item id
-    const itemIDRegex = /\d{2}.popmundo.com\/World\/Popmundo.aspx\/Character\/ItemDetails\/(\d+)/gi;
-
-    // XPath for Item name
-    const ITEM_NAME_XPATH = '//div[@class="content"][1]/div[@class="box"][1]/h2';
 
     // We initialize the varibles we need later on
-    let minutes, hours, days, weeks, itemID;
-
-    // We get the timer
+    let errors;
     let notifications = new Notifications();
-    let errors = notifications.getErrorsAsText();
+    let timeOut = Date.now() + 2000;
+    
+    // Notifications may take some seconds to be loaded, so we continously check for a couple of seconds
+    while (Date.now() <= timeOut) {
+        errors = notifications.getErrorsAsText();
+        console.log(errors.length)
+        if (errors.length > 0) break;   
+    }
 
     // Maybe a timer is there
     if (errors.length > 0) {
+        // Timings
+        const SECOND = 1000;
+        const MINUTE = SECOND * 60;
+        const HOUR = MINUTE * 60;
+        const DAY = HOUR * 24;
+        const WEEK = DAY * 7;
+
+        // Timer Regex
+        const minRegex = new RegExp("(\\d{1,})\\s+minutes", "i");
+        const hourRegex = new RegExp("(\\d{1,})\\s+hours", "i");
+        const daysRegex = new RegExp("(\\d{1,})\\s+days", "i");
+        const weeksRegex = new RegExp("(\\d{1,})\\s+weeks", "i");
+
+        // URL Regex for item id
+        const itemIDRegex = /\d{2}.popmundo.com\/World\/Popmundo.aspx\/Character\/ItemDetails\/(\d+)/gi;
+
+        // Settings KEY
+        const TIMERS_STORAGE_VALUE = { 'timers': {} };
+
+        // XPath for Item name
+        const ITEM_NAME_XPATH = '//div[@class="content"][1]/div[@class="box"][1]/h2';
+
         let idMatch = itemIDRegex.exec(window.location.href);
-        itemID = idMatch ? parseInt(idMatch[1]) : 0;
+        let itemID = idMatch ? parseInt(idMatch[1]) : 0;
 
         // My ID
         let myID = Utils.getMyID();
@@ -56,10 +62,10 @@ async function checkForTimer() {
             let weeksMatch = weeksRegex.exec(errorTxt);
 
             // We check for values and default to 0
-            minutes = minMatch ? parseInt(minMatch[1]) : 0;
-            hours = hourMatch ? parseInt(hourMatch[1]) : 0;
-            days = daysMatch ? parseInt(daysMatch[1]) : 0;
-            weeks = weeksMatch ? parseInt(weeksMatch[1]) : 0;
+            let minutes = minMatch ? parseInt(minMatch[1]) : 0;
+            let hours = hourMatch ? parseInt(hourMatch[1]) : 0;
+            let days = daysMatch ? parseInt(daysMatch[1]) : 0;
+            let weeks = weeksMatch ? parseInt(weeksMatch[1]) : 0;
 
             // console.log(`Timer for id ${itemID}: ${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes`);
             
@@ -149,6 +155,6 @@ async function injectUseAndTimer() {
     }
 }
 
-// Notifications may take some seconds to be loaded, so we wait a couple of seconds before checking for them
-window.setTimeout(() => { checkForTimer(); }, 2000);
+
 injectUseAndTimer();
+checkForTimer();
