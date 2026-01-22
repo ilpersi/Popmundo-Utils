@@ -5,7 +5,7 @@ chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONT
 var install_type = '';
 chrome.management.getSelf(info => {
     install_type = info.installType;
-    chrome.storage.local.set({'install_type': install_type});
+    chrome.storage.local.set({ 'install_type': install_type });
 })
 
 // We listen to messages incoming messages from the extension.
@@ -29,3 +29,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
     }
 });
+
+// This event listener is triggered when a item is used from the item list
+chrome.webRequest.onBeforeRequest.addListener(
+    async (details) => {
+        if ('requestBody' in details && 'formData' in details.requestBody) {
+            //debugger;
+
+            let itemKey = '';
+            for (const dataName in details.requestBody.formData) {
+                if (dataName.toLowerCase().includes('use.x')) {
+                    itemKey = dataName.replace('btnUse.x', 'hidItemIDstring')
+                    // debugger;
+                    break;
+                }
+            }
+
+            if (itemKey in details.requestBody.formData) {
+                let itemID = details.requestBody.formData[itemKey][0];
+                await chrome.storage.session.set({ "lastUseditemID": itemID });
+                // console.log("lastUseditemID: " + itemID);
+            }
+
+        }
+    },
+    { urls: ["https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"] },
+    ["requestBody"]
+);

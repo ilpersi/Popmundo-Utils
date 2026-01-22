@@ -8,14 +8,9 @@ async function checkForTimer() {
     // We initialize the varibles we need later on
     let errors;
     let notifications = new Notifications();
-    let timeOut = Date.now() + 2000;
-    
-    // Notifications may take some seconds to be loaded, so we continously check for a couple of seconds
-    while (Date.now() <= timeOut) {
-        errors = notifications.getErrorsAsText();
-        console.log(errors.length)
-        if (errors.length > 0) break;   
-    }
+    errors = notifications.getErrorsAsText();
+
+    // debugger;
 
     // Maybe a timer is there
     if (errors.length > 0) {
@@ -37,12 +32,20 @@ async function checkForTimer() {
 
         // Settings KEY
         const TIMERS_STORAGE_VALUE = { 'timers': {} };
+        const LAST_USED_ITEM_ID = { 'lastUseditemID': 0 };
 
-        // XPath for Item name
-        const ITEM_NAME_XPATH = '//div[@class="content"][1]/div[@class="box"][1]/h2';
-
-        let idMatch = itemIDRegex.exec(window.location.href);
-        let itemID = idMatch ? parseInt(idMatch[1]) : 0;
+        let itemID = 0;
+        // If we are on the items page we need to get the last used item ID from the cache
+        if (window.location.href.includes('Character/Items/')) {
+            let lastUsedDetails = await chrome.storage.session.get(LAST_USED_ITEM_ID);
+            itemID = lastUsedDetails.lastUseditemID;
+            console.log('used item id loaded from cache: ' + itemID);
+            await chrome.storage.session.set({ "lastUseditemID": 0 });
+        } else {
+            // If we are on a specific item, we use the URL to get the ID
+            idMatch = itemIDRegex.exec(window.location.href);
+            itemID = idMatch ? parseInt(idMatch[1]) : 0;
+        }
 
         // My ID
         let myID = Utils.getMyID();
@@ -68,9 +71,10 @@ async function checkForTimer() {
             let weeks = weeksMatch ? parseInt(weeksMatch[1]) : 0;
 
             // console.log(`Timer for id ${itemID}: ${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes`);
-            
+
             // We only update the timer when we find something
             if (minutes > 0 || hours > 0 || days > 0 || weeks > 0) {
+
                 // we round minutes and hours to avoid any false notification
                 if (minutes > 0) minutes += 1;
                 if (hours > 0 && minutes == 0) hours += 1;
@@ -79,27 +83,42 @@ async function checkForTimer() {
                 // We add duration to current time
                 let nowTimeStamp = now.getTime();
                 let timerTimeStamp = nowTimeStamp + (weeks * WEEK) + (days * DAY) + (hours * HOUR) + (minutes * MINUTE);
-    
+
                 // We add a 2 seconds buffer
                 timerTimeStamp += (2 * SECOND);
-    
+
                 // Timer was found for the item, we make sure that values are updated in the database
                 if (timerTimeStamp > nowTimeStamp) {
-    
-                    // We use XPATH to get the item name. This will be used in the notification message.
-                    let xpathHelper = new XPathHelper(ITEM_NAME_XPATH);
-                    let itemNameNode = xpathHelper.getFirstOrderedNode(document);
-    
+
+                    let itemName = '';
+                    if (window.location.href.includes('Character/Items/')) {
+                        // We use XPATH to get the item name. This will be used in the notification message.
+                        let xpathHelper = new XPathHelper('//a[@href="/World/Popmundo.aspx/Character/ItemDetails/' + itemID + '"]');
+                        let itemNameNode = xpathHelper.getFirstOrderedNode(document);
+                        itemName = itemNameNode.singleNodeValue.textContent;
+
+                    } else {
+                        // We use XPATH to get the item name. This will be used in the notification message.
+                        let xpathHelper = new XPathHelper('//div[@class="content"][1]/div[@class="box"][1]/h2');
+                        let itemNameNode = xpathHelper.getFirstOrderedNode(document);
+                        itemName = itemNameNode.singleNodeValue.textContent;
+                    }
+
                     // We make sure that a key is present for the current character
                     if (!timers.hasOwnProperty(myID)) timers[myID] = {};
-    
+
                     // We update the timer for the current items
-                    timers[myID][itemID] = { 'timerTimeStamp': timerTimeStamp, 'name': itemNameNode.singleNodeValue.textContent, 'now': nowTimeStamp };
+                    if (itemID != 0 && itemName != '')
+                        timers[myID][itemID] = { 'timerTimeStamp': timerTimeStamp, 'name': itemName, 'now': nowTimeStamp };
                 }
             }
         });
 
         await chrome.storage.sync.set({ "timers": timers });
+        
+        // If we are on the item list we make sure to reload the page so timers are correctly rendered
+        if (window.location.href.includes('Character/Items/'))
+            window.location.reload();
     }
 }
 
@@ -126,7 +145,7 @@ async function timerOnClick(btnNode) {
     }).then((html) => {
         console.log(html);
     });
-    
+
     btnNode.click();
 }
 
@@ -155,6 +174,30 @@ async function injectUseAndTimer() {
     }
 }
 
+// If we are on a specific item page, we inject "Use and Timer" button
+if (!window.location.href.includes('Character/Items/'))
+    injectUseAndTimer();
 
-injectUseAndTimer();
-checkForTimer();
+let maxIntervalCnt = 1;
+
+let intervalID = setInterval(async () => {
+    // console.log("Interval run: " + maxIntervalCnt);
+
+    // After 10 attempts we cancell the interval
+    if (maxIntervalCnt > 10) {
+        // console.log("Max attempts, cancellin intervall.");
+        clearInterval(intervalID);
+    }
+
+    // We make sure notifications are not loading
+    let notifications = new Notifications();
+    if (!notifications.areLoading()) {
+        // console.log("Notifications found, cancelling interval.")
+        await checkForTimer();
+        clearInterval(intervalID);
+    }
+
+    maxIntervalCnt += 1;
+}, 500)
+
+

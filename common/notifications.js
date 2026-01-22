@@ -119,11 +119,12 @@ class Notifications {
     /**
      * Get all the notifications currently displayed in the notification bar
      *
-     * @param {string} level
+     * @param {string} [level=null] The level of notification we are searching for. Look at LEVELS var for valid ones
+     * @param {boolean} [ignoreLoading=false] Ignore the 'notification-loading' class when filtering
      * @return {string[]} 
      * @memberof Notifications
      */
-    getNotificationsAsText(level = null) {
+    getNotificationsAsText(level = null, ignoreLoading = false) {
         const CLASS_PREFIX = 'notification-';
         let results = [];
 
@@ -131,6 +132,8 @@ class Notifications {
         for (var child = this.containerNode.firstChild; child !== null; child = child.nextSibling) {
             if ('DIV' === child.tagName) {
                 let divClass = child.getAttribute('class');
+
+                if (ignoreLoading && divClass.includes('notification-loading')) continue;
 
                 if ((level !== null && divClass.includes(className)) || (level === null && divClass.includes(CLASS_PREFIX))) {
                     results.push(child.textContent);
@@ -169,5 +172,19 @@ class Notifications {
      */
     getNormalsAsText() {
         return this.getNotificationsAsText(Notifications.LEVELS.NORMAL);
+    }
+
+    /**
+     * Are the notifications loading? This is not 100% reliable as when there are no notifications to show
+     * there still is a div with class 'notification-loading'. The reccomended approach is to use it in
+     * combination with setInterval()
+     *
+     * @return {boolean} True if notifications are loading 
+     * @memberof Notifications
+     */
+    areLoading() {
+        let notifications = this.getNotificationsAsText(null, true);
+
+        return document.querySelector("div.notification-loading") != null && notifications.length == 0;
     }
 }

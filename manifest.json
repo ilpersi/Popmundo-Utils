@@ -15,7 +15,8 @@
         "https://*.popmundo.com/*"
     ],
     "permissions": [
-        "storage"
+        "storage",
+        "webRequest"
     ],
 
     "background": {
@@ -139,7 +140,8 @@
         },
         {
             "matches": [
-                "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*"
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"
             ],
             "js": [
                 "common/utils.js",
