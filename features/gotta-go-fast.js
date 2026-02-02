@@ -9,8 +9,10 @@
     let fixedBookIds = [];
     let isProcessingBlock = false; // Para evitar múltiplas chamadas ao temporizador
     let continuaColeta = false;
+    let coletaInProgress = false;
 
     const fetcher = new TimedFetch(false);
+    const notifications = new Notifications();
 
     const STORAGE_KEYS = {
         BOOK_NAME: 'autograph_book_name',
@@ -119,7 +121,8 @@
     const LOG_TYPE_COLORS = {
         info: '#1976d2',
         warning: '#f9a825',
-        error: '#d32f2f'
+        error: '#d32f2f',
+        success: '#4caf50'
     };
 
     let LOG_INDEX = 0;
@@ -158,6 +161,7 @@
                     finalUrl = href.startsWith('http') ? href : `https://${hostName}${href}`;
                     await fetcher.fetch(finalUrl, { method: "GET" });
                     log(`Moving to location of <b>${charName}</b>`, 'info');
+                    notifications.getPageNotifications(fetcher);
                     return;
                 }
             }
@@ -169,6 +173,7 @@
                     finalUrl = btnHref.startsWith('http') ? btnHref : `https://${hostName}${btnHref}`;
                     await fetcher.fetch(finalUrl, { method: "GET" });
                     log(`Moving to location of <b>${charName}</b>`, 'info');
+                    notifications.getPageNotifications(fetcher);
                     return;
                 }
 
@@ -199,6 +204,7 @@
                                 finalUrl = characterUrl;
                             }
                             log(`Moving to location of <b>${charName}</b>`, 'info');
+                            notifications.getPageNotifications(fetcher);
                             return;
                         }
                     }
@@ -225,6 +231,7 @@
 
                         const postDoc = parser.parseFromString(postHtml, "text/html");
                         log(`Moving to location of <b>${charName}</b>`, 'info');
+                        notifications.getPageNotifications(fetcher);
                         return;
                     }
                 }
@@ -242,6 +249,7 @@
                             finalUrl = `https://${hostName}/World/Popmundo.aspx/Locale/MoveToLocale/${locationId}/${charId}`;
                             await fetcher.fetch(finalUrl, { method: "GET" });
                             log(`Moving to location of <b>${charName}</b>`, 'info');
+                            notifications.getPageNotifications(fetcher);
                             return;
                         }
                     }
@@ -280,6 +288,7 @@
                             finalUrl = characterUrl;
                         }
                         log(`Moving to location of <b>${charName}</b>`, 'info');
+                        notifications.getPageNotifications(fetcher);
                         return;
                     }
                 }
@@ -291,6 +300,7 @@
                     finalUrl = `https://${hostName}/World/${relativePath}`;
                     await fetcher.fetch(finalUrl, { method: "GET" });
                     log(`Moving to location of <b>${charName}</b>`, 'info');
+                    notifications.getPageNotifications(fetcher);
                     return;
                 }
             }
@@ -376,6 +386,15 @@
                 method: "POST",
                 body: formData
             });
+            const notification = await notifications.getPageNotifications(fetcher);
+            console.log(notification);
+            if (notification.Status === "error") {
+                log(`Error collecting autograph from ${person.name}: ${notification.Text}`, 'error');
+                return { success: false, bookIds: [] };
+            }
+            if (notification.Status === "success") {
+                log(`Autograph collected from ${person.name}`, 'success');
+            }
 
             if (isLastPersonInBlock && firstBookTimestamp) {
                 let now = Date.now();
@@ -452,10 +471,9 @@
                     <label for="btn-clear-storage" drinkwater>Clear chars that don't accept item usage from the storage?</label>
                     <input type="button" name="btn-clear-storage" value="Clear" id="limpar-chars" class="rmargin5" drinkwater>
                  </div>
-                <style drinkwater>#inicar-coleta:disabled, #parar-coleta:disabled { background-color: #9e9e9e !important; color: #bdbdbd !important; cursor: not-allowed; opacity: 0.7; }</style>
+                <style drinkwater>#inicar-coleta:disabled { background-color: #9e9e9e !important; color: #bdbdbd !important; cursor: not-allowed; opacity: 0.7; }</style>
                 <div class="actionbuttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;" drinkwater>
                     <input type="button" name="btn-iniciar-coleta" value="Start" id="inicar-coleta" style="background-color: #4CAF50; color: white;" class="rmargin5" drinkwater>
-                    <input type="button" name="btn-parar-coleta" value="Stop" id="parar-coleta" style="background-color: #f44336; color: white;" class="rmargin5" drinkwater>
                 </div>
 
             </div>
@@ -503,9 +521,10 @@
 
 
         jQuery('#inicar-coleta').click(async function () {
+            if (coletaInProgress) return;
+            coletaInProgress = true;
             continuaColeta = true;
             jQuery('#inicar-coleta').prop('disabled', true);
-            jQuery('#parar-coleta').prop('disabled', false);
             jQuery('#inicar-coleta').prop('value', 'Collecting Autographs...');
             const esperarSegundos = s => new Promise(r => setTimeout(r, s * 1000));
 
@@ -571,19 +590,10 @@
                 }
             }
 
+            coletaInProgress = false;
             jQuery('#inicar-coleta').prop('disabled', false);
             jQuery('#inicar-coleta').prop('value', 'Start');
-            jQuery('#parar-coleta').prop('disabled', true);
             log('Autograph collection stopped.');
-        });
-
-        jQuery('#parar-coleta').prop('disabled', true);
-        jQuery('#parar-coleta').click(function () {
-            continuaColeta = false;
-            jQuery('#parar-coleta').prop('disabled', true);
-            jQuery('#inicar-coleta').prop('disabled', false);
-            jQuery('#inicar-coleta').prop('value', 'Start');
-            log('Autograph collection stopped by user.', 'info');
         });
 
         jQuery('#limpar-chars').click(function () {
