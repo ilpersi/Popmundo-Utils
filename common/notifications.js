@@ -155,11 +155,11 @@ class Notifications {
     }
 
     /**
-     * Obtém as notificações da página via WebService (POST com parâmetro ts).
-     * Usa Fetch API: method, headers e body — compatível com TimedFetch.
+     * Gets page notifications via WebService (POST with ts parameter).
+     * Uses Fetch API: method, headers and body — compatible with TimedFetch.
      *
-     * @param {TimedFetch} fetcher Instância de TimedFetch para fazer a requisição
-     * @return {Promise<{Status: string, Text: string}>} Promise que resolve com {Status: "normal"|"success"|"error", Text: string}
+     * @param {TimedFetch} fetcher TimedFetch instance to perform the request
+     * @return {Promise<{Status: string, Text: string}>} Promise resolving with {Status: "normal"|"success"|"error", Text: string}
      * @memberof Notifications
      */
     async getPageNotifications(fetcher) {
@@ -178,7 +178,7 @@ class Notifications {
             .then((responseText) => {
                 const wrapper = JSON.parse(responseText);
                 const raw = typeof wrapper.d === "string" ? JSON.parse(wrapper.d) : wrapper.d;
-                // API retorna array de notificações; usar a última (mais recente)
+                // API returns array of notifications; use the last one (most recent)
                 const notification = Array.isArray(raw) && raw.length > 0
                     ? raw[raw.length - 1]
                     : (raw && typeof raw === "object" && !Array.isArray(raw) ? raw : null);
