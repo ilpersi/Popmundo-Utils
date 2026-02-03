@@ -1,22 +1,68 @@
 (function () {
     'use strict';
+
+    // --- Module state and constants ---
     let continuaColeta = false;
     let coletaInProgress = false;
 
     const fetcher = new TimedFetch(false);
     const notifications = new Notifications();
     const JQ = jQuery.noConflict();
-    const BOOK_COOLDOWN_MS = 6 * 60 * 1000; // 6 minutos por livro
+    const BOOK_COOLDOWN_MS = 6 * 60 * 1000; // 6 minutes per book
     const STORAGE_KEYS = {
         BOOK_NAME: 'autograph_book_name',
         BLOCKED_CHARS: 'chars-block-itens',
         BOOK_LAST_USE: 'autograph_book_last_use'
     };
 
+    // =============================================================================
+    // Logging
+    // =============================================================================
 
-    //declare region book disponibility
+    const LOG_TYPE_COLORS = {
+        info: '#1976d2',
+        warning: '#f9a825',
+        error: '#d32f2f',
+        success: '#4caf50'
+    };
 
-    //#region functions about chars that blocks the use of itens
+    let LOG_INDEX = 0;
+
+    /**
+     * Logs a message to the autograph collection log panel.
+     * @param {string} data - Message to display (may contain HTML).
+     * @param {'info'|'warning'|'error'|'success'} [type='info'] - Log type (color/title).
+     */
+    function log(data, type = 'info') {
+        if (window.parent === window) {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
+            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
+
+            if (JQ('#logs-autografos').length) {
+                try {
+                    const dt = JQ('#logs-autografos').DataTable();
+                    if (dt) {
+                        dt.row.add([time, typeCell, data]).draw(false);
+                        LOG_INDEX++;
+                        return;
+                    }
+                } catch (e) { /* DataTable not initialized */ }
+            }
+            JQ("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
+            LOG_INDEX++;
+        }
+    }
+
+    // =============================================================================
+    // Storage: blocked characters (that do not accept item usage)
+    // =============================================================================
+
+    /**
+     * Gets the list of blocked character IDs for item usage.
+     * @returns {Promise<string[]>} List of blocked character IDs.
+     */
     function getBlockedChars() {
         return new Promise((resolve) => {
             chrome.storage.local.get([STORAGE_KEYS.BLOCKED_CHARS], (items) => {
@@ -26,15 +72,25 @@
         });
     }
 
+    /**
+     * Persists the list of blocked characters.
+     * @param {string[]} blockedChars - List of blocked character IDs.
+     * @returns {Promise<void>}
+     */
     function setBlockedChars(blockedChars) {
         return new Promise((resolve) => {
             chrome.storage.local.set({ [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars }, resolve);
         });
     }
-    //#endregion
 
-    //#region functions about book disponibility
+    // =============================================================================
+    // Storage: book last use (cooldown per book)
+    // =============================================================================
 
+    /**
+     * Gets the map of bookId -> last use timestamp.
+     * @returns {Promise<Object<string, number>>} Map of book ID to timestamp.
+     */
     function getBookLastUse() {
         return new Promise((resolve) => {
             chrome.storage.local.get([STORAGE_KEYS.BOOK_LAST_USE], (items) => {
@@ -44,6 +100,12 @@
         });
     }
 
+    /**
+     * Updates the last use timestamp for a book.
+     * @param {string} bookId - Book ID.
+     * @param {number} timestamp - Use timestamp.
+     * @returns {Promise<void>}
+     */
     function setBookLastUse(bookId, timestamp) {
         return new Promise((resolve) => {
             getBookLastUse().then((lastUse) => {
@@ -53,6 +115,11 @@
         });
     }
 
+    /**
+     * Removes from storage any books not in the given list.
+     * @param {string[]} bookIds - Book IDs to keep.
+     * @returns {Promise<void>}
+     */
     function pruneBookLastUse(bookIds) {
         return new Promise((resolve) => {
             getBookLastUse().then((lastUse) => {
@@ -66,6 +133,15 @@
         });
     }
 
+    // =============================================================================
+    // Book availability (cooldown)
+    // =============================================================================
+
+    /**
+     * Returns the first available book (off cooldown) among the given IDs.
+     * @param {string[]} bookIds - Book IDs to consider.
+     * @returns {Promise<string|null>} First available book ID or null.
+     */
     async function getAvailableBook(bookIds) {
         const lastUse = await getBookLastUse();
         const now = Date.now();
@@ -78,6 +154,11 @@
         return null;
     }
 
+    /**
+     * Calculates how many ms until the soonest book becomes available.
+     * @param {string[]} bookIds - Book IDs to consider.
+     * @returns {Promise<number>} Milliseconds until next book available (0 if one is already available).
+     */
     async function getSoonestAvailableMs(bookIds) {
         const lastUse = await getBookLastUse();
         const now = Date.now();
@@ -90,12 +171,20 @@
                     soonestMs = remaining;
                 }
             } else {
-                return 0; // algum livro nunca usado, disponível agora
+                return 0; // some book never used, available now
             }
         }
         return soonestMs === Infinity ? 0 : soonestMs;
     }
 
+    // =============================================================================
+    // Storage: book name (user language)
+    // =============================================================================
+
+    /**
+     * Gets the autograph book name configured by the user.
+     * @returns {Promise<string>} Book name (e.g. "Autograph book").
+     */
     function getBookName() {
         return new Promise((resolve) => {
             chrome.storage.sync.get([STORAGE_KEYS.BOOK_NAME], (items) => {
@@ -103,21 +192,25 @@
             });
         });
     }
-    //#endregion
 
+    // =============================================================================
+    // People in city (list for collection)
+    // =============================================================================
 
-
-    //#region functions to get people to collect in the city
+    /**
+     * Gets the list of characters in the city eligible for autograph collection (autograph filter, available).
+     * @returns {Promise<Array<{name: string, id: string, status: string}>>} List of people to collect from.
+     */
     async function getPeopleToCollect() {
         let people = [];
         const hostName = window.location.hostname;
         const peopleOnlineUrl = `https://${hostName}/World/Popmundo.aspx/City/PeopleOnline/`;
 
         try {
-            // Passo 1: GET inicial para obter o formulário
+            // Step 1: Initial GET to obtain the form
             const html = await fetcher.fetch(peopleOnlineUrl, { method: "GET" });
 
-            // Passo 2: Parse HTML e extrair FormData
+            // Step 2: Parse HTML and extract FormData
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, "text/html");
             const docForm = doc.getElementById('aspnetForm');
@@ -128,7 +221,7 @@
 
             const formDataOrig = new FormData(docForm);
 
-            // Passo 3: Configurar valores do formulário
+            // Step 3: Set form values
             formDataOrig.set('ctl00$cphLeftColumn$ctl00$btnFilter', doc.getElementById('ctl00_cphLeftColumn_ctl00_btnFilter').value);
             formDataOrig.set('__EVENTTARGET', '');
             formDataOrig.set('__EVENTARGUMENT', '');
@@ -144,7 +237,7 @@
                 formDataOrig.delete('ctl00$cphLeftColumn$ctl00$chkRelationships');
             }
 
-            // Passo 4: POST com FormData configurado
+            // Step 4: POST with configured FormData
             const postHtml = await fetcher.fetch(peopleOnlineUrl, {
                 method: "POST",
                 body: formDataOrig
@@ -152,7 +245,7 @@
 
             const postDoc = parser.parseFromString(postHtml, "text/html");
 
-            // Passo 5: Extrair pessoas da tabela (independente de idioma)
+            // Step 5: Extract people from table (language-independent)
             const peopleTable = postDoc.querySelector('#tablepeople');
 
             if (peopleTable) {
@@ -180,26 +273,31 @@
             throw error;
         }
     }
-    //#endregion
 
+    // =============================================================================
+    // Navigation (go to character location)
+    // =============================================================================
 
-
-
-
+    /**
+     * Navigates to the character's location (via Interact / MoveToLocale).
+     * @param {string} charId - Character ID.
+     * @param {string} charName - Character name (for logging).
+     * @returns {Promise<void>}
+     */
     async function goToLocation(charId, charName) {
         const hostName = window.location.hostname;
         const characterUrl = `https://${hostName}/World/Popmundo.aspx/Character/${charId}`;
         let finalUrl = null;
 
         try {
-            // Passo 1: GET inicial da página do personagem via HTTP
+            // Step 1: Initial GET of character page via HTTP
             const html = await fetcher.fetch(characterUrl, { method: "GET" });
 
-            // Passo 2: Parse HTML com DOMParser
+            // Step 2: Parse HTML with DOMParser
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, "text/html");
 
-            // Passo 3: Detectar método de navegação e executar
+            // Step 3: Detect navigation method and execute
             const linkInteract = doc.querySelector('#ctl00_cphRightColumn_ctl00_lnkInteract');
             const btnInteract = doc.querySelector('#ctl00_cphRightColumn_ctl00_btnInteract');
 
@@ -361,7 +459,15 @@
         }
     }
 
+    // =============================================================================
+    // Autograph collection (use book on character)
+    // =============================================================================
 
+    /**
+     * Attempts to collect autograph from the character using an available book.
+     * @param {{name: string, id: string}} person - Character (name and ID).
+     * @returns {Promise<{success: boolean, bookIds: string[], waitMs?: number, skipPerson?: boolean}>} Operation result.
+     */
     async function collectAutograph(person) {
         const hostName = window.location.hostname;
         const interactUrl = `https://${hostName}/World/Popmundo.aspx/Interact/${person.id}`;
@@ -469,6 +575,15 @@
         }
     }
 
+    // =============================================================================
+    // Timer / UI (visual cooldown)
+    // =============================================================================
+
+    /**
+     * Shows countdown in minutes/seconds in the UI and resolves when finished.
+     * @param {number} minutes - Minutes to wait.
+     * @returns {Promise<void>}
+     */
     function startDelayTimer(minutes) {
         let timerMessage = JQ('#timer-message');
         let totalSeconds = minutes * 60;
@@ -492,39 +607,9 @@
         });
     }
 
-
-    //#region functions to log the script execution
-    const LOG_TYPE_COLORS = {
-        info: '#1976d2',
-        warning: '#f9a825',
-        error: '#d32f2f',
-        success: '#4caf50'
-    };
-
-    let LOG_INDEX = 0;
-    function log(data, type = 'info') {
-        if (window.parent === window) {
-            const now = new Date();
-            const time = now.toLocaleTimeString();
-            const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
-            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
-
-            if (JQ('#logs-autografos').length) {
-                try {
-                    const dt = JQ('#logs-autografos').DataTable();
-                    if (dt) {
-                        dt.row.add([time, typeCell, data]).draw(false);
-                        LOG_INDEX++;
-                        return;
-                    }
-                } catch (e) { /* DataTable não inicializado */ }
-            }
-            JQ("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
-            LOG_INDEX++;
-        }
-    }
-    //#endregion
-
+    // =============================================================================
+    // Initialization (DOM ready)
+    // =============================================================================
 
     JQ(document).ready(async function () {
         JQ('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
@@ -566,10 +651,6 @@
 
         JQ('#autografos-box').append('<div id="timer-message" style="font-weight: bold; color: red;" drinkwater></div>');
         JQ('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
-
-
-
-
 
         //#region functions to get AND set the book name in user language
         chrome.storage.sync.get([STORAGE_KEYS.BOOK_NAME], (items) => {
