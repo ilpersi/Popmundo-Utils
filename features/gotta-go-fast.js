@@ -5,14 +5,14 @@
 
     const fetcher = new TimedFetch(false);
     const notifications = new Notifications();
-
+    const JQ = jQuery.noConflict();
     const BOOK_COOLDOWN_MS = 6 * 60 * 1000; // 6 minutos por livro
-
     const STORAGE_KEYS = {
         BOOK_NAME: 'autograph_book_name',
         BLOCKED_CHARS: 'chars-block-itens',
         BOOK_LAST_USE: 'autograph_book_last_use'
     };
+
 
     function getBlockedChars() {
         return new Promise((resolve) => {
@@ -187,7 +187,18 @@
             const time = now.toLocaleTimeString();
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
             const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
-            jQuery("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
+       
+            if (JQ('#logs-autografos').length) {
+                try {
+                    const dt = JQ('#logs-autografos').DataTable();
+                    if (dt) {
+                        dt.row.add([time, typeCell, data]).draw(false);
+                        LOG_INDEX++;
+                        return;
+                    }
+                } catch (e) { /* DataTable não inicializado */ }
+            }
+            JQ("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
             LOG_INDEX++;
         }
     }
@@ -418,7 +429,7 @@
 
             if (!selectedBookId) {
                 const waitMs = await getSoonestAvailableMs(bookIds);
-                log(`Aguardando cooldown dos livros (${Math.ceil(waitMs / 60000)} min restantes)...`, 'info');
+                log(`Waiting for book cooldown (${Math.ceil(waitMs / 60000)} min remaining)...`, 'info');
                 return { success: false, bookIds, waitMs };
             }
 
@@ -477,7 +488,7 @@
     }
 
     function startDelayTimer(minutes) {
-        let timerMessage = jQuery('#timer-message');
+        let timerMessage = JQ('#timer-message');
         let totalSeconds = minutes * 60;
 
         return new Promise((resolve) => {
@@ -501,13 +512,13 @@
 
 
 
-    jQuery(document).ready(function () {
-        jQuery('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
-        jQuery('#autografos-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from popstars present in the city!</p>');
+    JQ(document).ready(async function () {
+        JQ('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
+        JQ('#autografos-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from popstars present in the city!</p>');
 
         const domain = window.location.hostname;
         const settingsUrl = `https://${domain}/User/Popmundo.aspx/User/ContentSettings`;
-        jQuery('#autografos-box').append(`
+        JQ('#autografos-box').append(`
             <div style="background-color: #ffeb3b; border: 3px solid #f57f17; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center;" drinkwater>
                 <h3 style="color: #d32f2f; margin-top: 0; font-size: 24px; font-weight: bold;" drinkwater>⚠️ ATTENTION ⚠️</h3>
                 <p style="font-size: 18px; font-weight: bold; color: #333; margin: 10px 0;" drinkwater>
@@ -521,7 +532,7 @@
             </div>
         `);
 
-        jQuery('#autografos-box').append(`
+        JQ('#autografos-box').append(`
             <div style="display: flex; flex-direction: column; gap: 16px; margin: 16px 0;" drinkwater>
                 <div style="display: flex; flex-direction: column; gap: 6px;" drinkwater>
                     <label for="autograph-book-name" drinkwater>Book name in your language:</label>
@@ -539,26 +550,27 @@
             </div>
         `);
 
-        jQuery('#autografos-box').append('<div id="timer-message" style="font-weight: bold; color: red;" drinkwater></div>');
-        jQuery('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
+        JQ('#autografos-box').append('<div id="timer-message" style="font-weight: bold; color: red;" drinkwater></div>');
+        JQ('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
 
         chrome.storage.sync.get([STORAGE_KEYS.BOOK_NAME], (items) => {
             const savedBookName = items[STORAGE_KEYS.BOOK_NAME];
             if (savedBookName) {
-                jQuery('#autograph-book-name').val(savedBookName);
+                JQ('#autograph-book-name').val(savedBookName);
             }
         });
 
-        jQuery('#autograph-book-name').on('input', function () {
-            const bookName = jQuery(this).val().trim();
+        JQ('#autograph-book-name').on('input', function () {
+            const bookName = JQ(this).val().trim();
             if (bookName) {
                 chrome.storage.sync.set({ [STORAGE_KEYS.BOOK_NAME]: bookName });
-
             }
         });
-        jQuery('#logs-autografos').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
+        JQ('#logs-autografos').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
 
-        const bookElement = jQuery('#checkedlist a:contains("Livro de autógrafos")');
+        const bookName = await getBookName();
+        const escaped = bookName.replace(/"/g, '\\"');
+        const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
         if (bookElement.length > 0) {
             const bookQuantity = bookElement.closest('td').find('em').text().trim();
             if (bookQuantity.startsWith('x')) {
@@ -573,12 +585,12 @@
         let lastCycleIds = [];
         let queue = [];
 
-        jQuery('#inicar-coleta').click(async function () {
+        JQ('#inicar-coleta').click(async function () {
             if (coletaInProgress) return;
             coletaInProgress = true;
             continuaColeta = true;
-            jQuery('#inicar-coleta').prop('disabled', true);
-            jQuery('#inicar-coleta').prop('value', 'Collecting Autographs...');
+            JQ('#inicar-coleta').prop('disabled', true);
+            JQ('#inicar-coleta').prop('value', 'Collecting Autographs...');
             const esperarSegundos = s => new Promise(r => setTimeout(r, s * 1000));
 
             while (continuaColeta) {
@@ -604,7 +616,7 @@
 
                     if (result.waitMs > 0) {
                         const waitMin = Math.ceil(result.waitMs / 60000);
-                        log(`Cooldown de ${waitMin} min antes do próximo uso…`);
+                        log(`Cooldown of ${waitMin} min before next use…`);
                         await startDelayTimer(waitMin);
                         continue;
                     }
@@ -623,12 +635,12 @@
             }
 
             coletaInProgress = false;
-            jQuery('#inicar-coleta').prop('disabled', false);
-            jQuery('#inicar-coleta').prop('value', 'Start');
+            JQ('#inicar-coleta').prop('disabled', false);
+            JQ('#inicar-coleta').prop('value', 'Start');
             log('Autograph collection stopped.');
         });
 
-        jQuery('#limpar-chars').click(function () {
+        JQ('#limpar-chars').click(function () {
             chrome.storage.local.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
                 log('Storage "chars-block-itens" cleared.');
             });
