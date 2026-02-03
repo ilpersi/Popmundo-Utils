@@ -1,22 +1,17 @@
 (function () {
     'use strict';
-    let timeInFirstCollect = 0;
-    let firstBookTimestamp = null;
-    let minuteDelay = 5; // Delay padrão de 5 minutos
-    let remainingDelay = 0;
-    let firstBookId = 0;
-    let indexPeopleBloc = 0;
-    let fixedBookIds = [];
-    let isProcessingBlock = false; // Para evitar múltiplas chamadas ao temporizador
     let continuaColeta = false;
     let coletaInProgress = false;
 
     const fetcher = new TimedFetch(false);
     const notifications = new Notifications();
 
+    const BOOK_COOLDOWN_MS = 6 * 60 * 1000; // 6 minutos por livro
+
     const STORAGE_KEYS = {
         BOOK_NAME: 'autograph_book_name',
-        BLOCKED_CHARS: 'chars-block-itens'
+        BLOCKED_CHARS: 'chars-block-itens',
+        BOOK_LAST_USE: 'autograph_book_last_use'
     };
 
     function getBlockedChars() {
@@ -32,6 +27,67 @@
         return new Promise((resolve) => {
             chrome.storage.local.set({ [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars }, resolve);
         });
+    }
+
+    function getBookLastUse() {
+        return new Promise((resolve) => {
+            chrome.storage.local.get([STORAGE_KEYS.BOOK_LAST_USE], (items) => {
+                const data = items[STORAGE_KEYS.BOOK_LAST_USE];
+                resolve(typeof data === 'object' && data !== null ? data : {});
+            });
+        });
+    }
+
+    function setBookLastUse(bookId, timestamp) {
+        return new Promise((resolve) => {
+            getBookLastUse().then((lastUse) => {
+                lastUse[bookId] = timestamp;
+                chrome.storage.local.set({ [STORAGE_KEYS.BOOK_LAST_USE]: lastUse }, resolve);
+            });
+        });
+    }
+
+    function pruneBookLastUse(bookIds) {
+        return new Promise((resolve) => {
+            getBookLastUse().then((lastUse) => {
+                const pruned = {};
+                const idSet = new Set(bookIds);
+                for (const [id, ts] of Object.entries(lastUse)) {
+                    if (idSet.has(id)) pruned[id] = ts;
+                }
+                chrome.storage.local.set({ [STORAGE_KEYS.BOOK_LAST_USE]: pruned }, resolve);
+            });
+        });
+    }
+
+    async function getAvailableBook(bookIds) {
+        const lastUse = await getBookLastUse();
+        const now = Date.now();
+        for (const bookId of bookIds) {
+            const last = lastUse[bookId];
+            if (!last || (now - last) >= BOOK_COOLDOWN_MS) {
+                return bookId;
+            }
+        }
+        return null;
+    }
+
+    async function getSoonestAvailableMs(bookIds) {
+        const lastUse = await getBookLastUse();
+        const now = Date.now();
+        let soonestMs = Infinity;
+        for (const bookId of bookIds) {
+            const last = lastUse[bookId];
+            if (last) {
+                const remaining = BOOK_COOLDOWN_MS - (now - last);
+                if (remaining > 0 && remaining < soonestMs) {
+                    soonestMs = remaining;
+                }
+            } else {
+                return 0; // algum livro nunca usado, disponível agora
+            }
+        }
+        return soonestMs === Infinity ? 0 : soonestMs;
     }
 
     function getBookName() {
@@ -109,7 +165,6 @@
                     }
                 });
             }
-            console.log(people);
             return people;
         } catch (error) {
             console.error('Error in getPeopleToCollect:', error);
@@ -306,7 +361,6 @@
             }
 
             log(`Maybe ${charName} is no longer in the city, or something happened!`, 'warning');
-            console.log('Could not determine navigation method for character:', charId);
 
         } catch (error) {
             console.error('Error in goToLocation:', error);
@@ -315,7 +369,7 @@
     }
 
 
-    async function collectAutograph(person, bookIndex, isLastPersonInBlock = false) {
+    async function collectAutograph(person) {
         const hostName = window.location.hostname;
         const interactUrl = `https://${hostName}/World/Popmundo.aspx/Interact/${person.id}`;
         let bookIds = [];
@@ -327,6 +381,7 @@
             const doc = parser.parseFromString(html, "text/html");
 
             const select = doc.querySelector('#ctl00_cphTopColumn_ctl00_ddlUseItem');
+
             if (!select) {
                 log(`Apparently <b>${person.name}</b> is no longer available or doesn't allow item usage`);
                 const blockedChars = await getBlockedChars();
@@ -336,7 +391,7 @@
                     log(`Storing char ${person.name} (${person.id}) in storage to not try again.`, 'warning');
                 }
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                return { success: false, bookIds: [] };
+                return { success: false, bookIds: [], skipPerson: true };
             }
 
             const bookName = await getBookName();
@@ -350,10 +405,6 @@
 
                 if (searchNames.some(name => optionText === name)) {
                     bookIds.push(optionValue);
-
-                    if (firstBookId === 0) {
-                        firstBookId = optionValue;
-                    }
                 }
             });
 
@@ -361,7 +412,15 @@
                 return { success: false, bookIds: [] };
             }
 
-            const selectedBookId = bookIds[bookIndex % bookIds.length];
+            await pruneBookLastUse(bookIds);
+
+            const selectedBookId = await getAvailableBook(bookIds);
+
+            if (!selectedBookId) {
+                const waitMs = await getSoonestAvailableMs(bookIds);
+                log(`Aguardando cooldown dos livros (${Math.ceil(waitMs / 60000)} min restantes)...`, 'info');
+                return { success: false, bookIds, waitMs };
+            }
 
             const docForm = doc.getElementById('aspnetForm');
             if (!docForm) {
@@ -370,49 +429,50 @@
 
             const formData = new FormData(docForm);
 
-            formData.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', '1');
+            const btnUseItem = doc.getElementById('ctl00_cphTopColumn_ctl00_btnUseItem');
+            const btnUseItemValue = btnUseItem?.value;
+
+            if (!btnUseItem || !btnUseItemValue) {
+                throw new Error(`Button 'ctl00_cphTopColumn_ctl00_btnUseItem' not found or has no value.`);
+            }
+
             formData.set('ctl00$cphTopColumn$ctl00$ddlUseItem', selectedBookId);
-            formData.set('ctl00$cphTopColumn$ctl00$btnUseItem', doc.getElementById('ctl00_cphTopColumn_ctl00_btnUseItem').value);
+            formData.set('ctl00$cphTopColumn$ctl00$btnUseItem', btnUseItemValue);
             formData.set('__EVENTTARGET', '');
             formData.set('__EVENTARGUMENT', '');
 
-            if (selectedBookId === firstBookId && !firstBookTimestamp) {
-                firstBookTimestamp = Date.now();
-                log(`First book use at: ${new Date(firstBookTimestamp).toLocaleTimeString()}`);
-            }
-
             log(`Collecting autograph from <b>${person.name}</b> using book ID: ${selectedBookId}`, 'info');
+            const urlParams = new URLSearchParams();
+            for (const [key, value] of formData.entries()) {
+                urlParams.append(key, value);
+            }
             await fetcher.fetch(interactUrl, {
                 method: "POST",
-                body: formData
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: urlParams.toString()
             });
             const notification = await notifications.getPageNotifications(fetcher);
-            console.log(notification);
+
             if (notification.Status === "error") {
                 log(`Error collecting autograph from ${person.name}: ${notification.Text}`, 'error');
-                return { success: false, bookIds: [] };
+                return { success: false, bookIds };
             }
+
+            await setBookLastUse(selectedBookId, Date.now());
+
             if (notification.Status === "success") {
                 log(`Autograph collected from ${person.name}`, 'success');
+            } else if (notification.Status === "normal") {
+                log(`Autograph operation completed for ${person.name}`, 'info');
             }
 
-            if (isLastPersonInBlock && firstBookTimestamp) {
-                let now = Date.now();
-                let elapsedMs = now - firstBookTimestamp;
-                let elapsedTime = Math.floor(elapsedMs / 60000);
-                remainingDelay = Math.max(0, minuteDelay - elapsedTime);
-
-                log(`Tempo decorrido desde o primeiro uso: ${elapsedTime} minutos.`);
-                log(`Delay restante para o próximo bloco: ${remainingDelay} minutos.`);
-
-                firstBookTimestamp = null;
-            }
-
-            return { success: true, bookIds: bookIds };
+            return { success: true, bookIds };
         } catch (error) {
             console.error('Error in collectAutograph:', error);
             log(`Error collecting autograph from ${person.name}: ${error.message}`, 'error');
-            return { success: false, bookIds: [] };
+            return { success: false, bookIds };
         }
     }
 
@@ -493,32 +553,25 @@
             const bookName = jQuery(this).val().trim();
             if (bookName) {
                 chrome.storage.sync.set({ [STORAGE_KEYS.BOOK_NAME]: bookName });
-                console.log('Nome do item salvo:', bookName);
+
             }
         });
         jQuery('#logs-autografos').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
 
-        let bookAmount;
         const bookElement = jQuery('#checkedlist a:contains("Livro de autógrafos")');
         if (bookElement.length > 0) {
             const bookQuantity = bookElement.closest('td').find('em').text().trim();
-
             if (bookQuantity.startsWith('x')) {
-                bookAmount = parseInt(bookQuantity.substring(1));
-                log(`Number of autograph books found: ${bookAmount}`, 'info');
+                log(`Number of autograph books found: ${parseInt(bookQuantity.substring(1))}`, 'info');
             } else {
-                bookAmount = bookElement.length;
+                log(`Number of autograph books found: ${bookElement.length}`, 'info');
             }
-
-
         } else {
             log('No autograph books found.');
         }
 
-
-        let bookIndex = 0;
         let lastCycleIds = [];
-
+        let queue = [];
 
         jQuery('#inicar-coleta').click(async function () {
             if (coletaInProgress) return;
@@ -530,60 +583,39 @@
 
             while (continuaColeta) {
                 try {
-                    let queue = await getPeopleToCollect();
-                    const blockedChars = await getBlockedChars();
-                    queue = queue.filter(
-                        p => !blockedChars.includes(p.id) && !lastCycleIds.includes(p.id)
-                    );
-
                     if (queue.length === 0) {
-                        log('No eligible person found. Will try again in 60 s.', 'warning');
-                        await esperarSegundos(60);
+                        const freshQueue = await getPeopleToCollect();
+                        const blockedChars = await getBlockedChars();
+                        queue = freshQueue.filter(
+                            p => !blockedChars.includes(p.id) && !lastCycleIds.includes(p.id)
+                        );
+
+                        if (queue.length === 0) {
+                            log('No eligible person found. Will try again in 60 s.', 'warning');
+                            await esperarSegundos(60);
+                            continue;
+                        }
+                    }
+
+                    const person = queue[0];
+                    await goToLocation(person.id, person.name);
+
+                    const result = await collectAutograph(person);
+
+                    if (result.waitMs > 0) {
+                        const waitMin = Math.ceil(result.waitMs / 60000);
+                        log(`Cooldown de ${waitMin} min antes do próximo uso…`);
+                        await startDelayTimer(waitMin);
                         continue;
                     }
 
-                    let livrosUsados = 0;
-                    let primeiroUsoTs = null;
-                    let currentCycleIds = [];
+                    queue.shift();
 
-                    while (livrosUsados < bookAmount && continuaColeta) {
-
-                        if (queue.length === 0) {
-                            const freshQueue = await getPeopleToCollect();
-                            const currentBlocked = await getBlockedChars();
-                            queue = freshQueue.filter(p => !currentBlocked.includes(p.id));
-
-                            if (queue.length === 0) break;
-                        }
-
-                        const person = queue.shift();
-                        if (!person) continue;
-
-                        await goToLocation(person.id, person.name);
-
-                        if (!primeiroUsoTs) primeiroUsoTs = Date.now();
-
-                        const result = await collectAutograph(person, bookIndex, (livrosUsados + 1 === bookAmount));
-                        if (!result.success || result.bookIds.length === 0) {
-                            continue;
-                        }
-
-                        currentCycleIds.push(person.id);
-                        bookIndex = (bookIndex + 1) % result.bookIds.length;
-                        livrosUsados++;
-                    }
-                    lastCycleIds = currentCycleIds;
-
-                    if (livrosUsados > 0 && primeiroUsoTs) {
-                        const elapsedMin = Math.floor((Date.now() - primeiroUsoTs) / 60000);
-                        const delayMinRest = Math.max(0, minuteDelay - elapsedMin);
-
-                        if (delayMinRest > 0) {
-                            log(`Cooldown de ${delayMinRest} min antes do próximo ciclo…`);
-                            await startDelayTimer(delayMinRest);
-                        }
+                    if (result.skipPerson || !result.success) {
+                        continue;
                     }
 
+                    lastCycleIds.push(person.id);
                 } catch (err) {
                     console.error(err);
                     log('Error during script execution – check the console.', 'error');
