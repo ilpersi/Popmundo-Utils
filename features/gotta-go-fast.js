@@ -14,6 +14,9 @@
     };
 
 
+    //declare region book disponibility
+
+    //#region functions about chars that blocks the use of itens
     function getBlockedChars() {
         return new Promise((resolve) => {
             chrome.storage.local.get([STORAGE_KEYS.BLOCKED_CHARS], (items) => {
@@ -28,6 +31,9 @@
             chrome.storage.local.set({ [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars }, resolve);
         });
     }
+    //#endregion
+
+    //#region functions about book disponibility
 
     function getBookLastUse() {
         return new Promise((resolve) => {
@@ -97,8 +103,11 @@
             });
         });
     }
+    //#endregion
 
-    // Função para coletar as pessoas
+
+
+    //#region functions to get people to collect in the city
     async function getPeopleToCollect() {
         let people = [];
         const hostName = window.location.hostname;
@@ -171,37 +180,10 @@
             throw error;
         }
     }
+    //#endregion
 
 
-    const LOG_TYPE_COLORS = {
-        info: '#1976d2',
-        warning: '#f9a825',
-        error: '#d32f2f',
-        success: '#4caf50'
-    };
 
-    let LOG_INDEX = 0;
-    function log(data, type = 'info') {
-        if (window.parent === window) {
-            const now = new Date();
-            const time = now.toLocaleTimeString();
-            const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
-            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
-       
-            if (JQ('#logs-autografos').length) {
-                try {
-                    const dt = JQ('#logs-autografos').DataTable();
-                    if (dt) {
-                        dt.row.add([time, typeCell, data]).draw(false);
-                        LOG_INDEX++;
-                        return;
-                    }
-                } catch (e) { /* DataTable não inicializado */ }
-            }
-            JQ("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
-            LOG_INDEX++;
-        }
-    }
 
 
     async function goToLocation(charId, charName) {
@@ -511,6 +493,38 @@
     }
 
 
+    //#region functions to log the script execution
+    const LOG_TYPE_COLORS = {
+        info: '#1976d2',
+        warning: '#f9a825',
+        error: '#d32f2f',
+        success: '#4caf50'
+    };
+
+    let LOG_INDEX = 0;
+    function log(data, type = 'info') {
+        if (window.parent === window) {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
+            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
+
+            if (JQ('#logs-autografos').length) {
+                try {
+                    const dt = JQ('#logs-autografos').DataTable();
+                    if (dt) {
+                        dt.row.add([time, typeCell, data]).draw(false);
+                        LOG_INDEX++;
+                        return;
+                    }
+                } catch (e) { /* DataTable não inicializado */ }
+            }
+            JQ("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
+            LOG_INDEX++;
+        }
+    }
+    //#endregion
+
 
     JQ(document).ready(async function () {
         JQ('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
@@ -553,6 +567,11 @@
         JQ('#autografos-box').append('<div id="timer-message" style="font-weight: bold; color: red;" drinkwater></div>');
         JQ('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
 
+
+
+
+
+        //#region functions to get AND set the book name in user language
         chrome.storage.sync.get([STORAGE_KEYS.BOOK_NAME], (items) => {
             const savedBookName = items[STORAGE_KEYS.BOOK_NAME];
             if (savedBookName) {
