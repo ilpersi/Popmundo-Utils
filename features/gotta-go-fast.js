@@ -648,20 +648,6 @@
         JQ('#autografos-box').append('<div id="timer-message" style="font-weight: bold; color: red;" drinkwater></div>');
         JQ('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
 
-        //#region functions to get AND set the book name in user language
-        chrome.storage.sync.get([STORAGE_KEYS.BOOK_NAME], (items) => {
-            const savedBookName = items[STORAGE_KEYS.BOOK_NAME];
-            if (savedBookName) {
-                JQ('#autograph-book-name').val(savedBookName);
-            }
-        });
-
-        JQ('#autograph-book-name').on('input', function () {
-            const bookName = JQ(this).val().trim();
-            if (bookName) {
-                chrome.storage.sync.set({ [STORAGE_KEYS.BOOK_NAME]: bookName });
-            }
-        });
         JQ('#logs-autografos').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
 
         const bookName = await getBookName();
