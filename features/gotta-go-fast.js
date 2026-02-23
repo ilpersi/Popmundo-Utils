@@ -622,7 +622,7 @@
         `);
         JQ('#autografos-box').append(`
             <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
-                <input type="button" name="btn-clear-storage" value="Clear blocked chars" id="limpar-chars" class="cns" title="Clear characters that don't accept item usage from session storage" drinkwater>
+                <input type="submit" name="btn-clear-storage" value="Clear blocked chars" id="limpar-chars" class="cns" title="Clear characters that don't accept item usage from session storage" drinkwater>
                 <input type="submit" name="btn-iniciar-coleta" value="Start" id="inicar-coleta" class="cns" drinkwater>
             </div>
         `);
@@ -647,23 +647,13 @@
                 log(`Number of autograph books found: ${bookElement.length}`, 'info');
             }
         } else {
-            log('No autograph books found.');
+            log('No autograph books found. Check if the autograph book item name is configured in the Options page.', 'warning');
+            JQ('#inicar-coleta').prop('disabled', true).prop('value', 'No books');
         }
 
         let lastCycleIds = [];
         let queue = [];
 
-        /* let newA = document.createElement('a');
-        newA.setAttribute('href', '#');
-        newA.textContent = 'Options';
-        newA.addEventListener('click', (event) => {
-            chrome.runtime.sendMessage(chrome.runtime.id, {
-                'type': 'cmd',
-                'payload': 'open-options'
-            });
-            return false;
-        });*/
-        // autografos-open-options-link
         JQ('#autografos-open-options-link').on('click', function (e) {
             e.preventDefault();
             chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
@@ -724,8 +714,11 @@
             JQ('#inicar-coleta').prop('value', 'Start');
             log('Autograph collection stopped.');
         });
+        //prevent default form submission
 
-        JQ('#limpar-chars').click(function () {
+        JQ('#limpar-chars').click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             chrome.storage.session.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
                 log('Blocked chars list cleared (session storage).');
             });
