@@ -65,7 +65,7 @@
      */
     function getBlockedChars() {
         return new Promise((resolve) => {
-            chrome.storage.local.get([STORAGE_KEYS.BLOCKED_CHARS], (items) => {
+            chrome.storage.session.get([STORAGE_KEYS.BLOCKED_CHARS], (items) => {
                 const blocked = items[STORAGE_KEYS.BLOCKED_CHARS];
                 resolve(Array.isArray(blocked) ? blocked : []);
             });
@@ -79,7 +79,7 @@
      */
     function setBlockedChars(blockedChars) {
         return new Promise((resolve) => {
-            chrome.storage.local.set({ [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars }, resolve);
+            chrome.storage.session.set({ [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars }, resolve);
         });
     }
 
@@ -723,8 +723,8 @@
         });
 
         JQ('#limpar-chars').click(function () {
-            chrome.storage.local.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
-                log('Storage "chars-block-itens" cleared.');
+            chrome.storage.session.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
+                log('Blocked chars list cleared (session storage).');
             });
         });
     });
