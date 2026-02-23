@@ -634,10 +634,6 @@
         JQ('#autografos-box').append(`
             <div style="display: flex; flex-direction: column; gap: 16px; margin: 16px 0;" drinkwater>
                 <div style="display: flex; flex-direction: column; gap: 6px;" drinkwater>
-                    <label for="autograph-book-name" drinkwater>Book name in your language:</label>
-                    <input type="text" id="autograph-book-name" class="round width95" placeholder="Livro de autógrafos / Autograph book" style="width: 300px; max-width: 100%; padding: 5px;" drinkwater>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px;" drinkwater>
                     <label for="btn-clear-storage" drinkwater>Clear chars that don't accept item usage from the storage?</label>
                     <input type="button" name="btn-clear-storage" value="Clear" id="limpar-chars" class="rmargin5" drinkwater>
                  </div>
