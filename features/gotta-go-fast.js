@@ -614,7 +614,7 @@
         JQ('#autografos-box').append(`
             <p drinkwater><strong>How to use?</strong></p>
             <ol drinkwater>
-                <li drinkwater>Configure the <strong>Autograph book name</strong> (in your language) on the Options page, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.</li>
+                <li drinkwater>Configure the <strong>Autograph book item name</strong> (in your language) on the <a href="#" id="autografos-open-options-link"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.</li>
                 <li drinkwater>Ensure you have autograph books in your inventory. Your character must be in any city (not traveling) and must not have a busy status (e.g. recording, rehearsal, date, etc.).</li>
                 <li drinkwater>Click <strong>Start</strong> to begin. The script will find famous people in the city, and the magic starts 🧚‍♀️</li>
                 <li drinkwater><strong>Blocked chars</strong> are characters that did not accept item usage. They are stored for the current session only so they are not retried repeatedly. Use <strong>Clear blocked chars</strong> to remove them from the list and allow the script to try them again in the same session.</li>
@@ -627,7 +627,11 @@
             </div>
         `);
 
-        JQ('#autografos-box').append('<div id="timer-message" style="font-weight: bold; color: red;" drinkwater></div>');
+        JQ('#autografos-box').append(
+            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;" drinkwater>' +
+            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" drinkwater></div>' +
+            '</div>'
+        );
         JQ('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
 
         JQ('#logs-autografos').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
@@ -648,6 +652,23 @@
 
         let lastCycleIds = [];
         let queue = [];
+
+        /* let newA = document.createElement('a');
+        newA.setAttribute('href', '#');
+        newA.textContent = 'Options';
+        newA.addEventListener('click', (event) => {
+            chrome.runtime.sendMessage(chrome.runtime.id, {
+                'type': 'cmd',
+                'payload': 'open-options'
+            });
+            return false;
+        });*/
+        // autografos-open-options-link
+        JQ('#autografos-open-options-link').on('click', function (e) {
+            e.preventDefault();
+            chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
+            return false;
+        });
 
         JQ('#inicar-coleta').click(async function () {
             if (coletaInProgress) return;
