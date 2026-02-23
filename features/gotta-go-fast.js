@@ -632,16 +632,9 @@
         `);
 
         JQ('#autografos-box').append(`
-            <div style="display: flex; flex-direction: column; gap: 16px; margin: 16px 0;" drinkwater>
-                <div style="display: flex; flex-direction: column; gap: 6px;" drinkwater>
-                    <label for="btn-clear-storage" drinkwater>Clear chars that don't accept item usage from the storage?</label>
-                    <input type="button" name="btn-clear-storage" value="Clear" id="limpar-chars" class="rmargin5" drinkwater>
-                 </div>
-                <style drinkwater>#inicar-coleta:disabled { background-color: #9e9e9e !important; color: #bdbdbd !important; cursor: not-allowed; opacity: 0.7; }</style>
-                <div class="actionbuttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;" drinkwater>
-                    <input type="button" name="btn-iniciar-coleta" value="Start" id="inicar-coleta" style="background-color: #4CAF50; color: white;" class="rmargin5" drinkwater>
-                </div>
-
+            <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
+                <input type="button" name="btn-clear-storage" value="Clear blocked chars" id="limpar-chars" class="cns" title="Clear chars that don't accept item usage from the session storage" drinkwater>
+                <input type="submit" name="btn-iniciar-coleta" value="Start" id="inicar-coleta" class="cns" drinkwater>
             </div>
         `);
 
