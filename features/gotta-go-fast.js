@@ -203,8 +203,7 @@
      */
     async function getPeopleToCollect() {
         let people = [];
-        const hostName = window.location.hostname;
-        const peopleOnlineUrl = `https://${hostName}/World/Popmundo.aspx/City/PeopleOnline/`;
+        const peopleOnlineUrl = Utils.getServerLink('World/Popmundo.aspx/City/PeopleOnline');
 
         try {
             // Step 1: Initial GET to obtain the form
@@ -285,8 +284,7 @@
      * @returns {Promise<void>}
      */
     async function goToLocation(charId, charName) {
-        const hostName = window.location.hostname;
-        const characterUrl = `https://${hostName}/World/Popmundo.aspx/Character/${charId}`;
+        const characterUrl = Utils.getServerLink('World/Popmundo.aspx/Character/' + charId);
         let finalUrl = null;
 
         try {
@@ -304,7 +302,7 @@
             if (linkInteract) {
                 const href = linkInteract.getAttribute('href');
                 if (href && !href.startsWith('javascript:')) {
-                    finalUrl = href.startsWith('http') ? href : `https://${hostName}${href}`;
+                    finalUrl = href.startsWith('http') ? href : Utils.getServerLink(href);
                     await fetcher.fetch(finalUrl, { method: "GET" });
                     log(`Moving to location of <b>${charName}</b>`, 'info');
                     notifications.getPageNotifications(fetcher);
@@ -316,7 +314,7 @@
                 const btnHref = btnInteract.getAttribute('href');
 
                 if (btnHref && !btnHref.startsWith('javascript:')) {
-                    finalUrl = btnHref.startsWith('http') ? btnHref : `https://${hostName}${btnHref}`;
+                    finalUrl = btnHref.startsWith('http') ? btnHref : Utils.getServerLink(btnHref);
                     await fetcher.fetch(finalUrl, { method: "GET" });
                     log(`Moving to location of <b>${charName}</b>`, 'info');
                     notifications.getPageNotifications(fetcher);
@@ -345,7 +343,7 @@
                                 postDoc.querySelector('a[href*="/Locale/MoveToLocale/"]')?.getAttribute('href');
 
                             if (redirectLink && !redirectLink.startsWith('javascript:')) {
-                                finalUrl = redirectLink.startsWith('http') ? redirectLink : `https://${hostName}${redirectLink}`;
+                                finalUrl = redirectLink.startsWith('http') ? redirectLink : Utils.getServerLink(redirectLink);
                             } else {
                                 finalUrl = characterUrl;
                             }
@@ -368,7 +366,7 @@
                         }
 
                         const formAction = form.getAttribute('action') || characterUrl;
-                        const postUrl = formAction.startsWith('http') ? formAction : `https://${hostName}${formAction}`;
+                        const postUrl = formAction.startsWith('http') ? formAction : Utils.getServerLink(formAction);
 
                         const postHtml = await fetcher.fetch(postUrl, {
                             method: "POST",
@@ -392,7 +390,7 @@
                     if (href) {
                         const locationId = href.split('/').pop();
                         if (locationId) {
-                            finalUrl = `https://${hostName}/World/Popmundo.aspx/Locale/MoveToLocale/${locationId}/${charId}`;
+                            finalUrl = Utils.getServerLink('World/Popmundo.aspx/Locale/MoveToLocale/' + locationId + '/' + charId);
                             await fetcher.fetch(finalUrl, { method: "GET" });
                             log(`Moving to location of <b>${charName}</b>`, 'info');
                             notifications.getPageNotifications(fetcher);
@@ -429,7 +427,7 @@
                             postDoc.querySelector('a[href*="/Locale/MoveToLocale/"]')?.getAttribute('href');
 
                         if (redirectLink && !redirectLink.startsWith('javascript:')) {
-                            finalUrl = redirectLink.startsWith('http') ? redirectLink : `https://${hostName}${redirectLink}`;
+                            finalUrl = redirectLink.startsWith('http') ? redirectLink : Utils.getServerLink(redirectLink);
                         } else {
                             finalUrl = characterUrl;
                         }
@@ -443,7 +441,7 @@
             if (locationLink && locationLink.includes('/World/')) {
                 const relativePath = locationLink.split('/World/')[1];
                 if (relativePath) {
-                    finalUrl = `https://${hostName}/World/${relativePath}`;
+                    finalUrl = Utils.getServerLink('World/' + relativePath);
                     await fetcher.fetch(finalUrl, { method: "GET" });
                     log(`Moving to location of <b>${charName}</b>`, 'info');
                     notifications.getPageNotifications(fetcher);
@@ -469,8 +467,7 @@
      * @returns {Promise<{success: boolean, bookIds: string[], waitMs?: number, skipPerson?: boolean}>} Operation result.
      */
     async function collectAutograph(person) {
-        const hostName = window.location.hostname;
-        const interactUrl = `https://${hostName}/World/Popmundo.aspx/Interact/${person.id}`;
+        const interactUrl = Utils.getServerLink('World/Popmundo.aspx/Interact/' + person.id);
         let bookIds = [];
 
         try {
@@ -615,8 +612,7 @@
         JQ('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
         JQ('#autografos-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from popstars present in the city!</p>');
 
-        const domain = window.location.hostname;
-        const settingsUrl = `https://${domain}/User/Popmundo.aspx/User/ContentSettings`;
+        const settingsUrl = Utils.getServerLink('User/Popmundo.aspx/User/ContentSettings');
         JQ('#autografos-box').append(`
             <div style="background-color: #ffeb3b; border: 3px solid #f57f17; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center;" drinkwater>
                 <h3 style="color: #d32f2f; margin-top: 0; font-size: 24px; font-weight: bold;" drinkwater>⚠️ ATTENTION ⚠️</h3>
