@@ -479,12 +479,12 @@
             const select = doc.querySelector('#ctl00_cphTopColumn_ctl00_ddlUseItem');
 
             if (!select) {
-                log(`Apparently <b>${person.name}</b> is no longer available or doesn't allow item usage`);
+                log(`Apparently <b>${person.name}</b> is no longer available or does not allow item usage.`);
                 const blockedChars = await getBlockedChars();
                 if (!blockedChars.includes(person.id)) {
                     blockedChars.push(person.id);
                     await setBlockedChars(blockedChars);
-                    log(`Storing char ${person.name} (${person.id}) in storage to not try again.`, 'warning');
+                    log(`Storing char ${person.name} (${person.id}) in storage so they won't be tried again.`, 'warning');
                 }
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 return { success: false, bookIds: [], skipPerson: true };
@@ -610,26 +610,19 @@
 
     JQ(document).ready(async function () {
         JQ('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
-        JQ('#autografos-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from popstars present in the city!</p>');
-
-        const settingsUrl = Utils.getServerLink('User/Popmundo.aspx/User/ContentSettings');
+        JQ('#autografos-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from pop stars present in the city!</p>');
         JQ('#autografos-box').append(`
-            <div style="background-color: #ffeb3b; border: 3px solid #f57f17; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center;" drinkwater>
-                <h3 style="color: #d32f2f; margin-top: 0; font-size: 24px; font-weight: bold;" drinkwater>⚠️ ATTENTION ⚠️</h3>
-                <p style="font-size: 18px; font-weight: bold; color: #333; margin: 10px 0;" drinkwater>
-                    YOU MUST DISABLE CONFIRMATION POPUPS FOR THE SCRIPT TO WORK PROPERLY!
-                </p>
-                <p style="font-size: 16px; margin: 15px 0;" drinkwater>
-                    <a href="${settingsUrl}" target="_blank" style="color: #1976d2; font-weight: bold; text-decoration: underline; font-size: 18px;" drinkwater>
-                        Click here to open content settings
-                    </a>
-                </p>
-            </div>
+            <p drinkwater><strong>How to use?</strong></p>
+            <ol drinkwater>
+                <li drinkwater>Configure the <strong>Autograph book name</strong> (in your language) on the Options page, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.</li>
+                <li drinkwater>Ensure you have autograph books in your inventory. Your character must be in any city (not traveling) and must not have a busy status (e.g. recording, rehearsal, date, etc.).</li>
+                <li drinkwater>Click <strong>Start</strong> to begin. The script will find famous people in the city, and the magic starts 🧚‍♀️</li>
+                <li drinkwater><strong>Blocked chars</strong> are characters that did not accept item usage. They are stored for the current session only so they are not retried repeatedly. Use <strong>Clear blocked chars</strong> to remove them from the list and allow the script to try them again in the same session.</li>
+            </ol>
         `);
-
         JQ('#autografos-box').append(`
             <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
-                <input type="button" name="btn-clear-storage" value="Clear blocked chars" id="limpar-chars" class="cns" title="Clear chars that don't accept item usage from the session storage" drinkwater>
+                <input type="button" name="btn-clear-storage" value="Clear blocked chars" id="limpar-chars" class="cns" title="Clear characters that don't accept item usage from session storage" drinkwater>
                 <input type="submit" name="btn-iniciar-coleta" value="Start" id="inicar-coleta" class="cns" drinkwater>
             </div>
         `);
