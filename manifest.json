@@ -251,7 +251,8 @@
             "js": [
                 "common/utils.js",
                 "common/xpath-helper.js",
-                "features/item-list-timers.js"
+                "features/item-list-timers.js",
+                "features/gotta-go-fast.js"
             ]
         },
         {

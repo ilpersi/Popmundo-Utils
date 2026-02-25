@@ -155,6 +155,49 @@ class Notifications {
     }
 
     /**
+     * Gets page notifications via WebService (POST with ts parameter).
+     * Uses Fetch API: method, headers and body — compatible with TimedFetch.
+     *
+     * @param {TimedFetch} fetcher TimedFetch instance to perform the request
+     * @return {Promise<{Status: string, Text: string}>} Promise resolving with {Status: "normal"|"success"|"error", Text: string}
+     * @memberof Notifications
+     */
+    async getPageNotifications(fetcher) {
+        const ts = new Date().getTime();
+        const url = "/WebServices/A/Open.asmx/GetPageNotifications";
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({ ts: String(ts) }),
+        };
+        let returnValue = null;
+
+        await fetcher.fetch(url, options)
+            .then((responseText) => {
+                const wrapper = JSON.parse(responseText);
+                const raw = typeof wrapper.d === "string" ? JSON.parse(wrapper.d) : wrapper.d;
+                // API returns array of notifications; use the last one (most recent)
+                const notification = Array.isArray(raw) && raw.length > 0
+                    ? raw[raw.length - 1]
+                    : (raw && typeof raw === "object" && !Array.isArray(raw) ? raw : null);
+                if (notification) {
+                    const statusNum = notification.Status;
+                    const statusString = statusNum === 0 ? "normal" : statusNum === 1 ? "success" : "error";
+                    returnValue = {
+                        Status: statusString,
+                        Text: notification.Text || ""
+                    };
+                } else {
+                    returnValue = { Status: "normal", Text: "" };
+                }
+            })
+            .catch(() => returnValue = { Status: "error", Text: "Error getting notifications" });
+        return returnValue;
+    }
+
+    /**
      * Get all the error notifications currently present on screen.
      *
      * @return {string[]} An array of strings with notifications' text 

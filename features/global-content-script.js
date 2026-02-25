@@ -24,7 +24,7 @@ const JQ = jQuery.noConflict();
 
 /**
  * Enables the DataTable plugin whenever is possible.
- *
+ * 
  */
 function searchableTables() {
     JQ(document).ready(function () {
