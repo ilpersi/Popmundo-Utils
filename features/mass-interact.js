@@ -367,7 +367,7 @@ async function onSubmitClick() {
             let html = await fetcher.fetch(interactUrl);
 
             // Initialize the DOM parser
-            const parser = new DOMParser();
+            let parser = new DOMParser();
 
             // Parse the text
             let doc = parser.parseFromString(html, "text/html");
