@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Popmundo Utils Options</title>
+    <title data-i18n="optPageTitle">Popmundo Utils Options</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="../libs/bootstrap.min-5.3.1.css" rel="stylesheet" type="text/css" />
     <style>
@@ -59,7 +59,6 @@
             color: #fff !important;
         }
 
-        /* Mobile: horizontal scrollable nav */
         @media (max-width: 991.98px) {
             .sidebar-nav {
                 overflow-x: auto;
@@ -99,12 +98,12 @@
             <div class="col-lg-3">
                 <div class="sidebar-nav">
                     <nav class="nav flex-column">
-                        <a class="nav-link active" href="#" data-tab="tab-call-friends">Call All Friends</a>
-                        <a class="nav-link" href="#" data-tab="tab-enhanced-links">Enhanced Links</a>
-                        <a class="nav-link" href="#" data-tab="tab-mass-interact">Mass Interact</a>
-                        <a class="nav-link" href="#" data-tab="tab-misc">Misc Options</a>
-                        <a class="nav-link" href="#" data-tab="tab-popup">Popup Options</a>
-                        <a class="nav-link" href="#" data-tab="tab-tour-bus">Tour Bus Helper</a>
+                        <a class="nav-link active" href="#" data-tab="tab-call-friends" data-i18n="navCallAllFriends">Call All Friends</a>
+                        <a class="nav-link" href="#" data-tab="tab-enhanced-links" data-i18n="navEnhancedLinks">Enhanced Links</a>
+                        <a class="nav-link" href="#" data-tab="tab-mass-interact" data-i18n="navMassInteract">Mass Interact</a>
+                        <a class="nav-link" href="#" data-tab="tab-misc" data-i18n="navMiscOptions">Misc Options</a>
+                        <a class="nav-link" href="#" data-tab="tab-popup" data-i18n="navPopupOptions">Popup Options</a>
+                        <a class="nav-link" href="#" data-tab="tab-tour-bus" data-i18n="navTourBusHelper">Tour Bus Helper</a>
                     </nav>
                 </div>
             </div>
@@ -114,7 +113,7 @@
 
                 <!-- Save / Status bar (always visible) -->
                 <div class="d-flex align-items-center gap-2 mb-3">
-                    <button id="save" class="btn btn-primary btn-sm">Save</button>
+                    <button id="save" class="btn btn-primary btn-sm" data-i18n="optSaveButton">Save</button>
                     <span id="status" class="text-muted small"></span>
                 </div>
 
@@ -122,62 +121,57 @@
                 <div id="tab-call-friends" class="tab-content-section">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Call All Friends</h5>
+                            <h5 class="mb-0" data-i18n="optCafTitle">Call All Friends</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">Select the telephone interactions to use. The logic will randomly
-                                select between the checked ones and those available for each friend.</p>
+                            <p class="text-muted mb-3" data-i18n="optCafDescription">Select the telephone interactions to use. The logic will randomly select between the checked ones and those available for each friend.</p>
 
-                            <div class="option-group-title">Interaction Types</div>
+                            <div class="option-group-title" data-i18n="optCafGroupInteractions">Interaction Types</div>
                             <div class="row g-2 mb-3">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="24"
-                                            id="call_all_wazzup">
-                                        <label class="form-check-label" for="call_all_wazzup">Wazzup call</label>
+                                        <input class="form-check-input" type="checkbox" value="24" id="call_all_wazzup">
+                                        <label class="form-check-label" for="call_all_wazzup" data-i18n="optCafWazzup">Wazzup call</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" value="26" id="call_all_prank">
-                                        <label class="form-check-label" for="call_all_prank">Prank call</label>
+                                        <label class="form-check-label" for="call_all_prank" data-i18n="optCafPrank">Prank call</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="58"
-                                            id="call_all_sms_pic">
-                                        <label class="form-check-label" for="call_all_sms_pic">SMS Funny Pic</label>
+                                        <input class="form-check-input" type="checkbox" value="58" id="call_all_sms_pic">
+                                        <label class="form-check-label" for="call_all_sms_pic" data-i18n="optCafSmsPic">SMS Funny Pic</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="61"
-                                            id="call_all_sms_txt">
-                                        <label class="form-check-label" for="call_all_sms_txt">SMS Friendly
-                                            Text</label>
+                                        <input class="form-check-input" type="checkbox" value="61" id="call_all_sms_txt">
+                                        <label class="form-check-label" for="call_all_sms_txt" data-i18n="optCafSmsTxt">SMS Friendly Text</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="121"
-                                            id="call_all_gossip">
-                                        <label class="form-check-label" for="call_all_gossip">Gossip on phone</label>
+                                        <input class="form-check-input" type="checkbox" value="121" id="call_all_gossip">
+                                        <label class="form-check-label" for="call_all_gossip" data-i18n="optCafGossip">Gossip on phone</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Exclusions</div>
+                            <div class="option-group-title" data-i18n="optCafGroupExclusions">Exclusions</div>
                             <div class="row g-2">
                                 <div class="col-sm-6">
-                                    <label for="call_exclude_id" class="form-label">Excluded character IDs
+                                    <label for="call_exclude_id" class="form-label">
+                                        <span data-i18n="optCafExcludedIds">Excluded character IDs</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="Comma-separated list of character IDs to skip during calls."
-                                            class="text-muted ms-1"
-                                            style="cursor:help;">&#9432;</span>
+                                            data-i18n-title="optCafExcludedIdsTooltip"
+                                            class="text-muted ms-1" style="cursor:help;">&#9432;</span>
                                     </label>
                                     <input type="text" class="form-control form-control-sm" id="call_exclude_id"
-                                        placeholder="e.g. 1234, 5678">
+                                        placeholder="e.g. 1234, 5678" data-i18n-placeholder="optCafExcludedIdsPlaceholder">
                                 </div>
                             </div>
                         </div>
@@ -188,120 +182,105 @@
                 <div id="tab-enhanced-links" class="tab-content-section d-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Enhanced Links</h5>
+                            <h5 class="mb-0" data-i18n="optElTitle">Enhanced Links</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">Add quick-action links next to game elements for faster
-                                navigation and interactions.</p>
+                            <p class="text-muted mb-3" data-i18n="optElDescription">Add quick-action links next to game elements for faster navigation and interactions.</p>
 
-                            <div class="option-group-title">Band</div>
+                            <div class="option-group-title" data-i18n="optElGroupBand">Band</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="band_popularity_shortcut">
-                                        <label class="form-check-label" for="band_popularity_shortcut">Popularity
-                                            link</label>
+                                        <label class="form-check-label" for="band_popularity_shortcut" data-i18n="optElPopularity">Popularity link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="band_upcoming_shows">
-                                        <label class="form-check-label" for="band_upcoming_shows">Upcoming Shows
-                                            link</label>
+                                        <label class="form-check-label" for="band_upcoming_shows" data-i18n="optElUpcomingShows">Upcoming Shows link</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Character</div>
+                            <div class="option-group-title" data-i18n="optElGroupCharacter">Character</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="character_send_message">
-                                        <label class="form-check-label" for="character_send_message">Send Message
-                                            link</label>
+                                        <label class="form-check-label" for="character_send_message" data-i18n="optElSendMessage">Send Message link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="character_call">
-                                        <label class="form-check-label" for="character_call">Call link</label>
+                                        <label class="form-check-label" for="character_call" data-i18n="optElCall">Call link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="character_offer_an_item">
-                                        <label class="form-check-label" for="character_offer_an_item">Offer an Item
-                                            link</label>
+                                        <label class="form-check-label" for="character_offer_an_item" data-i18n="optElOfferItem">Offer an Item link</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">City</div>
+                            <div class="option-group-title" data-i18n="optElGroupCity">City</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="city_book_regular_flight">
-                                        <label class="form-check-label" for="city_book_regular_flight">Book Regular
-                                            Flight link</label>
+                                        <label class="form-check-label" for="city_book_regular_flight" data-i18n="optElBookFlight">Book Regular Flight link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="city_charter_vip_jet">
-                                        <label class="form-check-label" for="city_charter_vip_jet">Charter VIP Jet
-                                            link</label>
+                                        <label class="form-check-label" for="city_charter_vip_jet" data-i18n="optElCharterJet">Charter VIP Jet link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="city_other_vehicles">
-                                        <label class="form-check-label" for="city_other_vehicles">Other Vehicles
-                                            link</label>
+                                        <label class="form-check-label" for="city_other_vehicles" data-i18n="optElOtherVehicles">Other Vehicles link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="city_find_locales">
-                                        <label class="form-check-label" for="city_find_locales">Find Locales
-                                            link</label>
+                                        <label class="form-check-label" for="city_find_locales" data-i18n="optElFindLocales">Find Locales link</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Locale</div>
+                            <div class="option-group-title" data-i18n="optElGroupLocale">Locale</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox"
-                                            id="locale_characters_present">
-                                        <label class="form-check-label" for="locale_characters_present">Characters
-                                            Present link</label>
+                                        <input class="form-check-input" type="checkbox" id="locale_characters_present">
+                                        <label class="form-check-label" for="locale_characters_present" data-i18n="optElCharactersPresent">Characters Present link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="move_to_shortcut">
-                                        <label class="form-check-label" for="move_to_shortcut">Move to Locale
-                                            link</label>
+                                        <label class="form-check-label" for="move_to_shortcut" data-i18n="optElMoveToLocale">Move to Locale link</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox"
-                                            id="locale_show_reconnaissance">
-                                        <label class="form-check-label"
-                                            for="locale_show_reconnaissance">Reconnaissance link</label>
+                                        <input class="form-check-input" type="checkbox" id="locale_show_reconnaissance">
+                                        <label class="form-check-label" for="locale_show_reconnaissance" data-i18n="optElReconnaissance">Reconnaissance link</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Crew</div>
+                            <div class="option-group-title" data-i18n="optElGroupCrew">Crew</div>
                             <div class="row g-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="crew_top_heist_shortcut">
-                                        <label class="form-check-label" for="crew_top_heist_shortcut">Top Heists
-                                            link</label>
+                                        <label class="form-check-label" for="crew_top_heist_shortcut" data-i18n="optElTopHeists">Top Heists link</label>
                                     </div>
                                 </div>
                             </div>
@@ -313,447 +292,365 @@
                 <div id="tab-mass-interact" class="tab-content-section d-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Mass Interact</h5>
+                            <h5 class="mb-0" data-i18n="optMiTitle">Mass Interact</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">Select the interactions to use. The logic will randomly select
-                                between the checked ones and those available for found characters.</p>
+                            <p class="text-muted mb-3" data-i18n="optMiDescription">Select the interactions to use. The logic will randomly select between the checked ones and those available for found characters.</p>
 
-                            <div class="option-group-title">Verbal &amp; Social</div>
+                            <div class="option-group-title" data-i18n="optMiGroupVerbal">Verbal &amp; Social</div>
                             <div class="row g-1 mb-2">
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="1"
-                                            id="mass_interact_greet">
-                                        <label class="form-check-label" for="mass_interact_greet">Greet</label>
+                                        <input class="form-check-input" type="checkbox" value="1" id="mass_interact_greet">
+                                        <label class="form-check-label" for="mass_interact_greet" data-i18n="optMiGreet">Greet</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="54"
-                                            id="mass_interact_smile">
-                                        <label class="form-check-label" for="mass_interact_smile">Smile</label>
+                                        <input class="form-check-input" type="checkbox" value="54" id="mass_interact_smile">
+                                        <label class="form-check-label" for="mass_interact_smile" data-i18n="optMiSmile">Smile</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="161"
-                                            id="mass_interact_wink">
-                                        <label class="form-check-label" for="mass_interact_wink">Wink</label>
+                                        <input class="form-check-input" type="checkbox" value="161" id="mass_interact_wink">
+                                        <label class="form-check-label" for="mass_interact_wink" data-i18n="optMiWink">Wink</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="15"
-                                            id="mass_interact_insult">
-                                        <label class="form-check-label" for="mass_interact_insult">Insult</label>
+                                        <input class="form-check-input" type="checkbox" value="15" id="mass_interact_insult">
+                                        <label class="form-check-label" for="mass_interact_insult" data-i18n="optMiInsult">Insult</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="3"
-                                            id="mass_interact_talk_to">
-                                        <label class="form-check-label" for="mass_interact_talk_to">Talk to</label>
+                                        <input class="form-check-input" type="checkbox" value="3" id="mass_interact_talk_to">
+                                        <label class="form-check-label" for="mass_interact_talk_to" data-i18n="optMiTalkTo">Talk to</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="5"
-                                            id="mass_interact_tease">
-                                        <label class="form-check-label" for="mass_interact_tease">Tease</label>
+                                        <input class="form-check-input" type="checkbox" value="5" id="mass_interact_tease">
+                                        <label class="form-check-label" for="mass_interact_tease" data-i18n="optMiTease">Tease</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="62"
-                                            id="mass_interact_share_opinions">
-                                        <label class="form-check-label" for="mass_interact_share_opinions">Share
-                                            Opinions</label>
+                                        <input class="form-check-input" type="checkbox" value="62" id="mass_interact_share_opinions">
+                                        <label class="form-check-label" for="mass_interact_share_opinions" data-i18n="optMiShareOpinions">Share Opinions</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="65"
-                                            id="mass_interact_gossip">
-                                        <label class="form-check-label" for="mass_interact_gossip">Gossip</label>
+                                        <input class="form-check-input" type="checkbox" value="65" id="mass_interact_gossip">
+                                        <label class="form-check-label" for="mass_interact_gossip" data-i18n="optMiGossip">Gossip</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="34"
-                                            id="mass_interact_have_profound_discussion">
-                                        <label class="form-check-label"
-                                            for="mass_interact_have_profound_discussion">Profound Discussion</label>
+                                        <input class="form-check-input" type="checkbox" value="34" id="mass_interact_have_profound_discussion">
+                                        <label class="form-check-label" for="mass_interact_have_profound_discussion" data-i18n="optMiProfoundDiscussion">Profound Discussion</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="51"
-                                            id="mass_interact_comfort">
-                                        <label class="form-check-label" for="mass_interact_comfort">Comfort</label>
+                                        <input class="form-check-input" type="checkbox" value="51" id="mass_interact_comfort">
+                                        <label class="form-check-label" for="mass_interact_comfort" data-i18n="optMiComfort">Comfort</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="57"
-                                            id="mass_interact_fraternize">
-                                        <label class="form-check-label"
-                                            for="mass_interact_fraternize">Fraternize</label>
+                                        <input class="form-check-input" type="checkbox" value="57" id="mass_interact_fraternize">
+                                        <label class="form-check-label" for="mass_interact_fraternize" data-i18n="optMiFraternize">Fraternize</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="68"
-                                            id="mass_interact_offer_advice">
-                                        <label class="form-check-label" for="mass_interact_offer_advice">Offer
-                                            Advice</label>
+                                        <input class="form-check-input" type="checkbox" value="68" id="mass_interact_offer_advice">
+                                        <label class="form-check-label" for="mass_interact_offer_advice" data-i18n="optMiOfferAdvice">Offer Advice</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="14"
-                                            id="mass_interact_compliment">
-                                        <label class="form-check-label"
-                                            for="mass_interact_compliment">Compliment</label>
+                                        <input class="form-check-input" type="checkbox" value="14" id="mass_interact_compliment">
+                                        <label class="form-check-label" for="mass_interact_compliment" data-i18n="optMiCompliment">Compliment</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="75"
-                                            id="mass_interact_praise">
-                                        <label class="form-check-label" for="mass_interact_praise">Praise</label>
+                                        <input class="form-check-input" type="checkbox" value="75" id="mass_interact_praise">
+                                        <label class="form-check-label" for="mass_interact_praise" data-i18n="optMiPraise">Praise</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="76"
-                                            id="mass_interact_tell_naughty_joke">
-                                        <label class="form-check-label" for="mass_interact_tell_naughty_joke">Tell
-                                            Naughty Joke</label>
+                                        <input class="form-check-input" type="checkbox" value="76" id="mass_interact_tell_naughty_joke">
+                                        <label class="form-check-label" for="mass_interact_tell_naughty_joke" data-i18n="optMiTellNaughtyJoke">Tell Naughty Joke</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="4"
-                                            id="mass_interact_tell_joke">
-                                        <label class="form-check-label" for="mass_interact_tell_joke">Tell
-                                            Joke</label>
+                                        <input class="form-check-input" type="checkbox" value="4" id="mass_interact_tell_joke">
+                                        <label class="form-check-label" for="mass_interact_tell_joke" data-i18n="optMiTellJoke">Tell Joke</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="69"
-                                            id="mass_interact_share_secrets">
-                                        <label class="form-check-label" for="mass_interact_share_secrets">Share
-                                            Secrets</label>
+                                        <input class="form-check-input" type="checkbox" value="69" id="mass_interact_share_secrets">
+                                        <label class="form-check-label" for="mass_interact_share_secrets" data-i18n="optMiShareSecrets">Share Secrets</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="70"
-                                            id="mass_interact_hang_out">
-                                        <label class="form-check-label" for="mass_interact_hang_out">Hang Out</label>
+                                        <input class="form-check-input" type="checkbox" value="70" id="mass_interact_hang_out">
+                                        <label class="form-check-label" for="mass_interact_hang_out" data-i18n="optMiHangOut">Hang Out</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="71"
-                                            id="mass_interact_hey_sexy_how_you_doin">
-                                        <label class="form-check-label" for="mass_interact_hey_sexy_how_you_doin">Hey
-                                            Sexy...</label>
+                                        <input class="form-check-input" type="checkbox" value="71" id="mass_interact_hey_sexy_how_you_doin">
+                                        <label class="form-check-label" for="mass_interact_hey_sexy_how_you_doin" data-i18n="optMiHexySexy">Hey Sexy...</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Physical</div>
+                            <div class="option-group-title" data-i18n="optMiGroupPhysical">Physical</div>
                             <div class="row g-1 mb-2">
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="55"
-                                            id="mass_interact_shake_hands">
-                                        <label class="form-check-label" for="mass_interact_shake_hands">Shake
-                                            Hands</label>
+                                        <input class="form-check-input" type="checkbox" value="55" id="mass_interact_shake_hands">
+                                        <label class="form-check-label" for="mass_interact_shake_hands" data-i18n="optMiShakeHands">Shake Hands</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="59"
-                                            id="mass_interact_rub_elbows">
-                                        <label class="form-check-label" for="mass_interact_rub_elbows">Rub
-                                            Elbows</label>
+                                        <input class="form-check-input" type="checkbox" value="59" id="mass_interact_rub_elbows">
+                                        <label class="form-check-label" for="mass_interact_rub_elbows" data-i18n="optMiRubElbows">Rub Elbows</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="8"
-                                            id="mass_interact_hug">
-                                        <label class="form-check-label" for="mass_interact_hug">Hug</label>
+                                        <input class="form-check-input" type="checkbox" value="8" id="mass_interact_hug">
+                                        <label class="form-check-label" for="mass_interact_hug" data-i18n="optMiHug">Hug</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="12"
-                                            id="mass_interact_tickle">
-                                        <label class="form-check-label" for="mass_interact_tickle">Tickle</label>
+                                        <input class="form-check-input" type="checkbox" value="12" id="mass_interact_tickle">
+                                        <label class="form-check-label" for="mass_interact_tickle" data-i18n="optMiTickle">Tickle</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="63"
-                                            id="mass_interact_pat_on_back">
-                                        <label class="form-check-label" for="mass_interact_pat_on_back">Pat on
-                                            Back</label>
+                                        <input class="form-check-input" type="checkbox" value="63" id="mass_interact_pat_on_back">
+                                        <label class="form-check-label" for="mass_interact_pat_on_back" data-i18n="optMiPatOnBack">Pat on Back</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="66"
-                                            id="mass_interact_braid_hair">
-                                        <label class="form-check-label" for="mass_interact_braid_hair">Braid
-                                            Hair</label>
+                                        <input class="form-check-input" type="checkbox" value="66" id="mass_interact_braid_hair">
+                                        <label class="form-check-label" for="mass_interact_braid_hair" data-i18n="optMiBraidHair">Braid Hair</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="7"
-                                            id="mass_interact_buy_a_drink">
-                                        <label class="form-check-label" for="mass_interact_buy_a_drink">Buy a
-                                            Drink</label>
+                                        <input class="form-check-input" type="checkbox" value="7" id="mass_interact_buy_a_drink">
+                                        <label class="form-check-label" for="mass_interact_buy_a_drink" data-i18n="optMiBuyADrink">Buy a Drink</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="129"
-                                            id="mass_interact_stroll_hand_in_hand">
-                                        <label class="form-check-label" for="mass_interact_stroll_hand_in_hand">Stroll
-                                            Hand in Hand</label>
+                                        <input class="form-check-input" type="checkbox" value="129" id="mass_interact_stroll_hand_in_hand">
+                                        <label class="form-check-label" for="mass_interact_stroll_hand_in_hand" data-i18n="optMiStrollHandInHand">Stroll Hand in Hand</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="89"
-                                            id="mass_interact_flex_biceps">
-                                        <label class="form-check-label" for="mass_interact_flex_biceps">Flex
-                                            Biceps</label>
+                                        <input class="form-check-input" type="checkbox" value="89" id="mass_interact_flex_biceps">
+                                        <label class="form-check-label" for="mass_interact_flex_biceps" data-i18n="optMiFlexBiceps">Flex Biceps</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="30"
-                                            id="mass_interact_caress">
-                                        <label class="form-check-label" for="mass_interact_caress">Caress</label>
+                                        <input class="form-check-input" type="checkbox" value="30" id="mass_interact_caress">
+                                        <label class="form-check-label" for="mass_interact_caress" data-i18n="optMiCaress">Caress</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="35"
-                                            id="mass_interact_ask_for_a_dance">
-                                        <label class="form-check-label" for="mass_interact_ask_for_a_dance">Ask for a
-                                            Dance</label>
+                                        <input class="form-check-input" type="checkbox" value="35" id="mass_interact_ask_for_a_dance">
+                                        <label class="form-check-label" for="mass_interact_ask_for_a_dance" data-i18n="optMiAskForADance">Ask for a Dance</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="60"
-                                            id="mass_interact_high_five">
-                                        <label class="form-check-label" for="mass_interact_high_five">High Five</label>
+                                        <input class="form-check-input" type="checkbox" value="60" id="mass_interact_high_five">
+                                        <label class="form-check-label" for="mass_interact_high_five" data-i18n="optMiHighFive">High Five</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="67"
-                                            id="mass_interact_arm_wrestle">
-                                        <label class="form-check-label" for="mass_interact_arm_wrestle">Arm
-                                            Wrestle</label>
+                                        <input class="form-check-input" type="checkbox" value="67" id="mass_interact_arm_wrestle">
+                                        <label class="form-check-label" for="mass_interact_arm_wrestle" data-i18n="optMiArmWrestle">Arm Wrestle</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="56"
-                                            id="mass_interact_kiss_cheeks">
-                                        <label class="form-check-label" for="mass_interact_kiss_cheeks">Kiss
-                                            Cheeks</label>
+                                        <input class="form-check-input" type="checkbox" value="56" id="mass_interact_kiss_cheeks">
+                                        <label class="form-check-label" for="mass_interact_kiss_cheeks" data-i18n="optMiKissCheeks">Kiss Cheeks</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="64"
-                                            id="mass_interact_embrace">
-                                        <label class="form-check-label" for="mass_interact_embrace">Embrace</label>
+                                        <input class="form-check-input" type="checkbox" value="64" id="mass_interact_embrace">
+                                        <label class="form-check-label" for="mass_interact_embrace" data-i18n="optMiEmbrace">Embrace</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="18"
-                                            id="mass_interact_play_with">
-                                        <label class="form-check-label" for="mass_interact_play_with">Play With</label>
+                                        <input class="form-check-input" type="checkbox" value="18" id="mass_interact_play_with">
+                                        <label class="form-check-label" for="mass_interact_play_with" data-i18n="optMiPlayWith">Play With</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="93"
-                                            id="mass_interact_pick_up">
-                                        <label class="form-check-label" for="mass_interact_pick_up">Pick Up</label>
+                                        <input class="form-check-input" type="checkbox" value="93" id="mass_interact_pick_up">
+                                        <label class="form-check-label" for="mass_interact_pick_up" data-i18n="optMiPickUp">Pick Up</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="95"
-                                            id="mass_interact_change_diapers">
-                                        <label class="form-check-label" for="mass_interact_change_diapers">Change
-                                            Diapers</label>
+                                        <input class="form-check-input" type="checkbox" value="95" id="mass_interact_change_diapers">
+                                        <label class="form-check-label" for="mass_interact_change_diapers" data-i18n="optMiChangeDiapers">Change Diapers</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="103"
-                                            id="mass_interact_kiss_on_forehead">
-                                        <label class="form-check-label" for="mass_interact_kiss_on_forehead">Kiss on
-                                            Forehead</label>
+                                        <input class="form-check-input" type="checkbox" value="103" id="mass_interact_kiss_on_forehead">
+                                        <label class="form-check-label" for="mass_interact_kiss_on_forehead" data-i18n="optMiKissOnForehead">Kiss on Forehead</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="44"
-                                            id="mass_interact_give_massage">
-                                        <label class="form-check-label" for="mass_interact_give_massage">Give
-                                            Massage</label>
+                                        <input class="form-check-input" type="checkbox" value="44" id="mass_interact_give_massage">
+                                        <label class="form-check-label" for="mass_interact_give_massage" data-i18n="optMiGiveMassage">Give Massage</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Romantic</div>
+                            <div class="option-group-title" data-i18n="optMiGroupRomantic">Romantic</div>
                             <div class="row g-1 mb-2">
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="9"
-                                            id="mass_interact_kiss">
-                                        <label class="form-check-label" for="mass_interact_kiss">Kiss</label>
+                                        <input class="form-check-input" type="checkbox" value="9" id="mass_interact_kiss">
+                                        <label class="form-check-label" for="mass_interact_kiss" data-i18n="optMiKiss">Kiss</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="10"
-                                            id="mass_interact_kiss_passionately">
-                                        <label class="form-check-label" for="mass_interact_kiss_passionately">Kiss
-                                            Passionately</label>
+                                        <input class="form-check-input" type="checkbox" value="10" id="mass_interact_kiss_passionately">
+                                        <label class="form-check-label" for="mass_interact_kiss_passionately" data-i18n="optMiKissPassionately">Kiss Passionately</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="11"
-                                            id="mass_interact_make_love">
-                                        <label class="form-check-label" for="mass_interact_make_love">Make Love</label>
+                                        <input class="form-check-input" type="checkbox" value="11" id="mass_interact_make_love">
+                                        <label class="form-check-label" for="mass_interact_make_love" data-i18n="optMiMakeLove">Make Love</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="13"
-                                            id="mass_interact_5_minute_quickie">
-                                        <label class="form-check-label" for="mass_interact_5_minute_quickie">5 Minute
-                                            Quickie</label>
+                                        <input class="form-check-input" type="checkbox" value="13" id="mass_interact_5_minute_quickie">
+                                        <label class="form-check-label" for="mass_interact_5_minute_quickie" data-i18n="optMiFiveMinuteQuickie">5 Minute Quickie</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="19"
-                                            id="mass_interact_tantric_sex">
-                                        <label class="form-check-label" for="mass_interact_tantric_sex">Tantric
-                                            Sex</label>
+                                        <input class="form-check-input" type="checkbox" value="19" id="mass_interact_tantric_sex">
+                                        <label class="form-check-label" for="mass_interact_tantric_sex" data-i18n="optMiTantricSex">Tantric Sex</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="164"
-                                            id="mass_interact_enjoy_kobe_sutra">
-                                        <label class="form-check-label" for="mass_interact_enjoy_kobe_sutra">Enjoy Kobe
-                                            Sutra</label>
+                                        <input class="form-check-input" type="checkbox" value="164" id="mass_interact_enjoy_kobe_sutra">
+                                        <label class="form-check-label" for="mass_interact_enjoy_kobe_sutra" data-i18n="optMiEnjoyKobeSutra">Enjoy Kobe Sutra</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Special</div>
+                            <div class="option-group-title" data-i18n="optMiGroupSpecial">Special</div>
                             <div class="row g-1 mb-3">
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="39"
-                                            id="mass_interact_bless">
-                                        <label class="form-check-label" for="mass_interact_bless">Bless</label>
+                                        <input class="form-check-input" type="checkbox" value="39" id="mass_interact_bless">
+                                        <label class="form-check-label" for="mass_interact_bless" data-i18n="optMiBless">Bless</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="33"
-                                            id="mass_interact_do_funny_magic">
-                                        <label class="form-check-label" for="mass_interact_do_funny_magic">Do Funny
-                                            Magic</label>
+                                        <input class="form-check-input" type="checkbox" value="33" id="mass_interact_do_funny_magic">
+                                        <label class="form-check-label" for="mass_interact_do_funny_magic" data-i18n="optMiDoFunnyMagic">Do Funny Magic</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="29"
-                                            id="mass_interact_seek_apprenticeship">
-                                        <label class="form-check-label" for="mass_interact_seek_apprenticeship">Seek
-                                            Apprenticeship</label>
+                                        <input class="form-check-input" type="checkbox" value="29" id="mass_interact_seek_apprenticeship">
+                                        <label class="form-check-label" for="mass_interact_seek_apprenticeship" data-i18n="optMiSeekApprenticeship">Seek Apprenticeship</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="21"
-                                            id="mass_interact_sing_to">
-                                        <label class="form-check-label" for="mass_interact_sing_to">Sing To</label>
+                                        <input class="form-check-input" type="checkbox" value="21" id="mass_interact_sing_to">
+                                        <label class="form-check-label" for="mass_interact_sing_to" data-i18n="optMiSingTo">Sing To</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="78"
-                                            id="mass_interact_serenade">
-                                        <label class="form-check-label" for="mass_interact_serenade">Serenade</label>
+                                        <input class="form-check-input" type="checkbox" value="78" id="mass_interact_serenade">
+                                        <label class="form-check-label" for="mass_interact_serenade" data-i18n="optMiSerenade">Serenade</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="94"
-                                            id="mass_interact_guide">
-                                        <label class="form-check-label" for="mass_interact_guide">Guide</label>
+                                        <input class="form-check-input" type="checkbox" value="94" id="mass_interact_guide">
+                                        <label class="form-check-label" for="mass_interact_guide" data-i18n="optMiGuide">Guide</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" value="6"
-                                            id="mass_interact_google">
-                                        <label class="form-check-label" for="mass_interact_google">Google-Google</label>
+                                        <input class="form-check-input" type="checkbox" value="6" id="mass_interact_google">
+                                        <label class="form-check-label" for="mass_interact_google" data-i18n="optMiGoogleGoogle">Google-Google</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Settings</div>
+                            <div class="option-group-title" data-i18n="optMiGroupSettings">Settings</div>
                             <div class="row g-2">
                                 <div class="col-sm-4">
-                                    <label for="mass_interact_exclude_id" class="form-label">Excluded character IDs
+                                    <label for="mass_interact_exclude_id" class="form-label">
+                                        <span data-i18n="optMiExcludedIds">Excluded character IDs</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="Comma-separated list of character IDs to skip during mass interact."
+                                            data-i18n-title="optMiExcludedIdsTooltip"
                                             class="text-muted ms-1" style="cursor:help;">&#9432;</span>
                                     </label>
-                                    <input type="text" class="form-control form-control-sm"
-                                        id="mass_interact_exclude_id" placeholder="e.g. 1234, 5678">
+                                    <input type="text" class="form-control form-control-sm" id="mass_interact_exclude_id" placeholder="e.g. 1234, 5678" data-i18n-placeholder="optCafExcludedIdsPlaceholder">
                                 </div>
                                 <div class="col-sm-4">
-                                    <label for="mass_interact_max_chars" class="form-label">Max characters (1-100)
+                                    <label for="mass_interact_max_chars" class="form-label">
+                                        <span data-i18n="optMiMaxChars">Max characters (1&#8211;100)</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="Limit the number of characters to interact with per run."
+                                            data-i18n-title="optMiMaxCharsTooltip"
                                             class="text-muted ms-1" style="cursor:help;">&#9432;</span>
                                     </label>
-                                    <input type="number" class="form-control form-control-sm"
-                                        id="mass_interact_max_chars" min="1" max="100">
+                                    <input type="number" class="form-control form-control-sm" id="mass_interact_max_chars" min="1" max="100">
                                 </div>
                                 <div class="col-sm-4 d-flex align-items-end pb-1">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox"
-                                            id="mass_interact_ignore_acquaintance">
-                                        <label class="form-check-label"
-                                            for="mass_interact_ignore_acquaintance">Ignore new
-                                            acquaintances</label>
+                                        <input class="form-check-input" type="checkbox" id="mass_interact_ignore_acquaintance">
+                                        <label class="form-check-label" for="mass_interact_ignore_acquaintance" data-i18n="optMiIgnoreAcquaintance">Ignore new acquaintances</label>
                                     </div>
                                 </div>
                             </div>
@@ -765,89 +662,84 @@
                 <div id="tab-misc" class="tab-content-section d-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Misc Options</h5>
+                            <h5 class="mb-0" data-i18n="optMiscTitle">Misc Options</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">General-purpose settings that affect the overall extension
-                                behaviour.</p>
+                            <p class="text-muted mb-3" data-i18n="optMiscDescription">General-purpose settings that affect the overall extension behaviour.</p>
 
-                            <div class="option-group-title">Display</div>
+                            <div class="option-group-title" data-i18n="optMiscGroupDisplay">Display</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="progress_bar_percent">
-                                        <label class="form-check-label" for="progress_bar_percent">Progress bar
-                                            percentages</label>
+                                        <label class="form-check-label" for="progress_bar_percent" data-i18n="optMiscProgressBarPercent">Progress bar percentages</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="strip_percent_txt">
-                                        <label class="form-check-label" for="strip_percent_txt">Strip text from
-                                            progress %</label>
+                                        <label class="form-check-label" for="strip_percent_txt" data-i18n="optMiscStripPercentTxt">Strip text from progress %</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="score_highlight">
-                                        <label class="form-check-label" for="score_highlight">Score
-                                            highlight</label>
+                                        <label class="form-check-label" for="score_highlight" data-i18n="optMiscScoreHighlight">Score highlight</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="searchable_tables">
-                                        <label class="form-check-label" for="searchable_tables">Searchable
-                                            tables</label>
+                                        <label class="form-check-label" for="searchable_tables" data-i18n="optMiscSearchableTables">Searchable tables</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="show_msg_helper">
-                                        <label class="form-check-label" for="show_msg_helper">Message helper</label>
+                                        <label class="form-check-label" for="show_msg_helper" data-i18n="optMiscMessageHelper">Message helper</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Navigation</div>
+                            <div class="option-group-title" data-i18n="optMiscGroupNavigation">Navigation</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="fast_character_switch">
-                                        <label class="form-check-label" for="fast_character_switch">Auto-switch
-                                            character</label>
+                                        <label class="form-check-label" for="fast_character_switch" data-i18n="optMiscAutoSwitchChar">Auto-switch character</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="redirect_to_login">
-                                        <label class="form-check-label" for="redirect_to_login">Redirect to standard
-                                            login</label>
+                                        <label class="form-check-label" for="redirect_to_login" data-i18n="optMiscRedirectToLogin">Redirect to standard login</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Scoring</div>
+                            <div class="option-group-title" data-i18n="optMiscGroupScoring">Scoring</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
-                                    <label for="score_scale" class="form-label">Score Scale</label>
+                                    <label for="score_scale" class="form-label" data-i18n="optMiscScoreScale">Score Scale</label>
                                     <select class="form-select form-select-sm" id="score_scale">
-                                        <option value="0_26" selected>From 0 to 26</option>
-                                        <option value="1_27">From 1 to 27</option>
+                                        <option value="0_26" data-i18n="optMiscScoreScale0_26">From 0 to 26</option>
+                                        <option value="1_27" data-i18n="optMiscScoreScale1_27">From 1 to 27</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Gotta Go Fast</div>
+                            <div class="option-group-title" data-i18n="optMiscGroupGottaGoFast">Gotta Go Fast</div>
                             <div class="row g-2">
                                 <div class="col-sm-6">
-                                    <label for="autograph_book_name" class="form-label">Autograph book item name
+                                    <label for="autograph_book_name" class="form-label">
+                                        <span data-i18n="optMiscAutographBookName">Autograph book item name</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="The in-game item name of the autograph book in your language."
+                                            data-i18n-title="optMiscAutographBookNameTooltip"
                                             class="text-muted ms-1" style="cursor:help;">&#9432;</span>
                                     </label>
                                     <input type="text" class="form-control form-control-sm" id="autograph_book_name"
-                                        placeholder="e.g. Autograph Book">
+                                        placeholder="e.g. Autograph Book" data-i18n-placeholder="optMiscAutographBookNamePlaceholder">
                                 </div>
                             </div>
                         </div>
@@ -858,43 +750,41 @@
                 <div id="tab-popup" class="tab-content-section d-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Popup Options</h5>
+                            <h5 class="mb-0" data-i18n="optPopupTitle">Popup Options</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">Enable or disable hover popups on specific game elements. Popups
-                                fetch and display element details inline without leaving the page.</p>
+                            <p class="text-muted mb-3" data-i18n="optPopupDescription">Enable or disable hover popups on specific game elements. Popups fetch and display element details inline without leaving the page.</p>
 
-                            <div class="option-group-title">Enabled Popups</div>
+                            <div class="option-group-title" data-i18n="optPopupGroupEnabled">Enabled Popups</div>
                             <div class="row g-2">
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="character_popup">
-                                        <label class="form-check-label" for="character_popup">Character popup</label>
+                                        <label class="form-check-label" for="character_popup" data-i18n="optPopupCharacter">Character popup</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="song_popup">
-                                        <label class="form-check-label" for="song_popup">Songs popup</label>
+                                        <label class="form-check-label" for="song_popup" data-i18n="optPopupSong">Songs popup</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="recent_progress_popup">
-                                        <label class="form-check-label" for="recent_progress_popup">Skills popup</label>
+                                        <label class="form-check-label" for="recent_progress_popup" data-i18n="optPopupSkills">Skills popup</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="show_club_popup">
-                                        <label class="form-check-label" for="show_club_popup">Club popup</label>
+                                        <label class="form-check-label" for="show_club_popup" data-i18n="optPopupClub">Club popup</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="show_details_popup">
-                                        <label class="form-check-label" for="show_details_popup">Show details
-                                            popup</label>
+                                        <label class="form-check-label" for="show_details_popup" data-i18n="optPopupShowDetails">Show details popup</label>
                                     </div>
                                 </div>
                             </div>
@@ -906,44 +796,45 @@
                 <div id="tab-tour-bus" class="tab-content-section d-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Tour Bus Book Helper</h5>
+                            <h5 class="mb-0" data-i18n="optTbTitle">Tour Bus Book Helper</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">Manage the tour bus booking assistant. This feature only works
-                                for VIP accounts.</p>
+                            <p class="text-muted mb-3" data-i18n="optTbDescription">Manage the tour bus booking assistant. This feature only works for VIP accounts.</p>
 
-                            <div class="option-group-title">General</div>
+                            <div class="option-group-title" data-i18n="optTbGroupGeneral">General</div>
                             <div class="row g-2 mb-3">
                                 <div class="col-sm-12">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="tb_enable">
-                                        <label class="form-check-label" for="tb_enable">Enable Tour Bus
-                                            Helper</label>
+                                        <label class="form-check-label" for="tb_enable" data-i18n="optTbEnable">Enable Tour Bus Helper</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="option-group-title">Booking Rules</div>
+                            <div class="option-group-title" data-i18n="optTbGroupBookingRules">Booking Rules</div>
                             <div class="row g-2">
                                 <div class="col-sm-4">
-                                    <label for="tb_book_after" class="form-label">Book tour route after
+                                    <label for="tb_book_after" class="form-label">
+                                        <span data-i18n="optTbBookAfter">Book tour route after</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="Determines which past event triggers the next booking."
+                                            data-i18n-title="optTbBookAfterTooltip"
                                             class="text-muted ms-1" style="cursor:help;">&#9432;</span>
                                     </label>
                                     <select class="form-select form-select-sm" id="tb_book_after">
-                                        <option value="previous_event" selected>Previous Event</option>
-                                        <option value="previous_show">Previous Show</option>
+                                        <option value="previous_event" data-i18n="optTbPreviousEvent">Previous Event</option>
+                                        <option value="previous_show" data-i18n="optTbPreviousShow">Previous Show</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label for="tb_hour_range" class="form-label">Book after how many hours (1-5)
+                                    <label for="tb_hour_range" class="form-label">
+                                        <span data-i18n="optTbHourRange">Book after how many hours (1&#8211;5)</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
                                             title="Number of hours after the trigger event before the route is booked."
+                                            data-i18n-title="optTbHourRangeTooltip"
                                             class="text-muted ms-1" style="cursor:help;">&#9432;</span>
                                     </label>
-                                    <input type="number" class="form-control form-control-sm" id="tb_hour_range"
-                                        min="1" max="5">
+                                    <input type="number" class="form-control form-control-sm" id="tb_hour_range" min="1" max="5">
                                 </div>
                             </div>
                         </div>

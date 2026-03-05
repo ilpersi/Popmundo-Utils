@@ -1,0 +1,898 @@
+{
+    "extName": {
+        "message": "Popmundo Utils",
+        "description": "Extension name"
+    },
+    "extDescription": {
+        "message": "Misc utilities for Popmundo",
+        "description": "Extension description shown in the browser extension list"
+    },
+
+    "optPageTitle": {
+        "message": "Popmundo Utils Options",
+        "description": "Title of the options page tab"
+    },
+    "optSaveButton": {
+        "message": "Save",
+        "description": "Options page save button label"
+    },
+    "optSaved": {
+        "message": "Options saved.",
+        "description": "Status message shown after saving options"
+    },
+
+    "navCallAllFriends": {
+        "message": "Call All Friends",
+        "description": "Sidebar navigation label for the Call All Friends section"
+    },
+    "navEnhancedLinks": {
+        "message": "Enhanced Links",
+        "description": "Sidebar navigation label for the Enhanced Links section"
+    },
+    "navMassInteract": {
+        "message": "Mass Interact",
+        "description": "Sidebar navigation label for the Mass Interact section"
+    },
+    "navMiscOptions": {
+        "message": "Misc Options",
+        "description": "Sidebar navigation label for the Misc Options section"
+    },
+    "navPopupOptions": {
+        "message": "Popup Options",
+        "description": "Sidebar navigation label for the Popup Options section"
+    },
+    "navTourBusHelper": {
+        "message": "Tour Bus Helper",
+        "description": "Sidebar navigation label for the Tour Bus Helper section"
+    },
+
+    "optCafTitle": {
+        "message": "Call All Friends",
+        "description": "Call All Friends section card title"
+    },
+    "optCafDescription": {
+        "message": "Select the telephone interactions to use. The logic will randomly select between the checked ones and those available for each friend.",
+        "description": "Call All Friends section description"
+    },
+    "optCafGroupInteractions": {
+        "message": "Interaction Types",
+        "description": "Category label for call interaction type checkboxes"
+    },
+    "optCafWazzup": {
+        "message": "Wazzup call",
+        "description": "Label for the Wazzup call option"
+    },
+    "optCafPrank": {
+        "message": "Prank call",
+        "description": "Label for the Prank call option"
+    },
+    "optCafSmsPic": {
+        "message": "SMS Funny Pic",
+        "description": "Label for the SMS Funny Pic option"
+    },
+    "optCafSmsTxt": {
+        "message": "SMS Friendly Text",
+        "description": "Label for the SMS Friendly Text option"
+    },
+    "optCafGossip": {
+        "message": "Gossip on phone",
+        "description": "Label for the Gossip on phone option"
+    },
+    "optCafGroupExclusions": {
+        "message": "Exclusions",
+        "description": "Category label for call exclusion settings"
+    },
+    "optCafExcludedIds": {
+        "message": "Excluded character IDs",
+        "description": "Label for the excluded character IDs field in Call All Friends"
+    },
+    "optCafExcludedIdsTooltip": {
+        "message": "Comma-separated list of character IDs to skip during calls.",
+        "description": "Tooltip text for the excluded character IDs field in Call All Friends"
+    },
+    "optCafExcludedIdsPlaceholder": {
+        "message": "e.g. 1234, 5678",
+        "description": "Placeholder text for the excluded character IDs field in Call All Friends"
+    },
+
+    "optElTitle": {
+        "message": "Enhanced Links",
+        "description": "Enhanced Links section card title"
+    },
+    "optElDescription": {
+        "message": "Add quick-action links next to game elements for faster navigation and interactions.",
+        "description": "Enhanced Links section description"
+    },
+    "optElGroupBand": {
+        "message": "Band",
+        "description": "Category label for band-related enhanced links"
+    },
+    "optElPopularity": {
+        "message": "Popularity link",
+        "description": "Label for the band Popularity link option"
+    },
+    "optElUpcomingShows": {
+        "message": "Upcoming Shows link",
+        "description": "Label for the band Upcoming Shows link option"
+    },
+    "optElGroupCharacter": {
+        "message": "Character",
+        "description": "Category label for character-related enhanced links"
+    },
+    "optElSendMessage": {
+        "message": "Send Message link",
+        "description": "Label for the character Send Message link option"
+    },
+    "optElCall": {
+        "message": "Call link",
+        "description": "Label for the character Call link option"
+    },
+    "optElOfferItem": {
+        "message": "Offer an Item link",
+        "description": "Label for the character Offer an Item link option"
+    },
+    "optElGroupCity": {
+        "message": "City",
+        "description": "Category label for city-related enhanced links"
+    },
+    "optElBookFlight": {
+        "message": "Book Regular Flight link",
+        "description": "Label for the city Book Regular Flight link option"
+    },
+    "optElCharterJet": {
+        "message": "Charter VIP Jet link",
+        "description": "Label for the city Charter VIP Jet link option"
+    },
+    "optElOtherVehicles": {
+        "message": "Other Vehicles link",
+        "description": "Label for the city Other Vehicles link option"
+    },
+    "optElFindLocales": {
+        "message": "Find Locales link",
+        "description": "Label for the city Find Locales link option"
+    },
+    "optElGroupLocale": {
+        "message": "Locale",
+        "description": "Category label for locale-related enhanced links"
+    },
+    "optElCharactersPresent": {
+        "message": "Characters Present link",
+        "description": "Label for the locale Characters Present link option"
+    },
+    "optElMoveToLocale": {
+        "message": "Move to Locale link",
+        "description": "Label for the locale Move to Locale link option"
+    },
+    "optElReconnaissance": {
+        "message": "Reconnaissance link",
+        "description": "Label for the locale Reconnaissance link option"
+    },
+    "optElGroupCrew": {
+        "message": "Crew",
+        "description": "Category label for crew-related enhanced links"
+    },
+    "optElTopHeists": {
+        "message": "Top Heists link",
+        "description": "Label for the crew Top Heists link option"
+    },
+
+    "optMiTitle": {
+        "message": "Mass Interact",
+        "description": "Mass Interact section card title"
+    },
+    "optMiDescription": {
+        "message": "Select the interactions to use. The logic will randomly select between the checked ones and those available for found characters.",
+        "description": "Mass Interact section description"
+    },
+    "optMiGroupVerbal": {
+        "message": "Verbal & Social",
+        "description": "Category label for verbal and social interactions"
+    },
+    "optMiGreet": { "message": "Greet" },
+    "optMiSmile": { "message": "Smile" },
+    "optMiWink": { "message": "Wink" },
+    "optMiInsult": { "message": "Insult" },
+    "optMiTalkTo": { "message": "Talk to" },
+    "optMiTease": { "message": "Tease" },
+    "optMiShareOpinions": { "message": "Share Opinions" },
+    "optMiGossip": { "message": "Gossip" },
+    "optMiProfoundDiscussion": { "message": "Profound Discussion" },
+    "optMiComfort": { "message": "Comfort" },
+    "optMiFraternize": { "message": "Fraternize" },
+    "optMiOfferAdvice": { "message": "Offer Advice" },
+    "optMiCompliment": { "message": "Compliment" },
+    "optMiPraise": { "message": "Praise" },
+    "optMiTellNaughtyJoke": { "message": "Tell Naughty Joke" },
+    "optMiTellJoke": { "message": "Tell Joke" },
+    "optMiShareSecrets": { "message": "Share Secrets" },
+    "optMiHangOut": { "message": "Hang Out" },
+    "optMiHexySexy": { "message": "Hey Sexy..." },
+    "optMiGroupPhysical": {
+        "message": "Physical",
+        "description": "Category label for physical interactions"
+    },
+    "optMiShakeHands": { "message": "Shake Hands" },
+    "optMiRubElbows": { "message": "Rub Elbows" },
+    "optMiHug": { "message": "Hug" },
+    "optMiTickle": { "message": "Tickle" },
+    "optMiPatOnBack": { "message": "Pat on Back" },
+    "optMiBraidHair": { "message": "Braid Hair" },
+    "optMiBuyADrink": { "message": "Buy a Drink" },
+    "optMiStrollHandInHand": { "message": "Stroll Hand in Hand" },
+    "optMiFlexBiceps": { "message": "Flex Biceps" },
+    "optMiCaress": { "message": "Caress" },
+    "optMiAskForADance": { "message": "Ask for a Dance" },
+    "optMiHighFive": { "message": "High Five" },
+    "optMiArmWrestle": { "message": "Arm Wrestle" },
+    "optMiKissCheeks": { "message": "Kiss Cheeks" },
+    "optMiEmbrace": { "message": "Embrace" },
+    "optMiPlayWith": { "message": "Play With" },
+    "optMiPickUp": { "message": "Pick Up" },
+    "optMiChangeDiapers": { "message": "Change Diapers" },
+    "optMiKissOnForehead": { "message": "Kiss on Forehead" },
+    "optMiGiveMassage": { "message": "Give Massage" },
+    "optMiGroupRomantic": {
+        "message": "Romantic",
+        "description": "Category label for romantic interactions"
+    },
+    "optMiKiss": { "message": "Kiss" },
+    "optMiKissPassionately": { "message": "Kiss Passionately" },
+    "optMiMakeLove": { "message": "Make Love" },
+    "optMiFiveMinuteQuickie": { "message": "5 Minute Quickie" },
+    "optMiTantricSex": { "message": "Tantric Sex" },
+    "optMiEnjoyKobeSutra": { "message": "Enjoy Kobe Sutra" },
+    "optMiGroupSpecial": {
+        "message": "Special",
+        "description": "Category label for special interactions"
+    },
+    "optMiBless": { "message": "Bless" },
+    "optMiDoFunnyMagic": { "message": "Do Funny Magic" },
+    "optMiSeekApprenticeship": { "message": "Seek Apprenticeship" },
+    "optMiSingTo": { "message": "Sing To" },
+    "optMiSerenade": { "message": "Serenade" },
+    "optMiGuide": { "message": "Guide" },
+    "optMiGoogleGoogle": { "message": "Google-Google" },
+    "optMiGroupSettings": {
+        "message": "Settings",
+        "description": "Category label for mass interact settings"
+    },
+    "optMiExcludedIds": {
+        "message": "Excluded character IDs",
+        "description": "Label for excluded character IDs in mass interact"
+    },
+    "optMiExcludedIdsTooltip": {
+        "message": "Comma-separated list of character IDs to skip during mass interact.",
+        "description": "Tooltip for excluded IDs field in mass interact"
+    },
+    "optMiMaxChars": {
+        "message": "Max characters (1\u2013100)",
+        "description": "Label for the maximum characters input in mass interact"
+    },
+    "optMiMaxCharsTooltip": {
+        "message": "Limit the number of characters to interact with per run.",
+        "description": "Tooltip for max characters field in mass interact"
+    },
+    "optMiIgnoreAcquaintance": {
+        "message": "Ignore new acquaintances",
+        "description": "Label for the ignore new acquaintances toggle in mass interact"
+    },
+
+    "optMiscTitle": {
+        "message": "Misc Options",
+        "description": "Misc Options section card title"
+    },
+    "optMiscDescription": {
+        "message": "General-purpose settings that affect the overall extension behaviour.",
+        "description": "Misc Options section description"
+    },
+    "optMiscGroupDisplay": {
+        "message": "Display",
+        "description": "Category label for display-related misc options"
+    },
+    "optMiscProgressBarPercent": {
+        "message": "Progress bar percentages",
+        "description": "Label for the progress bar percentages option"
+    },
+    "optMiscStripPercentTxt": {
+        "message": "Strip text from progress %",
+        "description": "Label for the strip text from progress percentage option"
+    },
+    "optMiscScoreHighlight": {
+        "message": "Score highlight",
+        "description": "Label for the score highlight option"
+    },
+    "optMiscSearchableTables": {
+        "message": "Searchable tables",
+        "description": "Label for the searchable tables option"
+    },
+    "optMiscMessageHelper": {
+        "message": "Message helper",
+        "description": "Label for the message helper option"
+    },
+    "optMiscGroupNavigation": {
+        "message": "Navigation",
+        "description": "Category label for navigation-related misc options"
+    },
+    "optMiscAutoSwitchChar": {
+        "message": "Auto-switch character",
+        "description": "Label for the auto-switch character option"
+    },
+    "optMiscRedirectToLogin": {
+        "message": "Redirect to standard login",
+        "description": "Label for the redirect to standard login option"
+    },
+    "optMiscGroupScoring": {
+        "message": "Scoring",
+        "description": "Category label for scoring-related misc options"
+    },
+    "optMiscScoreScale": {
+        "message": "Score Scale",
+        "description": "Label for the score scale select"
+    },
+    "optMiscScoreScale0_26": {
+        "message": "From 0 to 26",
+        "description": "Score scale select option: 0-26"
+    },
+    "optMiscScoreScale1_27": {
+        "message": "From 1 to 27",
+        "description": "Score scale select option: 1-27"
+    },
+    "optMiscGroupGottaGoFast": {
+        "message": "Gotta Go Fast",
+        "description": "Category label for the Gotta Go Fast autograph collection feature"
+    },
+    "optMiscAutographBookName": {
+        "message": "Autograph book item name",
+        "description": "Label for the autograph book item name field"
+    },
+    "optMiscAutographBookNameTooltip": {
+        "message": "The in-game item name of the autograph book in your language.",
+        "description": "Tooltip for the autograph book item name field"
+    },
+    "optMiscAutographBookNamePlaceholder": {
+        "message": "e.g. Autograph Book",
+        "description": "Placeholder for the autograph book item name field"
+    },
+
+    "optPopupTitle": {
+        "message": "Popup Options",
+        "description": "Popup Options section card title"
+    },
+    "optPopupDescription": {
+        "message": "Enable or disable hover popups on specific game elements. Popups fetch and display element details inline without leaving the page.",
+        "description": "Popup Options section description"
+    },
+    "optPopupGroupEnabled": {
+        "message": "Enabled Popups",
+        "description": "Category label for the popup toggle switches"
+    },
+    "optPopupCharacter": {
+        "message": "Character popup",
+        "description": "Label for the character popup option"
+    },
+    "optPopupSong": {
+        "message": "Songs popup",
+        "description": "Label for the song popup option"
+    },
+    "optPopupSkills": {
+        "message": "Skills popup",
+        "description": "Label for the skills popup option"
+    },
+    "optPopupClub": {
+        "message": "Club popup",
+        "description": "Label for the club popup option"
+    },
+    "optPopupShowDetails": {
+        "message": "Show details popup",
+        "description": "Label for the show details popup option"
+    },
+
+    "optTbTitle": {
+        "message": "Tour Bus Book Helper",
+        "description": "Tour Bus Helper section card title"
+    },
+    "optTbDescription": {
+        "message": "Manage the tour bus booking assistant. This feature only works for VIP accounts.",
+        "description": "Tour Bus Helper section description"
+    },
+    "optTbGroupGeneral": {
+        "message": "General",
+        "description": "Category label for general tour bus options"
+    },
+    "optTbEnable": {
+        "message": "Enable Tour Bus Helper",
+        "description": "Label for the enable tour bus helper toggle"
+    },
+    "optTbGroupBookingRules": {
+        "message": "Booking Rules",
+        "description": "Category label for tour bus booking rule settings"
+    },
+    "optTbBookAfter": {
+        "message": "Book tour route after",
+        "description": "Label for the book-after select in tour bus helper"
+    },
+    "optTbBookAfterTooltip": {
+        "message": "Determines which past event triggers the next booking.",
+        "description": "Tooltip for the book-after select"
+    },
+    "optTbPreviousEvent": {
+        "message": "Previous Event",
+        "description": "Tour bus book-after option: previous event"
+    },
+    "optTbPreviousShow": {
+        "message": "Previous Show",
+        "description": "Tour bus book-after option: previous show"
+    },
+    "optTbHourRange": {
+        "message": "Book after how many hours (1\u20135)",
+        "description": "Label for the hour range input in tour bus helper"
+    },
+    "optTbHourRangeTooltip": {
+        "message": "Number of hours after the trigger event before the route is booked.",
+        "description": "Tooltip for the hour range input"
+    },
+
+    "menuTitle": {
+        "message": "Popmundo Utils",
+        "description": "In-game sidebar menu title"
+    },
+    "menuDeveloper": {
+        "message": "Developer",
+        "description": "In-game sidebar menu item for developer tools"
+    },
+    "menuOptions": {
+        "message": "Options",
+        "description": "In-game sidebar menu item that opens the options page"
+    },
+    "menuReportIssue": {
+        "message": "Report an Issue",
+        "description": "In-game sidebar menu item that opens the GitHub issue tracker"
+    },
+
+    "linkUpcomingShows": {
+        "message": "Upcoming Shows",
+        "description": "Title attribute on the Upcoming Shows icon link"
+    },
+    "linkPopularity": {
+        "message": "Popularity",
+        "description": "Title attribute on the Popularity icon link"
+    },
+    "linkTopHeists": {
+        "message": "Top Heists",
+        "description": "Title attribute on the Top Heists icon link"
+    },
+    "linkSendMessage": {
+        "message": "Send Message",
+        "description": "Title attribute on the Send Message icon link"
+    },
+    "linkOfferItem": {
+        "message": "Offer an Item",
+        "description": "Title attribute on the Offer an Item icon link"
+    },
+    "linkCall": {
+        "message": "Call",
+        "description": "Title attribute on the Call icon link"
+    },
+    "linkOtherVehicles": {
+        "message": "Other Vehicles",
+        "description": "Title attribute on the Other Vehicles icon link"
+    },
+    "linkFindLocales": {
+        "message": "Find Locales",
+        "description": "Title attribute on the Find Locales icon link"
+    },
+    "linkCharterJet": {
+        "message": "Charter VIP Jet",
+        "description": "Title attribute on the Charter VIP Jet icon link"
+    },
+    "linkBookFlight": {
+        "message": "Book Regular Flight",
+        "description": "Title attribute on the Book Regular Flight icon link"
+    },
+    "linkReconnaissance": {
+        "message": "Reconnaissance",
+        "description": "Title attribute on the Reconnaissance icon link"
+    },
+    "linkMoveToLocale": {
+        "message": "Move To Locale",
+        "description": "Title attribute on the Move To Locale icon link"
+    },
+    "linkCharactersPresent": {
+        "message": "Characters Present",
+        "description": "Title attribute on the Characters Present icon link"
+    },
+
+    "cafH2": {
+        "message": "Call all your contacts",
+        "description": "Heading for the Call All Friends in-game panel"
+    },
+    "cafDescription": {
+        "message": "Call all your friends that have a phone.",
+        "description": "Description text in the Call All Friends in-game panel"
+    },
+    "cafButton": {
+        "message": "Call all relationships",
+        "description": "Submit button label for the Call All Friends feature"
+    },
+    "cafStatusIgnored": {
+        "message": "Ignored $COUNT$ friend(s). ",
+        "description": "Status prefix when some friends are excluded",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "cafStatusChecking": {
+        "message": "Checking friend $INDEX$ out of $TOTAL$ ($NAME$).",
+        "description": "Status while checking each friend for call availability",
+        "placeholders": {
+            "index": { "content": "$1", "example": "1" },
+            "total": { "content": "$2", "example": "20" },
+            "name": { "content": "$3", "example": "Jane" }
+        }
+    },
+    "cafStatusNoFriends": {
+        "message": "No friends to call.",
+        "description": "Status when no callable friends are found"
+    },
+    "cafStatusCalling": {
+        "message": "Calling $CALLABLE$ friends out of $TOTAL$...",
+        "description": "Status at the start of the calling phase",
+        "placeholders": {
+            "callable": { "content": "$1", "example": "15" },
+            "total": { "content": "$2", "example": "20" }
+        }
+    },
+    "cafStatusCallingOne": {
+        "message": "Calling friend $INDEX$ out of $TOTAL$ ($NAME$)...",
+        "description": "Status while calling each friend",
+        "placeholders": {
+            "index": { "content": "$1", "example": "1" },
+            "total": { "content": "$2", "example": "15" },
+            "name": { "content": "$3", "example": "Jane" }
+        }
+    },
+    "cafStatusSuccess": {
+        "message": "Successfully called $COUNT$ friends out of $TOTAL$.",
+        "description": "Final status after all calls are complete",
+        "placeholders": {
+            "count": { "content": "$1", "example": "14" },
+            "total": { "content": "$2", "example": "15" }
+        }
+    },
+
+    "miH2": {
+        "message": "Mass Interact with present characters",
+        "description": "Heading for the Mass Interact in-game panel"
+    },
+    "miDescription": {
+        "message": "Perform interactions with characters present in this locale.",
+        "description": "Description text in the Mass Interact in-game panel"
+    },
+    "miButton": {
+        "message": "Mass Interact",
+        "description": "Submit button label for the Mass Interact feature"
+    },
+    "miStatusCheckingRelations": {
+        "message": "Ignore new acquaintances is enabled, checking relations URL...",
+        "description": "Status when loading the relations page to filter acquaintances"
+    },
+    "miStatusAnalyzingRelations": {
+        "message": "Analyzing relations page $PAGE$ to get current acquaintances...",
+        "description": "Status while parsing each page of the relations list",
+        "placeholders": {
+            "page": { "content": "$1", "example": "1" }
+        }
+    },
+    "miStatusSkippingAcquaintance": {
+        "message": "Skipping $NAME$ as new acquaintances are not allowed...",
+        "description": "Status when a character is skipped because they are a new acquaintance",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "miStatusSkippingExcluded": {
+        "message": "Skipping $NAME$ as the ID is in the ignore list...",
+        "description": "Status when a character is skipped because their ID is in the exclusion list",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "miStatusTotalSkipped": {
+        "message": "Ignored a total of $TOTAL$ present characters.",
+        "description": "Summary of skipped characters",
+        "placeholders": {
+            "total": { "content": "$1", "example": "5" }
+        }
+    },
+    "miStatusNewAcqSkip": {
+        "message": " $COUNT$ new acquaintance(s).",
+        "description": "Appended to the skipped summary for new acquaintances",
+        "placeholders": {
+            "count": { "content": "$1", "example": "2" }
+        }
+    },
+    "miStatusIgnoreSkip": {
+        "message": " $COUNT$ ignored character(s).",
+        "description": "Appended to the skipped summary for explicitly ignored characters",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "miStatusTotalInteractions": {
+        "message": "Total performed interactions: $TOTAL$.",
+        "description": "Running count of interactions performed",
+        "placeholders": {
+            "total": { "content": "$1", "example": "42" }
+        }
+    },
+    "miStatusCheckingChar": {
+        "message": "Checking character $INDEX$ out of $TOTAL$ ($NAME$).",
+        "description": "Status while checking interaction options for each character",
+        "placeholders": {
+            "index": { "content": "$1", "example": "3" },
+            "total": { "content": "$2", "example": "10" },
+            "name": { "content": "$3", "example": "Jane" }
+        }
+    },
+    "miStatusInteracting": {
+        "message": "Interacting with friend $INDEX$ out of $TOTAL$ ($NAME$). Interaction # $INTERACTION$...",
+        "description": "Status while performing each interaction",
+        "placeholders": {
+            "index": { "content": "$1", "example": "3" },
+            "total": { "content": "$2", "example": "10" },
+            "name": { "content": "$3", "example": "Jane" },
+            "interaction": { "content": "$4", "example": "2" }
+        }
+    },
+    "miStatusFinalInteracted": {
+        "message": "Interacted a total of $INTERACTIONS$ with $CHARS$ characters!",
+        "description": "Final summary shown after all mass interactions complete",
+        "placeholders": {
+            "interactions": { "content": "$1", "example": "30" },
+            "chars": { "content": "$2", "example": "10" }
+        }
+    },
+    "miStatusNoInteraction": {
+        "message": "No interaction has been performed.",
+        "description": "Status when mass interact finds no interactions to perform"
+    },
+
+    "ggfTitle": {
+        "message": "Collect Autographs",
+        "description": "Heading for the Gotta Go Fast autograph collection panel"
+    },
+    "ggfDescription": {
+        "message": "The script will use all books in your inventory to collect autographs from pop stars present in the city!",
+        "description": "Description paragraph for the autograph collection panel"
+    },
+    "ggfHowToUse": {
+        "message": "How to use?",
+        "description": "Instructions heading for the autograph collection panel"
+    },
+    "ggfStep1": {
+        "message": "Configure the <strong>Autograph book item name</strong> (in your language) on the <a href=\"#\" id=\"autograph-open-options-link\"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.",
+        "description": "Step 1 instruction for autograph collection. Contains HTML. The link id must not be changed."
+    },
+    "ggfStep2": {
+        "message": "Ensure you have autograph books in your inventory. Your character must be in any city (not traveling) and must not have a busy status (e.g. recording, rehearsal, date, etc.).",
+        "description": "Step 2 instruction for autograph collection"
+    },
+    "ggfStep3": {
+        "message": "Click <strong>Start</strong> to begin. The script will find famous people in the city, and the magic starts.",
+        "description": "Step 3 instruction for autograph collection. Contains HTML."
+    },
+    "ggfStep4": {
+        "message": "<strong>Blocked chars</strong> are characters that did not accept item usage. They are stored for the current session only so they are not retried repeatedly. Use <strong>Clear blocked chars</strong> to remove them from the list and allow the script to try them again in the same session.",
+        "description": "Step 4 instruction for autograph collection. Contains HTML."
+    },
+    "ggfClearBlockedChars": {
+        "message": "Clear blocked chars",
+        "description": "Button label to clear the blocked characters list"
+    },
+    "ggfClearBlockedCharsTitle": {
+        "message": "Clear characters that don't accept item usage from session storage",
+        "description": "Title tooltip on the clear blocked chars button"
+    },
+    "ggfStart": {
+        "message": "Start",
+        "description": "Button label to start autograph collection"
+    },
+    "ggfLogColTime": {
+        "message": "Time",
+        "description": "Log table column header: time"
+    },
+    "ggfLogColType": {
+        "message": "Type",
+        "description": "Log table column header: type"
+    },
+    "ggfLogColMessage": {
+        "message": "Message",
+        "description": "Log table column header: message"
+    },
+    "ggfBooksFound": {
+        "message": "Number of autograph books found: $COUNT$",
+        "description": "Log message when autograph books are detected in inventory",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "ggfNoBooksFound": {
+        "message": "No autograph books found. Check if the autograph book item name is configured in the Options page.",
+        "description": "Warning log when no autograph books are found in inventory"
+    },
+    "ggfNoBooks": {
+        "message": "No books",
+        "description": "Disabled state label for the start button when no books exist"
+    },
+    "ggfCollecting": {
+        "message": "Collecting Autographs...",
+        "description": "Button label while autograph collection is running"
+    },
+    "ggfWaiting": {
+        "message": "Waiting: $MINUTES$ minutes and $SECONDS$ seconds remaining...",
+        "description": "Countdown timer message shown during cooldown",
+        "placeholders": {
+            "minutes": { "content": "$1", "example": "5" },
+            "seconds": { "content": "$2", "example": "30" }
+        }
+    },
+    "ggfContinuing": {
+        "message": "Continuing autograph collection...",
+        "description": "Message shown when the cooldown timer finishes"
+    },
+    "ggfMovingToLocation": {
+        "message": "Moving to location of <b>$NAME$</b>",
+        "description": "Log entry when navigating to a character's location. Contains HTML.",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "ggfMaybeLeft": {
+        "message": "Maybe $NAME$ is no longer in the city, or something happened!",
+        "description": "Warning log when a character's location cannot be found",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "ggfErrorNavigating": {
+        "message": "Error navigating to $NAME$: $ERROR$",
+        "description": "Error log when navigation to a character fails",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" },
+            "error": { "content": "$2", "example": "Network error" }
+        }
+    },
+    "ggfNotAvailable": {
+        "message": "Apparently <b>$NAME$</b> is no longer available or does not allow item usage.",
+        "description": "Log when a character's interact page has no item-use dropdown. Contains HTML.",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "ggfStoringChar": {
+        "message": "Storing char $NAME$ ($ID$) in storage so they won't be tried again.",
+        "description": "Warning log when a character is added to the blocked list",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" },
+            "id": { "content": "$2", "example": "12345" }
+        }
+    },
+    "ggfWaitingCooldown": {
+        "message": "Waiting for book cooldown ($MINUTES$ min remaining)...",
+        "description": "Log when all books are on cooldown",
+        "placeholders": {
+            "minutes": { "content": "$1", "example": "4" }
+        }
+    },
+    "ggfCollectingFrom": {
+        "message": "Collecting autograph from <b>$NAME$</b> using book ID: $BOOKID$",
+        "description": "Log when using a book on a character. Contains HTML.",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" },
+            "bookid": { "content": "$2", "example": "98765" }
+        }
+    },
+    "ggfErrorCollecting": {
+        "message": "Error collecting autograph from $NAME$: $ERROR$",
+        "description": "Error log when autograph collection fails for a character",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" },
+            "error": { "content": "$2", "example": "Network error" }
+        }
+    },
+    "ggfAutographCollected": {
+        "message": "Autograph collected from $NAME$",
+        "description": "Success log when an autograph is successfully collected",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "ggfAutographCompleted": {
+        "message": "Autograph operation completed for $NAME$",
+        "description": "Info log when the autograph use completed without explicit success/error status",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Jane" }
+        }
+    },
+    "ggfNoEligible": {
+        "message": "No eligible person found. Will try again in 60 s.",
+        "description": "Warning log when the city has no eligible characters left to collect from"
+    },
+    "ggfCooldownWait": {
+        "message": "Cooldown of $MINUTES$ min before next use\u2026",
+        "description": "Log when waiting for book cooldown between characters",
+        "placeholders": {
+            "minutes": { "content": "$1", "example": "6" }
+        }
+    },
+    "ggfScriptError": {
+        "message": "Error during script execution \u2013 check the console.",
+        "description": "Generic error log for unexpected exceptions in the main loop"
+    },
+    "ggfStopped": {
+        "message": "Autograph collection stopped.",
+        "description": "Log when the user stops autograph collection"
+    },
+    "ggfBlockedCleared": {
+        "message": "Blocked chars list cleared (session storage).",
+        "description": "Log when the blocked characters list is cleared"
+    },
+
+    "remTodayIs": {
+        "message": "Today is day $DAY$ of year $YEAR$.",
+        "description": "Prefix for reminder notifications indicating the current in-game date",
+        "placeholders": {
+            "day": { "content": "$1", "example": "27" },
+            "year": { "content": "$2", "example": "24" }
+        }
+    },
+    "remDay28": {
+        "message": "Is the Day of the Dead!",
+        "description": "Reminder for in-game day 28"
+    },
+    "remDay40": {
+        "message": "Is St Kobe's Day! Investigate the Statues of Celestial Beauty in Johannesburg, Moscow, Singapore, and Troms\u00f8 to go on an adventurous quest for improved music genre skills.",
+        "description": "Reminder for in-game day 40 (St Kobe's Day)"
+    },
+    "remDay48": {
+        "message": "Remember to use your Halloween Horror!",
+        "description": "Reminder for in-game day 48"
+    },
+    "remDay52": {
+        "message": "Is Christmas!",
+        "description": "Reminder for in-game day 52"
+    },
+    "remDay54": {
+        "message": "Remember to wear your Marvin T-Shirt to increase your star quality and get one experience point.",
+        "description": "Reminder for in-game day 54"
+    },
+    "remThursdayCards": {
+        "message": "It is Thursday, remember to get your free cards!",
+        "description": "Reminder shown on Thursdays for The Great Heist free card collection"
+    },
+    "remItemReady": {
+        "message": "Your $NAME$ is ready to be used.",
+        "description": "Notification when an item timer has expired and the item is ready",
+        "placeholders": {
+            "name": { "content": "$1", "example": "Autograph Book" }
+        }
+    },
+    "remUseLink": {
+        "message": "Use",
+        "description": "Link text to use a ready item from the reminder notification"
+    },
+    "remDismissLink": {
+        "message": "Dismiss Notification",
+        "description": "Link text to dismiss a ready item notification"
+    },
+
+    "itTimerButtonSuffix": {
+        "message": " & Timer",
+        "description": "Suffix appended to item use buttons to create the Use & Timer button"
+    },
+
+    "iltTimerExpired": {
+        "message": "Timer expired: ",
+        "description": "Prefix added to the item date/time when its timer has expired"
+    }
+}

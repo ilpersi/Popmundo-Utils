@@ -88,8 +88,8 @@ async function onSubmitClick() {
 
         let statusMessage = '';
         if (ignoreCnt > 0)
-            statusMessage += `Ignored ${ignoreCnt} friend(s). `;
-        statusMessage += `Checking friend ${friendIndex + 1} out of ${friendsInfo.length} (${friendDict.name}).`;
+            statusMessage += chrome.i18n.getMessage('cafStatusIgnored', [String(ignoreCnt)]);
+        statusMessage += chrome.i18n.getMessage('cafStatusChecking', [String(friendIndex + 1), String(friendsInfo.length), friendDict.name]);
         statusPElem.textContent = statusMessage;
 
         let interactUrl = Utils.getServerLink(`${interactPath}${friendDict.id}`);
@@ -165,16 +165,16 @@ async function onSubmitClick() {
     let callableFriends = friendsDetails.filter(details => details.canCall);
 
     if (callableFriends.length == 0) {
-        statusPElem.textContent = `No friends to call.`;
+        statusPElem.textContent = chrome.i18n.getMessage('cafStatusNoFriends');
     } else {
-        statusPElem.textContent = `Calling ${callableFriends.length} friends out of ${friendsInfo.length}...`;
+        statusPElem.textContent = chrome.i18n.getMessage('cafStatusCalling', [String(callableFriends.length), String(friendsInfo.length)]);
 
         let succesCalls = 0;
 
         // Phase 2: call each friend sequentially
         for (let friendIndex = 0; friendIndex < callableFriends.length; friendIndex++) {
             let friendDetails = callableFriends[friendIndex];
-            statusPElem.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length} (${friendDetails.name})...`;
+            statusPElem.textContent = chrome.i18n.getMessage('cafStatusCallingOne', [String(friendIndex + 1), String(callableFriends.length), friendDetails.name]);
 
             try {
                 await fetcher.fetch(friendDetails.interactUrl, {
@@ -187,7 +187,7 @@ async function onSubmitClick() {
             }
         }
 
-        statusPElem.textContent = `Succesfully called ${succesCalls} friends out of ${callableFriends.length}.`;
+        statusPElem.textContent = chrome.i18n.getMessage('cafStatusSuccess', [String(succesCalls), String(callableFriends.length)]);
 
         // We reload the page so we get all the notifications prited out in the green banners.
         if (succesCalls > 0) {
@@ -213,10 +213,10 @@ function injectCallAllHTML() {
         callAllDiv.setAttribute('class', 'box');
 
         let callAllH2 = document.createElement('h2');
-        callAllH2.textContent = 'Call all your contancts';
+        callAllH2.textContent = chrome.i18n.getMessage('cafH2');
 
         let callAllP1 = document.createElement('p');
-        callAllP1.textContent = 'Call all your friends that have a phone.';
+        callAllP1.textContent = chrome.i18n.getMessage('cafDescription');
         let callAllP3 = document.createElement('p');
         callAllP3.setAttribute('id', 'call-all-status-p');
         callAllP3.textContent = '';
@@ -226,7 +226,7 @@ function injectCallAllHTML() {
 
         let callAllSubmit = document.createElement('input');
         callAllSubmit.setAttribute('type', 'submit');
-        callAllSubmit.setAttribute('value', 'Call all relationships');
+        callAllSubmit.setAttribute('value', chrome.i18n.getMessage('cafButton'));
         callAllSubmit.setAttribute('class', 'cns');
         callAllSubmit.onclick = () => { onSubmitClick(); return false; };
 

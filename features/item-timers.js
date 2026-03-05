@@ -166,7 +166,7 @@ async function injectUseAndTimer() {
         let newBtn = document.createElement('input');
         newBtn.setAttribute('type', 'submit');
         newBtn.setAttribute('name', btnNode.getAttribute('name'));
-        newBtn.setAttribute('value', btnNode.getAttribute('value') + ' & Timer');
+        newBtn.setAttribute('value', btnNode.getAttribute('value') + chrome.i18n.getMessage('itTimerButtonSuffix'));
         newBtn.setAttribute('class', btnNode.getAttribute('class'));
 
         btnNode.parentNode.insertBefore(newBtn, btnResult.nextSibling);

@@ -112,23 +112,23 @@ function checkCrewLinks(aElem, elemID) {
 function handleIconLink(options) {
     let linkDB = [
         // Band links
-        { 'option': 'band_upcoming_shows', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/UpcomingPerformances/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/UpcomingPerformances/', 'img': 'images/calendar-list.png', 'title': 'Upcoming Shows' },
-        { 'option': 'band_popularity_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/Popularity/', 'img': 'images/star.png', 'title': 'Popularity' },
+        { 'option': 'band_upcoming_shows', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/UpcomingPerformances/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/UpcomingPerformances/', 'img': 'images/calendar-list.png', 'title': chrome.i18n.getMessage('linkUpcomingShows') },
+        { 'option': 'band_popularity_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/Popularity/', 'img': 'images/star.png', 'title': chrome.i18n.getMessage('linkPopularity') },
         // Crew links
-        { 'option': 'crew_top_heist_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Artist/TopHeists/', 'img': 'images/star.png', 'title': 'Top Heists' },
+        { 'option': 'crew_top_heist_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Artist/TopHeists/', 'img': 'images/star.png', 'title': chrome.i18n.getMessage('linkTopHeists') },
         // Character links
-        { 'option': 'character_send_message', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Conversation/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Conversations/Conversation/', 'img': 'images/mail--arrow.png', 'title': 'Send Message' },
-        { 'option': 'character_offer_an_item', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/OfferItem/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Character/OfferItem/', 'img': 'images/box--arrow.png', 'title': 'Offer an Item' },
-        { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'img': 'images/mobile-phone.png', 'title': 'Call' },
+        { 'option': 'character_send_message', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Conversation/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Conversations/Conversation/', 'img': 'images/mail--arrow.png', 'title': chrome.i18n.getMessage('linkSendMessage') },
+        { 'option': 'character_offer_an_item', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/OfferItem/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Character/OfferItem/', 'img': 'images/box--arrow.png', 'title': chrome.i18n.getMessage('linkOfferItem') },
+        { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'img': 'images/mobile-phone.png', 'title': chrome.i18n.getMessage('linkCall') },
         // City links
-        { 'option': 'city_other_vehicles', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/RoadTrip/', 'href': '/World/Popmundo.aspx/City/RoadTrip/', 'img': 'images/car--arrow.png', 'title': 'Other Vehicles' },
-        { 'option': 'city_find_locales', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/City/Locales/', 'href': '/World/Popmundo.aspx/City/Locales/', 'img': 'images/magnifier.png', 'title': 'Find Locales' },
-        { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'img': 'images/paper-plane--plus.png', 'title': 'Charter VIP Jet' },
-        { 'option': 'city_book_regular_flight', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/BookFlight/', 'href': '/World/Popmundo.aspx/City/BookFlight/', 'img': 'images/paper-plane--arrow.png', 'title': 'Book Regular Flight' },
+        { 'option': 'city_other_vehicles', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/RoadTrip/', 'href': '/World/Popmundo.aspx/City/RoadTrip/', 'img': 'images/car--arrow.png', 'title': chrome.i18n.getMessage('linkOtherVehicles') },
+        { 'option': 'city_find_locales', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/City/Locales/', 'href': '/World/Popmundo.aspx/City/Locales/', 'img': 'images/magnifier.png', 'title': chrome.i18n.getMessage('linkFindLocales') },
+        { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'img': 'images/paper-plane--plus.png', 'title': chrome.i18n.getMessage('linkCharterJet') },
+        { 'option': 'city_book_regular_flight', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/BookFlight/', 'href': '/World/Popmundo.aspx/City/BookFlight/', 'img': 'images/paper-plane--arrow.png', 'title': chrome.i18n.getMessage('linkBookFlight') },
         // Locale links
-        { 'option': 'locale_show_reconnaissance', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Locale/Reconnaissance/', 'img': 'images/binocular.png', 'title': 'Reconnaissance' },
-        { 'option': 'move_to_shortcut', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/MoveToLocale/', 'img': 'images/movetolocale.png', 'title': 'Move To Locale' },
-        { 'option': 'locale_characters_present', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/CharactersPresent/', 'img': 'images/users.png', 'title': 'Characters Present' },
+        { 'option': 'locale_show_reconnaissance', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Locale/Reconnaissance/', 'img': 'images/binocular.png', 'title': chrome.i18n.getMessage('linkReconnaissance') },
+        { 'option': 'move_to_shortcut', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/MoveToLocale/', 'img': 'images/movetolocale.png', 'title': chrome.i18n.getMessage('linkMoveToLocale') },
+        { 'option': 'locale_characters_present', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/CharactersPresent/', 'img': 'images/users.png', 'title': chrome.i18n.getMessage('linkCharactersPresent') },
     ];
 
     for (let linkInfo of linkDB) {
@@ -227,7 +227,7 @@ function renderIngameMenu(install_type) {
 
         // Box Title
         let newH2 = document.createElement('h2');
-        newH2.textContent = 'Popmundo Utils';
+        newH2.textContent = chrome.i18n.getMessage('menuTitle');
         newDiv.appendChild(newH2);
 
         // Box Menu
@@ -246,7 +246,7 @@ function renderIngameMenu(install_type) {
 
             let newADeveloper = document.createElement('a');
             newADeveloper.setAttribute('href', '#');
-            newADeveloper.textContent = 'Developer';
+            newADeveloper.textContent = chrome.i18n.getMessage('menuDeveloper');
             newADeveloper.addEventListener('click', (event) => {
                 chrome.runtime.sendMessage(chrome.runtime.id, {
                     'type': 'cmd',
@@ -264,7 +264,7 @@ function renderIngameMenu(install_type) {
 
         let newA = document.createElement('a');
         newA.setAttribute('href', '#');
-        newA.textContent = 'Options';
+        newA.textContent = chrome.i18n.getMessage('menuOptions');
         newA.addEventListener('click', (event) => {
             chrome.runtime.sendMessage(chrome.runtime.id, {
                 'type': 'cmd',
@@ -282,7 +282,7 @@ function renderIngameMenu(install_type) {
         let newAIssue = document.createElement('a');
         newAIssue.setAttribute('href', 'https://github.com/ilpersi/Popmundo-Utils/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=');
         newAIssue.setAttribute('target', '_blank');
-        newAIssue.textContent = 'Report an Issue';
+        newAIssue.textContent = chrome.i18n.getMessage('menuReportIssue');
 
         newLIIssue.appendChild(newAIssue);
         // Report Issue Link - END

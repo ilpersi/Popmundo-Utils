@@ -1,4 +1,38 @@
+/**
+ * Applies chrome.i18n translations to all elements with data-i18n* attributes.
+ * Must be called before Bootstrap tooltip initialization.
+ */
+function localizeUI() {
+    // data-i18n: set textContent
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const msg = chrome.i18n.getMessage(el.dataset.i18n);
+        if (msg) el.textContent = msg;
+    });
+
+    // data-i18n-title: set the title attribute (used by Bootstrap Tooltip)
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const msg = chrome.i18n.getMessage(el.dataset.i18nTitle);
+        if (msg) el.title = msg;
+    });
+
+    // data-i18n-placeholder: set the placeholder attribute
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const msg = chrome.i18n.getMessage(el.dataset.i18nPlaceholder);
+        if (msg) el.placeholder = msg;
+    });
+
+    // Page title lives in <title> which uses textContent too
+    const titleEl = document.querySelector('title[data-i18n]');
+    if (titleEl) {
+        const msg = chrome.i18n.getMessage(titleEl.dataset.i18n);
+        if (msg) document.title = msg;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+
+    // ── Localize UI before tooltip init so title attributes are already translated ──
+    localizeUI();
 
     // ── Tab switching ──
     const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');

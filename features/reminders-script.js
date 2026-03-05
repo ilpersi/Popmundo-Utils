@@ -68,16 +68,16 @@ function checkReminders() {
     const TIMERS_STORAGE_VALUE = { 'timers': {} };
 
     let dateDetails = getDayDetails();
-    let todayStr = `Today is day ${dateDetails.day} of year ${dateDetails.year}.`;
+    let todayStr = chrome.i18n.getMessage('remTodayIs', [String(dateDetails.day), String(dateDetails.year)]);
 
     const REMINDERS = [
         // { dayNumber: 26, reminder: `Test day 26.` },
         { dayNumber: 27, id: `day-27-${dateDetails.year}`, type: 'html', reminder: `Remember to visit <a href="${Utils.getServerLink('/World/Popmundo.aspx/Locale/4141')}">Stockholm's Graveyard</a> and use the <a href="${Utils.getServerLink('/World/Popmundo.aspx/Locale/ItemDetails/103487217')}">Frank Blomdahl Minneslund</a> Monolith to get 3 experince points.` },
-        { dayNumber: 28, id: `day-28-${dateDetails.year}`, type: 'text', reminder: `Is the Day of the Dead!` },
-        { dayNumber: 40, id: `day-40-${dateDetails.year}`, type: 'text', reminder: `Is St Kobe's Day! Investigate the Statues of Celestial Beauty in Johannesburg, Moscow, Singapore, and Tromsø to go on a adventurous quest for improved music genre skills.` },
-        { dayNumber: 48, id: `day-48-${dateDetails.year}`, type: 'text', reminder: `Remember to user your Halloween Horror!` },
-        { dayNumber: 52, id: `day-52-${dateDetails.year}`, type: 'text', reminder: `Is Chirsmast!` },
-        { dayNumber: 54, id: `day-54-${dateDetails.year}`, type: 'text', reminder: `Remember to wear your Marvin T-Shirt to increase your star quality and get one experince point.` },
+        { dayNumber: 28, id: `day-28-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay28') },
+        { dayNumber: 40, id: `day-40-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay40') },
+        { dayNumber: 48, id: `day-48-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay48') },
+        { dayNumber: 52, id: `day-52-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay52') },
+        { dayNumber: 54, id: `day-54-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay54') },
     ];
 
     if (Utils.isGreatHeist()) {
@@ -88,7 +88,7 @@ function checkReminders() {
                 dayNumber: dateDetails.day,
                 id: `tgh-card-day-${dateDetails.year}-${dateDetails.day}`,
                 type: 'text',
-                reminder: `It is Thursday, remember to get your free cards!`,
+                reminder: chrome.i18n.getMessage('remThursdayCards'),
             };
 
             REMINDERS.push(cardReminder);
@@ -124,8 +124,8 @@ function checkReminders() {
                     let details = {
                         id: itemID,
                         type: 'html',
-                        content: `Your ${itemDetails.name} is ready to be used. <a id='item-${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, true)'>Use</a> 
-                        or <a id='${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, false)'>Dismiss Notification</a>.`,
+                        content: `${chrome.i18n.getMessage('remItemReady', [itemDetails.name])} <a id='item-${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, true)'>${chrome.i18n.getMessage('remUseLink')}</a>
+                        or <a id='${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, false)'>${chrome.i18n.getMessage('remDismissLink')}</a>.`,
                     };
 
                     notificationData.push(details);

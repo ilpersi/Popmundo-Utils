@@ -304,7 +304,7 @@
                 if (href && !href.startsWith('javascript:')) {
                     finalUrl = href.startsWith('http') ? href : Utils.getServerLink(href);
                     await fetcher.fetch(finalUrl, { method: "GET" });
-                    log(`Moving to location of <b>${charName}</b>`, 'info');
+                    log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                     notifications.getPageNotifications(fetcher);
                     return;
                 }
@@ -316,7 +316,7 @@
                 if (btnHref && !btnHref.startsWith('javascript:')) {
                     finalUrl = btnHref.startsWith('http') ? btnHref : Utils.getServerLink(btnHref);
                     await fetcher.fetch(finalUrl, { method: "GET" });
-                    log(`Moving to location of <b>${charName}</b>`, 'info');
+                    log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                     notifications.getPageNotifications(fetcher);
                     return;
                 }
@@ -347,7 +347,7 @@
                             } else {
                                 finalUrl = characterUrl;
                             }
-                            log(`Moving to location of <b>${charName}</b>`, 'info');
+                            log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                             notifications.getPageNotifications(fetcher);
                             return;
                         }
@@ -374,7 +374,7 @@
                         });
 
                         const postDoc = parser.parseFromString(postHtml, "text/html");
-                        log(`Moving to location of <b>${charName}</b>`, 'info');
+                        log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                         notifications.getPageNotifications(fetcher);
                         return;
                     }
@@ -392,7 +392,7 @@
                         if (locationId) {
                             finalUrl = Utils.getServerLink('World/Popmundo.aspx/Locale/MoveToLocale/' + locationId + '/' + charId);
                             await fetcher.fetch(finalUrl, { method: "GET" });
-                            log(`Moving to location of <b>${charName}</b>`, 'info');
+                            log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                             notifications.getPageNotifications(fetcher);
                             return;
                         }
@@ -431,7 +431,7 @@
                         } else {
                             finalUrl = characterUrl;
                         }
-                        log(`Moving to location of <b>${charName}</b>`, 'info');
+                        log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                         notifications.getPageNotifications(fetcher);
                         return;
                     }
@@ -443,17 +443,17 @@
                 if (relativePath) {
                     finalUrl = Utils.getServerLink('World/' + relativePath);
                     await fetcher.fetch(finalUrl, { method: "GET" });
-                    log(`Moving to location of <b>${charName}</b>`, 'info');
+                    log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                     notifications.getPageNotifications(fetcher);
                     return;
                 }
             }
 
-            log(`Maybe ${charName} is no longer in the city, or something happened!`, 'warning');
+            log(chrome.i18n.getMessage('ggfMaybeLeft', [charName]), 'warning');
 
         } catch (error) {
             console.error('Error in goToLocation:', error);
-            log(`Error navigating to ${charName}: ${error.message}`, 'error');
+            log(chrome.i18n.getMessage('ggfErrorNavigating', [charName, error.message]), 'error');
         }
     }
 
@@ -479,12 +479,12 @@
             const select = doc.querySelector('#ctl00_cphTopColumn_ctl00_ddlUseItem');
 
             if (!select) {
-                log(`Apparently <b>${person.name}</b> is no longer available or does not allow item usage.`);
+                log(chrome.i18n.getMessage('ggfNotAvailable', [person.name]));
                 const blockedChars = await getBlockedChars();
                 if (!blockedChars.includes(person.id)) {
                     blockedChars.push(person.id);
                     await setBlockedChars(blockedChars);
-                    log(`Storing char ${person.name} (${person.id}) in storage so they won't be tried again.`, 'warning');
+                    log(chrome.i18n.getMessage('ggfStoringChar', [person.name, person.id]), 'warning');
                 }
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 return { success: false, bookIds: [], skipPerson: true };
@@ -514,7 +514,7 @@
 
             if (!selectedBookId) {
                 const waitMs = await getSoonestAvailableMs(bookIds);
-                log(`Waiting for book cooldown (${Math.ceil(waitMs / 60000)} min remaining)...`, 'info');
+                log(chrome.i18n.getMessage('ggfWaitingCooldown', [String(Math.ceil(waitMs / 60000))]), 'info');
                 return { success: false, bookIds, waitMs };
             }
 
@@ -537,7 +537,7 @@
             formData.set('__EVENTTARGET', '');
             formData.set('__EVENTARGUMENT', '');
 
-            log(`Collecting autograph from <b>${person.name}</b> using book ID: ${selectedBookId}`, 'info');
+            log(chrome.i18n.getMessage('ggfCollectingFrom', [person.name, selectedBookId]), 'info');
             const urlParams = new URLSearchParams();
             for (const [key, value] of formData.entries()) {
                 urlParams.append(key, value);
@@ -552,22 +552,22 @@
             const notification = await notifications.getPageNotifications(fetcher);
 
             if (notification.Status === "error") {
-                log(`Error collecting autograph from ${person.name}: ${notification.Text}`, 'error');
+                log(chrome.i18n.getMessage('ggfErrorCollecting', [person.name, notification.Text]), 'error');
                 return { success: false, bookIds };
             }
 
             await setBookLastUse(selectedBookId, Date.now());
 
             if (notification.Status === "success") {
-                log(`Autograph collected from ${person.name}`, 'success');
+                log(chrome.i18n.getMessage('ggfAutographCollected', [person.name]), 'success');
             } else if (notification.Status === "normal") {
-                log(`Autograph operation completed for ${person.name}`, 'info');
+                log(chrome.i18n.getMessage('ggfAutographCompleted', [person.name]), 'info');
             }
 
             return { success: true, bookIds };
         } catch (error) {
             console.error('Error in collectAutograph:', error);
-            log(`Error collecting autograph from ${person.name}: ${error.message}`, 'error');
+            log(chrome.i18n.getMessage('ggfErrorCollecting', [person.name, error.message]), 'error');
             return { success: false, bookIds };
         }
     }
@@ -590,11 +590,11 @@
                 let minutesLeft = Math.floor(totalSeconds / 60);
                 let secondsLeft = totalSeconds % 60;
 
-                timerMessage.text(`Waiting: ${minutesLeft} minutes and ${secondsLeft} seconds remaining...`);
+                timerMessage.text(chrome.i18n.getMessage('ggfWaiting', [String(minutesLeft), String(secondsLeft)]));
 
                 if (totalSeconds <= 0) {
                     clearInterval(interval);
-                    timerMessage.text('Continuing autograph collection...');
+                    timerMessage.text(chrome.i18n.getMessage('ggfContinuing'));
                     setTimeout(() => timerMessage.text(''), 2000);
                     resolve();
                 }
@@ -609,21 +609,21 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        JQ('#checkedlist').before('<div class="box" id="autograph-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
-        JQ('#autograph-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from pop stars present in the city!</p>');
+        JQ('#checkedlist').before(`<div class="box" id="autograph-box" drinkwater><h2 drinkwater>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
+        JQ('#autograph-box').append(`<p drinkwater>${chrome.i18n.getMessage('ggfDescription')}</p>`);
         JQ('#autograph-box').append(`
-            <p drinkwater><strong>How to use?</strong></p>
+            <p drinkwater><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
             <ol drinkwater>
-                <li drinkwater>Configure the <strong>Autograph book item name</strong> (in your language) on the <a href="#" id="autograph-open-options-link"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.</li>
-                <li drinkwater>Ensure you have autograph books in your inventory. Your character must be in any city (not traveling) and must not have a busy status (e.g. recording, rehearsal, date, etc.).</li>
-                <li drinkwater>Click <strong>Start</strong> to begin. The script will find famous people in the city, and the magic starts 🧚‍♀️</li>
-                <li drinkwater><strong>Blocked chars</strong> are characters that did not accept item usage. They are stored for the current session only so they are not retried repeatedly. Use <strong>Clear blocked chars</strong> to remove them from the list and allow the script to try them again in the same session.</li>
+                <li drinkwater>${chrome.i18n.getMessage('ggfStep1')}</li>
+                <li drinkwater>${chrome.i18n.getMessage('ggfStep2')}</li>
+                <li drinkwater>${chrome.i18n.getMessage('ggfStep3')}</li>
+                <li drinkwater>${chrome.i18n.getMessage('ggfStep4')}</li>
             </ol>
         `);
         JQ('#autograph-box').append(`
             <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
-                <input type="submit" name="btn-clear-storage" value="Clear blocked chars" id="clear-blocked-chars" class="cns" title="Clear characters that don't accept item usage from session storage" drinkwater>
-                <input type="submit" name="btn-start-collection" value="Start" id="start-collection" class="cns" drinkwater>
+                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}" drinkwater>
+                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns" drinkwater>
             </div>
         `);
 
@@ -634,7 +634,7 @@
         );
         JQ('#autograph-box').append('<table id="autograph-logs" class="data dataTable" drinkwater></table>');
 
-        JQ('#autograph-logs').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
+        JQ('#autograph-logs').append(`<thead drinkwater><tr drinkwater><th drinkwater>${chrome.i18n.getMessage('ggfLogColTime')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColType')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead><tbody drinkwater></tbody>`);
 
         const bookName = await getBookName();
         const escaped = bookName.replace(/"/g, '\\"');
@@ -642,13 +642,13 @@
         if (bookElement.length > 0) {
             const bookQuantity = bookElement.closest('td').find('em').text().trim();
             if (bookQuantity.startsWith('x')) {
-                log(`Number of autograph books found: ${parseInt(bookQuantity.substring(1))}`, 'info');
+                log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
             } else {
-                log(`Number of autograph books found: ${bookElement.length}`, 'info');
+                log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
             }
         } else {
-            log('No autograph books found. Check if the autograph book item name is configured in the Options page.', 'warning');
-            JQ('#start-collection').prop('disabled', true).prop('value', 'No books');
+            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning');
+            JQ('#start-collection').prop('disabled', true).prop('value', chrome.i18n.getMessage('ggfNoBooks'));
         }
 
         let lastCycleIds = [];
@@ -665,7 +665,7 @@
             collectionInProgress = true;
             keepCollecting = true;
             JQ('#start-collection').prop('disabled', true);
-            JQ('#start-collection').prop('value', 'Collecting Autographs...');
+            JQ('#start-collection').prop('value', chrome.i18n.getMessage('ggfCollecting'));
             const waitSeconds = s => new Promise(r => setTimeout(r, s * 1000));
 
             while (keepCollecting) {
@@ -678,7 +678,7 @@
                         );
 
                         if (queue.length === 0) {
-                            log('No eligible person found. Will try again in 60 s.', 'warning');
+                            log(chrome.i18n.getMessage('ggfNoEligible'), 'warning');
                             await waitSeconds(60);
                             continue;
                         }
@@ -691,7 +691,7 @@
 
                     if (result.waitMs > 0) {
                         const waitMin = Math.ceil(result.waitMs / 60000);
-                        log(`Cooldown of ${waitMin} min before next use…`);
+                        log(chrome.i18n.getMessage('ggfCooldownWait', [String(waitMin)]));
                         await startDelayTimer(waitMin);
                         continue;
                     }
@@ -705,14 +705,14 @@
                     lastCycleIds.push(person.id);
                 } catch (err) {
                     console.error(err);
-                    log('Error during script execution – check the console.', 'error');
+                    log(chrome.i18n.getMessage('ggfScriptError'), 'error');
                 }
             }
 
             collectionInProgress = false;
             JQ('#start-collection').prop('disabled', false);
-            JQ('#start-collection').prop('value', 'Start');
-            log('Autograph collection stopped.');
+            JQ('#start-collection').prop('value', chrome.i18n.getMessage('ggfStart'));
+            log(chrome.i18n.getMessage('ggfStopped'));
         });
         //prevent default form submission
 
@@ -720,7 +720,7 @@
             e.preventDefault();
             e.stopPropagation();
             chrome.storage.session.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
-                log('Blocked chars list cleared (session storage).');
+                log(chrome.i18n.getMessage('ggfBlockedCleared'));
             });
         });
     });

@@ -157,7 +157,7 @@ async function onSubmitClick() {
         let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH);
 
         // Status update
-        statusPElem.innerHTML = `Ignore new acquaintances is enabled, checking relations URL...`;
+        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusCheckingRelations');
 
         // We get the content of the Character page
         let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
@@ -186,7 +186,7 @@ async function onSubmitClick() {
         do {
 
             // We update the status message
-            statusPElem.innerHTML = `Analyzing relations page ${relPageCnt} to get current acquaintances...`;
+            statusPElem.innerHTML = chrome.i18n.getMessage('miStatusAnalyzingRelations', [String(relPageCnt)]);
 
             // If there is more than one page, the logic is doing a postBack, so we save current form info
             let docForm = doc.getElementById('aspnetForm');
@@ -298,7 +298,7 @@ async function onSubmitClick() {
                 // We check if we allow new acquaintances
                 if (savedOptions.mass_interact_ignore_acquaintance) {
                     if (!currentFriendsIDs.includes(charID)) {
-                        statusPElem.innerHTML = `Skipping ${charData.name} as new acquaintances are not allowed...`;
+                        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingAcquaintance', [charData.name]);
 
                         // We make sure the regex is working in the next iteration
                         CHAR_ID_RE.lastIndex = 0;
@@ -313,7 +313,7 @@ async function onSubmitClick() {
                 if (!savedOptions.mass_interact_exclude_id.includes(charData.id)) {
                     charsInfo.push(charData);
                 } else {
-                    statusPElem.innerHTML = `Skipping ${charData.name} as the ID is in the ignore list...`;
+                    statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingExcluded', [charData.name]);
 
                     totalSkip += 1;
                     ignoreSkip += 1;
@@ -327,14 +327,14 @@ async function onSubmitClick() {
 
     let statusIgnoreTxt = '';
     if (totalSkip > 0) {
-        statusIgnoreTxt = `Ignored a total of ${totalSkip} present characters.`;
+        statusIgnoreTxt = chrome.i18n.getMessage('miStatusTotalSkipped', [String(totalSkip)]);
 
         if (newAcqSkip > 0) {
-            statusIgnoreTxt += ` ${newAcqSkip} new acquaintance(s).`;
+            statusIgnoreTxt += chrome.i18n.getMessage('miStatusNewAcqSkip', [String(newAcqSkip)]);
         }
 
         if (ignoreSkip > 0) {
-            statusIgnoreTxt += ` ${ignoreSkip} ignored character(s).`;
+            statusIgnoreTxt += chrome.i18n.getMessage('miStatusIgnoreSkip', [String(ignoreSkip)]);
         }
 
         statusIgnoreTxt += '<br/><br/>';
@@ -359,9 +359,9 @@ async function onSubmitClick() {
         let charDict = charsInfo[charIndex];
 
         if (totalCharactersCnt < savedOptions['mass_interact_max_chars']) {
-            let totalInteractionsMsg = `Total performed interactions: ${totalInteractionsCnt}.<br/><br/>`;
+            let totalInteractionsMsg = chrome.i18n.getMessage('miStatusTotalInteractions', [String(totalInteractionsCnt)]) + '<br/><br/>';
 
-            statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}Checking character ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}).`;
+            statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusCheckingChar', [String(charIndex + 1), String(charsInfo.length), charDict.name]);
 
             let interactUrl = Utils.getServerLink(charDict.href);
             let html = await fetcher.fetch(interactUrl);
@@ -424,9 +424,9 @@ async function onSubmitClick() {
                     formDataNew.set(key, formDataOrig.get(key));
                 });
 
-                totalInteractionsMsg = `Total performed interactions: ${totalInteractionsCnt}.<br/><br/>`;
+                totalInteractionsMsg = chrome.i18n.getMessage('miStatusTotalInteractions', [String(totalInteractionsCnt)]) + '<br/><br/>';
 
-                statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}Interacting with friend ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}). Interaction # ${interactionCnt} ...`;
+                statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusInteracting', [String(charIndex + 1), String(charsInfo.length), charDict.name, String(interactionCnt)]);
 
                 // Synchronous fetch request
                 html = await fetcher.fetch(interactUrl, { "body": formDataNew, "method": "POST" });
@@ -446,9 +446,9 @@ async function onSubmitClick() {
 
     // Final update message with some statistics
     if (totalInteractionsCnt > 0)
-        statusPElem.innerHTML = `Interacted a total of ${totalInteractionsCnt} with ${totalCharactersCnt} characters!`;
+        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusFinalInteracted', [String(totalInteractionsCnt), String(totalCharactersCnt)]);
     else
-        statusPElem.innerHTML = `No interaction has been performed.`;
+        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteraction');
 }
 
 /**
@@ -467,10 +467,10 @@ function injectMassInteractHTML() {
         MassInteractDiv.setAttribute('class', 'box');
 
         let MassInteractH2 = document.createElement('h2');
-        MassInteractH2.textContent = 'Mass Interact with present characters';
+        MassInteractH2.textContent = chrome.i18n.getMessage('miH2');
 
         let MassInteractP1 = document.createElement('p');
-        MassInteractP1.textContent = 'Perform interactions with characters present in this locale.';
+        MassInteractP1.textContent = chrome.i18n.getMessage('miDescription');
         let MassInteractP3 = document.createElement('p');
         MassInteractP3.setAttribute('id', 'mass-interact-status-p');
         MassInteractP3.textContent = '';
@@ -480,7 +480,7 @@ function injectMassInteractHTML() {
 
         let MassInteractSubmit = document.createElement('input');
         MassInteractSubmit.setAttribute('type', 'submit');
-        MassInteractSubmit.setAttribute('value', 'Mass Interact');
+        MassInteractSubmit.setAttribute('value', chrome.i18n.getMessage('miButton'));
         MassInteractSubmit.setAttribute('class', 'cns');
         MassInteractSubmit.onclick = () => { onSubmitClick(); return false; };
 

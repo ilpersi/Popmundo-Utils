@@ -61,7 +61,7 @@ async function drawTimerIcon() {
 
                             let imgSrc = nowTime >= timerDate ? TIMER_WARN_ICON_SRC : TIMER_OK_ICON_SRC;
                             let imgTXT = "" + timerDate;
-                            if (nowTime >= timerDate) imgTXT = "Timer expired: " + imgTXT;
+                            if (nowTime >= timerDate) imgTXT = chrome.i18n.getMessage('iltTimerExpired') + imgTXT;
 
                             let newImg = document.createElement('img');
 
