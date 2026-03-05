@@ -385,6 +385,7 @@ class TimedFetch {
     #lastCall = Date.now() - this.#delay;
     #cache = {};
     #useCache = true;
+    #pending = false;
 
     /**
      * Creates an instance of TimedFetch.
@@ -414,7 +415,10 @@ class TimedFetch {
     /**
      * The main logic around the standard fetch method. This method is also centralizing the logic to manage
      * the status checks and it will either resolve with the html content or reject with an error message.
-     * 
+     *
+     * Callers are serialised: if a request is already in-flight, subsequent callers wait until it completes
+     * before starting their own delay countdown, preventing overlapping network requests.
+     *
      * For more details on the parameters, check the offical fetch documentation: https://developer.mozilla.org/en-US/docs/Web/API/fetch
      *
      * @param {string} resource The resource to fetch
@@ -426,46 +430,31 @@ class TimedFetch {
 
         // We can use a cached response, let's go for it!
         if (this.#useCache && this.#cache.hasOwnProperty(resource)) {
-            var result = new Promise((resolve) => {
-                resolve(this.#cache[resource]);
-            });
+            return this.#cache[resource];
+        }
 
-            return result;
-        } else {
+        // Wait until no other request is in-flight AND the cooldown has elapsed.
+        // Sleep for the exact remaining time rather than a fixed 250 ms to minimise busy-polling.
+        while (this.#pending || (Date.now() - this.#lastCall) < this.#delay) {
+            const remaining = this.#delay - (Date.now() - this.#lastCall);
+            await Utils.sleep(this.#pending ? this.#delay : Math.max(remaining, 50));
+        }
 
-            while (true) {
-                // let's check if it is the right moment to perform another fetch
-                let timeDiff = Date.now() - this.#lastCall;
+        this.#pending = true;
 
-                if (timeDiff >= this.#delay) {
-                    this.#lastCall = Date.now();
-
-                    var result = new Promise((resolve, reject) => {
-                        fetch(resource, options)
-                            .then(response => {
-                                if (response.ok && response.status >= 200 && response.status < 300) {
-                                    return response.text();
-                                } else {
-                                    reject('Bad response status: ' + response.status);
-                                }
-                            }).then(html => {
-                                if (this.#useCache) {
-                                    this.#cache[resource] = html;
-                                }
-                                resolve(html);
-                            }).catch((error) => {
-                                reject(error);
-                            })
-                    });
-
-                    return result;
-
-                } else {
-                    // If it is not the right moment, we wait 250 milliseconds
-                    await Utils.sleep(250);
-                }
-
+        try {
+            const response = await fetch(resource, options);
+            if (!response.ok || response.status < 200 || response.status >= 300) {
+                throw new Error('Bad response status: ' + response.status);
             }
+            const html = await response.text();
+            if (this.#useCache) {
+                this.#cache[resource] = html;
+            }
+            return html;
+        } finally {
+            this.#pending = false;
+            this.#lastCall = Date.now();
         }
 
     }
