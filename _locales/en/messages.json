@@ -894,5 +894,16 @@
     "iltTimerExpired": {
         "message": "Timer expired: ",
         "description": "Prefix added to the item date/time when its timer has expired"
+    },
+
+    "bshBookTransport": {
+        "message": "Book Transport from $FROM$ to $TO$ on $DATE$ at $TIME$",
+        "description": "Tooltip on the book-transport icon in the band schedule helper",
+        "placeholders": {
+            "from": { "content": "$1", "example": "London" },
+            "to":   { "content": "$2", "example": "Paris" },
+            "date": { "content": "$3", "example": "Day 12" },
+            "time": { "content": "$4", "example": "20:00" }
+        }
     }
 }

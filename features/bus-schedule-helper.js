@@ -367,7 +367,7 @@ function manageTourBusHelper() {
                                 // Travel Icon
                                 let imgElem = document.createElement('img');
                                 imgElem.setAttribute('src', chrome.runtime.getURL('images/book-transport.png'));
-                                imgElem.setAttribute('title', `Book Transport from ${previousShow.cityName} to ${currentShow.cityName} on ${departureDateTxt} at ${departureTimeTxt}`);
+                                imgElem.setAttribute('title', chrome.i18n.getMessage('bshBookTransport', [previousShow.cityName, currentShow.cityName, departureDateTxt, departureTimeTxt]));
                                 imgElem.addEventListener('click', event => {
                                     // console.log(`CURRENT ${currentShow} PREVIOUS ${previousShow}`);
 
