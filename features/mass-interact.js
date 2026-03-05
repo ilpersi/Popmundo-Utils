@@ -376,7 +376,7 @@ async function onSubmitClick() {
 
     // We have to manage async requests in sequence, so it is not possible to use forEach: we go old style for :)
     // To avoid any issue with server throtling, the logic is performed in a synchronous serial way with sleep delays.
-    for (charIndex = 0; charIndex < charsInfo.length; charIndex++) {
+    for (let charIndex = 0; charIndex < charsInfo.length; charIndex++) {
         let charDict = charsInfo[charIndex];
 
         if (totalCharactersCnt < savedOptions['mass_interact_max_chars']) {
