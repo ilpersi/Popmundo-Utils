@@ -2,8 +2,8 @@
     'use strict';
 
     // --- Module state and constants ---
-    let continuaColeta = false;
-    let coletaInProgress = false;
+    let keepCollecting = false;
+    let collectionInProgress = false;
 
     const fetcher = new TimedFetch(false);
     const notifications = new Notifications();
@@ -40,9 +40,9 @@
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
             const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
 
-            if (JQ('#logs-autografos').length) {
+            if (JQ('#autograph-logs').length) {
                 try {
-                    const dt = JQ('#logs-autografos').DataTable();
+                    const dt = JQ('#autograph-logs').DataTable();
                     if (dt) {
                         dt.row.add([time, typeCell, data]).draw(false);
                         LOG_INDEX++;
@@ -50,7 +50,7 @@
                     }
                 } catch (e) { /* DataTable not initialized */ }
             }
-            JQ("#logs-autografos tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
+            JQ("#autograph-logs tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
             LOG_INDEX++;
         }
     }
@@ -261,7 +261,7 @@
                         people.push({
                             name: characterLink.textContent.trim(),
                             id: characterId,
-                            status: 'Disponível'
+                            status: 'Available'
                         });
                     }
                 });
@@ -609,32 +609,32 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        JQ('#checkedlist').before('<div class="box" id="autografos-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
-        JQ('#autografos-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from pop stars present in the city!</p>');
-        JQ('#autografos-box').append(`
+        JQ('#checkedlist').before('<div class="box" id="autograph-box" drinkwater><h2 drinkwater>Collect Autographs</h2></div>');
+        JQ('#autograph-box').append('<p drinkwater>The script will use all books in your inventory to collect autographs from pop stars present in the city!</p>');
+        JQ('#autograph-box').append(`
             <p drinkwater><strong>How to use?</strong></p>
             <ol drinkwater>
-                <li drinkwater>Configure the <strong>Autograph book item name</strong> (in your language) on the <a href="#" id="autografos-open-options-link"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.</li>
+                <li drinkwater>Configure the <strong>Autograph book item name</strong> (in your language) on the <a href="#" id="autograph-open-options-link"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section. This must match the item name as shown in your inventory.</li>
                 <li drinkwater>Ensure you have autograph books in your inventory. Your character must be in any city (not traveling) and must not have a busy status (e.g. recording, rehearsal, date, etc.).</li>
                 <li drinkwater>Click <strong>Start</strong> to begin. The script will find famous people in the city, and the magic starts 🧚‍♀️</li>
                 <li drinkwater><strong>Blocked chars</strong> are characters that did not accept item usage. They are stored for the current session only so they are not retried repeatedly. Use <strong>Clear blocked chars</strong> to remove them from the list and allow the script to try them again in the same session.</li>
             </ol>
         `);
-        JQ('#autografos-box').append(`
+        JQ('#autograph-box').append(`
             <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
-                <input type="submit" name="btn-clear-storage" value="Clear blocked chars" id="limpar-chars" class="cns" title="Clear characters that don't accept item usage from session storage" drinkwater>
-                <input type="submit" name="btn-iniciar-coleta" value="Start" id="inicar-coleta" class="cns" drinkwater>
+                <input type="submit" name="btn-clear-storage" value="Clear blocked chars" id="clear-blocked-chars" class="cns" title="Clear characters that don't accept item usage from session storage" drinkwater>
+                <input type="submit" name="btn-start-collection" value="Start" id="start-collection" class="cns" drinkwater>
             </div>
         `);
 
-        JQ('#autografos-box').append(
+        JQ('#autograph-box').append(
             '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;" drinkwater>' +
             '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" drinkwater></div>' +
             '</div>'
         );
-        JQ('#autografos-box').append('<table id="logs-autografos" class="data dataTable" drinkwater></table>');
+        JQ('#autograph-box').append('<table id="autograph-logs" class="data dataTable" drinkwater></table>');
 
-        JQ('#logs-autografos').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
+        JQ('#autograph-logs').append('<thead drinkwater><tr drinkwater><th drinkwater>Time</th><th drinkwater>Type</th><th drinkwater>Message</th></tr></thead><tbody drinkwater></tbody>');
 
         const bookName = await getBookName();
         const escaped = bookName.replace(/"/g, '\\"');
@@ -648,27 +648,27 @@
             }
         } else {
             log('No autograph books found. Check if the autograph book item name is configured in the Options page.', 'warning');
-            JQ('#inicar-coleta').prop('disabled', true).prop('value', 'No books');
+            JQ('#start-collection').prop('disabled', true).prop('value', 'No books');
         }
 
         let lastCycleIds = [];
         let queue = [];
 
-        JQ('#autografos-open-options-link').on('click', function (e) {
+        JQ('#autograph-open-options-link').on('click', function (e) {
             e.preventDefault();
             chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
             return false;
         });
 
-        JQ('#inicar-coleta').click(async function () {
-            if (coletaInProgress) return;
-            coletaInProgress = true;
-            continuaColeta = true;
-            JQ('#inicar-coleta').prop('disabled', true);
-            JQ('#inicar-coleta').prop('value', 'Collecting Autographs...');
-            const esperarSegundos = s => new Promise(r => setTimeout(r, s * 1000));
+        JQ('#start-collection').click(async function () {
+            if (collectionInProgress) return;
+            collectionInProgress = true;
+            keepCollecting = true;
+            JQ('#start-collection').prop('disabled', true);
+            JQ('#start-collection').prop('value', 'Collecting Autographs...');
+            const waitSeconds = s => new Promise(r => setTimeout(r, s * 1000));
 
-            while (continuaColeta) {
+            while (keepCollecting) {
                 try {
                     if (queue.length === 0) {
                         const freshQueue = await getPeopleToCollect();
@@ -679,7 +679,7 @@
 
                         if (queue.length === 0) {
                             log('No eligible person found. Will try again in 60 s.', 'warning');
-                            await esperarSegundos(60);
+                            await waitSeconds(60);
                             continue;
                         }
                     }
@@ -709,14 +709,14 @@
                 }
             }
 
-            coletaInProgress = false;
-            JQ('#inicar-coleta').prop('disabled', false);
-            JQ('#inicar-coleta').prop('value', 'Start');
+            collectionInProgress = false;
+            JQ('#start-collection').prop('disabled', false);
+            JQ('#start-collection').prop('value', 'Start');
             log('Autograph collection stopped.');
         });
         //prevent default form submission
 
-        JQ('#limpar-chars').click(function (e) {
+        JQ('#clear-blocked-chars').click(function (e) {
             e.preventDefault();
             e.stopPropagation();
             chrome.storage.session.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
