@@ -144,8 +144,7 @@ async function onSubmitClick() {
     const INTERACT_SELECT_XPATH = '//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option';
     // Regex to extract the character id from the href of a elems
     const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
-    // Delaty between each fetch() call
-    const INTERACT_DELAY = 1000;
+    const fetcher = new TimedFetch(false);
 
     // We'll use this to log progression and give feedback to the user
     const statusPElem = document.getElementById('mass-interact-status-p');
@@ -162,16 +161,7 @@ async function onSubmitClick() {
 
         // We get the content of the Character page
         let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
-        let charHTML = await fetch(charURL, {
-            "method": "GET"
-        }).then(response => {
-            return response.text();
-        }).then(html => {
-            return html;
-        });
-
-        // We sleep to avoid disconnections
-        await Utils.sleep(INTERACT_DELAY);
+        let charHTML = await fetcher.fetch(charURL);
 
         // We parse the character page
         let parser = new DOMParser();
@@ -216,15 +206,7 @@ async function onSubmitClick() {
             }
 
             // We finally perform the real fetch
-            let relHTML = await fetch(relationURL, fetchOptions)
-                .then(response => {
-                    return response.text();
-                }).then(html => {
-                    return html;
-                });
-
-            // We sleep to avoid disconnections
-            await Utils.sleep(INTERACT_DELAY);
+            let relHTML = await fetcher.fetch(relationURL, fetchOptions);
 
             doc = parser.parseFromString(relHTML, "text/html");
 
@@ -358,9 +340,6 @@ async function onSubmitClick() {
         statusIgnoreTxt += '<br/><br/>';
     }
 
-    // We save the current host so that we can build correct urls to fetch later on
-    const hostName = window.location.hostname;
-
     // The list of fields that we will include in the fetch call payload when actually interacting with a character.
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
@@ -384,15 +363,11 @@ async function onSubmitClick() {
 
             statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}Checking character ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}).`;
 
-            let interactUrl = `https://${hostName}${charDict.href}`;
-            let response = await fetch(interactUrl, { "method": "GET", });
-            let html = await response.text();
-
-            // We wait to avoid server throtle limits
-            await Utils.sleep(INTERACT_DELAY);
+            let interactUrl = Utils.getServerLink(charDict.href);
+            let html = await fetcher.fetch(interactUrl);
 
             // Initialize the DOM parser
-            let parser = new DOMParser();
+            const parser = new DOMParser();
 
             // Parse the text
             let doc = parser.parseFromString(html, "text/html");
@@ -454,9 +429,7 @@ async function onSubmitClick() {
                 statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}Interacting with friend ${charIndex + 1} out of ${charsInfo.length} (${charDict.name}). Interaction # ${interactionCnt} ...`;
 
                 // Synchronous fetch request
-                response = await fetch(interactUrl, { "body": formDataNew, "method": "POST", });
-                html = await response.text();
-                await Utils.sleep(INTERACT_DELAY);
+                html = await fetcher.fetch(interactUrl, { "body": formDataNew, "method": "POST" });
 
                 // We update the parser content so to make sure the while does not go in infinite loop
                 parser = new DOMParser();
