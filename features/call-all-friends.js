@@ -37,8 +37,6 @@ async function onSubmitClick() {
     const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
     // Regex to extract the character friend id from the href of a elems
     const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
-    // Delaty between each fetch() call
-    const CALL_DELAY = 1000;
 
     // We search for friend ID in the relationship page
     let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
@@ -70,11 +68,6 @@ async function onSubmitClick() {
         RELATIONS_ID_RE.lastIndex = 0;
     }
 
-    // This array will contain the required friends details
-    let friendsDetailsPromises = [];
-
-    // We save the current host so that we can build correct urls to fetch later on
-    const hostName = window.location.hostname;
     const interactPath = '/World/Popmundo.aspx/Interact/Phone/';
 
     // The list of fields that we will include in the fetch call payload when actually calling your friend.
@@ -86,144 +79,115 @@ async function onSubmitClick() {
     // We randomly sort the interactions and create an iterator base on it
     let interactionIterator = Utils.cycle(Utils.shuffle(INTERACTIONS));
 
-    friendsInfo.forEach((friendDict, friendIndex) => {
+    const fetcher = new TimedFetch(false);
 
-        let friendDetailsPromise = new Promise((resolve, reject) => {
-            // To avoid being kicked out, we delay backgroud fetch calls
-            setTimeout(async () => {
-                let statusMessage = '';
-                
-                if (ignoreCnt > 0)
-                    statusMessage += `Ignored ${ignoreCnt} friend(s). `;
-                
-                statusMessage += `Checking friend ${friendIndex + 1} out of ${friendsInfo.length} (${friendDict.name}).`;
+    // Phase 1: check each friend sequentially to determine which can be called
+    let friendsDetails = [];
+    for (let friendIndex = 0; friendIndex < friendsInfo.length; friendIndex++) {
+        let friendDict = friendsInfo[friendIndex];
 
-                statusPElem.textContent = statusMessage;
+        let statusMessage = '';
+        if (ignoreCnt > 0)
+            statusMessage += `Ignored ${ignoreCnt} friend(s). `;
+        statusMessage += `Checking friend ${friendIndex + 1} out of ${friendsInfo.length} (${friendDict.name}).`;
+        statusPElem.textContent = statusMessage;
 
-                let interactUrl = `https://${hostName}${interactPath}${friendDict.id}`;
-                await fetch(interactUrl, { "method": "GET", })
-                    .then(response => {
-                        if (response.ok && response.status >= 200 && response.status < 300) {
-                            return response.text();
-                        }
-                    }).then(html => {
-                        // Initialize the DOM parser
-                        let parser = new DOMParser();
+        let interactUrl = Utils.getServerLink(`${interactPath}${friendDict.id}`);
+        try {
+            const html = await fetcher.fetch(interactUrl);
 
-                        // Parse the text
-                        let doc = parser.parseFromString(html, "text/html");
+            // Initialize the DOM parser
+            let parser = new DOMParser();
 
-                        // This XPATH makes sure that the Wazzup call option is there
-                        let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]');
-                        let wazzupNode = wazzupXpathHelper.getOrderedSnapshot(doc);
+            // Parse the text
+            let doc = parser.parseFromString(html, "text/html");
 
-                        // Random interaction is 0 by default, if interactions are available a random value is generated
-                        let randomInteraction = 0;
-                        if (wazzupNode.snapshotLength > 0) {
-                            let availableInteractions = [];
-                            // This is the XPATH for the option values in the interaction select element
-                            let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option')
-                            let interactionNodes = interactionsXpathHelper.getUnorderedNodeSnapshot(doc);
+            // This XPATH makes sure that the Wazzup call option is there
+            let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]');
+            let wazzupNode = wazzupXpathHelper.getOrderedSnapshot(doc);
 
-                            // We loop and we push possible values in availableInteractions
-                            for (let i = 0; i < interactionNodes.snapshotLength; i++) {
-                                let interactionOption = interactionNodes.snapshotItem(i);
-                                let value = parseInt(interactionOption.getAttribute('value'));
-                                availableInteractions.push(value);
-                            }
+            // Random interaction is 0 by default, if interactions are available a random value is generated
+            let randomInteraction = 0;
+            if (wazzupNode.snapshotLength > 0) {
+                let availableInteractions = [];
+                // This is the XPATH for the option values in the interaction select element
+                let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option')
+                let interactionNodes = interactionsXpathHelper.getUnorderedNodeSnapshot(doc);
 
-                            // We intersect available interactions with call interactions
-                            let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
+                // We loop and we push possible values in availableInteractions
+                for (let i = 0; i < interactionNodes.snapshotLength; i++) {
+                    let interactionOption = interactionNodes.snapshotItem(i);
+                    let value = parseInt(interactionOption.getAttribute('value'));
+                    availableInteractions.push(value);
+                }
 
-                            // We finally choose a random interaction
-                            if (possibleInteractions.length > 0){
-                                randomInteraction = interactionIterator.next().value;
+                // We intersect available interactions with call interactions
+                let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
 
-                                while (!possibleInteractions.includes(randomInteraction))
-                                    randomInteraction = interactionIterator.next().value;
-                            }
-                        }
+                // We finally choose a random interaction
+                if (possibleInteractions.length > 0) {
+                    randomInteraction = interactionIterator.next().value;
 
-                        // We get the form fields
-                        let docForm = doc.getElementById('aspnetForm');
-                        let formDataOrig = new FormData(docForm);
+                    while (!possibleInteractions.includes(randomInteraction))
+                        randomInteraction = interactionIterator.next().value;
+                }
+            }
 
-                        // We make sure to set the correct values
-                        formDataOrig.set('__EVENTTARGET', '');
-                        formDataOrig.set('__EVENTARGUMENT', '');
-                        formDataOrig.set('ctl00$cphTopColumn$ctl00$btnInteract', 'Interact');
-                        formDataOrig.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', randomInteraction);
+            // We get the form fields
+            let docForm = doc.getElementById('aspnetForm');
+            let formDataOrig = new FormData(docForm);
 
-                        // We don't need all the fields, so we make sure to only take the relevant ones
-                        let formDataNew = new FormData();
-                        bodyFields.forEach((key) => {
-                            formDataNew.set(key, formDataOrig.get(key));
-                        });
+            // We make sure to set the correct values
+            formDataOrig.set('__EVENTTARGET', '');
+            formDataOrig.set('__EVENTARGUMENT', '');
+            formDataOrig.set('ctl00$cphTopColumn$ctl00$btnInteract', 'Interact');
+            formDataOrig.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', randomInteraction);
 
-                        // The final result of the promise
-                        var result = {
-                            'id': friendDict.id,
-                            'name': friendDict.name,
-                            'canCall': (wazzupNode.snapshotLength > 0) && (randomInteraction !== 0),
-                            'formData': formDataNew,
-                            'interactUrl': interactUrl,
-                        }
+            // We don't need all the fields, so we make sure to only take the relevant ones
+            let formDataNew = new FormData();
+            bodyFields.forEach((key) => {
+                formDataNew.set(key, formDataOrig.get(key));
+            });
 
-                        resolve(result);
-                    })
-                    .catch(error => console.error(error));
-            }, CALL_DELAY * friendIndex);
-        });
+            friendsDetails.push({
+                'id': friendDict.id,
+                'name': friendDict.name,
+                'canCall': (wazzupNode.snapshotLength > 0) && (randomInteraction !== 0),
+                'formData': formDataNew,
+                'interactUrl': interactUrl,
+            });
+        } catch (error) {
+            console.error(`Failed to check ${friendDict.name}:`, error);
+        }
+    }
 
-        friendsDetailsPromises.push(friendDetailsPromise);
-
-    });
-
-    // We make sure that all the promises for friend details are completed
-    let friendsDetails = await Promise.all(friendsDetailsPromises);
     // We filter so to have only callable friends
-    let callableFriends = friendsDetails.filter(details => details.canCall)
+    let callableFriends = friendsDetails.filter(details => details.canCall);
 
     if (callableFriends.length == 0) {
         statusPElem.textContent = `No friends to call.`;
     } else {
         statusPElem.textContent = `Calling ${callableFriends.length} friends out of ${friendsInfo.length}...`;
-        // console.log(callableFriends);
 
         let succesCalls = 0;
-        let friendCallsPromisses = [];
 
-        callableFriends.forEach((friendDetails, friendIndex) => {
+        // Phase 2: call each friend sequentially
+        for (let friendIndex = 0; friendIndex < callableFriends.length; friendIndex++) {
+            let friendDetails = callableFriends[friendIndex];
+            statusPElem.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length} (${friendDetails.name})...`;
 
-            let friendCallPromise = new Promise((resolve, reject) => {
-                // To avoid being kicked out, we delay backgroud fetch calls
-                setTimeout(() => {
-                    statusPElem.textContent = `Calling friend ${friendIndex + 1} out of ${callableFriends.length} (${friendDetails.name})...`;
+            try {
+                await fetcher.fetch(friendDetails.interactUrl, {
+                    "body": friendDetails.formData,
+                    "method": "POST",
+                });
+                succesCalls += 1;
+            } catch (error) {
+                console.error(`Failed to call ${friendDetails.name}:`, error);
+            }
+        }
 
-                    fetch(friendDetails.interactUrl, {
-                        "body": friendDetails.formData,
-                        "method": "POST",
-                    }).then((response) => {
-                        if (response.ok && response.status >= 200 && response.status < 300) {
-                            succesCalls += 1;
-                            return response.text();
-                        }
-                    }).then((html) => {
-                        resolve(true);
-                    }).catch((error) => {
-                        console.error(`Failed to call ${friendDetails.name}:`, error);
-                        resolve(false);
-                    });
-
-                }, CALL_DELAY * friendIndex);
-            });
-
-            friendCallsPromisses.push(friendCallPromise);
-        });
-
-        let callDetails = await Promise.all(friendCallsPromisses);
-
-        statusPElem.textContent = `Succesfully called ${succesCalls} friends out of ${callableFriends.length}.`
+        statusPElem.textContent = `Succesfully called ${succesCalls} friends out of ${callableFriends.length}.`;
 
         // We reload the page so we get all the notifications prited out in the green banners.
         if (succesCalls > 0) {
