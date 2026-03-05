@@ -22,10 +22,10 @@ async function checkForTimer() {
         const WEEK = DAY * 7;
 
         // Timer Regex
-        const minRegex = new RegExp("(\\d{1,})\\s+minutes", "i");
-        const hourRegex = new RegExp("(\\d{1,})\\s+hours", "i");
-        const daysRegex = new RegExp("(\\d{1,})\\s+days", "i");
-        const weeksRegex = new RegExp("(\\d{1,})\\s+weeks", "i");
+        const minRegex = new RegExp(chrome.i18n.getMessage('itMinRegex'), "i");
+        const hourRegex = new RegExp(chrome.i18n.getMessage('itHourRegex'), "i");
+        const daysRegex = new RegExp(chrome.i18n.getMessage('itDaysRegex'), "i");
+        const weeksRegex = new RegExp(chrome.i18n.getMessage('itWeeksRegex'), "i");
 
         // URL Regex for item id
         const itemIDRegex = /\d{2}.popmundo.com\/World\/Popmundo.aspx\/Character\/ItemDetails\/(\d+)/gi;

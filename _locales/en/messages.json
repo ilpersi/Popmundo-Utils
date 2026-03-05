@@ -891,6 +891,26 @@
         "description": "Suffix appended to item use buttons to create the Use & Timer button"
     },
 
+    "itMinRegex": {
+        "message": "(\\d{1,})\\s+minutes",
+        "description": "Regula expression to find minutes in timer notifications"
+    },
+
+    "itHourRegex": {
+        "message": "(\\d{1,})\\s+hours",
+        "description": "Regula expression to find hours in timer notifications"
+    },
+
+    "itDaysRegex": {
+        "message": "(\\d{1,})\\s+days",
+        "description": "Regula expression to find days in timer notifications"
+    },
+
+    "itWeeksRegex": {
+        "message": "(\\d{1,})\\s+weeks",
+        "description": "Regula expression to find weeks in timer notifications"
+    },
+
     "iltTimerExpired": {
         "message": "Timer expired: ",
         "description": "Prefix added to the item date/time when its timer has expired"
