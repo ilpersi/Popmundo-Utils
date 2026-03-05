@@ -3,527 +3,961 @@
 
 <head>
     <title>Popmundo Utils Options</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="../libs/bootstrap.min-5.3.1.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 0.56rem 0.94rem;
+            background-color: #fff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+        }
+
+        .card-body {
+            padding: 0.75rem 0.94rem;
+        }
+
+        .option-group-title {
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .option-group-title:first-child {
+            margin-top: 0;
+        }
+
+        .sidebar-nav .nav-link {
+            color: #495057;
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background-color: #e9ecef;
+            color: #212529;
+        }
+
+        .sidebar-nav .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff !important;
+        }
+
+        /* Mobile: horizontal scrollable nav */
+        @media (max-width: 991.98px) {
+            .sidebar-nav {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 0.5rem;
+            }
+
+            .sidebar-nav .nav {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+
+            .sidebar-nav .nav-link {
+                display: inline-block;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar-nav {
+                position: sticky;
+                top: 1rem;
+            }
+        }
+
+        .form-check-label {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
-<body>
-
+<body class="py-3">
     <!-- Whenever you add a new option, make sure to update the related logic in options.js -->
-    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Call all friends options</legend>
-        <label>Select the thelephone interactions you want to use. The logic will randomly select between the ones
-            checked and the
-            one available for your friends:</label>
-        <br /><br />
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="24" id="call_all_wazzup">
-                    <label for="call_all_wazzup">Include Wazzup call.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="26" id="call_all_prank">
-                    <label for="call_all_prank">Include Prank call.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="58" id="call_all_sms_pic">
-                    <label for="call_all_sms_pic">Include SMS Funny Pic.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="61" id="call_all_sms_txt">
-                    <label for="call_all_sms_txt">Include SMS Friendly Text.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="121" id="call_all_gossip">
-                    <label for="call_all_gossip">Include Gossip on phone.</label><br />
-                </div>
-                <div class="col">
-                </div>
-            </div>
-        </div>
-        <br /><br />
-        <div class="row">
-            <div class="col">
-                <label for="call_exclude_id">Comma separated list of characters id to exclude.</label>
-                <input type="text" id="call_exclude_id">
-            </div>
-            <div class="col"></div>
-            <div class="col"></div>
-        </div>
-    </fieldset>
+    <div class="container-fluid px-3">
+        <div class="row g-3">
 
-    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Enhanced Links Options</legend>
-        <label>Select the thelephone interactions you want to use. The logic will randomly select between the ones
-            checked and the
-            one available for your friends:</label>
-        <br /><br />
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Band shortcuts -->
-                <div class="col">
-                    <input type="checkbox" id="band_popularity_shortcut">
-                    <label for="band_popularity_shortcut">Enable "Popularity" link for bands.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="band_upcoming_shows">
-                    <label for="band_upcoming_shows">Enable "Upcoming Shows" link for bands.</label>
-                </div>
-                <!-- Character shortcuts -->
-                <div class="col">
-                    <input type="checkbox" id="character_send_message">
-                    <label for="character_send_message">Enable "Send Message" link for characters.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="character_call">
-                    <label for="character_call">Enable "Call" link for characters.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="character_offer_an_item">
-                    <label for="character_offer_an_item">Enable "Offer an Item" link for characters.</label>
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="sidebar-nav">
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#" data-tab="tab-call-friends">Call All Friends</a>
+                        <a class="nav-link" href="#" data-tab="tab-enhanced-links">Enhanced Links</a>
+                        <a class="nav-link" href="#" data-tab="tab-mass-interact">Mass Interact</a>
+                        <a class="nav-link" href="#" data-tab="tab-misc">Misc Options</a>
+                        <a class="nav-link" href="#" data-tab="tab-popup">Popup Options</a>
+                        <a class="nav-link" href="#" data-tab="tab-tour-bus">Tour Bus Helper</a>
+                    </nav>
                 </div>
             </div>
 
-            <div class="row">
-                <!-- City shortcuts-->
-                <div class="col">
-                    <input type="checkbox" id="city_book_regular_flight">
-                    <label for="city_book_regular_flight">Enable "Book Regular Flight" link for cities.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="city_charter_vip_jet">
-                    <label for="city_charter_vip_jet">Enable "Charter VIP Jet" link for cities.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="city_other_vehicles">
-                    <label for="city_other_vehicles">Enable "Other Vehicles" link for cities.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="city_find_locales">
-                    <label for="city_find_locales">Enable "Find Locales" link for cities.</label>
-                </div>
-                <!-- Locale shortcuts-->
-                <div class="col">
-                    <input type="checkbox" id="locale_characters_present">
-                    <label for="locale_characters_present">Enable "Characters Present" link for locales.</label>
-                </div>
-            </div>
+            <!-- Content -->
+            <div class="col-lg-9">
 
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" id="move_to_shortcut">
-                    <label for="move_to_shortcut">Enable "Move to Locale" link for locales.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="locale_show_reconnaissance">
-                    <label for="locale_show_reconnaissance">Enable "Reconnaissance" link for locales.</label>
-                </div>
-                <!-- Crew shortcuts-->
-                <div class="col">
-                    <input type="checkbox" id="crew_top_heist_shortcut">
-                    <label for="crew_top_heist_shortcut">Enable "Top Heists" link for crews.</label>
-                </div>
-                <div class="col">
-                    &nbsp;
-                </div>
-                <div class="col">
-                    &nbsp;
-                </div>
-            </div>
-
-        </div>
-    </fieldset>
-
-    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Mass interact options</legend>
-        <label>Select the interactions you want to use. The logic will randomly select between the ones checked and the
-            one available for found characters:</label>
-        <br /><br />
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="1" id="mass_interact_greet">
-                    <label for="mass_interact_greet">Greet.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="54" id="mass_interact_smile">
-                    <label for="mass_interact_smile">Smile.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="161" id="mass_interact_wink">
-                    <label for="mass_interact_wink">Wink.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="15" id="mass_interact_insult">
-                    <label for="mass_interact_insult">Insult.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="62" id="mass_interact_share_opinions">
-                    <label for="mass_interact_share_opinions">Share Opinions.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="65" id="mass_interact_gossip">
-                    <label for="mass_interact_gossip">Gossip.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="34" id="mass_interact_have_profound_discussion">
-                    <label for="mass_interact_have_profound_discussion">Have profound discussion.</label>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="51" id="mass_interact_comfort">
-                    <label for="mass_interact_comfort">Comfort.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="3" id="mass_interact_talk_to">
-                    <label for="mass_interact_talk_to">Talk to.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="5" id="mass_interact_tease">
-                    <label for="mass_interact_tease">Tease.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="57" id="mass_interact_fraternize">
-                    <label for="mass_interact_fraternize">Fraternize.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="68" id="mass_interact_offer_advice">
-                    <label for="mass_interact_offer_advice">Offer Advice.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="14" id="mass_interact_compliment">
-                    <label for="mass_interact_compliment">Compliment.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="71" id="mass_interact_hey_sexy_how_you_doin">
-                    <label for="mass_interact_hey_sexy_how_you_doin">Hey sexy, how you doin'?</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="75" id="mass_interact_praise">
-                    <label for="mass_interact_praise">Praise.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="76" id="mass_interact_tell_naughty_joke">
-                    <label for="mass_interact_tell_naughty_joke">Tell naughty joke.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="69" id="mass_interact_share_secrets">
-                    <label for="mass_interact_share_secrets">Share secrets.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="70" id="mass_interact_hang_out">
-                    <label for="mass_interact_hang_out">Hang out.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="18" id="mass_interact_play_with">
-                    <label for="mass_interact_play_with">Play with.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="63" id="mass_interact_pat_on_back">
-                    <label for="mass_interact_pat_on_back">Pat on back.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="66" id="mass_interact_braid_hair">
-                    <label for="mass_interact_braid_hair">Braid Hair.</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="55" id="mass_interact_shake_hands">
-                    <label for="mass_interact_shake_hands">Shake hands.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="59" id="mass_interact_rub_elbows">
-                    <label for="mass_interact_rub_elbows">Rub elbows.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="8" id="mass_interact_hug">
-                    <label for="mass_interact_hug">Hug.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="12" id="mass_interact_tickle">
-                    <label for="mass_interact_tickle">Tickle.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="7" id="mass_interact_buy_a_drink">
-                    <label for="mass_interact_buy_a_drink">Buy a drink.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="129" id="mass_interact_stroll_hand_in_hand">
-                    <label for="mass_interact_stroll_hand_in_hand">Stroll hand in hand.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="89" id="mass_interact_flex_biceps">
-                    <label for="mass_interact_flex_biceps">Flex biceps.</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="30" id="mass_interact_caress">
-                    <label for="mass_interact_caress">Caress.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="35" id="mass_interact_ask_for_a_dance">
-                    <label for="mass_interact_ask_for_a_dance">Ask for a dance.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="60" id="mass_interact_high_five">
-                    <label for="mass_interact_high_five">High Five.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="67" id="mass_interact_arm_wrestle">
-                    <label for="mass_interact_arm_wrestle">Arm Wrestle.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="56" id="mass_interact_kiss_cheeks">
-                    <label for="mass_interact_kiss_cheeks">Kiss Cheeks.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="64" id="mass_interact_embrace">
-                    <label for="mass_interact_embrace">Embrace.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="9" id="mass_interact_kiss">
-                    <label for="mass_interact_kiss">Kiss.</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="10" id="mass_interact_kiss_passionately">
-                    <label for="mass_interact_kiss_passionately">Kiss passionately.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="164" id="mass_interact_enjoy_kobe_sutra">
-                    <label for="mass_interact_enjoy_kobe_sutra">Enjoy Kobe Sutra.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="13" id="mass_interact_5_minute_quickie">
-                    <label for="mass_interact_5_minute_quickie">5 minute quickie.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="19" id="mass_interact_tantric_sex">
-                    <label for="mass_interact_tantric_sex">Tantric Sex.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="11" id="mass_interact_make_love">
-                    <label for="mass_interact_make_love">Make Love.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="44" id="mass_interact_give_massage">
-                    <label for="mass_interact_give_massage">Give Massage.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="39" id="mass_interact_bless">
-                    <label for="mass_interact_bless">Bless.</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="33" id="mass_interact_do_funny_magic">
-                    <label for="mass_interact_do_funny_magic">Do funny magic.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="4" id="mass_interact_tell_joke">
-                    <label for="mass_interact_tell_joke">Tell joke.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="29" id="mass_interact_seek_apprenticeship">
-                    <label for="mass_interact_seek_apprenticeship">Seek apprenticeship.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="21" id="mass_interact_sing_to">
-                    <label for="mass_interact_sing_to">Sing to.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="78" id="mass_interact_serenade">
-                    <label for="mass_interact_serenade">Serenade.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="94" id="mass_interact_guide">
-                    <label for="mass_interact_guide">Guide.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="6" id="mass_interact_google">
-                    <label for="mass_interact_google">Google-Google.</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" value="95" id="mass_interact_change_diapers">
-                    <label for="mass_interact_change_diapers">Change Diapers.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="93" id="mass_interact_pick_up">
-                    <label for="mass_interact_pick_up">Pick Up.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" value="103" id="mass_interact_kiss_on_forehead">
-                    <label for="mass_interact_kiss_on_forehead">Kiss on forehead.</label>
-                </div>
-                <div class="col">
-                    
-                </div>
-                <div class="col">
-                    
-                </div>
-                <div class="col">
-                    
-                </div>
-                <div class="col">
-                   
-                </div>
-            </div>
-            <br /><br />
-            <div class="row">
-                <div class="col">
-                    <label for="mass_interact_exclude_id" class="ms-5">Comma separated list of characters id to
-                        exclude.</label>
-                    <input type="text" id="mass_interact_exclude_id">
-                </div>
-                <div class="col">
-                    <label for="mass_interact_max_chars" class="ms-5">Limit the number of characters to interact with
-                        (from 1 to 100).</label>
-                    <input type="number" id="mass_interact_max_chars" min="1" max="100">
-                </div>
-                <div class="col">
-                    <label for="mass_interact_ignore_acquaintance" class="ms-5">Ignore new acquaintances.</label>
-                    <input type="checkbox" id="mass_interact_ignore_acquaintance">
-                </div>
-            </div>
-        </div>
-        <!-- <input type="checkbox" value="154" id="mass_interact_please_stop_flirting_with_me"> <label>Please stop flirting with me.</label><br/><br/> -->
-        <!-- <input type="checkbox" value="166" id="mass_interact_say_im_sorry"> <label>Say I'm sorry.</label><br/><br/> -->
-        <!-- <input type="checkbox" value="77" id="mass_interact_say_i_love_you"> <label>Say I love you.</label><br/><br/> -->
-        <!-- <input type="checkbox" value="156" id="mass_interact_i_dont_want_to_be_friends"> <label>I don't want to be friends.</label><br/><br/> -->
-
-    </fieldset>
-
-    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Misc Options </legend>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" id="fast_character_switch">
-                    <label for="fast_character_switch">Automatically switch character.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="progress_bar_percent">
-                    <label for="progress_bar_percent">Enable progress bar percentages.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="score_highlight">
-                    <label for="score_highlight">Enable score highlight.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="searchable_tables">
-                    <label for="searchable_tables">Enable searchable tables.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="show_msg_helper">
-                    <label for="show_msg_helper">Enable show message helper.</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" id="redirect_to_login">
-                    <label for="redirect_to_login">Redirect to standard Login Page.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="strip_percent_txt">
-                    <label for="strip_percent_txt">Strip text from progress percentage.</label>
-                </div>
-                <div class="col">
-                    <label for="score_scale" class="form-label float-start align-middle">Score Scale: </label>
-                    <select class="form-select w-auto float-start ms-3" aria-label="Score Scale"
-                        name="Score Scale" id="score_scale">
-                        <option value="0_26" selected>From 0 to 26</option>
-                        <option value="1_27">From 1 to 27</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="autograph_book_name">Autograph book item name (in your language):</label>
-                    <input type="text" id="autograph_book_name">
-                </div>
-                <div class="col"></div>
-                <div class="col"></div>
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Popup Options </legend>
-        <label>Enable or disable popups on specific game elements.</label>
-        <br /><br />
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" id="character_popup">
-                    <label for="character_popup">Enable character popup.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="song_popup">
-                    <label for="song_popup">Enable songs popup.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="recent_progress_popup">
-                    <label for="recent_progress_popup">Enable skills popup.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="show_club_popup">
-                    <label for="show_club_popup">Enable club popup.</label>
-                </div>
-                <div class="col">
-                    <input type="checkbox" id="show_details_popup">
-                    <label for="show_details_popup">Enable show details popup.</label>
-                </div>
-                <div class="col">
-                </div>
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset class="rounded border border-primary mb-3 mx-3 p-3">
-        <legend class="w-auto float-none">Tour Bus Book Helper Options</legend>
-        <label>Manage the tour bus booking assistant option. This feature will only work for VIP Accounts.</label>
-        <br /><br />
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <input type="checkbox" id="tb_enable">
-                    <label for="tb_enable">Enable Tour Bus Helper.</label>
-                </div>
-                <div class="col">
-                    <label for="tb_book_after" class="form-label float-start align-middle">Book Tour Route
-                        After:</label>
-                    <select class="form-select w-auto float-start ms-3" aria-label="Book Tour Route After"
-                        name="Book After" id="tb_book_after">
-                        <option value="previous_event" selected>Previous Event</option>
-                        <option value="previous_show">Previous Show</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="tb_hour_range" class="float-start">Book after how many hours (1-5)?</label>
-                    <input type="number" class="ms-3 form-control w-auto" id="tb_hour_range" min="1" max="5">
+                <!-- Save / Status bar (always visible) -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <button id="save" class="btn btn-primary btn-sm">Save</button>
+                    <span id="status" class="text-muted small"></span>
                 </div>
 
-                <div class="col"></div>
-            </div>
-        </div>
-    </fieldset>
+                <!-- ── Call All Friends ── -->
+                <div id="tab-call-friends" class="tab-content-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Call All Friends</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">Select the telephone interactions to use. The logic will randomly
+                                select between the checked ones and those available for each friend.</p>
 
-    <div id="status" class="ms-3"></div>
+                            <div class="option-group-title">Interaction Types</div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="24"
+                                            id="call_all_wazzup">
+                                        <label class="form-check-label" for="call_all_wazzup">Wazzup call</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="26" id="call_all_prank">
+                                        <label class="form-check-label" for="call_all_prank">Prank call</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="58"
+                                            id="call_all_sms_pic">
+                                        <label class="form-check-label" for="call_all_sms_pic">SMS Funny Pic</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="61"
+                                            id="call_all_sms_txt">
+                                        <label class="form-check-label" for="call_all_sms_txt">SMS Friendly
+                                            Text</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="121"
+                                            id="call_all_gossip">
+                                        <label class="form-check-label" for="call_all_gossip">Gossip on phone</label>
+                                    </div>
+                                </div>
+                            </div>
 
-    <div>
-        <button id="save" class="btn btn-primary ms-3">Save</button>
-    </div>
-    <br />
+                            <div class="option-group-title">Exclusions</div>
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <label for="call_exclude_id" class="form-label">Excluded character IDs
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Comma-separated list of character IDs to skip during calls."
+                                            class="text-muted ms-1"
+                                            style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" id="call_exclude_id"
+                                        placeholder="e.g. 1234, 5678">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Enhanced Links ── -->
+                <div id="tab-enhanced-links" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Enhanced Links</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">Add quick-action links next to game elements for faster
+                                navigation and interactions.</p>
+
+                            <div class="option-group-title">Band</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="band_popularity_shortcut">
+                                        <label class="form-check-label" for="band_popularity_shortcut">Popularity
+                                            link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="band_upcoming_shows">
+                                        <label class="form-check-label" for="band_upcoming_shows">Upcoming Shows
+                                            link</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Character</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="character_send_message">
+                                        <label class="form-check-label" for="character_send_message">Send Message
+                                            link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="character_call">
+                                        <label class="form-check-label" for="character_call">Call link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="character_offer_an_item">
+                                        <label class="form-check-label" for="character_offer_an_item">Offer an Item
+                                            link</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">City</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="city_book_regular_flight">
+                                        <label class="form-check-label" for="city_book_regular_flight">Book Regular
+                                            Flight link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="city_charter_vip_jet">
+                                        <label class="form-check-label" for="city_charter_vip_jet">Charter VIP Jet
+                                            link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="city_other_vehicles">
+                                        <label class="form-check-label" for="city_other_vehicles">Other Vehicles
+                                            link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="city_find_locales">
+                                        <label class="form-check-label" for="city_find_locales">Find Locales
+                                            link</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Locale</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="locale_characters_present">
+                                        <label class="form-check-label" for="locale_characters_present">Characters
+                                            Present link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="move_to_shortcut">
+                                        <label class="form-check-label" for="move_to_shortcut">Move to Locale
+                                            link</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="locale_show_reconnaissance">
+                                        <label class="form-check-label"
+                                            for="locale_show_reconnaissance">Reconnaissance link</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Crew</div>
+                            <div class="row g-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="crew_top_heist_shortcut">
+                                        <label class="form-check-label" for="crew_top_heist_shortcut">Top Heists
+                                            link</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Mass Interact ── -->
+                <div id="tab-mass-interact" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Mass Interact</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">Select the interactions to use. The logic will randomly select
+                                between the checked ones and those available for found characters.</p>
+
+                            <div class="option-group-title">Verbal &amp; Social</div>
+                            <div class="row g-1 mb-2">
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="1"
+                                            id="mass_interact_greet">
+                                        <label class="form-check-label" for="mass_interact_greet">Greet</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="54"
+                                            id="mass_interact_smile">
+                                        <label class="form-check-label" for="mass_interact_smile">Smile</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="161"
+                                            id="mass_interact_wink">
+                                        <label class="form-check-label" for="mass_interact_wink">Wink</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="15"
+                                            id="mass_interact_insult">
+                                        <label class="form-check-label" for="mass_interact_insult">Insult</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="3"
+                                            id="mass_interact_talk_to">
+                                        <label class="form-check-label" for="mass_interact_talk_to">Talk to</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="5"
+                                            id="mass_interact_tease">
+                                        <label class="form-check-label" for="mass_interact_tease">Tease</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="62"
+                                            id="mass_interact_share_opinions">
+                                        <label class="form-check-label" for="mass_interact_share_opinions">Share
+                                            Opinions</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="65"
+                                            id="mass_interact_gossip">
+                                        <label class="form-check-label" for="mass_interact_gossip">Gossip</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="34"
+                                            id="mass_interact_have_profound_discussion">
+                                        <label class="form-check-label"
+                                            for="mass_interact_have_profound_discussion">Profound Discussion</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="51"
+                                            id="mass_interact_comfort">
+                                        <label class="form-check-label" for="mass_interact_comfort">Comfort</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="57"
+                                            id="mass_interact_fraternize">
+                                        <label class="form-check-label"
+                                            for="mass_interact_fraternize">Fraternize</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="68"
+                                            id="mass_interact_offer_advice">
+                                        <label class="form-check-label" for="mass_interact_offer_advice">Offer
+                                            Advice</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="14"
+                                            id="mass_interact_compliment">
+                                        <label class="form-check-label"
+                                            for="mass_interact_compliment">Compliment</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="75"
+                                            id="mass_interact_praise">
+                                        <label class="form-check-label" for="mass_interact_praise">Praise</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="76"
+                                            id="mass_interact_tell_naughty_joke">
+                                        <label class="form-check-label" for="mass_interact_tell_naughty_joke">Tell
+                                            Naughty Joke</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="4"
+                                            id="mass_interact_tell_joke">
+                                        <label class="form-check-label" for="mass_interact_tell_joke">Tell
+                                            Joke</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="69"
+                                            id="mass_interact_share_secrets">
+                                        <label class="form-check-label" for="mass_interact_share_secrets">Share
+                                            Secrets</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="70"
+                                            id="mass_interact_hang_out">
+                                        <label class="form-check-label" for="mass_interact_hang_out">Hang Out</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="71"
+                                            id="mass_interact_hey_sexy_how_you_doin">
+                                        <label class="form-check-label" for="mass_interact_hey_sexy_how_you_doin">Hey
+                                            Sexy...</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Physical</div>
+                            <div class="row g-1 mb-2">
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="55"
+                                            id="mass_interact_shake_hands">
+                                        <label class="form-check-label" for="mass_interact_shake_hands">Shake
+                                            Hands</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="59"
+                                            id="mass_interact_rub_elbows">
+                                        <label class="form-check-label" for="mass_interact_rub_elbows">Rub
+                                            Elbows</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="8"
+                                            id="mass_interact_hug">
+                                        <label class="form-check-label" for="mass_interact_hug">Hug</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="12"
+                                            id="mass_interact_tickle">
+                                        <label class="form-check-label" for="mass_interact_tickle">Tickle</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="63"
+                                            id="mass_interact_pat_on_back">
+                                        <label class="form-check-label" for="mass_interact_pat_on_back">Pat on
+                                            Back</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="66"
+                                            id="mass_interact_braid_hair">
+                                        <label class="form-check-label" for="mass_interact_braid_hair">Braid
+                                            Hair</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="7"
+                                            id="mass_interact_buy_a_drink">
+                                        <label class="form-check-label" for="mass_interact_buy_a_drink">Buy a
+                                            Drink</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="129"
+                                            id="mass_interact_stroll_hand_in_hand">
+                                        <label class="form-check-label" for="mass_interact_stroll_hand_in_hand">Stroll
+                                            Hand in Hand</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="89"
+                                            id="mass_interact_flex_biceps">
+                                        <label class="form-check-label" for="mass_interact_flex_biceps">Flex
+                                            Biceps</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="30"
+                                            id="mass_interact_caress">
+                                        <label class="form-check-label" for="mass_interact_caress">Caress</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="35"
+                                            id="mass_interact_ask_for_a_dance">
+                                        <label class="form-check-label" for="mass_interact_ask_for_a_dance">Ask for a
+                                            Dance</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="60"
+                                            id="mass_interact_high_five">
+                                        <label class="form-check-label" for="mass_interact_high_five">High Five</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="67"
+                                            id="mass_interact_arm_wrestle">
+                                        <label class="form-check-label" for="mass_interact_arm_wrestle">Arm
+                                            Wrestle</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="56"
+                                            id="mass_interact_kiss_cheeks">
+                                        <label class="form-check-label" for="mass_interact_kiss_cheeks">Kiss
+                                            Cheeks</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="64"
+                                            id="mass_interact_embrace">
+                                        <label class="form-check-label" for="mass_interact_embrace">Embrace</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="18"
+                                            id="mass_interact_play_with">
+                                        <label class="form-check-label" for="mass_interact_play_with">Play With</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="93"
+                                            id="mass_interact_pick_up">
+                                        <label class="form-check-label" for="mass_interact_pick_up">Pick Up</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="95"
+                                            id="mass_interact_change_diapers">
+                                        <label class="form-check-label" for="mass_interact_change_diapers">Change
+                                            Diapers</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="103"
+                                            id="mass_interact_kiss_on_forehead">
+                                        <label class="form-check-label" for="mass_interact_kiss_on_forehead">Kiss on
+                                            Forehead</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="44"
+                                            id="mass_interact_give_massage">
+                                        <label class="form-check-label" for="mass_interact_give_massage">Give
+                                            Massage</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Romantic</div>
+                            <div class="row g-1 mb-2">
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="9"
+                                            id="mass_interact_kiss">
+                                        <label class="form-check-label" for="mass_interact_kiss">Kiss</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="10"
+                                            id="mass_interact_kiss_passionately">
+                                        <label class="form-check-label" for="mass_interact_kiss_passionately">Kiss
+                                            Passionately</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="11"
+                                            id="mass_interact_make_love">
+                                        <label class="form-check-label" for="mass_interact_make_love">Make Love</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="13"
+                                            id="mass_interact_5_minute_quickie">
+                                        <label class="form-check-label" for="mass_interact_5_minute_quickie">5 Minute
+                                            Quickie</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="19"
+                                            id="mass_interact_tantric_sex">
+                                        <label class="form-check-label" for="mass_interact_tantric_sex">Tantric
+                                            Sex</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="164"
+                                            id="mass_interact_enjoy_kobe_sutra">
+                                        <label class="form-check-label" for="mass_interact_enjoy_kobe_sutra">Enjoy Kobe
+                                            Sutra</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Special</div>
+                            <div class="row g-1 mb-3">
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="39"
+                                            id="mass_interact_bless">
+                                        <label class="form-check-label" for="mass_interact_bless">Bless</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="33"
+                                            id="mass_interact_do_funny_magic">
+                                        <label class="form-check-label" for="mass_interact_do_funny_magic">Do Funny
+                                            Magic</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="29"
+                                            id="mass_interact_seek_apprenticeship">
+                                        <label class="form-check-label" for="mass_interact_seek_apprenticeship">Seek
+                                            Apprenticeship</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="21"
+                                            id="mass_interact_sing_to">
+                                        <label class="form-check-label" for="mass_interact_sing_to">Sing To</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="78"
+                                            id="mass_interact_serenade">
+                                        <label class="form-check-label" for="mass_interact_serenade">Serenade</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="94"
+                                            id="mass_interact_guide">
+                                        <label class="form-check-label" for="mass_interact_guide">Guide</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="6"
+                                            id="mass_interact_google">
+                                        <label class="form-check-label" for="mass_interact_google">Google-Google</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Settings</div>
+                            <div class="row g-2">
+                                <div class="col-sm-4">
+                                    <label for="mass_interact_exclude_id" class="form-label">Excluded character IDs
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Comma-separated list of character IDs to skip during mass interact."
+                                            class="text-muted ms-1" style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm"
+                                        id="mass_interact_exclude_id" placeholder="e.g. 1234, 5678">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="mass_interact_max_chars" class="form-label">Max characters (1-100)
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Limit the number of characters to interact with per run."
+                                            class="text-muted ms-1" style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <input type="number" class="form-control form-control-sm"
+                                        id="mass_interact_max_chars" min="1" max="100">
+                                </div>
+                                <div class="col-sm-4 d-flex align-items-end pb-1">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="mass_interact_ignore_acquaintance">
+                                        <label class="form-check-label"
+                                            for="mass_interact_ignore_acquaintance">Ignore new
+                                            acquaintances</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Misc Options ── -->
+                <div id="tab-misc" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Misc Options</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">General-purpose settings that affect the overall extension
+                                behaviour.</p>
+
+                            <div class="option-group-title">Display</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="progress_bar_percent">
+                                        <label class="form-check-label" for="progress_bar_percent">Progress bar
+                                            percentages</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="strip_percent_txt">
+                                        <label class="form-check-label" for="strip_percent_txt">Strip text from
+                                            progress %</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="score_highlight">
+                                        <label class="form-check-label" for="score_highlight">Score
+                                            highlight</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="searchable_tables">
+                                        <label class="form-check-label" for="searchable_tables">Searchable
+                                            tables</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="show_msg_helper">
+                                        <label class="form-check-label" for="show_msg_helper">Message helper</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Navigation</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="fast_character_switch">
+                                        <label class="form-check-label" for="fast_character_switch">Auto-switch
+                                            character</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="redirect_to_login">
+                                        <label class="form-check-label" for="redirect_to_login">Redirect to standard
+                                            login</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Scoring</div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-4">
+                                    <label for="score_scale" class="form-label">Score Scale</label>
+                                    <select class="form-select form-select-sm" id="score_scale">
+                                        <option value="0_26" selected>From 0 to 26</option>
+                                        <option value="1_27">From 1 to 27</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Gotta Go Fast</div>
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <label for="autograph_book_name" class="form-label">Autograph book item name
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="The in-game item name of the autograph book in your language."
+                                            class="text-muted ms-1" style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" id="autograph_book_name"
+                                        placeholder="e.g. Autograph Book">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Popup Options ── -->
+                <div id="tab-popup" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Popup Options</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">Enable or disable hover popups on specific game elements. Popups
+                                fetch and display element details inline without leaving the page.</p>
+
+                            <div class="option-group-title">Enabled Popups</div>
+                            <div class="row g-2">
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="character_popup">
+                                        <label class="form-check-label" for="character_popup">Character popup</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="song_popup">
+                                        <label class="form-check-label" for="song_popup">Songs popup</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="recent_progress_popup">
+                                        <label class="form-check-label" for="recent_progress_popup">Skills popup</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="show_club_popup">
+                                        <label class="form-check-label" for="show_club_popup">Club popup</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="show_details_popup">
+                                        <label class="form-check-label" for="show_details_popup">Show details
+                                            popup</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Tour Bus Helper ── -->
+                <div id="tab-tour-bus" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Tour Bus Book Helper</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">Manage the tour bus booking assistant. This feature only works
+                                for VIP accounts.</p>
+
+                            <div class="option-group-title">General</div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="tb_enable">
+                                        <label class="form-check-label" for="tb_enable">Enable Tour Bus
+                                            Helper</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title">Booking Rules</div>
+                            <div class="row g-2">
+                                <div class="col-sm-4">
+                                    <label for="tb_book_after" class="form-label">Book tour route after
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Determines which past event triggers the next booking."
+                                            class="text-muted ms-1" style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <select class="form-select form-select-sm" id="tb_book_after">
+                                        <option value="previous_event" selected>Previous Event</option>
+                                        <option value="previous_show">Previous Show</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="tb_hour_range" class="form-label">Book after how many hours (1-5)
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Number of hours after the trigger event before the route is booked."
+                                            class="text-muted ms-1" style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <input type="number" class="form-control form-control-sm" id="tb_hour_range"
+                                        min="1" max="5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /col-lg-9 -->
+        </div><!-- /row -->
+    </div><!-- /container-fluid -->
 
     <script src="options.js"></script>
+    <script src="../libs/popper.min.js"></script>
     <script src="../libs/bootstrap.min-5.3.1.js"></script>
+    <script src="options-ui.js"></script>
 </body>
 
 </html>
