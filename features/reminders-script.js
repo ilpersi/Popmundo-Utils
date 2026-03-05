@@ -57,7 +57,7 @@ function checkReminders() {
 
         if (data.redirect) {
             // https://74.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/12345
-            let itemHREF = `http://${window.location.host}/World/Popmundo.aspx/Character/ItemDetails/${data.itemID}`;
+            let itemHREF = Utils.getServerLink(`/World/Popmundo.aspx/Character/ItemDetails/${data.itemID}`);
             window.location.href = itemHREF;
         } else {
             // We should delete the notification
