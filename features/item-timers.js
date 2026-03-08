@@ -101,7 +101,7 @@ async function checkForTimer() {
                         // We use XPATH to get the item name. This will be used in the notification message.
                         let xpathHelper = new XPathHelper('//div[@class="content"][1]/div[@class="box"][1]/h2');
                         let itemNameNode = xpathHelper.getFirstOrderedNode(document);
-                        itemName = itemNameNode.singleNodeValue.textContent;
+                        itemName = itemNameNode.singleNodeValue?.textContent ?? '';
                     }
 
                     // We make sure that a key is present for the current character
