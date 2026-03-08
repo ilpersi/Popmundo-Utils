@@ -8,7 +8,7 @@ class Notifications {
     }
 
     constructor() {
-        this.containerNode = document.getElementById('notifications');
+        this.#containerNode = document.getElementById('notifications');
     }
 
     /**
@@ -17,7 +17,7 @@ class Notifications {
      * @memberof Notifications
      */
     hideAll() {
-        for (var child = this.containerNode.firstChild; child !== null; child = child.nextSibling) {
+        for (var child = this.#containerNode.firstChild; child !== null; child = child.nextSibling) {
             if ('DIV' === child.tagName) {
                 if (child.getAttribute('style'))
                     child.setAttribute('style', child.getAttribute('style') + ' display:none;');
@@ -34,8 +34,8 @@ class Notifications {
      * @memberof Notifications
      */
     deleteAll() {
-        while (this.containerNode.firstChild) {
-            this.containerNode.removeChild(this.containerNode.lastChild);
+        while (this.#containerNode.firstChild) {
+            this.#containerNode.removeChild(this.#containerNode.lastChild);
         }
     }
 
@@ -50,7 +50,7 @@ class Notifications {
      */
     createNotification(level, id = null, textContent = null) {
 
-        if (this.containerNode) {
+        if (this.#containerNode) {
             var newDiv = document.createElement('div');
 
             if (Notifications.LEVELS.SUCCESS === level)
@@ -63,15 +63,13 @@ class Notifications {
                 throw 'Unknown notification level: ' + level;
             }
 
-            newDiv.setAttribute("null", "");
-
             if (id)
                 newDiv.setAttribute('id', id);
 
             if (textContent)
                 newDiv.textContent = textContent;
 
-            this.containerNode.appendChild(newDiv);
+            this.#containerNode.appendChild(newDiv);
 
             return newDiv;
         } else {
@@ -129,7 +127,7 @@ class Notifications {
         let results = [];
 
         let className = CLASS_PREFIX + level;
-        for (var child = this.containerNode.firstChild; child !== null; child = child.nextSibling) {
+        for (var child = this.#containerNode.firstChild; child !== null; child = child.nextSibling) {
             if ('DIV' === child.tagName) {
                 let divClass = child.getAttribute('class');
 
