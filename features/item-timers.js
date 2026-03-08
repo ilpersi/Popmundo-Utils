@@ -143,7 +143,7 @@ async function timerOnClick(btnNode) {
             return response.text();
         }
     }).then((html) => {
-        console.log(html);
+        // console.log(html);
     });
 
     btnNode.click();
