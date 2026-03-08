@@ -17,15 +17,16 @@ class Notifications {
      * @memberof Notifications
      */
     hideAll() {
-        for (var child = this.#containerNode.firstChild; child !== null; child = child.nextSibling) {
-            if ('DIV' === child.tagName) {
-                if (child.getAttribute('style'))
-                    child.setAttribute('style', child.getAttribute('style') + ' display:none;');
-                else
-                    child.setAttribute('style', 'display:none;');
+        if (this.#containerNode != null) {
+            for (var child = this.#containerNode.firstChild; child !== null; child = child.nextSibling) {
+                if ('DIV' === child.tagName) {
+                    if (child.getAttribute('style'))
+                        child.setAttribute('style', child.getAttribute('style') + ' display:none;');
+                    else
+                        child.setAttribute('style', 'display:none;');
+                }
             }
         }
-
     }
 
     /**
@@ -34,8 +35,10 @@ class Notifications {
      * @memberof Notifications
      */
     deleteAll() {
-        while (this.#containerNode.firstChild) {
-            this.#containerNode.removeChild(this.#containerNode.lastChild);
+        if (this.#containerNode != null) {
+            while (this.#containerNode.firstChild) {
+                this.#containerNode.removeChild(this.#containerNode.lastChild);
+            }
         }
     }
 
@@ -127,14 +130,16 @@ class Notifications {
         let results = [];
 
         let className = CLASS_PREFIX + level;
-        for (var child = this.#containerNode.firstChild; child !== null; child = child.nextSibling) {
-            if ('DIV' === child.tagName) {
-                let divClass = child.getAttribute('class');
+        if (this.#containerNode != null) {
+            for (var child = this.#containerNode.firstChild; child !== null; child = child.nextSibling) {
+                if ('DIV' === child.tagName) {
+                    let divClass = child.getAttribute('class');
 
-                if (ignoreLoading && divClass.includes('notification-loading')) continue;
+                    if (ignoreLoading && divClass.includes('notification-loading')) continue;
 
-                if ((level !== null && divClass.includes(className)) || (level === null && divClass.includes(CLASS_PREFIX))) {
-                    results.push(child.textContent);
+                    if ((level !== null && divClass.includes(className)) || (level === null && divClass.includes(CLASS_PREFIX))) {
+                        results.push(child.textContent);
+                    }
                 }
             }
         }
