@@ -404,7 +404,7 @@ async function onSubmitClick() {
 
                 // We finally choose a random interaction
                 if (possibleInteractions.length > 0)
-                    randomInteraction = possibleInteractions.sort(() => 0.5 - Math.random())[0];
+                    randomInteraction = possibleInteractions[Math.floor(Math.random() * possibleInteractions.length)];
                 else
                     break;
 
