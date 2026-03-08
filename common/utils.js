@@ -26,7 +26,7 @@ class Utils {
      */
     static get progressBarJSRE() {
         // <script type="text/javascript">drawProgressBar(0, false, "0%", "progressBar", false, "0%");</script>
-        const returnRE = /<script type="text\/javascript">drawProgressBar\((?<progressInt>[0-9]{1,3}),\s*(?<bool1>false|true),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool2>false|true),\s*"(?<progressStr2>[^"]+?)"s*\);<\/script>/gm;
+        const returnRE = /<script type="text\/javascript">drawProgressBar\((?<progressInt>[0-9]{1,3}),\s*(?<bool1>false|true),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool2>false|true),\s*"(?<progressStr2>[^"]+?)"\s*\);<\/script>/gm;
         return returnRE;
     }
 
@@ -39,7 +39,7 @@ class Utils {
      */
     static get plusMinusBarJSRE() {
         // <script type="text/javascript">drawPlusMinusBar(0, "0%", "plusMinusBar", false, "0%");</script>
-        const returnRE = /<script type="text\/javascript">drawPlusMinusBar\((?<progressInt>-{0,1}[0-9]{1,3}),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool1>false|true),\s*"(?<progressStr2>[^"]+?)"s*\);<\/script>/gm;
+        const returnRE = /<script type="text\/javascript">drawPlusMinusBar\((?<progressInt>-{0,1}[0-9]{1,3}),\s*"(?<progressStr>[^"]+?)",\s*"(?<style>[^"]+?)",\s*(?<bool1>false|true),\s*"(?<progressStr2>[^"]+?)"\s*\);<\/script>/gm;
         return returnRE;
     }
 
