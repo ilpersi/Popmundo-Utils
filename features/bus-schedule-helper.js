@@ -349,7 +349,7 @@ function manageTourBusHelper() {
                                         let valueIndex = i + bookRange;
 
                                         // This may happen if previous show is at 22:00
-                                        if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = timeOptionValueNodes.snapshotLength;
+                                        if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = timeOptionValueNodes.snapshotLength - 1;
 
                                         let valueNode = timeOptionValueNodes.snapshotItem(valueIndex);
                                         departureTimeValue = valueNode.getAttribute('value');
