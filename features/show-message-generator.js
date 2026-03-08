@@ -23,7 +23,8 @@ function manageShowArea() {
         let msgXpathHelper = new XPathHelper(VENUE_A_XPATH);
         let venueAFirstNode = msgXpathHelper.getFirstOrderedNode(document);
 
-        let venueANode = venueAFirstNode.singleNodeValue
+        const venueANode = venueAFirstNode.singleNodeValue;
+        if (!venueANode) return;
         let venueId = parseInt(venueANode.getAttribute('href').replace(/[^0-9]/g, ''));
         let venueName = venueANode.textContent;
 
@@ -31,7 +32,8 @@ function manageShowArea() {
         msgXpathHelper.xpath = CITY_A_XPATH;
         let cityAFirstNode = msgXpathHelper.getFirstOrderedNode(document);
 
-        let cityANode = cityAFirstNode.singleNodeValue;
+        const cityANode = cityAFirstNode.singleNodeValue;
+        if (!cityANode) return;
         let cityId = parseInt(cityANode.getAttribute('href').replace(/[^0-9]/g, ''));
         let cityName = cityANode.textContent;
 
@@ -39,7 +41,8 @@ function manageShowArea() {
         msgXpathHelper.xpath = TIME_TD_XPATH;
         let timeTDFirstNode = msgXpathHelper.getFirstOrderedNode(document);
 
-        let timeTDNode = timeTDFirstNode.singleNodeValue;
+        const timeTDNode = timeTDFirstNode.singleNodeValue;
+        if (!timeTDNode) return;
         let dateArray = timeTDNode.textContent.match(/(\d{1,2}\/\d{1,2}\/\d{4}),\s+([0-9:]+)/);
         let dateString = (dateArray != null) ? dateArray[1] : 'Unknown date';
         let timeString = (dateArray != null) ? dateArray[2] : 'Unknown time';
@@ -48,8 +51,11 @@ function manageShowArea() {
         msgXpathHelper.xpath = SCORE_A_XPATH;
         let scoreAFirstNode = msgXpathHelper.getFirstOrderedNode(document);
 
-        let scoreANode = scoreAFirstNode.singleNodeValue;
-        let fame = scoreANode.href.match(/Scoring\/([0-9]{1,2})/)[1];
+        const scoreANode = scoreAFirstNode.singleNodeValue;
+        if (!scoreANode) return;
+        const fameMatch = scoreANode.href.match(/Scoring\/([0-9]{1,2})/);
+        if (!fameMatch) return;
+        let fame = fameMatch[1];
         let priceStr = "0 M$";
 
         // https://docs.google.com/spreadsheets/d/1w50Blx8EbcNBWH7UkIgt9zx6xmcU01CLUCBlZ1r1P5M/pub?hl=de&hl=de&gid=18#
@@ -125,25 +131,27 @@ function manageShowArea() {
                 priceStr = "100 M$";
                 break;
             default:
-                alert("Something went wrong with the fame level!");
+                console.warn(`Unexpected fame level: ${fame}`);
                 break;
         }
 
         // We get the band id
         msgXpathHelper.xpath = BAND_ID_DIV_PATH;
         let bandIdDivFirstNode = msgXpathHelper.getFirstOrderedNode(document);
-        let bandIdDiv = bandIdDivFirstNode.singleNodeValue;
+        const bandIdDiv = bandIdDivFirstNode.singleNodeValue;
+        if (!bandIdDiv) return;
         let bandId = bandIdDiv.textContent;
 
         msgXpathHelper.xpath = TXT_AREA_DIV_XPATH;
         let txtAreaDivFirstNode = msgXpathHelper.getFirstOrderedNode(document);
-        let txtAreaDivNode = txtAreaDivFirstNode.singleNodeValue;
+        const txtAreaDivNode = txtAreaDivFirstNode.singleNodeValue;
+        if (!txtAreaDivNode) return;
 
         let textArea1 = document.createElement('textarea');
         textArea1.setAttribute('cols', 55);
         textArea1.setAttribute('rows', 9);
         textArea1.setAttribute('id', 'show_message');
-        textArea1.innerHTML = `Hi,\n[artistid=${bandId} name=my band] has a show planned on ${dateString} at ${timeString} in [cityid=${cityId} name=${cityName}] in the [localeid=${venueId} name=${venueName}] venue.\n\nCan you please set the price to ${priceStr}?\n\nThank you!`;
+        textArea1.value = `Hi,\n[artistid=${bandId} name=my band] has a show planned on ${dateString} at ${timeString} in [cityid=${cityId} name=${cityName}] in the [localeid=${venueId} name=${venueName}] venue.\n\nCan you please set the price to ${priceStr}?\n\nThank you!`;
 
         txtAreaDivNode.appendChild(document.createElement('br'));
         txtAreaDivNode.appendChild(document.createElement('br'));
