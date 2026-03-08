@@ -43,7 +43,7 @@ async function checkForTimer() {
             await chrome.storage.session.set({ "lastUseditemID": 0 });
         } else {
             // If we are on a specific item, we use the URL to get the ID
-            idMatch = itemIDRegex.exec(window.location.href);
+            let idMatch = itemIDRegex.exec(window.location.href);
             itemID = idMatch ? parseInt(idMatch[1]) : 0;
         }
 
