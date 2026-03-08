@@ -63,8 +63,6 @@ class Notifications {
                 throw 'Unknown notification level: ' + level;
             }
 
-            newDiv.setAttribute("null", "");
-
             if (id)
                 newDiv.setAttribute('id', id);
 
