@@ -39,7 +39,7 @@ async function checkForTimer() {
         if (window.location.href.includes('Character/Items/')) {
             let lastUsedDetails = await chrome.storage.session.get(LAST_USED_ITEM_ID);
             itemID = lastUsedDetails.lastUseditemID;
-            console.log('used item id loaded from cache: ' + itemID);
+            // console.log('used item id loaded from cache: ' + itemID);
             await chrome.storage.session.set({ "lastUseditemID": 0 });
         } else {
             // If we are on a specific item, we use the URL to get the ID
