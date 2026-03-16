@@ -35,8 +35,8 @@
                 "https://*.popmundo.com/*"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js"
+                "common/xpath-helper.js",
+                "common/utils.js"
             ]
         },
         {
