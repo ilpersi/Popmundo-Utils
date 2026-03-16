@@ -67,10 +67,10 @@ function manageCharacterTooltips() {
                     await scoring.applyBarPercentage(doc);
 
                     // This xpath is to manage the content we want to display in the popup
-                    let divXpathHelper = new XPathHelper('//*[@id="ppm-content"]/div[position()<3]');
+                    let divXpathHelper = new XPathHelper('//*[@id="ppm-content"]/div[position()<3]', doc);
 
                     // This xpath is to make sure that images in pop-up have the right src
-                    let imgSrcXpathHelper = new XPathHelper("//img[contains(@src, '../')]");
+                    let imgSrcXpathHelper = new XPathHelper("//img[contains(@src, '../')]", doc);
 
                     let infoHTML = '';
                     let divNodes = divXpathHelper.getOrderedSnapshot(doc);
@@ -80,6 +80,7 @@ function manageCharacterTooltips() {
                             let divNode = divNodes.snapshotItem(i);
 
                             // Let's fix images src when required
+                            // console.dir(divNode)
                             let imgNodes = imgSrcXpathHelper.getOrderedSnapshot(divNode);
                             for (let j = 0; j < imgNodes.snapshotLength; j++) {
                                 let imgNode = imgNodes.snapshotItem(j);
@@ -107,6 +108,7 @@ function manageCharacterTooltips() {
                     instance.setContent(infoHTML);
 
                 }).catch((error) => {
+                    console.log(error.stack);
                     instance._error = error;
                     instance.setContent(`<span style="color: ${popupTheme.COLOR};">Request failed. ${error}</span>`);
                 })

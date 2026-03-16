@@ -1,10 +1,13 @@
 class XPathHelper {
     #xpath;
+    #docToEvaluate;
     nameSpace;
 
     /**
      * Creates an instance of XPathHelper.
-     * @param {string} xpathExpression
+     * @param {string} xpathExpression Your XPath expression
+     * @param {Document} docToEvaluate The HTML document that will be used to run the document.evaluate method to find
+     * XPath expressions
      * @param {*} [namespaceResolver=null] A function that will be passed any namespace prefixes and should return a
      *  string representing the namespace URI associated with that prefix. It will be used to resolve prefixes within
      *  the xpath itself, so that they can be matched with the document. The value null is common for HTML documents
@@ -13,8 +16,9 @@ class XPathHelper {
      * @memberof XPathHelper An existing XPathResult to use for the results. If set to null the method will create and
      *  return a new XPathResult.
      */
-    constructor(xpathExpression, namespaceResolver=null, result=null) {
+    constructor(xpathExpression, docToEvaluate = document, namespaceResolver=null, result=null) {
         this.#xpath = xpathExpression;
+        this.#docToEvaluate = docToEvaluate;
         this.nameSpace = namespaceResolver;
         this.result = result;
     }
@@ -78,6 +82,6 @@ class XPathHelper {
     }
 
     #xpathNodes(contextNode, resultType) {
-        return document.evaluate(this.#xpath, contextNode, this.nameSpace, resultType, this.result);
+        return this.#docToEvaluate.evaluate(this.#xpath, contextNode, this.nameSpace, resultType, this.result);
     }
 }

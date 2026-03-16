@@ -585,7 +585,7 @@ class Scoring {
             // The Xpath for the bars mostly used on char and artis pages
             const PROGRESS_BAR_PATH = '//div[contains(@class, "rogressBar")]';
 
-            let xpathHelper = new XPathHelper(PROGRESS_BAR_PATH);
+            let xpathHelper = new XPathHelper(PROGRESS_BAR_PATH, domTree);
             let barNodes = xpathHelper.getOrderedSnapshot(domTree);
 
             for (let i = 0; i < barNodes.snapshotLength; i++) {
@@ -635,7 +635,7 @@ class Scoring {
             }
 
             const PLUS_NEG_HOLDER = '//div[@class="plusMinusBar"]';
-            xpathHelper = new XPathHelper(PLUS_NEG_HOLDER);
+            xpathHelper = new XPathHelper(PLUS_NEG_HOLDER, domTree);
             barNodes = xpathHelper.getOrderedSnapshot(domTree);
 
             for (let i = 0; i < barNodes.snapshotLength; i++) {
