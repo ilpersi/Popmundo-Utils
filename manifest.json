@@ -19,19 +19,31 @@
         "storage",
         "webRequest"
     ],
-
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "@popmundo-utils"
+        }
+    },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "scripts": ["background.js"]
       },
 
     "content_scripts": [
         {
             "matches": [
+                "https://*.popmundo.com/*"
+            ],
+            "js": [
+                "common/utils.js",
+                "common/xpath-helper.js"
+            ]
+        },
+        {
+            "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/City*"
             ],
             "js": [
-                "common/xpath-helper.js",
-                "common/utils.js",
                 "features/open-houses.js"
             ]
         },
@@ -42,8 +54,6 @@
             "js": [
                 "libs/jquery-3.6.1.min.js",
                 "libs/jquery.dataTables.min.js",
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/global-content-script.js"
             ]
         },
@@ -64,8 +74,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Charts*"
             ],
             "js": [
-                "common/xpath-helper.js",
-                "common/utils.js",
                 "features/progress-bar-script.js"
             ]
         },
@@ -79,7 +87,6 @@
             "js": [
                 "libs/popper.min.js",
                 "libs/tippy-bundle.umd.min.js",
-                "common/utils.js",
                 "features/skill-popup-script.js"
             ],
             "css": [
@@ -94,7 +101,6 @@
             "js": [
                 "libs/popper.min.js",
                 "libs/tippy-bundle.umd.min.js",
-                "common/utils.js",
                 "features/song-popup-script.js"
             ],
             "css": [
@@ -114,9 +120,7 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Charts*"
             ],
             "js": [
-                "common/xpath-helper.js",
                 "common/color.js",
-                "common/utils.js",
                 "features/scoring-script.js"
             ]
         },
@@ -134,7 +138,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character"
             ],
             "js": [
-                "common/utils.js",
                 "common/notifications.js",
                 "features/reminders-script.js"
             ]
@@ -145,8 +148,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "common/notifications.js",
                 "features/item-timers.js"
             ]
@@ -156,8 +157,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Relations/*"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "common/notifications.js",
                 "features/call-all-friends.js"
             ]
@@ -167,8 +166,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/CharactersPresent/*"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/mass-interact.js"
             ]
         },
@@ -189,8 +186,6 @@
             "js": [
                 "libs/popper.min.js",
                 "libs/tippy-bundle.umd.min.js",
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/character-popup.js"
             ]
         },
@@ -199,7 +194,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/PerformanceDetails/*"
             ],
             "js": [
-                "common/xpath-helper.js",
                 "features/show-message-generator.js"
             ]
         },
@@ -208,7 +202,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/Repertoire/*"
             ],
             "js": [
-                "common/xpath-helper.js",
                 "features/jam-helper.js"
             ]
         },
@@ -217,7 +210,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/Schedule/*"
             ],
             "js": [
-                "common/xpath-helper.js",
                 "features/bus-schedule-helper.js"
             ]
         },
@@ -227,8 +219,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/BookShow/*"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/club-popup.js"
             ]
         },
@@ -240,8 +230,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/show-details-popup.js"
             ]
         },
@@ -250,8 +238,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/item-list-timers.js",
                 "features/gotta-go-fast.js"
             ]
@@ -261,8 +247,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character"
             ],
             "js": [
-                "common/utils.js",
-                "common/xpath-helper.js",
                 "features/local-storage-char-id.js"
             ]
         }
