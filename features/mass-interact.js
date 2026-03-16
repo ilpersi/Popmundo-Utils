@@ -154,7 +154,6 @@ async function onSubmitClick() {
     if (savedOptions.mass_interact_ignore_acquaintance) {
         // XPATH for the Relations link in the Character Page
         const RELATIONS_A_XPATH = "//a[contains(@href, '/World/Popmundo.aspx/Character/Relations/')]";
-        let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH);
 
         // Status update
         statusPElem.innerHTML = chrome.i18n.getMessage('miStatusCheckingRelations');
@@ -166,6 +165,8 @@ async function onSubmitClick() {
         // We parse the character page
         let parser = new DOMParser();
         let doc = parser.parseFromString(charHTML, "text/html");
+
+        let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH, doc);
         let relationANode = relationAXpathHelp.getFirstOrderedNode(doc);
         let relationURL = Utils.getServerLink(relationANode.singleNodeValue.getAttribute('href'));
 
@@ -211,7 +212,7 @@ async function onSubmitClick() {
             doc = parser.parseFromString(relHTML, "text/html");
 
             // We search for friend ID in the relationship page
-            let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
+            let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH, doc);
             let relationsNodes = relationsXPathHelp.getOrderedSnapshot(doc);
 
             for (let i = 0; i < relationsNodes.snapshotLength; i++) {
@@ -229,7 +230,7 @@ async function onSubmitClick() {
             }
 
             // We search for next page link
-            let relationsNextXPathHelp = new XPathHelper(RELATIONS_NEXT_XPATH);
+            let relationsNextXPathHelp = new XPathHelper(RELATIONS_NEXT_XPATH, doc);
             let relationsNextNode = relationsNextXPathHelp.getFirstOrderedNode(doc);
 
             // Next page element is found
@@ -344,8 +345,7 @@ async function onSubmitClick() {
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
 
-    // This XPATH makes sure that the Interact Select is is there
-    let interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH);
+    
 
     // How many characters did we actually interact with? This is the counter for it. It is only increased when at least one interaction is available
     let totalCharactersCnt = 0;
@@ -372,6 +372,8 @@ async function onSubmitClick() {
             // Parse the text
             let doc = parser.parseFromString(html, "text/html");
 
+            // This XPATH makes sure that the Interact Select is is there
+            let interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
             let interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
 
             // If interactions are available for this char, we are going to use them so we increment the counter of total characters we interacted with

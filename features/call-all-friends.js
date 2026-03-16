@@ -103,7 +103,7 @@ async function onSubmitClick() {
             let doc = parser.parseFromString(html, "text/html");
 
             // This XPATH makes sure that the Wazzup call option is there
-            let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]');
+            let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]', doc);
             let wazzupNode = wazzupXpathHelper.getOrderedSnapshot(doc);
 
             // Random interaction is 0 by default, if interactions are available a random value is generated
@@ -111,7 +111,7 @@ async function onSubmitClick() {
             if (wazzupNode.snapshotLength > 0) {
                 let availableInteractions = [];
                 // This is the XPATH for the option values in the interaction select element
-                let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option')
+                let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option', doc)
                 let interactionNodes = interactionsXpathHelper.getUnorderedNodeSnapshot(doc);
 
                 // We loop and we push possible values in availableInteractions

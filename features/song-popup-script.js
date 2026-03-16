@@ -59,8 +59,8 @@ function manageSongTooltips() {
                     await scoring.applyBarPercentage(doc);
                     await scoring.applyScoringNumbers(doc);
 
-                    let xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr/td');
-                    let checkMarketHelper = new XPathHelper("//p[count(a[contains(@href, 'BuySong')]) > 0]");
+                    let xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr/td', doc);
+                    let checkMarketHelper = new XPathHelper("//p[count(a[contains(@href, 'BuySong')]) > 0]", doc);
 
                     // The HTML content of the popup
                     let infoHTML = '';
@@ -73,7 +73,7 @@ function manageSongTooltips() {
                         let isMaket = checkMarketHelper.getBoolean(doc, true);
 
                         // We get all the div with relevant information
-                        let songInfoHelper = new XPathHelper("//div[@id='ppm-content']/div[@class='box']");
+                        let songInfoHelper = new XPathHelper("//div[@id='ppm-content']/div[@class='box']", doc);
 
                         // Main song info
                         let divPositions = [0];

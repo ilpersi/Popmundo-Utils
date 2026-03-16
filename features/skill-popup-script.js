@@ -55,7 +55,7 @@ function manageSkillTooltips() {
 
                     // Parse the text
                     let doc = parser.parseFromString(html, "text/html");
-                    xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr[@class="odd"]/td[4]');
+                    xpathHelper = new XPathHelper('//div[@class="box"]/table/tbody/tr[@class="odd"]/td[4]', doc);
 
                     let infoHTML = '';
                     let trNodes = xpathHelper.getOrderedSnapshot(doc);

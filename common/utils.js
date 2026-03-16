@@ -532,7 +532,7 @@ class Scoring {
             const SCORE_LINK_XPATH = '//a[contains(@href, "Scoring")]';
 
             // Let's get the scoring nodes
-            let xpathHelper = new XPathHelper(SCORE_LINK_XPATH);
+            let xpathHelper = new XPathHelper(SCORE_LINK_XPATH, domTree);
             let scoreNodes = xpathHelper.getOrderedSnapshot(domTree);
 
             for (let i = 0; i < scoreNodes.snapshotLength; i++) {
