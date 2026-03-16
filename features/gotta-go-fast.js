@@ -65,21 +65,28 @@
      */
     function getBlockedChars() {
         return new Promise((resolve) => {
-            chrome.storage.session.get([STORAGE_KEYS.BLOCKED_CHARS], (items) => {
-                const blocked = items[STORAGE_KEYS.BLOCKED_CHARS];
-                resolve(Array.isArray(blocked) ? blocked : []);
-            });
+            chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'get',
+                'param': [STORAGE_KEYS.BLOCKED_CHARS],
+            })
+                .then((items) => {
+                    const blocked = items[STORAGE_KEYS.BLOCKED_CHARS];
+                    resolve(Array.isArray(blocked) ? blocked : []);
+                });
         });
     }
 
     /**
      * Persists the list of blocked characters.
      * @param {string[]} blockedChars - List of blocked character IDs.
-     * @returns {Promise<void>}
+     * @returns {Promise<any>}
      */
     function setBlockedChars(blockedChars) {
-        return new Promise((resolve) => {
-            chrome.storage.session.set({ [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars }, resolve);
+        return chrome.runtime.sendMessage({
+            'type': 'storage.session',
+            'payload': 'set',
+            'param': { [STORAGE_KEYS.BLOCKED_CHARS]: blockedChars },
         });
     }
 
@@ -719,9 +726,12 @@
         JQ('#clear-blocked-chars').click(function (e) {
             e.preventDefault();
             e.stopPropagation();
-            chrome.storage.session.remove(STORAGE_KEYS.BLOCKED_CHARS, () => {
-                log(chrome.i18n.getMessage('ggfBlockedCleared'));
-            });
+            chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'remove',
+                'param': STORAGE_KEYS.BLOCKED_CHARS,
+            })
+                .then(() => log(chrome.i18n.getMessage('ggfBlockedCleared')));
         });
     });
 

@@ -198,7 +198,13 @@ function fastCharSwitch(autoClick = false) {
     let selectResult = xpathHelper.getFirstOrderedNode(document);
     if (selectResult.singleNodeValue) {
         selectResult.singleNodeValue.addEventListener('change', async (event) => {
-            await chrome.storage.session.remove('my_char_id');
+
+            await chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'remove',
+                'param': 'my_char_id',
+            });
+
             xpathHelper.xpath = CHAR_SUBMIT_XPATH;
             let submitResult = xpathHelper.getFirstOrderedNode(document);
             if (submitResult.singleNodeValue && autoClick) submitResult.singleNodeValue.click();

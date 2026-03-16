@@ -14,6 +14,7 @@ async function checkForTimer() {
 
     // Maybe a timer is there
     if (errors.length > 0) {
+        // console.log('Found ' + errors.length + ' errors');
         // Timings
         const SECOND = 1000;
         const MINUTE = SECOND * 60;
@@ -37,10 +38,21 @@ async function checkForTimer() {
         let itemID = 0;
         // If we are on the items page we need to get the last used item ID from the cache
         if (window.location.href.includes('Character/Items/')) {
-            let lastUsedDetails = await chrome.storage.session.get(LAST_USED_ITEM_ID);
+
+            let lastUsedDetails = await chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'get',
+                'param': LAST_USED_ITEM_ID,
+            });
             itemID = lastUsedDetails.lastUseditemID;
             // console.log('used item id loaded from cache: ' + itemID);
-            await chrome.storage.session.set({ "lastUseditemID": 0 });
+
+            // We reset the last used id
+            await chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'set',
+                'param': { "lastUseditemID": 0 },
+            });
         } else {
             // If we are on a specific item, we use the URL to get the ID
             let idMatch = itemIDRegex.exec(window.location.href);
@@ -115,7 +127,7 @@ async function checkForTimer() {
         });
 
         await chrome.storage.sync.set({ "timers": timers });
-        
+
         // If we are on the item list we make sure to reload the page so timers are correctly rendered
         if (window.location.href.includes('Character/Items/'))
             window.location.reload();
@@ -192,9 +204,9 @@ let intervalID = setInterval(async () => {
     // We make sure notifications are not loading
     let notifications = new Notifications();
     if (!notifications.areLoading()) {
-        // console.log("Notifications found, cancelling interval.")
-        await checkForTimer();
+        // console.log("Notifications found, cancelling interval.");
         clearInterval(intervalID);
+        await checkForTimer();
     }
 
     maxIntervalCnt += 1;
