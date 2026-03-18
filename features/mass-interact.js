@@ -133,7 +133,7 @@ async function onSubmitClick() {
                 INTERACTIONS.push(optionsMap[optionName]);
         }
     }
-
+    // try {
     // XPATH used to search character id in the present characters page
     const PRESENT_CHARS_XPATH = '//tr[contains(@id, "ctl00_cphLeftColumn_ctl00_repCharactersPresent") and contains(@id, "trCharacterRow")]';
     // Additional XPATH to make sure that the interact link is present for a specific character
@@ -436,6 +436,8 @@ async function onSubmitClick() {
                 // We update the parser content so to make sure the while does not go in infinite loop
                 parser = new DOMParser();
                 doc = parser.parseFromString(html, "text/html");
+                // As we are updating the parser content, we also need to update the XpathHelper
+                interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
                 interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
 
                 // We increase the counters
@@ -451,6 +453,8 @@ async function onSubmitClick() {
         statusPElem.innerHTML = chrome.i18n.getMessage('miStatusFinalInteracted', [String(totalInteractionsCnt), String(totalCharactersCnt)]);
     else
         statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteraction');
+
+    // } catch (error) { console.log(error.message); console.log(error.stack);}
 }
 
 /**

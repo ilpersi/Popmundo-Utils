@@ -71,20 +71,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 
     }
-
-    if (request.command === "storage.session.set") {
-        // console.dir(request);
-        return chrome.storage.session.set(request.param);
-    } else if (request.command === "storage.session.get") {
-        // console.dir(request);
-        chrome.storage.session.get(request.param)
-            .then((data) => {
-                // debugger;
-                // console.dir(data);
-                sendResponse(data);
-            });
-
-        // Since session.set is asynchronous, must return an explicit `true`
-        return true;
-    }
 });

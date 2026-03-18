@@ -31,7 +31,6 @@ function manageClubTooltips() {
         },
 
         'onShow': function (instance) {
-
             if (!showClubPopUp) {
                 instance.setContent('');
                 return false
@@ -62,11 +61,11 @@ function manageClubTooltips() {
                     // await scoring.applyBarPercentage(doc);
                     await scoring.applyScoringNumbers(doc);
 
-                    xpathHelper = new XPathHelper('//div[@class="box" and position() >1]');
+                    xpathHelper = new XPathHelper('//div[@class="box" and position() >1]', doc);
 
                     let infoHTML = '';
                     let divNodes = xpathHelper.getOrderedSnapshot(doc);
-                    
+
                     if (divNodes.snapshotLength > 0) {
                         for (let i = 0; i < divNodes.snapshotLength; i++) {
                             let divNode = divNodes.snapshotItem(i);
@@ -121,7 +120,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 if (!Utils.isGreatHeist()) {
     chrome.storage.sync.get(clubPopUpOptionsValues, items => {
         showClubPopUp = items.show_club_popup;
-    
+
         manageClubTooltips();
     });
 }

@@ -213,7 +213,7 @@ function fastCharSwitch(autoClick = false) {
 }
 
 /**
- * This code will had a Popmundo menu inside the game. The idea is to have some options available in a handy place.
+ * This code will add a Popmundo menu inside the game. The idea is to have some options available in a handy place.
  * 
  * @param {string} install_type - The result of chrome.management.getSelf() method. Used to enable developer options.
  */

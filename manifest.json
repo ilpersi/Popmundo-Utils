@@ -4,14 +4,12 @@
     "default_locale": "en",
     "name": "__MSG_extName__",
     "description": "__MSG_extDescription__",
-
     "icons": {
         "16": "icons/icon16-new.png",
         "32": "icons/icon32-new.png",
         "48": "icons/icon48-new.png",
         "128": "icons/icon128-new.png"
     },
-
     "host_permissions": [
         "https://*.popmundo.com/*"
     ],
@@ -26,9 +24,10 @@
     },
     "background": {
         "service_worker": "background.js",
-        "scripts": ["background.js"]
-      },
-
+        "scripts": [
+            "background.js"
+        ]
+    },
     "content_scripts": [
         {
             "matches": [
@@ -251,7 +250,6 @@
             ]
         }
     ],
-
     "web_accessible_resources": [
         {
             "resources": [
@@ -270,6 +268,5 @@
             ]
         }
     ],
-    
     "options_page": "options/options.html"
 }

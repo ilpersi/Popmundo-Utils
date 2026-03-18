@@ -60,7 +60,7 @@ function manageDetailsTooltips() {
                     // await scoring.applyBarPercentage(doc);
                     await scoring.applyScoringNumbers(doc);
 
-                    xpathHelper = new XPathHelper('//div[@class="box" and position() >1 and position() < 5]');
+                    xpathHelper = new XPathHelper('//div[@class="box" and position() >1 and position() < 5]', doc);
 
                     let infoHTML = '';
                     let divNodes = xpathHelper.getOrderedSnapshot(doc);

@@ -33,7 +33,7 @@ const watchChanges = (dir, lastTimestamp) => {
 }
 
 chrome.management.getSelf(self => {
-    if (self.installType === 'development') {
+    if (self.installType === 'development'  && 'getPackageDirectoryEntry' in chrome.runtime) {
         chrome.runtime.getPackageDirectoryEntry(dir => watchChanges(dir))
     }
 })

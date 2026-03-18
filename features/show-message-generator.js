@@ -6,12 +6,14 @@ function manageShowArea() {
     if (!showMessageArea) return;
 
     // This XPath will make it so that the text area with the message is only displayed for future shows of my Artist
-    const IS_BAND_SHOW_XPATH = "boolean(count(//div[@class='box']) = 7)"
+    const IS_BAND_SHOW_XPATH = "boolean(count(//div[@class='box']) > 5)"
 
     let isBandXpathHelper = new XPathHelper(IS_BAND_SHOW_XPATH);
     let isBandXpath = isBandXpathHelper.getBoolean(document);
 
     if (isBandXpath.booleanValue) {
+        console.log("My band page")
+
         const VENUE_A_XPATH = "//a[@id='ctl00_cphLeftColumn_ctl01_lnkVenue']";
         const CITY_A_XPATH = "//a[@id='ctl00_cphLeftColumn_ctl01_lnkVenueCity']";
         const TIME_TD_XPATH = "/html/body/form/div[3]/div[4]/div[2]/div[2]/table/tbody/tr[3]/td[2]";
