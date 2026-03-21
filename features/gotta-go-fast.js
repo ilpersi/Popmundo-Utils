@@ -38,7 +38,7 @@
             const now = new Date();
             const time = now.toLocaleTimeString();
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
-            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
+            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" >${type}</span>`;
 
             if (JQ('#autograph-logs').length) {
                 try {
@@ -50,7 +50,7 @@
                     }
                 } catch (e) { /* DataTable not initialized */ }
             }
-            JQ("#autograph-logs tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
+            JQ("#autograph-logs tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" ><td >${time}</td><td >${typeCell}</td><td >${data}</td></tr>`);
             LOG_INDEX++;
         }
     }
@@ -609,32 +609,32 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        JQ('#checkedlist').before(`<div class="box" id="autograph-box" drinkwater><h2 drinkwater>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
-        JQ('#autograph-box').append(`<p drinkwater>${chrome.i18n.getMessage('ggfDescription')}</p>`);
+        JQ('#checkedlist').before(`<div class="box" id="autograph-box" ><h2 >${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
+        JQ('#autograph-box').append(`<p >${chrome.i18n.getMessage('ggfDescription')}</p>`);
         JQ('#autograph-box').append(`
-            <p drinkwater><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
-            <ol drinkwater>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep1')}</li>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep2')}</li>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep3')}</li>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep4')}</li>
+            <p ><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
+            <ol >
+                <li >${chrome.i18n.getMessage('ggfStep1')}</li>
+                <li >${chrome.i18n.getMessage('ggfStep2')}</li>
+                <li >${chrome.i18n.getMessage('ggfStep3')}</li>
+                <li >${chrome.i18n.getMessage('ggfStep4')}</li>
             </ol>
         `);
         JQ('#autograph-box').append(`
-            <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
-                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}" drinkwater>
-                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns" drinkwater>
+            <div class="actionbuttons" style="margin: 16px 0;" >
+                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}" >
+                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns" >
             </div>
         `);
 
         JQ('#autograph-box').append(
-            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;" drinkwater>' +
-            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" drinkwater></div>' +
+            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;" >' +
+            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" ></div>' +
             '</div>'
         );
-        JQ('#autograph-box').append('<table id="autograph-logs" class="data" drinkwater></table>');
+        JQ('#autograph-box').append('<table id="autograph-logs" class="data" ></table>');
 
-        JQ('#autograph-logs').append(`<thead drinkwater><tr drinkwater><th drinkwater>${chrome.i18n.getMessage('ggfLogColTime')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColType')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead><tbody drinkwater></tbody>`);
+        JQ('#autograph-logs').append(`<thead ><tr ><th >${chrome.i18n.getMessage('ggfLogColTime')}</th><th >${chrome.i18n.getMessage('ggfLogColType')}</th><th >${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead><tbody ></tbody>`);
 
         try {
             JQ('#autograph-logs').DataTable({
