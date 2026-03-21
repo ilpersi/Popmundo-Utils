@@ -632,9 +632,17 @@
             '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" drinkwater></div>' +
             '</div>'
         );
-        JQ('#autograph-box').append('<table id="autograph-logs" class="data dataTable" drinkwater></table>');
+        JQ('#autograph-box').append('<table id="autograph-logs" class="data" drinkwater></table>');
 
         JQ('#autograph-logs').append(`<thead drinkwater><tr drinkwater><th drinkwater>${chrome.i18n.getMessage('ggfLogColTime')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColType')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead><tbody drinkwater></tbody>`);
+
+        try {
+            JQ('#autograph-logs').DataTable({
+                paging: false,
+                dom: 'lfrt',
+                order: []
+            });
+        } catch (e) { /* keep manual tbody append in log() */ }
 
         const bookName = await getBookName();
         const escaped = bookName.replace(/"/g, '\\"');
