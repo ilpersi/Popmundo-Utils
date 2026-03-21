@@ -609,7 +609,14 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        JQ('#checkedlist').before(`<div class="box" id="autograph-box" ><h2 >${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
+        const bookName = await getBookName();
+        const escaped = bookName.replace(/"/g, '\\"');
+        const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
+        if (bookElement.length === 0) {
+            return;
+        }
+
+        JQ('#ctl00_cphLeftColumn_ctl00_divCharacterExtras').after(`<div class="box" id="autograph-box" ><h2 >${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
         JQ('#autograph-box').append(`<p >${chrome.i18n.getMessage('ggfDescription')}</p>`);
         JQ('#autograph-box').append(`
             <p ><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
@@ -644,19 +651,11 @@
             });
         } catch (e) { /* keep manual tbody append in log() */ }
 
-        const bookName = await getBookName();
-        const escaped = bookName.replace(/"/g, '\\"');
-        const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
-        if (bookElement.length > 0) {
-            const bookQuantity = bookElement.closest('td').find('em').text().trim();
-            if (bookQuantity.startsWith('x')) {
-                log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
-            } else {
-                log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
-            }
+        const bookQuantity = bookElement.closest('td').find('em').text().trim();
+        if (bookQuantity.startsWith('x')) {
+            log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
         } else {
-            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning');
-            JQ('#start-collection').prop('disabled', true).prop('value', chrome.i18n.getMessage('ggfNoBooks'));
+            log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
         }
 
         let lastCycleIds = [];
