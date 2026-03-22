@@ -925,5 +925,63 @@
             "date": { "content": "$3", "example": "Day 12" },
             "time": { "content": "$4", "example": "20:00" }
         }
+    },
+
+    "misPickItemsPlaceholder": {
+        "message": "If you want to offer multiple items, click here and select them from the list.",
+        "description": "Closed multi-select dropdown summary on Offer Item when nothing is checked"
+    },
+    "misOneItemSelected": {
+        "message": "1 item selected",
+        "description": "Multi-select dropdown summary when exactly one item is checked"
+    },
+    "misNItemsSelected": {
+        "message": "$COUNT$ items selected",
+        "description": "Multi-select dropdown summary when two or more items are checked",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "misDdHeaderAria": {
+        "message": "Open list of inventory items to select several for offering",
+        "description": "Accessible name for the Offer Item multi-select dropdown toggle"
+    },
+    "misOfferNoneSelected": {
+        "message": "Select at least one item in the list before offering multiple.",
+        "description": "Validation when Offer multiple is clicked with no checkboxes selected"
+    },
+    "misOfferMultiSubmit": {
+        "message": "Offer multiple items",
+        "description": "Submit button when one or more items are checked in the multi-select on Offer Item page"
+    },
+    "misOfferFormMissing": {
+        "message": "The page form was not found; cannot offer items.",
+        "description": "Error when aspnetForm is missing during multi-offer on Offer Item page"
+    },
+    "misOfferGiveButtonMissing": {
+        "message": "The offer button was not found on the page.",
+        "description": "Error when btnGive is missing in parsed or live DOM during multi-offer"
+    },
+    "misOfferFailed": {
+        "message": "Offer failed: $DETAIL$",
+        "description": "Multi-offer stopped after network error, missing form, or server notification error",
+        "placeholders": {
+            "detail": { "content": "$1", "example": "Invalid view state" }
+        }
+    },
+    "misOfferQueueDone": {
+        "message": "Successfully submitted $COUNT$ offers.",
+        "description": "Summary after all queued Offer Item POSTs completed without error",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "misOfferSendingProgress": {
+        "message": "Sending $CURRENT$ of $TOTAL$…",
+        "description": "Progress label next to the multi-select header while queued Offer Item POSTs run",
+        "placeholders": {
+            "current": { "content": "$1", "example": "1" },
+            "total": { "content": "$2", "example": "3" }
+        }
     }
 }
