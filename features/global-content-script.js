@@ -29,7 +29,10 @@ const JQ = jQuery.noConflict();
 function searchableTables() {
     JQ(document).ready(function () {
         try {
-            JQ('table.data').DataTable({
+            // #autograph-logs (gotta-go-fast.js) also uses class "data" for Popmundo styling but
+            // must not be initialised here — it has its own DataTable setup to avoid racing log()
+            // vs this callback (double init → DataTables tn/3).
+            JQ('table.data').not('#autograph-logs').DataTable({
                 "paging": false,
                 "dom": "lfrt",
                 "order": [],
