@@ -26,8 +26,6 @@
         success: '#4caf50'
     };
 
-    let LOG_INDEX = 0;
-
     /**
      * Logs a message to the autograph collection log panel.
      * @param {string} data - Message to display (may contain HTML).
@@ -40,18 +38,9 @@
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
             const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" >${type}</span>`;
 
-            if (JQ('#autograph-logs').length) {
-                try {
-                    const dt = JQ('#autograph-logs').DataTable();
-                    if (dt) {
-                        dt.row.add([time, typeCell, data]).draw(false);
-                        LOG_INDEX++;
-                        return;
-                    }
-                } catch (e) { /* DataTable not initialized */ }
+            if (JQ('#autograph-logs tbody').length) {
+                JQ('#autograph-logs tbody').append(`<tr ><td >${time}</td><td >${typeCell}</td><td >${data}</td></tr>`);
             }
-            JQ("#autograph-logs tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" ><td >${time}</td><td >${typeCell}</td><td >${data}</td></tr>`);
-            LOG_INDEX++;
         }
     }
 
@@ -639,17 +628,13 @@
             '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" ></div>' +
             '</div>'
         );
-        JQ('#autograph-box').append('<table id="autograph-logs" class="data" ></table>');
-
-        JQ('#autograph-logs').append(`<thead ><tr ><th >${chrome.i18n.getMessage('ggfLogColTime')}</th><th >${chrome.i18n.getMessage('ggfLogColType')}</th><th >${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead><tbody ></tbody>`);
-
-        try {
-            JQ('#autograph-logs').DataTable({
-                paging: false,
-                dom: 'lfrt',
-                order: []
-            });
-        } catch (e) { /* keep manual tbody append in log() */ }
+        JQ('#autograph-box').append(
+            '<div class="box" id="autograph-logs-wrap"  >' +
+            `<h2 >Logs</h2>` +
+            '<table id="autograph-logs" >' +
+            `<thead ><tr ><th >${chrome.i18n.getMessage('ggfLogColTime')}</th><th >${chrome.i18n.getMessage('ggfLogColType')}</th><th >${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead>` +
+            '<tbody ></tbody></table></div>'
+        );
 
         const bookQuantity = bookElement.closest('td').find('em').text().trim();
         if (bookQuantity.startsWith('x')) {
