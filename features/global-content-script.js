@@ -144,6 +144,9 @@ function handleIconLink(options) {
         for (let i = 0; i < linkNodes.snapshotLength; i++) {
             let aElem = linkNodes.snapshotItem(i);
 
+            // We don't want to add link on the top menu with shortcuts
+            if (aElem.parentElement.tagName.toLowerCase() == 'div' && aElem.parentElement.id === 'character-tools-shortcuts') continue;
+
             // We need aditional checks on the location url
             let linkHref = aElem.getAttribute('href');
             let linkMatch = linkInfo.re.exec(linkHref);
