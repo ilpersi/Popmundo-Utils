@@ -614,18 +614,21 @@
         JQ('#autograph-box').append(`<p>${chrome.i18n.getMessage('ggfDescription')}</p>`);
         JQ('#autograph-box').append(`<p><small>${chrome.i18n.getMessage('ggfDisableHint')}</small></p>`);
 
+        const popupTheme = Utils.getPopupTheme();
+
         const howToUseContent =
-        //fonte normal e cor preta, tamanho 11px
-            `<ol style="font-weight: normal; color: black; font-size: 11px; margin: 8px 0; padding-left: 20px;">` +
+            `<div class="box" style="font-size:${popupTheme.FONT_SIZE};color:${popupTheme.COLOR};">` +
+            `<h2>${chrome.i18n.getMessage('ggfHowToUse')}</h2>` +
+            `<ol class="normal">` +
             `<li>${chrome.i18n.getMessage('ggfStep1')}</li>` +
             `<li>${chrome.i18n.getMessage('ggfStep2')}</li>` +
             `<li>${chrome.i18n.getMessage('ggfStep3')}</li>` +
             `<li>${chrome.i18n.getMessage('ggfStep4')}</li>` +
-            `</ol>`;
+            `</ol>` +
+            `</div>`;
 
-        JQ('#autograph-box').append(`<p><strong><a href="#" id="ggf-how-to-use-link">${chrome.i18n.getMessage('ggfHowToUse')}</a></strong></p>`);
-
-        const popupTheme = Utils.getPopupTheme();
+        JQ('#autograph-box').append(`<p><a href="#" id="ggf-how-to-use-link">${chrome.i18n.getMessage('ggfHowToUse')}</a></p>`);
+        
         tippy('#ggf-how-to-use-link', {
             content: howToUseContent,
             allowHTML: true,
