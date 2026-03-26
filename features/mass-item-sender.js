@@ -328,19 +328,7 @@
             'aria-controls': DOM_IDS.DD_LIST,
             'aria-label': chrome.i18n.getMessage('misDdHeaderAria')
         });
-        const $progress = JQ('<span>', {
-            id: DOM_IDS.DD_PROGRESS,
-            class: 'popmundo-utils-mis-send-progress',
-            attr: { 'aria-live': 'polite', role: 'status' },
-            css: {
-                visibility: 'hidden',
-                flex: '0 0 auto',
-                whiteSpace: 'nowrap',
-                fontSize: '0.95em',
-                opacity: 0.92
-            }
-        });
-        $headRow.append($header, $progress);
+        $headRow.append($header);
         const $list = JQ('<div>', {
             id: DOM_IDS.DD_LIST,
             class: 'popmundo-utils-mis-dd-list',
@@ -362,7 +350,7 @@
         $list.attr({ role: 'listbox', 'aria-multiselectable': 'true' });
         $wrap.append($headRow, $list);
         $panel.append($wrap);
-        return { $panel, $header, $list, $wrap, $progress };
+        return { $panel, $header, $list, $wrap };
     }
 
     /**
@@ -487,8 +475,14 @@
             return;
         }
 
-        const { $panel, $header, $list, $progress } = buildMultiSelectDropdown();
+        const { $panel, $header, $list } = buildMultiSelectDropdown();
         const $btnMulti = createAlternateSubmitButton();
+        const $progress = JQ('<span>', {
+            id: DOM_IDS.DD_PROGRESS,
+            class: 'popmundo-utils-mis-send-progress',
+            attr: { 'aria-live': 'polite', role: 'status' },
+            css: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' }
+        });
         refreshMultiSelectFromSelect($select, $list, new Set());
         updateMultiSelectSummary($header, $list);
 
@@ -497,6 +491,7 @@
 
         const $btnGive = JQ(`#${DOM_IDS.BTN_GIVE}`);
         mountAlternateSubmitBesideGive($btnGive, $btnMulti, $select);
+        $btnMulti.after($progress);
 
         const syncGiveButtons = () => syncNativeVsAlternateSubmitMulti($list, $btnGive, $btnMulti);
 
