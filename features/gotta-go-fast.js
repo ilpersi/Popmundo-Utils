@@ -26,8 +26,6 @@
         success: '#4caf50'
     };
 
-    let LOG_INDEX = 0;
-
     /**
      * Logs a message to the autograph collection log panel.
      * @param {string} data - Message to display (may contain HTML).
@@ -38,20 +36,11 @@
             const now = new Date();
             const time = now.toLocaleTimeString();
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
-            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" drinkwater>${type}</span>`;
+            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;">${type}</span>`;
 
-            if (JQ('#autograph-logs').length) {
-                try {
-                    const dt = JQ('#autograph-logs').DataTable();
-                    if (dt) {
-                        dt.row.add([time, typeCell, data]).draw(false);
-                        LOG_INDEX++;
-                        return;
-                    }
-                } catch (e) { /* DataTable not initialized */ }
+            if (JQ('#autograph-logs tbody').length) {
+                JQ('#autograph-logs tbody').append(`<tr><td>${time}</td><td>${typeCell}</td><td>${data}</td></tr>`);
             }
-            JQ("#autograph-logs tbody").append(`<tr class="${LOG_INDEX % 2 === 0 ? "odd" : "even"}" drinkwater><td drinkwater>${time}</td><td drinkwater>${typeCell}</td><td drinkwater>${data}</td></tr>`);
-            LOG_INDEX++;
         }
     }
 
@@ -616,52 +605,84 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        JQ('#checkedlist').before(`<div class="box" id="autograph-box" drinkwater><h2 drinkwater>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
-        JQ('#autograph-box').append(`<p drinkwater>${chrome.i18n.getMessage('ggfDescription')}</p>`);
+        const { collect_autograph: isEnabled = true } = await new Promise(resolve =>
+            chrome.storage.sync.get({ collect_autograph: true }, resolve)
+        );
+        if (!isEnabled) return;
+
+        JQ('#checkedlist').before(`<div class="box" id="autograph-box"><h2>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
+        JQ('#autograph-box').append(`<p>${chrome.i18n.getMessage('ggfDescription')}</p>`);
+        JQ('#autograph-box').append(`<p><small>${chrome.i18n.getMessage('ggfDisableHint')}</small></p>`);
+
+        const howToUseContent =
+        //fonte normal e cor preta, tamanho 11px
+            `<ol style="font-weight: normal; color: black; font-size: 11px; margin: 8px 0; padding-left: 20px;">` +
+            `<li>${chrome.i18n.getMessage('ggfStep1')}</li>` +
+            `<li>${chrome.i18n.getMessage('ggfStep2')}</li>` +
+            `<li>${chrome.i18n.getMessage('ggfStep3')}</li>` +
+            `<li>${chrome.i18n.getMessage('ggfStep4')}</li>` +
+            `</ol>`;
+
+        JQ('#autograph-box').append(`<p><strong><a href="#" id="ggf-how-to-use-link">${chrome.i18n.getMessage('ggfHowToUse')}</a></strong></p>`);
+
+        const popupTheme = Utils.getPopupTheme();
+        tippy('#ggf-how-to-use-link', {
+            content: howToUseContent,
+            allowHTML: true,
+            interactive: true,
+            placement: 'bottom-start',
+            theme: popupTheme.DATA_THEME,
+            maxWidth: 520,
+        });
+
+        JQ('#autograph-box').on('click', '#ggf-how-to-use-link', function (e) {
+            e.preventDefault();
+        });
         JQ('#autograph-box').append(`
-            <p drinkwater><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
-            <ol drinkwater>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep1')}</li>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep2')}</li>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep3')}</li>
-                <li drinkwater>${chrome.i18n.getMessage('ggfStep4')}</li>
-            </ol>
-        `);
-        JQ('#autograph-box').append(`
-            <div class="actionbuttons" style="margin: 16px 0;" drinkwater>
-                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}" drinkwater>
-                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns" drinkwater>
+            <div class="actionbuttons" style="margin: 16px 0;">
+                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}">
+                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns">
             </div>
         `);
 
         JQ('#autograph-box').append(
-            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;" drinkwater>' +
-            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" drinkwater></div>' +
+            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;">' +
+            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;"></div>' +
             '</div>'
         );
-        JQ('#autograph-box').append('<table id="autograph-logs" class="data dataTable" drinkwater></table>');
+        JQ('#autograph-box').append(
 
-        JQ('#autograph-logs').append(`<thead drinkwater><tr drinkwater><th drinkwater>${chrome.i18n.getMessage('ggfLogColTime')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColType')}</th><th drinkwater>${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead><tbody drinkwater></tbody>`);
+            '<table id="autograph-logs" class="data">' +
+            `<thead><tr><th>${chrome.i18n.getMessage('ggfLogColTime')}</th><th>${chrome.i18n.getMessage('ggfLogColType')}</th><th>${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead>` +
+            '<tbody></tbody></table>'
+        );
 
         const bookName = await getBookName();
         const escaped = bookName.replace(/"/g, '\\"');
         const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
-        if (bookElement.length > 0) {
+
+        if (bookElement.length === 0) {
+            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning');
+            JQ('#start-collection').prop('disabled', true).prop('value', chrome.i18n.getMessage('ggfNoBooks'));
+        } else {
             const bookQuantity = bookElement.closest('td').find('em').text().trim();
             if (bookQuantity.startsWith('x')) {
                 log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
             } else {
                 log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
             }
-        } else {
-            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning');
-            JQ('#start-collection').prop('disabled', true).prop('value', chrome.i18n.getMessage('ggfNoBooks'));
         }
 
         let lastCycleIds = [];
         let queue = [];
 
         JQ('#autograph-open-options-link').on('click', function (e) {
+            e.preventDefault();
+            chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
+            return false;
+        });
+
+        JQ('#ggf-options-hint-link').on('click', function (e) {
             e.preventDefault();
             chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
             return false;

@@ -248,6 +248,19 @@
             "js": [
                 "features/local-storage-char-id.js"
             ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/OfferItem",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/OfferItem/*"
+            ],
+            "js": [
+                "libs/jquery-3.6.1.min.js",
+                "common/utils.js",
+                "common/notifications.js",
+                "common/xpath-helper.js",
+                "features/mass-item-sender.js"
+            ]
         }
     ],
     "web_accessible_resources": [

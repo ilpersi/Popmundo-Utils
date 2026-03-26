@@ -341,6 +341,10 @@
         "message": "Gotta Go Fast",
         "description": "Category label for the Gotta Go Fast autograph collection feature"
     },
+    "optMiscCollectAutograph": {
+        "message": "Enable autograph collection",
+        "description": "Label for the enable/disable toggle of the Gotta Go Fast feature"
+    },
     "optMiscAutographBookName": {
         "message": "Autograph book item name",
         "description": "Label for the autograph book item name field"
@@ -352,6 +356,14 @@
     "optMiscAutographBookNamePlaceholder": {
         "message": "e.g. Autograph Book",
         "description": "Placeholder for the autograph book item name field"
+    },
+    "optMiscGroupMassItemSender": {
+        "message": "Mass Item Sender",
+        "description": "Category label for the mass item sender feature"
+    },
+    "optMiscMassItemSenderEnabled": {
+        "message": "Enable mass item sender",
+        "description": "Label for the enable/disable toggle of the mass item sender feature"
     },
 
     "optPopupTitle": {
@@ -665,6 +677,10 @@
         "message": "The script will use all books in your inventory to collect autographs from pop stars present in the city!",
         "description": "Description paragraph for the autograph collection panel"
     },
+    "ggfDisableHint": {
+        "message": "To hide this panel, disable <strong>Enable autograph collection</strong> on the <a href=\"#\" id=\"ggf-options-hint-link\"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section.",
+        "description": "Hint shown in the panel telling the user how to disable the feature via Misc Options"
+    },
     "ggfHowToUse": {
         "message": "How to use?",
         "description": "Instructions heading for the autograph collection panel"
@@ -837,6 +853,10 @@
         "message": "Blocked chars list cleared (session storage).",
         "description": "Log when the blocked characters list is cleared"
     },
+    "ggfLogs": {
+        "message": "Logs",
+        "description": "Heading for the autograph collection log panel"
+    },
 
     "remTodayIs": {
         "message": "Today is day $DAY$ of year $YEAR$.",
@@ -924,6 +944,68 @@
             "to":   { "content": "$2", "example": "Paris" },
             "date": { "content": "$3", "example": "Day 12" },
             "time": { "content": "$4", "example": "20:00" }
+        }
+    },
+
+    "misPickItemsPlaceholder": {
+        "message": "If you want to offer multiple items, click here and select them from the list.",
+        "description": "Closed multi-select dropdown summary on Offer Item when nothing is checked"
+    },
+    "misOneItemSelected": {
+        "message": "1 item selected",
+        "description": "Multi-select dropdown summary when exactly one item is checked"
+    },
+    "misNItemsSelected": {
+        "message": "$COUNT$ items selected",
+        "description": "Multi-select dropdown summary when two or more items are checked",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "misDdHeaderAria": {
+        "message": "Open list of inventory items to select several for offering",
+        "description": "Accessible name for the Offer Item multi-select dropdown toggle"
+    },
+    "misOfferNoneSelected": {
+        "message": "Select at least one item in the list before offering multiple.",
+        "description": "Validation when Offer multiple is clicked with no checkboxes selected"
+    },
+    "misOfferMultiSubmit": {
+        "message": "Offer multiple items",
+        "description": "Submit button when one or more items are checked in the multi-select on Offer Item page"
+    },
+    "misOfferFormMissing": {
+        "message": "The page form was not found; cannot offer items.",
+        "description": "Error when aspnetForm is missing during multi-offer on Offer Item page"
+    },
+    "misOfferGiveButtonMissing": {
+        "message": "The offer button was not found on the page.",
+        "description": "Error when btnGive is missing in parsed or live DOM during multi-offer"
+    },
+    "misOfferFailed": {
+        "message": "Offer failed: $DETAIL$",
+        "description": "Multi-offer stopped after network error, missing form, or server notification error",
+        "placeholders": {
+            "detail": { "content": "$1", "example": "Invalid view state" }
+        }
+    },
+    "misOfferQueueDone": {
+        "message": "Successfully submitted $COUNT$ offers.",
+        "description": "Summary after all queued Offer Item POSTs completed without error",
+        "placeholders": {
+            "count": { "content": "$1", "example": "3" }
+        }
+    },
+    "misDisableHint": {
+        "message": "You can disable this feature in the Options page.",
+        "description": "Hint text to inform that the feature can be disabled in the Options page"
+    },
+    "misOfferSendingProgress": {
+        "message": "Sending $CURRENT$ of $TOTAL$…",
+        "description": "Progress label next to the multi-select header while queued Offer Item POSTs run",
+        "placeholders": {
+            "current": { "content": "$1", "example": "1" },
+            "total": { "content": "$2", "example": "3" }
         }
     }
 }
