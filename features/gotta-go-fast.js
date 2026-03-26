@@ -36,10 +36,10 @@
             const now = new Date();
             const time = now.toLocaleTimeString();
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
-            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;" >${type}</span>`;
-
+            const typeCell = `<span style="color: ${typeColor}; font-weight: 600;">${type}</span>`;
+2
             if (JQ('#autograph-logs tbody').length) {
-                JQ('#autograph-logs tbody').append(`<tr ><td >${time}</td><td >${typeCell}</td><td >${data}</td></tr>`);
+                JQ('#autograph-logs tbody').append(`<tr><td>${time}</td><td>${typeCell}</td><td>${data}</td></tr>`);
             }
         }
     }
@@ -598,49 +598,55 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        const bookName = await getBookName();
-        const escaped = bookName.replace(/"/g, '\\"');
-        const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
-        if (bookElement.length === 0) {
-            return;
-        }
+        const { collect_autograph: isEnabled = true } = await new Promise(resolve =>
+            chrome.storage.sync.get({ collect_autograph: true }, resolve)
+        );
+        if (!isEnabled) return;
 
-        JQ('#ctl00_cphLeftColumn_ctl00_divCharacterExtras').after(`<div class="box" id="autograph-box" ><h2 >${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
-        JQ('#autograph-box').append(`<p >${chrome.i18n.getMessage('ggfDescription')}</p>`);
+        JQ('#checkedlist').before(`<div class="box" id="autograph-box"><h2>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
+        JQ('#autograph-box').append(`<p>${chrome.i18n.getMessage('ggfDescription')}</p>`);
         JQ('#autograph-box').append(`
-            <p ><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
-            <ol >
-                <li >${chrome.i18n.getMessage('ggfStep1')}</li>
-                <li >${chrome.i18n.getMessage('ggfStep2')}</li>
-                <li >${chrome.i18n.getMessage('ggfStep3')}</li>
-                <li >${chrome.i18n.getMessage('ggfStep4')}</li>
+            <p><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
+            <ol>
+                <li>${chrome.i18n.getMessage('ggfStep1')}</li>
+                <li>${chrome.i18n.getMessage('ggfStep2')}</li>
+                <li>${chrome.i18n.getMessage('ggfStep3')}</li>
+                <li>${chrome.i18n.getMessage('ggfStep4')}</li>
             </ol>
         `);
         JQ('#autograph-box').append(`
-            <div class="actionbuttons" style="margin: 16px 0;" >
-                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}" >
-                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns" >
+            <div class="actionbuttons" style="margin: 16px 0;">
+                <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}">
+                <input type="submit" name="btn-start-collection" value="${chrome.i18n.getMessage('ggfStart')}" id="start-collection" class="cns">
             </div>
         `);
 
         JQ('#autograph-box').append(
-            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;" >' +
-            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;" ></div>' +
+            '<div id="timer-message-wrap" style="margin-bottom: 14px; min-height: 1.5em;">' +
+            '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;"></div>' +
             '</div>'
         );
         JQ('#autograph-box').append(
-            '<div class="box" id="autograph-logs-wrap"  >' +
-            `<h2 >Logs</h2>` +
-            '<table id="autograph-logs" >' +
-            `<thead ><tr ><th >${chrome.i18n.getMessage('ggfLogColTime')}</th><th >${chrome.i18n.getMessage('ggfLogColType')}</th><th >${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead>` +
-            '<tbody ></tbody></table></div>'
+
+            '<table id="autograph-logs" class="data">' +
+            `<thead><tr><th>${chrome.i18n.getMessage('ggfLogColTime')}</th><th>${chrome.i18n.getMessage('ggfLogColType')}</th><th>${chrome.i18n.getMessage('ggfLogColMessage')}</th></tr></thead>` +
+            '<tbody></tbody></table>'
         );
 
-        const bookQuantity = bookElement.closest('td').find('em').text().trim();
-        if (bookQuantity.startsWith('x')) {
-            log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
+        const bookName = await getBookName();
+        const escaped = bookName.replace(/"/g, '\\"');
+        const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
+
+        if (bookElement.length === 0) {
+            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning');
+            JQ('#start-collection').prop('disabled', true).prop('value', chrome.i18n.getMessage('ggfNoBooks'));
         } else {
-            log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
+            const bookQuantity = bookElement.closest('td').find('em').text().trim();
+            if (bookQuantity.startsWith('x')) {
+                log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
+            } else {
+                log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
+            }
         }
 
         let lastCycleIds = [];

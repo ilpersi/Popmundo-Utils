@@ -341,6 +341,10 @@
         "message": "Gotta Go Fast",
         "description": "Category label for the Gotta Go Fast autograph collection feature"
     },
+    "optMiscCollectAutograph": {
+        "message": "Enable autograph collection",
+        "description": "Label for the enable/disable toggle of the Gotta Go Fast feature"
+    },
     "optMiscAutographBookName": {
         "message": "Autograph book item name",
         "description": "Label for the autograph book item name field"
@@ -836,6 +840,10 @@
     "ggfBlockedCleared": {
         "message": "Blocked chars list cleared (session storage).",
         "description": "Log when the blocked characters list is cleared"
+    },
+    "ggfLogs": {
+        "message": "Logs",
+        "description": "Heading for the autograph collection log panel"
     },
 
     "remTodayIs": {
