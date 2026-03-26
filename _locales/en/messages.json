@@ -357,6 +357,14 @@
         "message": "e.g. Autograph Book",
         "description": "Placeholder for the autograph book item name field"
     },
+    "optMiscGroupMassItemSender": {
+        "message": "Mass Item Sender",
+        "description": "Category label for the mass item sender feature"
+    },
+    "optMiscMassItemSenderEnabled": {
+        "message": "Enable mass item sender",
+        "description": "Label for the enable/disable toggle of the mass item sender feature"
+    },
 
     "optPopupTitle": {
         "message": "Popup Options",
@@ -987,6 +995,10 @@
         "placeholders": {
             "count": { "content": "$1", "example": "3" }
         }
+    },
+    "misDisableHint": {
+        "message": "You can disable this feature in the Options page.",
+        "description": "Hint text to inform that the feature can be disabled in the Options page"
     },
     "misOfferSendingProgress": {
         "message": "Sending $CURRENT$ of $TOTAL$…",

@@ -211,13 +211,13 @@
             const result = await postSingleOfferItem(fetcherInst, notificationsInst, postUrl, htmlDoc, itemInstanceId);
             if (!result.ok || result.notification.Status === 'error') {
                 const detail = result.notification.Text || 'Unknown error';
-                window.alert(chrome.i18n.getMessage('misOfferFailed', [detail]));
+                notificationsInst.notifyError('mis-error', chrome.i18n.getMessage('misOfferFailed', [detail]));
                 return { success: false, completed };
             }
             htmlDoc = result.nextDoc;
             completed += 1;
         }
-        window.alert(chrome.i18n.getMessage('misOfferQueueDone', [String(completed)]));
+        notificationsInst.notifySuccess('mis-done', chrome.i18n.getMessage('misOfferQueueDone', [String(completed)]));
         return { success: true, completed };
     }
 
@@ -236,7 +236,7 @@
         }
         const payload = buildMultiOfferPayloadFromList($list);
         if (payload.itemInstanceIds.length === 0) {
-            window.alert(chrome.i18n.getMessage('misOfferNoneSelected'));
+            notifications.notifyError('mis-validation', chrome.i18n.getMessage('misOfferNoneSelected'));
             return;
         }
         offerQueueInProgress = true;
@@ -386,8 +386,7 @@
             const $t = JQ(target);
             if (
                 $t.closest('#' + DOM_IDS.DD_HEADER).length ||
-                $t.closest('#' + DOM_IDS.DD_LIST).length ||
-                $t.closest('#' + DOM_IDS.DD_PROGRESS).length
+                $t.closest('#' + DOM_IDS.DD_LIST).length
             ) {
                 return;
             }
@@ -494,6 +493,7 @@
         updateMultiSelectSummary($header, $list);
 
         mountPanelInOfferBox($select, $panel);
+        $panel.append(`<p><small>${chrome.i18n.getMessage('misDisableHint')}</small></p>`);
 
         const $btnGive = JQ(`#${DOM_IDS.BTN_GIVE}`);
         mountAlternateSubmitBesideGive($btnGive, $btnMulti, $select);
@@ -550,5 +550,11 @@
         setTimeout(tryInitOfferItemMultiSend, PROBE_RETRY_MS);
     }
 
-    JQ(document).ready(scheduleOfferItemProbe);
+    JQ(document).ready(async function () {
+        const { mass_item_sender: isEnabled = true } = await new Promise(resolve =>
+            chrome.storage.sync.get({ mass_item_sender: true }, resolve)
+        );
+        if (!isEnabled) return;
+        scheduleOfferItemProbe();
+    });
 }());
