@@ -669,6 +669,10 @@
         "message": "The script will use all books in your inventory to collect autographs from pop stars present in the city!",
         "description": "Description paragraph for the autograph collection panel"
     },
+    "ggfDisableHint": {
+        "message": "To hide this panel, disable <strong>Enable autograph collection</strong> on the <a href=\"#\" id=\"ggf-options-hint-link\"><strong>Options page</strong></a>, in the <strong>Misc Options</strong> section.",
+        "description": "Hint shown in the panel telling the user how to disable the feature via Misc Options"
+    },
     "ggfHowToUse": {
         "message": "How to use?",
         "description": "Instructions heading for the autograph collection panel"

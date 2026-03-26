@@ -37,7 +37,7 @@
             const time = now.toLocaleTimeString();
             const typeColor = LOG_TYPE_COLORS[type] || LOG_TYPE_COLORS.info;
             const typeCell = `<span style="color: ${typeColor}; font-weight: 600;">${type}</span>`;
-2
+
             if (JQ('#autograph-logs tbody').length) {
                 JQ('#autograph-logs tbody').append(`<tr><td>${time}</td><td>${typeCell}</td><td>${data}</td></tr>`);
             }
@@ -605,15 +605,32 @@
 
         JQ('#checkedlist').before(`<div class="box" id="autograph-box"><h2>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
         JQ('#autograph-box').append(`<p>${chrome.i18n.getMessage('ggfDescription')}</p>`);
-        JQ('#autograph-box').append(`
-            <p><strong>${chrome.i18n.getMessage('ggfHowToUse')}</strong></p>
-            <ol>
-                <li>${chrome.i18n.getMessage('ggfStep1')}</li>
-                <li>${chrome.i18n.getMessage('ggfStep2')}</li>
-                <li>${chrome.i18n.getMessage('ggfStep3')}</li>
-                <li>${chrome.i18n.getMessage('ggfStep4')}</li>
-            </ol>
-        `);
+        JQ('#autograph-box').append(`<p><small>${chrome.i18n.getMessage('ggfDisableHint')}</small></p>`);
+
+        const howToUseContent =
+        //fonte normal e cor preta, tamanho 11px
+            `<ol style="font-weight: normal; color: black; font-size: 11px; margin: 8px 0; padding-left: 20px;">` +
+            `<li>${chrome.i18n.getMessage('ggfStep1')}</li>` +
+            `<li>${chrome.i18n.getMessage('ggfStep2')}</li>` +
+            `<li>${chrome.i18n.getMessage('ggfStep3')}</li>` +
+            `<li>${chrome.i18n.getMessage('ggfStep4')}</li>` +
+            `</ol>`;
+
+        JQ('#autograph-box').append(`<p><strong><a href="#" id="ggf-how-to-use-link">${chrome.i18n.getMessage('ggfHowToUse')}</a></strong></p>`);
+
+        const popupTheme = Utils.getPopupTheme();
+        tippy('#ggf-how-to-use-link', {
+            content: howToUseContent,
+            allowHTML: true,
+            interactive: true,
+            placement: 'bottom-start',
+            theme: popupTheme.DATA_THEME,
+            maxWidth: 520,
+        });
+
+        JQ('#autograph-box').on('click', '#ggf-how-to-use-link', function (e) {
+            e.preventDefault();
+        });
         JQ('#autograph-box').append(`
             <div class="actionbuttons" style="margin: 16px 0;">
                 <input type="submit" name="btn-clear-storage" value="${chrome.i18n.getMessage('ggfClearBlockedChars')}" id="clear-blocked-chars" class="cns" title="${chrome.i18n.getMessage('ggfClearBlockedCharsTitle')}">
@@ -653,6 +670,12 @@
         let queue = [];
 
         JQ('#autograph-open-options-link').on('click', function (e) {
+            e.preventDefault();
+            chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
+            return false;
+        });
+
+        JQ('#ggf-options-hint-link').on('click', function (e) {
             e.preventDefault();
             chrome.runtime.sendMessage(chrome.runtime.id, { type: 'cmd', payload: 'open-options' });
             return false;
