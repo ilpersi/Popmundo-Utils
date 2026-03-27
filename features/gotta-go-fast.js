@@ -4,6 +4,8 @@
     // --- Module state and constants ---
     let keepCollecting = false;
     let collectionInProgress = false;
+    let scrollIntoViewOption = true;
+    let logMaxRowsOption = 0;
 
     const fetcher = new TimedFetch(false);
     const notifications = new Notifications();
@@ -31,7 +33,7 @@
      * @param {string} data - Message to display (may contain HTML).
      * @param {'info'|'warning'|'error'|'success'} [type='info'] - Log type (color/title).
      */
-    function log(data, type = 'info') {
+    function log(data, type = 'info', scrollTo = true) {
         if (window.parent === window) {
             const now = new Date();
             const time = now.toLocaleTimeString();
@@ -39,7 +41,15 @@
             const typeCell = `<span style="color: ${typeColor}; font-weight: 600;">${type}</span>`;
 
             if (JQ('#autograph-logs tbody').length) {
-                JQ('#autograph-logs tbody').append(`<tr><td>${time}</td><td>${typeCell}</td><td>${data}</td></tr>`);
+                if (logMaxRowsOption > 0 ) {
+                    let rowCount = JQ('#autograph-logs tbody tr').length;
+
+                    if (rowCount >= logMaxRowsOption) JQ("#autograph-logs tbody tr:first-child").remove();
+                }
+
+                let tr = JQ(`<tr><td>${time}</td><td>${typeCell}</td><td>${data}</td></tr>`);
+                JQ('#autograph-logs tbody').append(tr);
+                if (scrollTo && scrollIntoViewOption) tr[0].scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
             }
         }
     }
@@ -605,9 +615,14 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        const { collect_autograph: isEnabled = true } = await new Promise(resolve =>
-            chrome.storage.sync.get({ collect_autograph: true }, resolve)
+        const { collect_autograph: isEnabled = true, collect_autograph_scroll: scrollIntoViewOptionLocal, autograph_log_max_rows: logMaxRowsOptionLocal } = 
+        await new Promise(resolve =>
+            chrome.storage.sync.get({ collect_autograph: true, collect_autograph_scroll: true, autograph_log_max_rows: 0}, resolve)
         );
+
+        scrollIntoViewOption = scrollIntoViewOptionLocal
+        logMaxRowsOption = logMaxRowsOptionLocal
+
         if (!isEnabled) return;
 
         JQ('#checkedlist').before(`<div class="box" id="autograph-box"><h2>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
@@ -665,14 +680,14 @@
         const bookElement = JQ(`#checkedlist a:contains("${escaped}")`);
 
         if (bookElement.length === 0) {
-            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning');
+            log(chrome.i18n.getMessage('ggfNoBooksFound'), 'warning', false);
             JQ('#start-collection').prop('disabled', true).prop('value', chrome.i18n.getMessage('ggfNoBooks'));
         } else {
             const bookQuantity = bookElement.closest('td').find('em').text().trim();
             if (bookQuantity.startsWith('x')) {
-                log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info');
+                log(chrome.i18n.getMessage('ggfBooksFound', [String(parseInt(bookQuantity.substring(1)))]), 'info', false);
             } else {
-                log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info');
+                log(chrome.i18n.getMessage('ggfBooksFound', [String(bookElement.length)]), 'info', false);
             }
         }
 

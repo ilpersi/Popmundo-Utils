@@ -21,7 +21,11 @@
         "description": "Status message shown after saving options"
     },
 
-    "navCallAllFriends": {
+    "navGottaGoFast": {
+        "message": "Autograph Collector",
+        "description": "Sidebar navigation label for the Autograph Collector section"
+    }
+    ,"navCallAllFriends": {
         "message": "Call All Friends",
         "description": "Sidebar navigation label for the Call All Friends section"
     },
@@ -45,7 +49,42 @@
         "message": "Tour Bus Helper",
         "description": "Sidebar navigation label for the Tour Bus Helper section"
     },
-
+    "optGGFDescription": {
+        "message": "Options for the Autograph collector feature.",
+        "description": "Autograph Collector section description"
+    },
+    "optGGFGroupDisplay": {
+        "message": "General",
+        "description": "Autograph Collector general section"
+    },
+    "optGGFCollectAutograph": {
+        "message": "Enable autograph collection",
+        "description": "Label for the enable/disable toggle of the Gotta Go Fast feature"
+    },
+    "optGGFCollectAutographScroll": {
+        "message": "Scroll view to the last log line.",
+        "description": "Label for the autograph book scroll to last line option"
+    },
+    "optGGFAutographBookName": {
+        "message": "Autograph book item name",
+        "description": "Label for the autograph book item name field"
+    },
+    "optGGFAutographBookNameTooltip": {
+        "message": "The in-game item name of the autograph book in your language.",
+        "description": "Tooltip for the autograph book item name field"
+    },
+    "optGGFAutographBookNamePlaceholder": {
+        "message": "e.g. Autograph Book",
+        "description": "Placeholder for the autograph book item name field"
+    },
+    "optGGFAutographLogMaxRows": {
+        "message": "Log Max Rows",
+        "description": "Log Max Rows label"
+    },
+    "optGGFAutographLogMaxRowsTooltip": {
+        "message": "The maximu number of rows to be kept in the log. Set to zero for unlimited rows.",
+        "description": "Tooltip for Autograph collector max rows"
+    },
     "optCafTitle": {
         "message": "Call All Friends",
         "description": "Call All Friends section card title"
@@ -340,22 +379,6 @@
     "optMiscGroupGottaGoFast": {
         "message": "Gotta Go Fast",
         "description": "Category label for the Gotta Go Fast autograph collection feature"
-    },
-    "optMiscCollectAutograph": {
-        "message": "Enable autograph collection",
-        "description": "Label for the enable/disable toggle of the Gotta Go Fast feature"
-    },
-    "optMiscAutographBookName": {
-        "message": "Autograph book item name",
-        "description": "Label for the autograph book item name field"
-    },
-    "optMiscAutographBookNameTooltip": {
-        "message": "The in-game item name of the autograph book in your language.",
-        "description": "Tooltip for the autograph book item name field"
-    },
-    "optMiscAutographBookNamePlaceholder": {
-        "message": "e.g. Autograph Book",
-        "description": "Placeholder for the autograph book item name field"
     },
     "optMiscGroupMassItemSender": {
         "message": "Mass Item Sender",
