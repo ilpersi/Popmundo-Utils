@@ -542,10 +542,10 @@
             formData.set('ctl00$cphTopColumn$ctl00$btnUseItem', btnUseItemValue);
             formData.set('__EVENTTARGET', '');
             formData.set('__EVENTARGUMENT', '');
-
             log(chrome.i18n.getMessage('ggfCollectingFrom', [person.name, selectedBookId]), 'info');
             const urlParams = new URLSearchParams();
-            for (const [key, value] of formData.entries()) {
+            console.dir(formData.entries());
+            for (const [key, value] of formData) {
                 urlParams.append(key, value);
             }
             await fetcher.fetch(interactUrl, {
