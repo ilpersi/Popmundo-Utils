@@ -5,6 +5,17 @@ chrome.management.getSelf(info => {
     chrome.storage.local.set({ 'install_type': install_type });
 })
 
+// On first install, seed log_level based on install type:
+//   development → DEBUG (0), production → ERROR (3)
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+    if (reason === 'install') {
+        chrome.management.getSelf(info => {
+            const logLevel = info.installType === 'development' ? 0 : 3;
+            chrome.storage.sync.set({ log_level: logLevel });
+        });
+    }
+});
+
 // This event listener is triggered when a item is used from the item list
 chrome.webRequest.onBeforeRequest.addListener(
     async (details) => {

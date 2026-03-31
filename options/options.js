@@ -110,7 +110,9 @@ const optionDetails = [
     { 'name': 'mass_interact_change_diapers', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_pick_up', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_kiss_on_forehead', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
-    
+
+    // developer options (only shown in development builds)
+    { 'name': 'log_level', 'default': 3, 'save_cb': saveInteger, 'load_cb': loadInteger },
 ]
 
 function saveCSVString(optionName, defaultVaule) {

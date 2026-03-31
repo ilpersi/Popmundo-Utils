@@ -110,6 +110,7 @@
                         <a class="nav-link" href="#" data-tab="tab-popup" data-i18n="navPopupOptions">Popup Options</a>
                         <a class="nav-link" href="#" data-tab="tab-tour-bus" data-i18n="navTourBusHelper">Tour Bus
                             Helper</a>
+                        <a class="nav-link d-none" href="#" data-tab="tab-developer" id="nav-developer">Developer</a>
                     </nav>
                 </div>
             </div>
@@ -1054,6 +1055,31 @@
                                     </label>
                                     <input type="number" class="form-control form-control-sm" id="tb_hour_range" min="1"
                                         max="5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Developer (development builds only) ── -->
+                <div id="tab-developer" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Developer</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">Settings only available in development builds.</p>
+
+                            <div class="option-group-title">Logging</div>
+                            <div class="row g-2">
+                                <div class="col-sm-4">
+                                    <label for="log_level" class="form-label">Log Level</label>
+                                    <select class="form-select form-select-sm" id="log_level">
+                                        <option value="0">Debug</option>
+                                        <option value="1">Info</option>
+                                        <option value="2">Warn</option>
+                                        <option value="3">Error</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

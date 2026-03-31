@@ -54,4 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Bootstrap Tooltips ──
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+
+    // ── Show Developer tab in development builds or when ?debug=true is in the URL ──
+    const debugParam = new URLSearchParams(window.location.search).get('debug') === 'true';
+    debugger;
+    chrome.storage.local.get('install_type', ({ install_type }) => {
+        if (install_type === 'development' || debugParam) {
+            document.getElementById('nav-developer').classList.remove('d-none');
+        }
+    });
 });
