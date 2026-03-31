@@ -289,8 +289,9 @@
      * @param {JQuery} $header
      * @param {JQuery} $btnMulti
      * @param {JQuery} $progress Progress label beside the dropdown header (hidden when idle).
+     * @param {(() => Promise<void>)|undefined} [onAfterQueue]
      */
-    async function handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress) {
+    async function handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress, onAfterQueue) {
         e.preventDefault();
         e.stopPropagation();
         if (offerQueueInProgress) {
@@ -310,6 +311,9 @@
                 $progress.text(chrome.i18n.getMessage('misOfferSendingProgress', [String(current), String(total)]));
                 $progress.css('visibility', 'visible');
             });
+            if (typeof onAfterQueue === 'function') {
+                await onAfterQueue();
+            }
         } catch (err) {
             console.error('[mass-item-sender]', err);
             window.alert(chrome.i18n.getMessage('misOfferFailed', [err.message || String(err)]));
@@ -317,7 +321,9 @@
             offerQueueInProgress = false;
             $btnMulti.prop('disabled', false);
             $header.prop('disabled', false);
-            $list.find('.popmundo-utils-mis-cb').prop('disabled', false);
+            if (typeof onAfterQueue !== 'function') {
+                $list.find('.popmundo-utils-mis-cb').prop('disabled', false);
+            }
             $progress.empty();
             $progress.css('visibility', 'hidden');
             updateMultiSelectSummary($header, $list);
@@ -621,16 +627,32 @@
             syncGiveButtons();
         });
 
-        $btnMulti.on('click', function (e) {
-            void handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress);
-            return false;
-        });
-
         const runAfterOffersLoaded = () => {
             refreshMultiSelectFromSelect($select, $list, new Set(), offeredInstanceIdsRef);
             updateMultiSelectSummary($header, $list);
             syncGiveButtons();
         };
+
+        const reloadOfferedItemsDatasource = async () => {
+            try {
+                offeredInstanceIdsRef = await fetchOfferedItemInstanceIds(fetcher);
+            } catch (err) {
+                console.warn('[mass-item-sender] ItemsOffered refresh failed', err);
+            }
+            runAfterOffersLoaded();
+        };
+
+        $btnMulti.on('click', function (e) {
+            void handleAlternateSubmitClick(
+                e,
+                $list,
+                $header,
+                $btnMulti,
+                $progress,
+                reloadOfferedItemsDatasource
+            );
+            return false;
+        });
 
         void (async () => {
             try {
