@@ -41,9 +41,6 @@
     /** GET page listing active offers (same HTML as in-game “items offered”). */
     const ITEMS_OFFERED_PATH = '/World/Popmundo.aspx/Character/ItemsOffered';
 
-    /** Prevents double-submit while the POST queue runs. */
-    let offerQueueInProgress = false;
-
     /** Inline CSS constants — centralizes visual tokens used in DOM builders. */
     const STYLES = {
         DD_WRAP: { position: 'relative', maxWidth: '100%' },
@@ -319,30 +316,40 @@
     }
 
     /**
-     * @param {JQuery.Event} e
-     * @param {JQuery} $list
-     * @param {JQuery} $header
-     * @param {JQuery} $btnMulti
-     * @param {JQuery} $progress Progress label beside the dropdown header (hidden when idle).
-     * @param {(() => Promise<void>)|undefined} [onAfterQueue]
+     * @typedef {{
+     *   $list: JQuery,
+     *   $header: JQuery,
+     *   $btnMulti: JQuery,
+     *   $progress: JQuery,
+     *   fetcherInst: TimedFetch,
+     *   notificationsInst: Notifications,
+     *   isQueueInProgress: { value: boolean },
+     *   onAfterQueue?: (() => Promise<void>)
+     * }} SubmitCtx
      */
-    async function handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress, onAfterQueue) {
+
+    /**
+     * @param {JQuery.Event} e
+     * @param {SubmitCtx} ctx
+     */
+    async function handleAlternateSubmitClick(e, ctx) {
+        const { $list, $header, $btnMulti, $progress, fetcherInst, notificationsInst, isQueueInProgress, onAfterQueue } = ctx;
         e.preventDefault();
         e.stopPropagation();
-        if (offerQueueInProgress) {
+        if (isQueueInProgress.value) {
             return;
         }
         const payload = buildMultiOfferPayloadFromList($list);
         if (payload.itemInstanceIds.length === 0) {
-            notifications.notifyError('mis-validation', chrome.i18n.getMessage('misOfferNoneSelected'));
+            notificationsInst.notifyError('mis-validation', chrome.i18n.getMessage('misOfferNoneSelected'));
             return;
         }
-        offerQueueInProgress = true;
+        isQueueInProgress.value = true;
         $btnMulti.prop('disabled', true);
         $header.prop('disabled', true);
         $list.find('.popmundo-utils-mis-cb').prop('disabled', true);
         try {
-            await runQueuedOfferItems(fetcher, notifications, payload, function (current, total) {
+            await runQueuedOfferItems(fetcherInst, notificationsInst, payload, function (current, total) {
                 $progress.text(chrome.i18n.getMessage('misOfferSendingProgress', [String(current), String(total)]));
                 $progress.css('visibility', 'visible');
             });
@@ -351,9 +358,9 @@
             }
         } catch (err) {
             console.error('[mass-item-sender]', err);
-            window.alert(chrome.i18n.getMessage('misOfferFailed', [err.message || String(err)]));
+            notificationsInst.notifyError('mis-error', chrome.i18n.getMessage('misOfferFailed', [err.message || String(err)]));
         } finally {
-            offerQueueInProgress = false;
+            isQueueInProgress.value = false;
             $btnMulti.prop('disabled', false);
             $header.prop('disabled', false);
             if (typeof onAfterQueue !== 'function') {
@@ -589,6 +596,9 @@
         /** @type {Set<string>} Instance ids with an active offer (from ItemsOffered page). */
         let offeredInstanceIdsRef = new Set();
 
+        /** Prevents double-submit while the POST queue runs. Boxed so handleAlternateSubmitClick can mutate it. */
+        const isQueueInProgress = { value: false };
+
         mountPanelInOfferBox($select, $panel);
         $panel.append(`<p><small>${chrome.i18n.getMessage('misDisableHint')}</small></p>`);
 
@@ -633,14 +643,13 @@
         };
 
         $btnMulti.on('click', function (e) {
-            void handleAlternateSubmitClick(
-                e,
-                $list,
-                $header,
-                $btnMulti,
-                $progress,
-                reloadOfferedItemsDatasource
-            );
+            void handleAlternateSubmitClick(e, {
+                $list, $header, $btnMulti, $progress,
+                fetcherInst: fetcher,
+                notificationsInst: notifications,
+                isQueueInProgress,
+                onAfterQueue: reloadOfferedItemsDatasource
+            });
             return false;
         });
 
