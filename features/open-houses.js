@@ -847,7 +847,7 @@ function injectOpenHouseHTML() {
                             let newMenuA = document.createElement('a');
                             newMenuA.setAttribute('href', `https://${window.location.hostname}/World/Popmundo.aspx/Locale/${houseDetails.id}`);
                             newMenuA.textContent = houseDetails.name
-                            newMenuUL.appendChild(newMenuA);
+                            newMenuLI.appendChild(newMenuA);
                             foundHouses++;
                         }
                     });
