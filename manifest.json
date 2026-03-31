@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "0.7.0",
+    "version": "0.7.1",
     "default_locale": "en",
     "name": "__MSG_extName__",
     "description": "__MSG_extDescription__",
@@ -80,6 +80,7 @@
         {
             "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Skills/*",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/SkillType/*"
