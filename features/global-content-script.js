@@ -16,6 +16,7 @@ const globalOptions = {
     'move_to_shortcut': true,
     'crew_top_heist_shortcut': false,
     'locale_show_reconnaissance': false,
+    'log_level': Logger.ERROR,
 };
 
 // Let's be sure that there is no JQuery conflict
@@ -307,6 +308,8 @@ chrome.storage.sync.get(globalOptions, items => {
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
+
+    if (items.log_level === Logger.DEBUG || Logger.debugMode) Logger.createDebugPanel();
 });
 
 // This is the logic that takes care of performing the hot-reload of the extention
