@@ -1,6 +1,7 @@
 class XPathHelper {
     #xpath;
     #docToEvaluate;
+    #evaluateResult
     nameSpace;
 
     /**
@@ -19,6 +20,7 @@ class XPathHelper {
     constructor(xpathExpression, docToEvaluate = document, namespaceResolver=null, result=null) {
         this.#xpath = xpathExpression;
         this.#docToEvaluate = docToEvaluate;
+        this.#evaluateResult = null;
         this.nameSpace = namespaceResolver;
         this.result = result;
     }
@@ -82,6 +84,116 @@ class XPathHelper {
     }
 
     #xpathNodes(contextNode, resultType) {
-        return this.#docToEvaluate.evaluate(this.#xpath, contextNode, this.nameSpace, resultType, this.result);
+        this.#evaluateResult = this.#docToEvaluate.evaluate(this.#xpath, contextNode, this.nameSpace, resultType, this.result);
+        
+        return this.#evaluateResult;
+    }
+
+    // Maps XPathResult.resultType numbers to human-readable names.
+    static #RESULT_TYPE_NAMES = {
+        0: 'ANY',
+        1: 'NUMBER',
+        2: 'STRING',
+        3: 'BOOLEAN',
+        4: 'UNORDERED_NODE_ITERATOR',
+        5: 'ORDERED_NODE_ITERATOR',
+        6: 'UNORDERED_NODE_SNAPSHOT',
+        7: 'ORDERED_NODE_SNAPSHOT',
+        8: 'ANY_UNORDERED_NODE',
+        9: 'FIRST_ORDERED_NODE',
+    };
+
+    /**
+     * Formats a single DOM node as a compact human-readable string.
+     * Element nodes are rendered as <tag#id.class> "text…".
+     * Text nodes are rendered as #text "content…".
+     * Null is rendered as the string "null".
+     * Text content is truncated to 60 characters.
+     *
+     * @static
+     * @param {Node|null} node
+     * @return {string}
+     * @memberof XPathHelper
+     */
+    static #formatNode(node) {
+        if (!node) return 'null';
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            const raw = node.textContent.trim();
+            return `#text "${raw.length > 60 ? raw.slice(0, 60) + '…' : raw}"`;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            let label = node.tagName.toLowerCase();
+            if (node.id)        label += `#${node.id}`;
+            if (node.className) label += `.${[...node.classList].join('.')}`;
+            const raw = node.textContent.trim();
+            const text = raw.length > 60 ? raw.slice(0, 60) + '…' : raw;
+            return `<${label}> "${text}"`;
+        }
+
+        return node.nodeName;
+    }
+
+    /**
+     * Formats the instance's XPathResult into a human-readable multi-line
+     * string that includes the XPath expression and the result contents.
+     *
+     * Iterator results (types 4 & 5) are never consumed: only their validity
+     * state is reported. All other result types are fully rendered.
+     *
+     * Intended to be passed directly to Logger methods:
+     *   Logger.debug(helper.prettyPrint());
+     *
+     * @return {string}
+     * @memberof XPathHelper
+     */
+    prettyPrint() {
+        const lines = [`XPath : ${this.#xpath}`];
+
+        if (!this.#evaluateResult) {
+            lines.push('Result: null');
+            return lines.join('\n');
+        }
+
+        const typeName = XPathHelper.#RESULT_TYPE_NAMES[this.#evaluateResult.resultType] ?? `UNKNOWN(${this.#evaluateResult.resultType})`;
+        lines.push(`Type  : ${typeName}`);
+
+        switch (this.#evaluateResult.resultType) {
+            case XPathResult.NUMBER_TYPE:
+                lines.push(`Value : ${this.#evaluateResult.numberValue}`);
+                break;
+
+            case XPathResult.STRING_TYPE:
+                lines.push(`Value : "${this.#evaluateResult.stringValue}"`);
+                break;
+
+            case XPathResult.BOOLEAN_TYPE:
+                lines.push(`Value : ${this.#evaluateResult.booleanValue}`);
+                break;
+
+            case XPathResult.UNORDERED_NODE_ITERATOR_TYPE:
+            case XPathResult.ORDERED_NODE_ITERATOR_TYPE:
+                lines.push(`State : ${this.#evaluateResult.invalidIteratorState ? 'invalid (DOM mutated since creation)' : 'valid'}`);
+                lines.push('Note  : content not inspected to avoid consuming the iterator');
+                break;
+
+            case XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE:
+            case XPathResult.ORDERED_NODE_SNAPSHOT_TYPE:
+                lines.push(`Count : ${this.#evaluateResult.snapshotLength}`);
+                for (let i = 0; i < this.#evaluateResult.snapshotLength; i++)
+                    lines.push(`[${i}]   ${XPathHelper.#formatNode(this.#evaluateResult.snapshotItem(i))}`);
+                break;
+
+            case XPathResult.ANY_UNORDERED_NODE_TYPE:
+            case XPathResult.FIRST_ORDERED_NODE_TYPE:
+                lines.push(`Node  : ${XPathHelper.#formatNode(this.#evaluateResult.singleNodeValue)}`);
+                break;
+
+            default:
+                lines.push('Value : (unrecognised result type)');
+        }
+
+        return lines.join('\n');
     }
 }
