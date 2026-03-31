@@ -38,12 +38,74 @@
     /** Delay before retrying init when the item select is not in the DOM yet. */
     const PROBE_RETRY_MS = 500;
 
+    /** GET page listing active offers (same HTML as in-game “items offered”). */
+    const ITEMS_OFFERED_PATH = '/World/Popmundo.aspx/Character/ItemsOffered';
+
     /** Prevents double-submit while the POST queue runs. */
     let offerQueueInProgress = false;
 
     // =============================================================================
     // Options: read from native `<select>` (one row per option value)
     // =============================================================================
+
+    /**
+     * Resolves the table for **items you are offering** on `ItemsOffered`.
+     * The page has two `table.data`: incoming offers (often `#DataTables_Table_0`) and your offers.
+     * Prefer the table in the `.box` immediately before `#ctl00_cphLeftColumn_ctl00_pnlOffers` (cartas).
+     * @param {Document} doc
+     * @returns {HTMLTableElement|null}
+     */
+    function findYourOffersTable(doc) {
+        const pnlOffers = doc.getElementById('ctl00_cphLeftColumn_ctl00_pnlOffers');
+        if (pnlOffers && pnlOffers.previousElementSibling) {
+            const t = pnlOffers.previousElementSibling.querySelector('table.data');
+            if (t) {
+                return t;
+            }
+        }
+        const yourItemLink = doc.querySelector('a[id*="repYourOffers"][id*="lnkItem"]');
+        if (yourItemLink) {
+            const t = yourItemLink.closest('table');
+            if (t) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Parses HTML from `ItemsOffered` and returns instance ids already in an active offer (outgoing).
+     * @param {string} html
+     * @returns {Set<string>}
+     */
+    function parseOfferedItemInstanceIdsFromHtml(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const table = findYourOffersTable(doc);
+        if (!table) {
+            return new Set();
+        }
+        /** @type {Set<string>} */
+        const ids = new Set();
+        const links = table.querySelectorAll('a[href*="ItemDetails"]');
+        for (let i = 0; i < links.length; i++) {
+            const href = links[i].getAttribute('href') || '';
+            const m = /\/Character\/ItemDetails\/(\d+)/.exec(href);
+            if (m) {
+                ids.add(m[1]);
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * @param {TimedFetch} fetcherInst
+     * @returns {Promise<Set<string>>}
+     */
+    async function fetchOfferedItemInstanceIds(fetcherInst) {
+        const url = new URL(ITEMS_OFFERED_PATH, window.location.origin).href;
+        const html = await fetcherInst.fetch(url, { method: 'GET', credentials: 'same-origin' });
+        return parseOfferedItemInstanceIdsFromHtml(html);
+    }
 
     /**
      * @param {JQuery} $select
@@ -268,33 +330,76 @@
 
     /**
      * Rebuilds checkbox rows from the current `<select>` options; restores checked state for values in `preservedValues`.
+     * Rows whose instance id is in `offeredInstanceIds` are disabled (already offered elsewhere).
      * @param {JQuery} $select
      * @param {JQuery} $list
      * @param {Set<string>} [preservedValues]
+     * @param {Set<string>} [offeredInstanceIds]
      */
-    function refreshMultiSelectFromSelect($select, $list, preservedValues) {
+    function refreshMultiSelectFromSelect($select, $list, preservedValues, offeredInstanceIds) {
         const preserve = preservedValues instanceof Set ? preservedValues : new Set();
+        const offered = offeredInstanceIds instanceof Set ? offeredInstanceIds : null;
         $list.empty();
         const options = readOptionsFromSelect($select);
         for (let i = 0; i < options.length; i++) {
             const opt = options[i];
             const id = 'popmundo-utils-mis-cb-' + i;
+            const isOffered = offered != null && offered.has(opt.value);
             const $cb = JQ('<input>', {
                 type: 'checkbox',
                 class: 'popmundo-utils-mis-cb lmargin5',
                 id: id,
                 'data-value': opt.value
             });
-            if (preserve.has(opt.value)) {
+            if (preserve.has(opt.value) && !isOffered) {
                 $cb.prop('checked', true);
+            }
+            if (isOffered) {
+                $cb.prop('disabled', true).prop('checked', false);
             }
             const $span = JQ('<span>').text(opt.label);
             const $lbl = JQ('<label>', {
-                class: 'popmundo-utils-mis-dd-row',
-                css: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' }
+                class: 'popmundo-utils-mis-dd-row' + (isOffered ? ' popmundo-utils-mis-dd-row--offered' : ''),
+                css: isOffered
+                    ? {
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '4px 6px',
+                          cursor: 'not-allowed',
+                          opacity: 0.55
+                      }
+                    : { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' }
             });
+            if (isOffered) {
+                $lbl.attr({
+                    title: chrome.i18n.getMessage('misItemAlreadyOffered'),
+                    'aria-disabled': 'true'
+                });
+            }
             $lbl.append($cb, $span);
-            $list.append($lbl);
+            if (isOffered) {
+                const $hint = JQ('<small>', {
+                    class: 'popmundo-utils-mis-offered-hint',
+                    css: {
+                        display: 'block',
+                        fontSize: '0.75em',
+                        lineHeight: 1.35,
+                        marginTop: '3px',
+                        paddingLeft: '24px',
+                        paddingBottom: '2px',
+                        color: '#555'
+                    }
+                });
+                $hint.html(chrome.i18n.getMessage('misItemOfferedHintHtml'));
+                const $rowWrap = JQ('<div>', {
+                    class: 'popmundo-utils-mis-offered-row-wrap',
+                    css: { display: 'block' }
+                });
+                $rowWrap.append($lbl, $hint);
+                $list.append($rowWrap);
+            } else {
+                $list.append($lbl);
+            }
         }
     }
 
@@ -483,8 +588,10 @@
             attr: { 'aria-live': 'polite', role: 'status' },
             css: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' }
         });
-        refreshMultiSelectFromSelect($select, $list, new Set());
-        updateMultiSelectSummary($header, $list);
+        $header.text(chrome.i18n.getMessage('misLoadingPendingOffers'));
+
+        /** @type {Set<string>} Instance ids with an active offer (from ItemsOffered page). */
+        let offeredInstanceIdsRef = new Set();
 
         mountPanelInOfferBox($select, $panel);
         $panel.append(`<p><small>${chrome.i18n.getMessage('misDisableHint')}</small></p>`);
@@ -509,7 +616,7 @@
 
         $select.on('change', function () {
             const preserved = new Set(getCheckedInstanceIdsOrdered($list));
-            refreshMultiSelectFromSelect($select, $list, preserved);
+            refreshMultiSelectFromSelect($select, $list, preserved, offeredInstanceIdsRef);
             updateMultiSelectSummary($header, $list);
             syncGiveButtons();
         });
@@ -518,6 +625,21 @@
             void handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress);
             return false;
         });
+
+        const runAfterOffersLoaded = () => {
+            refreshMultiSelectFromSelect($select, $list, new Set(), offeredInstanceIdsRef);
+            updateMultiSelectSummary($header, $list);
+            syncGiveButtons();
+        };
+
+        void (async () => {
+            try {
+                offeredInstanceIdsRef = await fetchOfferedItemInstanceIds(fetcher);
+            } catch (err) {
+                console.warn('[mass-item-sender] ItemsOffered fetch failed', err);
+            }
+            runAfterOffersLoaded();
+        })();
 
         syncGiveButtons();
     }
