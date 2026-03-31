@@ -467,6 +467,43 @@
         "description": "Tooltip for the hour range input"
     },
 
+    "navDeveloper": {
+        "message": "Developer",
+        "description": "Sidebar navigation label for the Developer section (shown in development builds or with ?debug=true)"
+    },
+    "optDevTitle": {
+        "message": "Developer",
+        "description": "Developer section card title"
+    },
+    "optDevDescription": {
+        "message": "Settings only available in development builds.",
+        "description": "Developer section description"
+    },
+    "optDevGroupLogging": {
+        "message": "Logging",
+        "description": "Category label for developer logging options"
+    },
+    "optDevLogLevel": {
+        "message": "Log Level",
+        "description": "Label for the log level select in the developer section"
+    },
+    "optDevLogLevelDebug": {
+        "message": "Debug",
+        "description": "Log level option: debug (most verbose)"
+    },
+    "optDevLogLevelInfo": {
+        "message": "Info",
+        "description": "Log level option: info"
+    },
+    "optDevLogLevelWarn": {
+        "message": "Warn",
+        "description": "Log level option: warn"
+    },
+    "optDevLogLevelError": {
+        "message": "Error",
+        "description": "Log level option: error (least verbose, default for production)"
+    },
+
     "menuTitle": {
         "message": "Popmundo Utils",
         "description": "In-game sidebar menu title"

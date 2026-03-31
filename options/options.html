@@ -110,7 +110,7 @@
                         <a class="nav-link" href="#" data-tab="tab-popup" data-i18n="navPopupOptions">Popup Options</a>
                         <a class="nav-link" href="#" data-tab="tab-tour-bus" data-i18n="navTourBusHelper">Tour Bus
                             Helper</a>
-                        <a class="nav-link d-none" href="#" data-tab="tab-developer" id="nav-developer">Developer</a>
+                        <a class="nav-link d-none" href="#" data-tab="tab-developer" id="nav-developer" data-i18n="navDeveloper">Developer</a>
                     </nav>
                 </div>
             </div>
@@ -1065,20 +1065,20 @@
                 <div id="tab-developer" class="tab-content-section d-none">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">Developer</h5>
+                            <h5 class="mb-0" data-i18n="optDevTitle">Developer</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-muted mb-3">Settings only available in development builds.</p>
+                            <p class="text-muted mb-3" data-i18n="optDevDescription">Settings only available in development builds.</p>
 
-                            <div class="option-group-title">Logging</div>
+                            <div class="option-group-title" data-i18n="optDevGroupLogging">Logging</div>
                             <div class="row g-2">
                                 <div class="col-sm-4">
-                                    <label for="log_level" class="form-label">Log Level</label>
+                                    <label for="log_level" class="form-label" data-i18n="optDevLogLevel">Log Level</label>
                                     <select class="form-select form-select-sm" id="log_level">
-                                        <option value="0">Debug</option>
-                                        <option value="1">Info</option>
-                                        <option value="2">Warn</option>
-                                        <option value="3">Error</option>
+                                        <option value="0" data-i18n="optDevLogLevelDebug">Debug</option>
+                                        <option value="1" data-i18n="optDevLogLevelInfo">Info</option>
+                                        <option value="2" data-i18n="optDevLogLevelWarn">Warn</option>
+                                        <option value="3" data-i18n="optDevLogLevelError">Error</option>
                                     </select>
                                 </div>
                             </div>
