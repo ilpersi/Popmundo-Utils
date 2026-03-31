@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * A simple levelled logger for the Popmundo Utils extension.
  *
@@ -23,6 +25,8 @@ class Logger {
 
     // Safe default: emit nothing below ERROR until init() has resolved.
     static #level = 3;
+
+    static get level() { return Logger.#level; }
 
     /**
      * Reads log_level from chrome.storage.sync and caches it locally.
