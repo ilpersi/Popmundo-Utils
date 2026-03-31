@@ -44,6 +44,41 @@
     /** Prevents double-submit while the POST queue runs. */
     let offerQueueInProgress = false;
 
+    /** Inline CSS constants — centralizes visual tokens used in DOM builders. */
+    const STYLES = {
+        DD_WRAP: { position: 'relative', maxWidth: '100%' },
+        DD_HEAD_ROW: { display: 'flex', alignItems: 'center', gap: '8px', width: '100%', flexWrap: 'nowrap' },
+        DD_HEADER: { flex: '1 1 auto', minWidth: 0, textAlign: 'left' },
+        DD_LIST: {
+            display: 'none',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: '100%',
+            zIndex: 5000,
+            maxHeight: '240px',
+            overflowY: 'auto',
+            marginBottom: '2px',
+            border: '1px solid #999',
+            background: '#fff',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.15)'
+        },
+        DD_PROGRESS: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' },
+        CB_ROW_BASE: { display: 'flex', alignItems: 'center', padding: '4px 6px' },
+        CB_ROW_NORMAL: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' },
+        CB_ROW_OFFERED: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'not-allowed', opacity: 0.55 },
+        CB_OFFERED_HINT: {
+            display: 'block',
+            fontSize: '0.75em',
+            lineHeight: 1.35,
+            marginTop: '3px',
+            paddingLeft: '24px',
+            paddingBottom: '2px',
+            color: '#555'
+        },
+        CB_OFFERED_ROW_WRAP: { display: 'block' }
+    };
+
     // =============================================================================
     // Options: read from native `<select>` (one row per option value)
     // =============================================================================
@@ -366,15 +401,7 @@
             const $span = JQ('<span>').text(opt.label);
             const $lbl = JQ('<label>', {
                 class: 'popmundo-utils-mis-dd-row' + (isOffered ? ' popmundo-utils-mis-dd-row--offered' : ''),
-                css: isOffered
-                    ? {
-                          display: 'flex',
-                          alignItems: 'center',
-                          padding: '4px 6px',
-                          cursor: 'not-allowed',
-                          opacity: 0.55
-                      }
-                    : { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' }
+                css: isOffered ? STYLES.CB_ROW_OFFERED : STYLES.CB_ROW_NORMAL
             });
             if (isOffered) {
                 $lbl.attr({
@@ -386,20 +413,12 @@
             if (isOffered) {
                 const $hint = JQ('<small>', {
                     class: 'popmundo-utils-mis-offered-hint',
-                    css: {
-                        display: 'block',
-                        fontSize: '0.75em',
-                        lineHeight: 1.35,
-                        marginTop: '3px',
-                        paddingLeft: '24px',
-                        paddingBottom: '2px',
-                        color: '#555'
-                    }
+                    css: STYLES.CB_OFFERED_HINT
                 });
                 $hint.html(chrome.i18n.getMessage('misItemOfferedHintHtml'));
                 const $rowWrap = JQ('<div>', {
                     class: 'popmundo-utils-mis-offered-row-wrap',
-                    css: { display: 'block' }
+                    css: STYLES.CB_OFFERED_ROW_WRAP
                 });
                 $rowWrap.append($lbl, $hint);
                 $list.append($rowWrap);
@@ -414,54 +433,31 @@
      */
     function buildMultiSelectDropdown() {
         const $panel = JQ('<p>', { id: DOM_IDS.PANEL, class: 'popmundo-utils-mis-multi-panel' });
-        const $wrap = JQ('<div>', {
-            class: 'popmundo-utils-mis-dd-wrap',
-            css: { position: 'relative', maxWidth: '100%' }
-        });
-        const $headRow = JQ('<div>', {
-            class: 'popmundo-utils-mis-dd-headrow',
-            css: {
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                width: '100%',
-                flexWrap: 'nowrap'
-            }
-        });
+        const $wrap = JQ('<div>', { class: 'popmundo-utils-mis-dd-wrap', css: STYLES.DD_WRAP });
+        const $headRow = JQ('<div>', { class: 'popmundo-utils-mis-dd-headrow', css: STYLES.DD_HEAD_ROW });
         const $header = JQ('<button>', {
             type: 'button',
             id: DOM_IDS.DD_HEADER,
             class: 'cns',
             text: chrome.i18n.getMessage('misPickItemsPlaceholder'),
-            css: { flex: '1 1 auto', minWidth: 0, textAlign: 'left' },
+            css: STYLES.DD_HEADER,
             'aria-expanded': 'false',
             'aria-haspopup': 'listbox',
             'aria-controls': DOM_IDS.DD_LIST,
             'aria-label': chrome.i18n.getMessage('misDdHeaderAria')
         });
         $headRow.append($header);
-        const $list = JQ('<div>', {
-            id: DOM_IDS.DD_LIST,
-            class: 'popmundo-utils-mis-dd-list',
-            css: {
-                display: 'none',
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: '100%',
-                zIndex: 5000,
-                maxHeight: '240px',
-                overflowY: 'auto',
-                marginBottom: '2px',
-                border: '1px solid #999',
-                background: '#fff',
-                boxShadow: '0 -2px 8px rgba(0,0,0,0.15)'
-            }
-        });
+        const $list = JQ('<div>', { id: DOM_IDS.DD_LIST, class: 'popmundo-utils-mis-dd-list', css: STYLES.DD_LIST });
         $list.attr({ role: 'listbox', 'aria-multiselectable': 'true' });
+        const $progress = JQ('<span>', {
+            id: DOM_IDS.DD_PROGRESS,
+            class: 'popmundo-utils-mis-send-progress',
+            attr: { 'aria-live': 'polite', role: 'status' },
+            css: STYLES.DD_PROGRESS
+        });
         $wrap.append($headRow, $list);
         $panel.append($wrap);
-        return { $panel, $header, $list, $wrap };
+        return { $panel, $header, $list, $wrap, $progress };
     }
 
     /**
@@ -586,14 +582,8 @@
             return;
         }
 
-        const { $panel, $header, $list } = buildMultiSelectDropdown();
+        const { $panel, $header, $list, $progress } = buildMultiSelectDropdown();
         const $btnMulti = createAlternateSubmitButton();
-        const $progress = JQ('<span>', {
-            id: DOM_IDS.DD_PROGRESS,
-            class: 'popmundo-utils-mis-send-progress',
-            attr: { 'aria-live': 'polite', role: 'status' },
-            css: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' }
-        });
         $header.text(chrome.i18n.getMessage('misLoadingPendingOffers'));
 
         /** @type {Set<string>} Instance ids with an active offer (from ItemsOffered page). */
