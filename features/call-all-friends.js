@@ -41,6 +41,7 @@ async function onSubmitClick() {
     // We search for friend ID in the relationship page
     let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
     let relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
+    Logger.debug(relationsXPathHelp.prettyPrint());
 
     let ignoreCnt = 0;
     let friendsInfo = [];
@@ -57,7 +58,7 @@ async function onSubmitClick() {
             }
 
             // We make sure not to include ids in the exclusion list
-            if (!savedOptions.call_exclude_id.includes(friendData.id)){
+            if (!savedOptions.call_exclude_id.includes(friendData.id)) {
                 friendsInfo.push(friendData);
             } else {
                 ignoreCnt++;
@@ -105,6 +106,7 @@ async function onSubmitClick() {
             // This XPATH makes sure that the Wazzup call option is there
             let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]', doc);
             let wazzupNode = wazzupXpathHelper.getOrderedSnapshot(doc);
+            Logger.debug(wazzupXpathHelper.prettyPrint());
 
             // Random interaction is 0 by default, if interactions are available a random value is generated
             let randomInteraction = 0;
@@ -113,6 +115,7 @@ async function onSubmitClick() {
                 // This is the XPATH for the option values in the interaction select element
                 let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option', doc)
                 let interactionNodes = interactionsXpathHelper.getUnorderedNodeSnapshot(doc);
+                Logger.debug(interactionsXpathHelper.prettyPrint());
 
                 // We loop and we push possible values in availableInteractions
                 for (let i = 0; i < interactionNodes.snapshotLength; i++) {
@@ -200,11 +203,14 @@ async function onSubmitClick() {
  * This function will inject the required HTML elements to make the "Call all" functionality available in the relations page
  *
  */
-function injectCallAllHTML() {
+async function injectCallAllHTML() {
+    await Logger.init();
     const END_RELATION_XPATH = '//div[@id="ctl00_cphLeftColumn_ctl00_pnlEndMultiple"]';
 
     let endRelationsXPathHelp = new XPathHelper(END_RELATION_XPATH);
     let endRelationsNode = endRelationsXPathHelp.getFirstOrderedNode(document);
+
+    Logger.debug(endRelationsXPathHelp.prettyPrint());
 
     if (endRelationsNode.singleNodeValue) {
         // console.log("End relations div");
@@ -241,6 +247,9 @@ function injectCallAllHTML() {
     }
 }
 
-if (window.location.href.includes(Utils.getMyID())) {
-    injectCallAllHTML();
-}
+(async () => {
+    if (window.location.href.includes(Utils.getMyID())) {
+        await Logger.init();
+        injectCallAllHTML();
+    }
+})();
