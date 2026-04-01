@@ -61,7 +61,6 @@
             boxShadow: '0 -2px 8px rgba(0,0,0,0.15)'
         },
         DD_PROGRESS: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' },
-        CB_ROW_BASE: { display: 'flex', alignItems: 'center', padding: '4px 6px' },
         CB_ROW_NORMAL: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' },
         CB_ROW_OFFERED: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'not-allowed', opacity: 0.55 },
         CB_OFFERED_HINT: {
@@ -72,8 +71,7 @@
             paddingLeft: '24px',
             paddingBottom: '2px',
             color: '#555'
-        },
-        CB_OFFERED_ROW_WRAP: { display: 'block' }
+        }
     };
 
     // =============================================================================
@@ -134,7 +132,7 @@
      * @returns {Promise<Set<string>>}
      */
     async function fetchOfferedItemInstanceIds(fetcherInst) {
-        const url = new URL(ITEMS_OFFERED_PATH, window.location.origin).href;
+        const url = Utils.getServerLink(ITEMS_OFFERED_PATH);
         const html = await fetcherInst.fetch(url, { method: 'GET', credentials: 'same-origin' });
         return parseOfferedItemInstanceIdsFromHtml(html);
     }
@@ -386,13 +384,13 @@
      */
     function refreshMultiSelectFromSelect($select, $list, preservedValues, offeredInstanceIds) {
         const preserve = preservedValues instanceof Set ? preservedValues : new Set();
-        const offered = offeredInstanceIds instanceof Set ? offeredInstanceIds : null;
+        const offered = offeredInstanceIds instanceof Set ? offeredInstanceIds : new Set();
         $list.empty();
         const options = readOptionsFromSelect($select);
         for (let i = 0; i < options.length; i++) {
             const opt = options[i];
             const id = 'popmundo-utils-mis-cb-' + i;
-            const isOffered = offered != null && offered.has(opt.value);
+            const isOffered = offered.has(opt.value);
             const $cb = JQ('<input>', {
                 type: 'checkbox',
                 class: 'popmundo-utils-mis-cb lmargin5',
@@ -418,14 +416,16 @@
             }
             $lbl.append($cb, $span);
             if (isOffered) {
+                const itemsOfferedUrl = Utils.getServerLink(ITEMS_OFFERED_PATH);
                 const $hint = JQ('<small>', {
                     class: 'popmundo-utils-mis-offered-hint',
                     css: STYLES.CB_OFFERED_HINT
                 });
-                $hint.html(chrome.i18n.getMessage('misItemOfferedHintHtml'));
+                $hint.html(chrome.i18n.getMessage('misItemOfferedHintHtml',
+                    [`<a href="${itemsOfferedUrl}" target="_blank" rel="noopener noreferrer">Items offered</a>`]
+                ));
                 const $rowWrap = JQ('<div>', {
-                    class: 'popmundo-utils-mis-offered-row-wrap',
-                    css: STYLES.CB_OFFERED_ROW_WRAP
+                    class: 'popmundo-utils-mis-offered-row-wrap'
                 });
                 $rowWrap.append($lbl, $hint);
                 $list.append($rowWrap);
@@ -637,6 +637,8 @@
             try {
                 offeredInstanceIdsRef = await fetchOfferedItemInstanceIds(fetcher);
             } catch (err) {
+                // Silent degradation: background refresh failure leaves all items selectable.
+                // A user-facing notification would be confusing for an implicit background fetch.
                 console.warn('[mass-item-sender] ItemsOffered refresh failed', err);
             }
             runAfterOffersLoaded();
@@ -653,14 +655,8 @@
             return false;
         });
 
-        void (async () => {
-            try {
-                offeredInstanceIdsRef = await fetchOfferedItemInstanceIds(fetcher);
-            } catch (err) {
-                console.warn('[mass-item-sender] ItemsOffered fetch failed', err);
-            }
-            runAfterOffersLoaded();
-        })();
+
+        void reloadOfferedItemsDatasource();
 
         syncGiveButtons();
     }
