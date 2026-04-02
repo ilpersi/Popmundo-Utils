@@ -236,17 +236,16 @@
 
                             <div class="option-group-title" data-i18n="optCafGroupExclusions">Exclusions</div>
                             <div class="row g-2">
-                                <div class="col-sm-6">
-                                    <label for="call_exclude_id" class="form-label">
-                                        <span data-i18n="optCafExcludedIds">Excluded character IDs</span>
+                                <div class="col-12">
+                                    <label class="form-label">
+                                        <span data-i18n="optCafExcludedChars">Excluded Characters</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Comma-separated list of character IDs to skip during calls."
-                                            data-i18n-title="optCafExcludedIdsTooltip" class="text-muted ms-1"
+                                            title="Characters added here will be skipped during calls. Add them using the Exclude button in the game."
+                                            data-i18n-title="optCafExcludedCharsTooltip" class="text-muted ms-1"
                                             style="cursor:help;">&#9432;</span>
                                     </label>
-                                    <input type="text" class="form-control form-control-sm" id="call_exclude_id"
-                                        placeholder="e.g. 1234, 5678"
-                                        data-i18n-placeholder="optCafExcludedIdsPlaceholder">
+                                    <input type="hidden" id="call_exclude_id">
+                                    <div id="call_exclude_id_list"></div>
                                 </div>
                             </div>
                         </div>
@@ -822,17 +821,16 @@
 
                             <div class="option-group-title" data-i18n="optMiGroupSettings">Settings</div>
                             <div class="row g-2">
-                                <div class="col-sm-4">
-                                    <label for="mass_interact_exclude_id" class="form-label">
-                                        <span data-i18n="optMiExcludedIds">Excluded character IDs</span>
+                                <div class="col-12">
+                                    <label class="form-label">
+                                        <span data-i18n="optMiExcludedChars">Excluded Characters</span>
                                         <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Comma-separated list of character IDs to skip during mass interact."
-                                            data-i18n-title="optMiExcludedIdsTooltip" class="text-muted ms-1"
+                                            title="Characters added here will be skipped during mass interact. Add them using the Exclude button in the game."
+                                            data-i18n-title="optMiExcludedCharsTooltip" class="text-muted ms-1"
                                             style="cursor:help;">&#9432;</span>
                                     </label>
-                                    <input type="text" class="form-control form-control-sm"
-                                        id="mass_interact_exclude_id" placeholder="e.g. 1234, 5678"
-                                        data-i18n-placeholder="optCafExcludedIdsPlaceholder">
+                                    <input type="hidden" id="mass_interact_exclude_id">
+                                    <div id="mass_interact_exclude_id_list"></div>
                                 </div>
                                 <div class="col-sm-4">
                                     <label for="mass_interact_max_chars" class="form-label">

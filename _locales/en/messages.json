@@ -121,17 +121,21 @@
         "message": "Exclusions",
         "description": "Category label for call exclusion settings"
     },
-    "optCafExcludedIds": {
-        "message": "Excluded character IDs",
-        "description": "Label for the excluded character IDs field in Call All Friends"
+    "optCafExcludedChars": {
+        "message": "Excluded Characters",
+        "description": "Label for the excluded characters list in Call All Friends"
     },
-    "optCafExcludedIdsTooltip": {
-        "message": "Comma-separated list of character IDs to skip during calls.",
-        "description": "Tooltip text for the excluded character IDs field in Call All Friends"
+    "optCafExcludedCharsTooltip": {
+        "message": "Characters added here will be skipped during calls. Add them using the Exclude button in the game.",
+        "description": "Tooltip for the excluded characters list in Call All Friends"
     },
-    "optCafExcludedIdsPlaceholder": {
-        "message": "e.g. 1234, 5678",
-        "description": "Placeholder text for the excluded character IDs field in Call All Friends"
+    "optExcludeListEmpty": {
+        "message": "No characters excluded.",
+        "description": "Empty state text for excluded characters lists"
+    },
+    "optExcludeListRemove": {
+        "message": "Remove",
+        "description": "Button text to remove a character from an exclusion list"
     },
 
     "optElTitle": {
@@ -295,13 +299,29 @@
         "message": "Settings",
         "description": "Category label for mass interact settings"
     },
-    "optMiExcludedIds": {
-        "message": "Excluded character IDs",
-        "description": "Label for excluded character IDs in mass interact"
+    "optMiExcludedChars": {
+        "message": "Excluded Characters",
+        "description": "Label for the excluded characters list in Mass Interact"
     },
-    "optMiExcludedIdsTooltip": {
-        "message": "Comma-separated list of character IDs to skip during mass interact.",
-        "description": "Tooltip for excluded IDs field in mass interact"
+    "optMiExcludedCharsTooltip": {
+        "message": "Characters added here will be skipped during mass interact. Add them using the Exclude button in the game.",
+        "description": "Tooltip for the excluded characters list in Mass Interact"
+    },
+    "miExclude": {
+        "message": "Exclude from Mass Interact",
+        "description": "Tooltip on the prohibition icon next to a character not yet excluded from Mass Interact"
+    },
+    "miInclude": {
+        "message": "Include in Mass Interact",
+        "description": "Tooltip on the tick-circle icon next to a character currently excluded from Mass Interact"
+    },
+    "cafExclude": {
+        "message": "Exclude from Call All Friends",
+        "description": "Tooltip on the prohibition icon next to a character not yet excluded from Call All Friends"
+    },
+    "cafInclude": {
+        "message": "Include in Call All Friends",
+        "description": "Tooltip on the tick-circle icon next to a character currently excluded from Call All Friends"
     },
     "optMiMaxChars": {
         "message": "Max characters (1\u2013100)",

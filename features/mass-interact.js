@@ -268,6 +268,9 @@ async function onSubmitClick() {
 
     let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
 
+    // Support both old integer array format and new [{id, name}] format
+    const excludedIds = savedOptions.mass_interact_exclude_id.map(e => typeof e === 'object' ? e.id : e);
+
     let charsInfo = [];
     let charTRNode = null;
 
@@ -311,7 +314,7 @@ async function onSubmitClick() {
                 }
 
                 // We make sure not to include ids in the exclusion list
-                if (!savedOptions.mass_interact_exclude_id.includes(charData.id)) {
+                if (!excludedIds.includes(charData.id)) {
                     charsInfo.push(charData);
                 } else {
                     statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingExcluded', [charData.name]);
@@ -501,4 +504,74 @@ function injectMassInteractHTML() {
     }
 }
 
+/**
+ * Adds a toggle icon next to each character name on the Characters Present page.
+ * prohibition.png = not excluded (click to exclude).
+ * tick-circle.png = excluded (click to re-include).
+ */
+async function injectMassInteractExcludeButtons() {
+    const PRESENT_CHARS_XPATH = '//tr[contains(@id, "ctl00_cphLeftColumn_ctl00_repCharactersPresent") and contains(@id, "trCharacterRow")]';
+    const INTERACT_A_XPATH = './td[@class="right"]/a[contains(@href, "/World/Popmundo.aspx/Interact/")]';
+    const CHAR_A_XPATH = './td[2]/a';
+    const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g;
+
+    const prohibitionUrl = chrome.runtime.getURL('images/prohibition.png');
+    const tickCircleUrl = chrome.runtime.getURL('images/tick-circle.png');
+
+    const { mass_interact_exclude_id: excludeList } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
+    const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
+
+    const presentCharsTRXPathHelp = new XPathHelper(PRESENT_CHARS_XPATH);
+    const interactAXpathHelp = new XPathHelper(INTERACT_A_XPATH);
+    const charAXpathHelp = new XPathHelper(CHAR_A_XPATH);
+    const charsTRNodes = presentCharsTRXPathHelp.getOrderedSnapshot(document);
+
+    for (let charCnt = 0; charCnt < charsTRNodes.snapshotLength; charCnt++) {
+        const charTRNode = charsTRNodes.snapshotItem(charCnt);
+        const aNodeSnapshot = interactAXpathHelp.getUnorderedNodeSnapshot(charTRNode);
+        if (aNodeSnapshot.snapshotLength !== 1) continue;
+
+        const charNode = charAXpathHelp.getAnyUnorderedNode(charTRNode);
+        const charANode = charNode.singleNodeValue;
+        if (!charANode) continue;
+
+        const href = charANode.getAttribute('href');
+        CHAR_ID_RE.lastIndex = 0;
+        const charMatch = CHAR_ID_RE.exec(href);
+        if (!charMatch) continue;
+
+        const charID = parseInt(charMatch[1]);
+        const charName = charANode.textContent.trim();
+        const isExcluded = currentExcludedIds.includes(charID);
+
+        const img = document.createElement('img');
+        img.src = isExcluded ? prohibitionUrl : tickCircleUrl;
+        img.title = isExcluded ? chrome.i18n.getMessage('miInclude') : chrome.i18n.getMessage('miExclude');
+        // img.style.cssText = 'width:16px; height:16px; margin-left:5px; cursor:pointer; vertical-align:middle;';
+
+        img.addEventListener('click', async () => {
+            const { mass_interact_exclude_id: current } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
+            const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+
+            if (currentIds.includes(charID)) {
+                // Remove from exclusion list
+                const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== charID);
+                await chrome.storage.sync.set({ mass_interact_exclude_id: updated });
+                img.src = tickCircleUrl;
+                img.title = chrome.i18n.getMessage('miExclude');
+            } else {
+                // Add to exclusion list
+                const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
+                normalized.push({ id: charID, name: charName });
+                await chrome.storage.sync.set({ mass_interact_exclude_id: normalized });
+                img.src = prohibitionUrl;
+                img.title = chrome.i18n.getMessage('miInclude');
+            }
+        });
+
+        charANode.insertAdjacentElement('beforebegin', img);
+    }
+}
+
 injectMassInteractHTML();
+injectMassInteractExcludeButtons();

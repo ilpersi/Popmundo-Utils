@@ -43,6 +43,9 @@ async function onSubmitClick() {
     let relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
     Logger.debug(relationsXPathHelp.prettyPrint());
 
+    // Support both old integer array format and new [{id, name}] format
+    const excludedIds = savedOptions.call_exclude_id.map(e => typeof e === 'object' ? e.id : e);
+
     let ignoreCnt = 0;
     let friendsInfo = [];
     for (let i = 0; i < relationsNodes.snapshotLength; i++) {
@@ -58,7 +61,7 @@ async function onSubmitClick() {
             }
 
             // We make sure not to include ids in the exclusion list
-            if (!savedOptions.call_exclude_id.includes(friendData.id)) {
+            if (!excludedIds.includes(friendData.id)) {
                 friendsInfo.push(friendData);
             } else {
                 ignoreCnt++;
@@ -247,9 +250,69 @@ async function injectCallAllHTML() {
     }
 }
 
+/**
+ * Adds a toggle icon next to each friend link on the Relations page.
+ * prohibition.png = not excluded (click to exclude).
+ * tick-circle.png = excluded (click to re-include).
+ */
+async function injectCallAllExcludeButtons() {
+    const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
+    const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g;
+
+    const prohibitionUrl = chrome.runtime.getURL('images/prohibition.png');
+    const tickCircleUrl = chrome.runtime.getURL('images/tick-circle.png');
+
+    const { call_exclude_id: excludeList } = await chrome.storage.sync.get({ call_exclude_id: [] });
+    const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
+
+    const relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
+    const relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
+
+    for (let i = 0; i < relationsNodes.snapshotLength; i++) {
+        const aNode = relationsNodes.snapshotItem(i);
+        const href = aNode.getAttribute('href');
+
+        RELATIONS_ID_RE.lastIndex = 0;
+        const friendMatch = RELATIONS_ID_RE.exec(href);
+        if (!friendMatch) continue;
+
+        const friendID = parseInt(friendMatch[1]);
+        const friendName = aNode.textContent.trim();
+        const isExcluded = currentExcludedIds.includes(friendID);
+
+        const img = document.createElement('img');
+        img.src = isExcluded ? prohibitionUrl : tickCircleUrl;
+        img.title = isExcluded ? chrome.i18n.getMessage('cafInclude') : chrome.i18n.getMessage('cafExclude');
+        // img.style.cssText = 'width:16px; height:16px; margin-left:5px; cursor:pointer; vertical-align:middle;';
+
+        img.addEventListener('click', async () => {
+            const { call_exclude_id: current } = await chrome.storage.sync.get({ call_exclude_id: [] });
+            const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+
+            if (currentIds.includes(friendID)) {
+                // Remove from exclusion list
+                const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== friendID);
+                await chrome.storage.sync.set({ call_exclude_id: updated });
+                img.src = tickCircleUrl;
+                img.title = chrome.i18n.getMessage('cafExclude');
+            } else {
+                // Add to exclusion list
+                const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
+                normalized.push({ id: friendID, name: friendName });
+                await chrome.storage.sync.set({ call_exclude_id: normalized });
+                img.src = prohibitionUrl;
+                img.title = chrome.i18n.getMessage('cafInclude');
+            }
+        });
+
+        aNode.insertAdjacentElement('beforebegin', img);
+    }
+}
+
 (async () => {
     if (window.location.href.includes(Utils.getMyID())) {
         await Logger.init();
         injectCallAllHTML();
+        injectCallAllExcludeButtons();
     }
 })();

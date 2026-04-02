@@ -52,7 +52,7 @@ const optionDetails = [
     { 'name': 'call_all_sms_pic', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_all_sms_txt', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_all_gossip', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
-    { 'name': 'call_exclude_id', 'default': [], 'save_cb': saveCSVString, 'load_cb': loadCSVstring },
+    { 'name': 'call_exclude_id', 'default': [], 'save_cb': saveExcludeList, 'load_cb': loadExcludeList },
 
     // mass interact options
     { 'name': 'mass_interact_greet', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
@@ -102,7 +102,7 @@ const optionDetails = [
     { 'name': 'mass_interact_seek_apprenticeship', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_sing_to', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_serenade', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
-    { 'name': 'mass_interact_exclude_id', 'default': [], 'save_cb': saveCSVString, 'load_cb': loadCSVstring },
+    { 'name': 'mass_interact_exclude_id', 'default': [], 'save_cb': saveExcludeList, 'load_cb': loadExcludeList },
     { 'name': 'mass_interact_max_chars', 'default': 99, 'save_cb': saveInteger, 'load_cb': loadInteger },
     { 'name': 'mass_interact_ignore_acquaintance', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_guide', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
@@ -114,6 +114,27 @@ const optionDetails = [
     // developer options (only shown in development builds)
     { 'name': 'log_level', 'default': 3, 'save_cb': saveInteger, 'load_cb': loadInteger },
 ]
+
+function saveExcludeList(optionName, defaultValue) {
+    const hidden = document.getElementById(optionName);
+    if (!hidden) return defaultValue;
+    try {
+        return JSON.parse(hidden.value || '[]');
+    } catch (_) {
+        return defaultValue;
+    }
+}
+
+function loadExcludeList(optionName, optionValue) {
+    // Backward compat: old format was an array of integers
+    let data = Array.isArray(optionValue) ? optionValue : [];
+    if (data.length > 0 && typeof data[0] === 'number') {
+        data = data.map(id => ({ id, name: `#${id}` }));
+    }
+    const hidden = document.getElementById(optionName);
+    if (hidden) hidden.value = JSON.stringify(data);
+    renderExcludeList(optionName, data);
+}
 
 function saveCSVString(optionName, defaultVaule) {
     let result = defaultVaule;

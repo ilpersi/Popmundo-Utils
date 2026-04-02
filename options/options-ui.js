@@ -1,4 +1,57 @@
 /**
+ * Renders a Bootstrap list-group for an exclusion list stored as [{id, name}].
+ * Called by loadExcludeList (options.js) and by the Remove button click handler.
+ *
+ * @param {string} storageKey  The chrome.storage.sync key (also the hidden input id).
+ * @param {Array}  data        Array of {id, name} objects.
+ */
+function renderExcludeList(storageKey, data) {
+    const container = document.getElementById(storageKey + '_list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'text-muted small mb-0';
+        empty.textContent = chrome.i18n.getMessage('optExcludeListEmpty') || 'No characters excluded.';
+        container.appendChild(empty);
+        return;
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'list-group list-group-flush';
+
+    data.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center px-0 py-1';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'small';
+        nameSpan.textContent = `${entry.name} \u2014 #${entry.id}`;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-sm btn-outline-danger py-0 px-2';
+        removeBtn.textContent = chrome.i18n.getMessage('optExcludeListRemove') || 'Remove';
+        removeBtn.addEventListener('click', () => {
+            const hidden = document.getElementById(storageKey);
+            let current = [];
+            try { current = JSON.parse(hidden.value || '[]'); } catch (_) {}
+            current.splice(index, 1);
+            hidden.value = JSON.stringify(current);
+            renderExcludeList(storageKey, current);
+        });
+
+        li.appendChild(nameSpan);
+        li.appendChild(removeBtn);
+        ul.appendChild(li);
+    });
+
+    container.appendChild(ul);
+}
+
+/**
  * Applies chrome.i18n translations to all elements with data-i18n* attributes.
  * Must be called before Bootstrap tooltip initialization.
  */
