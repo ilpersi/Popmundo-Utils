@@ -167,6 +167,18 @@ class Logger {
         clearBtn.textContent = 'Clear';
         clearBtn.addEventListener('click', () => { log.innerHTML = ''; });
 
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy';
+        copyBtn.addEventListener('click', () => {
+            const text = [...log.querySelectorAll('.pm-entry')]
+                .map(el => el.textContent)
+                .join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1500);
+            });
+        });
+
         const closeBtn = document.createElement('button');
         closeBtn.textContent = '✕';
         closeBtn.addEventListener('click', () => {
@@ -179,6 +191,7 @@ class Logger {
         log.id = 'pm-log';
 
         btnGroup.appendChild(clearBtn);
+        btnGroup.appendChild(copyBtn);
         btnGroup.appendChild(closeBtn);
         header.appendChild(title);
         header.appendChild(btnGroup);
