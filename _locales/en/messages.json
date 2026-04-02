@@ -1067,5 +1067,20 @@
             "current": { "content": "$1", "example": "1" },
             "total": { "content": "$2", "example": "3" }
         }
+    },
+    "misLoadingPendingOffers": {
+        "message": "Checking which items are already offered…",
+        "description": "Dropdown header while fetching Character/ItemsOffered before building the item list"
+    },
+    "misItemAlreadyOffered": {
+        "message": "This item already has an active offer and cannot be selected here.",
+        "description": "Tooltip on a disabled row in the multi-select when the instance is listed on ItemsOffered"
+    },
+    "misItemOfferedHintHtml": {
+        "message": "This item has already been offered to someone. See $LINK$.",
+        "description": "Small hint below a disabled row in the mass-offer list; $LINK$ is replaced with an <a> tag to Character/ItemsOffered",
+        "placeholders": {
+            "link": { "content": "$1", "example": "<a>Items offered</a>" }
+        }
     }
 }

@@ -38,12 +38,104 @@
     /** Delay before retrying init when the item select is not in the DOM yet. */
     const PROBE_RETRY_MS = 500;
 
-    /** Prevents double-submit while the POST queue runs. */
-    let offerQueueInProgress = false;
+    /** GET page listing active offers (same HTML as in-game “items offered”). */
+    const ITEMS_OFFERED_PATH = '/World/Popmundo.aspx/Character/ItemsOffered';
+
+    /** Inline CSS constants — centralizes visual tokens used in DOM builders. */
+    const STYLES = {
+        DD_WRAP: { position: 'relative', maxWidth: '100%' },
+        DD_HEAD_ROW: { display: 'flex', alignItems: 'center', gap: '8px', width: '100%', flexWrap: 'nowrap' },
+        DD_HEADER: { flex: '1 1 auto', minWidth: 0, textAlign: 'left' },
+        DD_LIST: {
+            display: 'none',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: '100%',
+            zIndex: 5000,
+            maxHeight: '240px',
+            overflowY: 'auto',
+            marginBottom: '2px',
+            border: '1px solid #999',
+            background: '#fff',
+            boxShadow: '0 -2px 8px rgba(0,0,0,0.15)'
+        },
+        DD_PROGRESS: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' },
+        CB_ROW_NORMAL: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' },
+        CB_ROW_OFFERED: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'not-allowed', opacity: 0.55 },
+        CB_OFFERED_HINT: {
+            display: 'block',
+            fontSize: '0.75em',
+            lineHeight: 1.35,
+            marginTop: '3px',
+            paddingLeft: '24px',
+            paddingBottom: '2px',
+            color: '#555'
+        }
+    };
 
     // =============================================================================
     // Options: read from native `<select>` (one row per option value)
     // =============================================================================
+
+    /**
+     * Resolves the table for **items you are offering** on `ItemsOffered`.
+     * The page has two `table.data`: incoming offers (often `#DataTables_Table_0`) and your offers.
+     * Prefer the table in the `.box` immediately before `#ctl00_cphLeftColumn_ctl00_pnlOffers` (cartas).
+     * @param {Document} doc
+     * @returns {HTMLTableElement|null}
+     */
+    function findYourOffersTable(doc) {
+        const pnlOffers = doc.getElementById('ctl00_cphLeftColumn_ctl00_pnlOffers');
+        if (pnlOffers && pnlOffers.previousElementSibling) {
+            const t = pnlOffers.previousElementSibling.querySelector('table.data');
+            if (t) {
+                return t;
+            }
+        }
+        const yourItemLink = doc.querySelector('a[id*="repYourOffers"][id*="lnkItem"]');
+        if (yourItemLink) {
+            const t = yourItemLink.closest('table');
+            if (t) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Parses HTML from `ItemsOffered` and returns instance ids already in an active offer (outgoing).
+     * @param {string} html
+     * @returns {Set<string>}
+     */
+    function parseOfferedItemInstanceIdsFromHtml(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const table = findYourOffersTable(doc);
+        if (!table) {
+            return new Set();
+        }
+        /** @type {Set<string>} */
+        const ids = new Set();
+        const links = table.querySelectorAll('a[href*="ItemDetails"]');
+        for (let i = 0; i < links.length; i++) {
+            const href = links[i].getAttribute('href') || '';
+            const m = /\/Character\/ItemDetails\/(\d+)/.exec(href);
+            if (m) {
+                ids.add(m[1]);
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * @param {TimedFetch} fetcherInst
+     * @returns {Promise<Set<string>>}
+     */
+    async function fetchOfferedItemInstanceIds(fetcherInst) {
+        const url = Utils.getServerLink(ITEMS_OFFERED_PATH);
+        const html = await fetcherInst.fetch(url, { method: 'GET', credentials: 'same-origin' });
+        return parseOfferedItemInstanceIdsFromHtml(html);
+    }
 
     /**
      * @param {JQuery} $select
@@ -222,40 +314,56 @@
     }
 
     /**
-     * @param {JQuery.Event} e
-     * @param {JQuery} $list
-     * @param {JQuery} $header
-     * @param {JQuery} $btnMulti
-     * @param {JQuery} $progress Progress label beside the dropdown header (hidden when idle).
+     * @typedef {{
+     *   $list: JQuery,
+     *   $header: JQuery,
+     *   $btnMulti: JQuery,
+     *   $progress: JQuery,
+     *   fetcherInst: TimedFetch,
+     *   notificationsInst: Notifications,
+     *   isQueueInProgress: { value: boolean },
+     *   onAfterQueue?: (() => Promise<void>)
+     * }} SubmitCtx
      */
-    async function handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress) {
+
+    /**
+     * @param {JQuery.Event} e
+     * @param {SubmitCtx} ctx
+     */
+    async function handleAlternateSubmitClick(e, ctx) {
+        const { $list, $header, $btnMulti, $progress, fetcherInst, notificationsInst, isQueueInProgress, onAfterQueue } = ctx;
         e.preventDefault();
         e.stopPropagation();
-        if (offerQueueInProgress) {
+        if (isQueueInProgress.value) {
             return;
         }
         const payload = buildMultiOfferPayloadFromList($list);
         if (payload.itemInstanceIds.length === 0) {
-            notifications.notifyError('mis-validation', chrome.i18n.getMessage('misOfferNoneSelected'));
+            notificationsInst.notifyError('mis-validation', chrome.i18n.getMessage('misOfferNoneSelected'));
             return;
         }
-        offerQueueInProgress = true;
+        isQueueInProgress.value = true;
         $btnMulti.prop('disabled', true);
         $header.prop('disabled', true);
         $list.find('.popmundo-utils-mis-cb').prop('disabled', true);
         try {
-            await runQueuedOfferItems(fetcher, notifications, payload, function (current, total) {
+            await runQueuedOfferItems(fetcherInst, notificationsInst, payload, function (current, total) {
                 $progress.text(chrome.i18n.getMessage('misOfferSendingProgress', [String(current), String(total)]));
                 $progress.css('visibility', 'visible');
             });
+            if (typeof onAfterQueue === 'function') {
+                await onAfterQueue();
+            }
         } catch (err) {
             console.error('[mass-item-sender]', err);
-            window.alert(chrome.i18n.getMessage('misOfferFailed', [err.message || String(err)]));
+            notificationsInst.notifyError('mis-error', chrome.i18n.getMessage('misOfferFailed', [err.message || String(err)]));
         } finally {
-            offerQueueInProgress = false;
+            isQueueInProgress.value = false;
             $btnMulti.prop('disabled', false);
             $header.prop('disabled', false);
-            $list.find('.popmundo-utils-mis-cb').prop('disabled', false);
+            if (typeof onAfterQueue !== 'function') {
+                $list.find('.popmundo-utils-mis-cb').prop('disabled', false);
+            }
             $progress.empty();
             $progress.css('visibility', 'hidden');
             updateMultiSelectSummary($header, $list);
@@ -268,33 +376,62 @@
 
     /**
      * Rebuilds checkbox rows from the current `<select>` options; restores checked state for values in `preservedValues`.
+     * Rows whose instance id is in `offeredInstanceIds` are disabled (already offered elsewhere).
      * @param {JQuery} $select
      * @param {JQuery} $list
      * @param {Set<string>} [preservedValues]
+     * @param {Set<string>} [offeredInstanceIds]
      */
-    function refreshMultiSelectFromSelect($select, $list, preservedValues) {
+    function refreshMultiSelectFromSelect($select, $list, preservedValues, offeredInstanceIds) {
         const preserve = preservedValues instanceof Set ? preservedValues : new Set();
+        const offered = offeredInstanceIds instanceof Set ? offeredInstanceIds : new Set();
         $list.empty();
         const options = readOptionsFromSelect($select);
         for (let i = 0; i < options.length; i++) {
             const opt = options[i];
             const id = 'popmundo-utils-mis-cb-' + i;
+            const isOffered = offered.has(opt.value);
             const $cb = JQ('<input>', {
                 type: 'checkbox',
                 class: 'popmundo-utils-mis-cb lmargin5',
                 id: id,
                 'data-value': opt.value
             });
-            if (preserve.has(opt.value)) {
+            if (preserve.has(opt.value) && !isOffered) {
                 $cb.prop('checked', true);
+            }
+            if (isOffered) {
+                $cb.prop('disabled', true).prop('checked', false);
             }
             const $span = JQ('<span>').text(opt.label);
             const $lbl = JQ('<label>', {
-                class: 'popmundo-utils-mis-dd-row',
-                css: { display: 'flex', alignItems: 'center', padding: '4px 6px', cursor: 'pointer' }
+                class: 'popmundo-utils-mis-dd-row' + (isOffered ? ' popmundo-utils-mis-dd-row--offered' : ''),
+                css: isOffered ? STYLES.CB_ROW_OFFERED : STYLES.CB_ROW_NORMAL
             });
+            if (isOffered) {
+                $lbl.attr({
+                    title: chrome.i18n.getMessage('misItemAlreadyOffered'),
+                    'aria-disabled': 'true'
+                });
+            }
             $lbl.append($cb, $span);
-            $list.append($lbl);
+            if (isOffered) {
+                const itemsOfferedUrl = Utils.getServerLink(ITEMS_OFFERED_PATH);
+                const $hint = JQ('<small>', {
+                    class: 'popmundo-utils-mis-offered-hint',
+                    css: STYLES.CB_OFFERED_HINT
+                });
+                $hint.html(chrome.i18n.getMessage('misItemOfferedHintHtml',
+                    [`<a href="${itemsOfferedUrl}" target="_blank" rel="noopener noreferrer">Items offered</a>`]
+                ));
+                const $rowWrap = JQ('<div>', {
+                    class: 'popmundo-utils-mis-offered-row-wrap'
+                });
+                $rowWrap.append($lbl, $hint);
+                $list.append($rowWrap);
+            } else {
+                $list.append($lbl);
+            }
         }
     }
 
@@ -303,54 +440,31 @@
      */
     function buildMultiSelectDropdown() {
         const $panel = JQ('<p>', { id: DOM_IDS.PANEL, class: 'popmundo-utils-mis-multi-panel' });
-        const $wrap = JQ('<div>', {
-            class: 'popmundo-utils-mis-dd-wrap',
-            css: { position: 'relative', maxWidth: '100%' }
-        });
-        const $headRow = JQ('<div>', {
-            class: 'popmundo-utils-mis-dd-headrow',
-            css: {
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                width: '100%',
-                flexWrap: 'nowrap'
-            }
-        });
+        const $wrap = JQ('<div>', { class: 'popmundo-utils-mis-dd-wrap', css: STYLES.DD_WRAP });
+        const $headRow = JQ('<div>', { class: 'popmundo-utils-mis-dd-headrow', css: STYLES.DD_HEAD_ROW });
         const $header = JQ('<button>', {
             type: 'button',
             id: DOM_IDS.DD_HEADER,
             class: 'cns',
             text: chrome.i18n.getMessage('misPickItemsPlaceholder'),
-            css: { flex: '1 1 auto', minWidth: 0, textAlign: 'left' },
+            css: STYLES.DD_HEADER,
             'aria-expanded': 'false',
             'aria-haspopup': 'listbox',
             'aria-controls': DOM_IDS.DD_LIST,
             'aria-label': chrome.i18n.getMessage('misDdHeaderAria')
         });
         $headRow.append($header);
-        const $list = JQ('<div>', {
-            id: DOM_IDS.DD_LIST,
-            class: 'popmundo-utils-mis-dd-list',
-            css: {
-                display: 'none',
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: '100%',
-                zIndex: 5000,
-                maxHeight: '240px',
-                overflowY: 'auto',
-                marginBottom: '2px',
-                border: '1px solid #999',
-                background: '#fff',
-                boxShadow: '0 -2px 8px rgba(0,0,0,0.15)'
-            }
-        });
+        const $list = JQ('<div>', { id: DOM_IDS.DD_LIST, class: 'popmundo-utils-mis-dd-list', css: STYLES.DD_LIST });
         $list.attr({ role: 'listbox', 'aria-multiselectable': 'true' });
+        const $progress = JQ('<span>', {
+            id: DOM_IDS.DD_PROGRESS,
+            class: 'popmundo-utils-mis-send-progress',
+            attr: { 'aria-live': 'polite', role: 'status' },
+            css: STYLES.DD_PROGRESS
+        });
         $wrap.append($headRow, $list);
         $panel.append($wrap);
-        return { $panel, $header, $list, $wrap };
+        return { $panel, $header, $list, $wrap, $progress };
     }
 
     /**
@@ -475,16 +589,15 @@
             return;
         }
 
-        const { $panel, $header, $list } = buildMultiSelectDropdown();
+        const { $panel, $header, $list, $progress } = buildMultiSelectDropdown();
         const $btnMulti = createAlternateSubmitButton();
-        const $progress = JQ('<span>', {
-            id: DOM_IDS.DD_PROGRESS,
-            class: 'popmundo-utils-mis-send-progress',
-            attr: { 'aria-live': 'polite', role: 'status' },
-            css: { visibility: 'hidden', whiteSpace: 'nowrap', fontSize: '0.95em', opacity: 0.92, marginLeft: '8px' }
-        });
-        refreshMultiSelectFromSelect($select, $list, new Set());
-        updateMultiSelectSummary($header, $list);
+        $header.text(chrome.i18n.getMessage('misLoadingPendingOffers'));
+
+        /** @type {Set<string>} Instance ids with an active offer (from ItemsOffered page). */
+        let offeredInstanceIdsRef = new Set();
+
+        /** Prevents double-submit while the POST queue runs. Boxed so handleAlternateSubmitClick can mutate it. */
+        const isQueueInProgress = { value: false };
 
         mountPanelInOfferBox($select, $panel);
         $panel.append(`<p><small>${chrome.i18n.getMessage('misDisableHint')}</small></p>`);
@@ -509,15 +622,41 @@
 
         $select.on('change', function () {
             const preserved = new Set(getCheckedInstanceIdsOrdered($list));
-            refreshMultiSelectFromSelect($select, $list, preserved);
+            refreshMultiSelectFromSelect($select, $list, preserved, offeredInstanceIdsRef);
             updateMultiSelectSummary($header, $list);
             syncGiveButtons();
         });
 
+        const runAfterOffersLoaded = () => {
+            refreshMultiSelectFromSelect($select, $list, new Set(), offeredInstanceIdsRef);
+            updateMultiSelectSummary($header, $list);
+            syncGiveButtons();
+        };
+
+        const reloadOfferedItemsDatasource = async () => {
+            try {
+                offeredInstanceIdsRef = await fetchOfferedItemInstanceIds(fetcher);
+            } catch (err) {
+                // Silent degradation: background refresh failure leaves all items selectable.
+                // A user-facing notification would be confusing for an implicit background fetch.
+                console.warn('[mass-item-sender] ItemsOffered refresh failed', err);
+            }
+            runAfterOffersLoaded();
+        };
+
         $btnMulti.on('click', function (e) {
-            void handleAlternateSubmitClick(e, $list, $header, $btnMulti, $progress);
+            void handleAlternateSubmitClick(e, {
+                $list, $header, $btnMulti, $progress,
+                fetcherInst: fetcher,
+                notificationsInst: notifications,
+                isQueueInProgress,
+                onAfterQueue: reloadOfferedItemsDatasource
+            });
             return false;
         });
+
+
+        void reloadOfferedItemsDatasource();
 
         syncGiveButtons();
     }
