@@ -19,36 +19,43 @@ function renderExcludeList(storageKey, data) {
         return;
     }
 
-    const ul = document.createElement('ul');
-    ul.className = 'list-group list-group-flush';
+    const row = document.createElement('div');
+    row.className = 'row row-cols-3 g-1';
 
-    data.forEach((entry, index) => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center px-0 py-1';
+    const sorted = data.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+    sorted.forEach((entry, index) => {
+        const col = document.createElement('div');
+        col.className = 'col';
+
+        const cell = document.createElement('div');
+        cell.className = 'd-flex justify-content-between align-items-center border-bottom py-1';
 
         const nameSpan = document.createElement('span');
-        nameSpan.className = 'small';
+        nameSpan.className = 'small text-truncate me-1';
+        nameSpan.title = `${entry.name} — #${entry.id}`;
         nameSpan.textContent = `${entry.name} \u2014 #${entry.id}`;
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'btn btn-sm btn-outline-danger py-0 px-2';
+        removeBtn.className = 'btn btn-sm btn-outline-danger py-0 px-2 flex-shrink-0';
         removeBtn.textContent = chrome.i18n.getMessage('optExcludeListRemove') || 'Remove';
         removeBtn.addEventListener('click', () => {
             const hidden = document.getElementById(storageKey);
             let current = [];
             try { current = JSON.parse(hidden.value || '[]'); } catch (_) {}
-            current.splice(index, 1);
-            hidden.value = JSON.stringify(current);
-            renderExcludeList(storageKey, current);
+            const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== entry.id);
+            hidden.value = JSON.stringify(updated);
+            renderExcludeList(storageKey, updated);
         });
 
-        li.appendChild(nameSpan);
-        li.appendChild(removeBtn);
-        ul.appendChild(li);
+        cell.appendChild(nameSpan);
+        cell.appendChild(removeBtn);
+        col.appendChild(cell);
+        row.appendChild(col);
     });
 
-    container.appendChild(ul);
+    container.appendChild(row);
 }
 
 /**
@@ -107,6 +114,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Bootstrap Tooltips ──
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+
+    // ── Remove All buttons for exclusion lists ──
+    document.querySelectorAll('[data-exclude-clear]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const storageKey = btn.dataset.excludeClear;
+            const hidden = document.getElementById(storageKey);
+            if (hidden) hidden.value = '[]';
+            renderExcludeList(storageKey, []);
+        });
+    });
 
     // ── Show Developer tab in development builds or when ?debug=true is in the URL ──
     const debugParam = new URLSearchParams(window.location.search).get('debug') === 'true';

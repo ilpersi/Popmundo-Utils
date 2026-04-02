@@ -137,6 +137,10 @@
         "message": "Remove",
         "description": "Button text to remove a character from an exclusion list"
     },
+    "optExcludeListRemoveAll": {
+        "message": "Remove All",
+        "description": "Button text to clear an entire exclusion list"
+    },
 
     "optElTitle": {
         "message": "Enhanced Links",

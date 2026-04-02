@@ -237,13 +237,18 @@
                             <div class="option-group-title" data-i18n="optCafGroupExclusions">Exclusions</div>
                             <div class="row g-2">
                                 <div class="col-12">
-                                    <label class="form-label">
-                                        <span data-i18n="optCafExcludedChars">Excluded Characters</span>
-                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Characters added here will be skipped during calls. Add them using the Exclude button in the game."
-                                            data-i18n-title="optCafExcludedCharsTooltip" class="text-muted ms-1"
-                                            style="cursor:help;">&#9432;</span>
-                                    </label>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <label class="form-label mb-0">
+                                            <span data-i18n="optCafExcludedChars">Excluded Characters</span>
+                                            <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="Characters added here will be skipped during calls. Add them using the Exclude button in the game."
+                                                data-i18n-title="optCafExcludedCharsTooltip" class="text-muted ms-1"
+                                                style="cursor:help;">&#9432;</span>
+                                        </label>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2"
+                                            data-exclude-clear="call_exclude_id"
+                                            data-i18n="optExcludeListRemoveAll">Remove All</button>
+                                    </div>
                                     <input type="hidden" id="call_exclude_id">
                                     <div id="call_exclude_id_list"></div>
                                 </div>
@@ -821,17 +826,6 @@
 
                             <div class="option-group-title" data-i18n="optMiGroupSettings">Settings</div>
                             <div class="row g-2">
-                                <div class="col-12">
-                                    <label class="form-label">
-                                        <span data-i18n="optMiExcludedChars">Excluded Characters</span>
-                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Characters added here will be skipped during mass interact. Add them using the Exclude button in the game."
-                                            data-i18n-title="optMiExcludedCharsTooltip" class="text-muted ms-1"
-                                            style="cursor:help;">&#9432;</span>
-                                    </label>
-                                    <input type="hidden" id="mass_interact_exclude_id">
-                                    <div id="mass_interact_exclude_id_list"></div>
-                                </div>
                                 <div class="col-sm-4">
                                     <label for="mass_interact_max_chars" class="form-label">
                                         <span data-i18n="optMiMaxChars">Max characters (1&#8211;100)</span>
@@ -850,6 +844,22 @@
                                         <label class="form-check-label" for="mass_interact_ignore_acquaintance"
                                             data-i18n="optMiIgnoreAcquaintance">Ignore new acquaintances</label>
                                     </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <label class="form-label mb-0">
+                                            <span data-i18n="optMiExcludedChars">Excluded Characters</span>
+                                            <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="Characters added here will be skipped during mass interact. Add them using the Exclude button in the game."
+                                                data-i18n-title="optMiExcludedCharsTooltip" class="text-muted ms-1"
+                                                style="cursor:help;">&#9432;</span>
+                                        </label>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2"
+                                            data-exclude-clear="mass_interact_exclude_id"
+                                            data-i18n="optExcludeListRemoveAll">Remove All</button>
+                                    </div>
+                                    <input type="hidden" id="mass_interact_exclude_id">
+                                    <div id="mass_interact_exclude_id_list"></div>
                                 </div>
                             </div>
                         </div>
