@@ -35,6 +35,7 @@
             ],
             "js": [
                 "common/xpath-helper.js",
+                "common/css-helper.js",
                 "common/utils.js",
                 "common/logger.js"
             ]
@@ -261,6 +262,7 @@
                 "common/utils.js",
                 "common/notifications.js",
                 "common/xpath-helper.js",
+                "common/css-helper.js",
                 "features/mass-item-sender.js"
             ]
         }
