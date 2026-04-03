@@ -150,6 +150,14 @@
         "message": "Add quick-action links next to game elements for faster navigation and interactions.",
         "description": "Enhanced Links section description"
     },
+    "optElGroupGeneral": {
+        "message": "General",
+        "description": "Category label for general enhanced links options"
+    },
+    "optElFontSize": {
+        "message": "Icons Font Size",
+        "description": "Label for the enhanced links font size option"
+    },
     "optElGroupBand": {
         "message": "Band",
         "description": "Category label for band-related enhanced links"

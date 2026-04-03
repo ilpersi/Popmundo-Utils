@@ -509,7 +509,7 @@ async function injectMassInteractExcludeButtons() {
     const prohibitionIcon = '🚫';
     const tickCircleIcon = '✅';
 
-    const { mass_interact_exclude_id: excludeList } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
+    const { mass_interact_exclude_id: excludeList, enhanced_links_font_size: fontSize } = await chrome.storage.sync.get({ mass_interact_exclude_id: [], enhanced_links_font_size: 16 });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
 
     const charsTRNodes = new CssSelectorHelper(PRESENT_CHARS_SELECTOR).getAll();
@@ -544,7 +544,7 @@ async function injectMassInteractExcludeButtons() {
         const icon = document.createElement('span');
         icon.textContent = isExcluded ? prohibitionIcon : tickCircleIcon;
         icon.title = isExcluded ? chrome.i18n.getMessage('miInclude') : chrome.i18n.getMessage('miExclude');
-        icon.style.cssText = 'margin-right:5px; cursor:pointer; font-size:14px; user-select:none;';
+        icon.style.cssText = `margin-right:5px; cursor:pointer; font-size:${fontSize}px; user-select:none;`;
 
         icon.className = 'mi-status-icon';
         icon.dataset.charId = charID;

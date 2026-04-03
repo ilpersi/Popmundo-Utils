@@ -1,5 +1,6 @@
 const optionDetails = [
     // enhanced links options
+    { 'name': 'enhanced_links_font_size', 'default': 16, 'save_cb': saveInteger, 'load_cb': loadInteger },
     // band
     { 'name': 'band_popularity_shortcut', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'band_upcoming_shows', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },

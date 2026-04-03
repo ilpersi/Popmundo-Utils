@@ -16,6 +16,7 @@ const globalOptions = {
     'move_to_shortcut': true,
     'crew_top_heist_shortcut': false,
     'locale_show_reconnaissance': false,
+    'enhanced_links_font_size': 16,
     'log_level': Logger.ERROR,
 };
 
@@ -173,7 +174,7 @@ function handleIconLink(options) {
             let iconElem = document.createElement('span');
             iconElem.textContent = linkInfo.icon;
             iconElem.setAttribute('title', linkInfo.title);
-            iconElem.style.cssText = 'font-size:14px; user-select:none;';
+            iconElem.style.cssText = `font-size:${options.enhanced_links_font_size}px; user-select:none;`;
 
             // Include icon in link
             newAElem.appendChild(iconElem);

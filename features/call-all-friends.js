@@ -260,7 +260,7 @@ async function injectCallAllExcludeButtons() {
     const prohibitionIcon = '🚫';
     const tickCircleIcon = '✅';
 
-    const { call_exclude_id: excludeList } = await chrome.storage.sync.get({ call_exclude_id: [] });
+    const { call_exclude_id: excludeList, enhanced_links_font_size: fontSize } = await chrome.storage.sync.get({ call_exclude_id: [], enhanced_links_font_size: 16 });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
 
     const relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR).getAll();
@@ -290,7 +290,7 @@ async function injectCallAllExcludeButtons() {
         const icon = document.createElement('span');
         icon.textContent = isExcluded ? prohibitionIcon : tickCircleIcon;
         icon.title = isExcluded ? chrome.i18n.getMessage('cafInclude') : chrome.i18n.getMessage('cafExclude');
-        icon.style.cssText = 'margin-right:5px; cursor:pointer; font-size:14px; user-select:none;';
+        icon.style.cssText = `margin-right:5px; cursor:pointer; font-size:${fontSize}px; user-select:none;`;
 
         icon.className = 'caf-status-icon';
         icon.dataset.friendId = friendID;
