@@ -526,6 +526,16 @@ async function injectMassInteractExcludeButtons() {
     const charAXpathHelp = new XPathHelper(CHAR_A_XPATH);
     const charsTRNodes = presentCharsTRXPathHelp.getOrderedSnapshot(document);
 
+    if (charsTRNodes.snapshotLength === 0) return;
+
+    const firstNode = charsTRNodes.snapshotItem(0);
+    const parentTable = firstNode.closest('table');
+    const originalDisplay = parentTable ? parentTable.style.display : '';
+
+    if (parentTable) {
+        parentTable.style.display = 'none';
+    }
+
     for (let charCnt = 0; charCnt < charsTRNodes.snapshotLength; charCnt++) {
         const charTRNode = charsTRNodes.snapshotItem(charCnt);
         const aNodeSnapshot = interactAXpathHelp.getUnorderedNodeSnapshot(charTRNode);
@@ -554,6 +564,10 @@ async function injectMassInteractExcludeButtons() {
         icon.dataset.charName = charName;
 
         charANode.insertAdjacentElement('beforebegin', icon);
+    }
+
+    if (parentTable) {
+        parentTable.style.display = originalDisplay;
     }
 
     document.addEventListener('click', async (e) => {

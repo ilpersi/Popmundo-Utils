@@ -268,6 +268,16 @@ async function injectCallAllExcludeButtons() {
     const relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
     const relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
 
+    if (relationsNodes.snapshotLength === 0) return;
+
+    const firstNode = relationsNodes.snapshotItem(0);
+    const parentTable = firstNode.closest('table');
+    const originalDisplay = parentTable ? parentTable.style.display : '';
+
+    if (parentTable) {
+        parentTable.style.display = 'none';
+    }
+
     for (let i = 0; i < relationsNodes.snapshotLength; i++) {
         const aNode = relationsNodes.snapshotItem(i);
         const href = aNode.getAttribute('href');
@@ -290,6 +300,10 @@ async function injectCallAllExcludeButtons() {
         icon.dataset.friendName = friendName;
 
         aNode.insertAdjacentElement('beforebegin', icon);
+    }
+
+    if (parentTable) {
+        parentTable.style.display = originalDisplay;
     }
 
     document.addEventListener('click', async (e) => {
