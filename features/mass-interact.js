@@ -515,8 +515,8 @@ async function injectMassInteractExcludeButtons() {
     const CHAR_A_XPATH = './td[2]/a';
     const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g;
 
-    const prohibitionUrl = chrome.runtime.getURL('images/prohibition.png');
-    const tickCircleUrl = chrome.runtime.getURL('images/tick-circle.png');
+    const prohibitionIcon = '🚫';
+    const tickCircleIcon = '✅';
 
     const { mass_interact_exclude_id: excludeList } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
@@ -544,33 +544,43 @@ async function injectMassInteractExcludeButtons() {
         const charName = charANode.textContent.trim();
         const isExcluded = currentExcludedIds.includes(charID);
 
-        const img = document.createElement('img');
-        img.src = isExcluded ? prohibitionUrl : tickCircleUrl;
-        img.title = isExcluded ? chrome.i18n.getMessage('miInclude') : chrome.i18n.getMessage('miExclude');
-        // img.style.cssText = 'width:16px; height:16px; margin-left:5px; cursor:pointer; vertical-align:middle;';
+        const icon = document.createElement('span');
+        icon.textContent = isExcluded ? prohibitionIcon : tickCircleIcon;
+        icon.title = isExcluded ? chrome.i18n.getMessage('miInclude') : chrome.i18n.getMessage('miExclude');
+        icon.style.cssText = 'margin-right:5px; cursor:pointer; font-size:14px; user-select:none;';
 
-        img.addEventListener('click', async () => {
-            const { mass_interact_exclude_id: current } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
-            const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+        icon.className = 'mi-status-icon';
+        icon.dataset.charId = charID;
+        icon.dataset.charName = charName;
 
-            if (currentIds.includes(charID)) {
-                // Remove from exclusion list
-                const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== charID);
-                await chrome.storage.sync.set({ mass_interact_exclude_id: updated });
-                img.src = tickCircleUrl;
-                img.title = chrome.i18n.getMessage('miExclude');
-            } else {
-                // Add to exclusion list
-                const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
-                normalized.push({ id: charID, name: charName });
-                await chrome.storage.sync.set({ mass_interact_exclude_id: normalized });
-                img.src = prohibitionUrl;
-                img.title = chrome.i18n.getMessage('miInclude');
-            }
-        });
-
-        charANode.insertAdjacentElement('beforebegin', img);
+        charANode.insertAdjacentElement('beforebegin', icon);
     }
+
+    document.addEventListener('click', async (e) => {
+        if (!e.target.classList.contains('mi-status-icon')) return;
+
+        const icon = e.target;
+        const charID = parseInt(icon.dataset.charId);
+        const charName = icon.dataset.charName;
+
+        const { mass_interact_exclude_id: current } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
+        const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+
+        if (currentIds.includes(charID)) {
+            // Remove from exclusion list
+            const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== charID);
+            await chrome.storage.sync.set({ mass_interact_exclude_id: updated });
+            icon.textContent = tickCircleIcon;
+            icon.title = chrome.i18n.getMessage('miExclude');
+        } else {
+            // Add to exclusion list
+            const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
+            normalized.push({ id: charID, name: charName });
+            await chrome.storage.sync.set({ mass_interact_exclude_id: normalized });
+            icon.textContent = prohibitionIcon;
+            icon.title = chrome.i18n.getMessage('miInclude');
+        }
+    });
 }
 
 injectMassInteractHTML();

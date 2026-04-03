@@ -259,8 +259,8 @@ async function injectCallAllExcludeButtons() {
     const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
     const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g;
 
-    const prohibitionUrl = chrome.runtime.getURL('images/prohibition.png');
-    const tickCircleUrl = chrome.runtime.getURL('images/tick-circle.png');
+    const prohibitionIcon = '🚫';
+    const tickCircleIcon = '✅';
 
     const { call_exclude_id: excludeList } = await chrome.storage.sync.get({ call_exclude_id: [] });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
@@ -280,33 +280,43 @@ async function injectCallAllExcludeButtons() {
         const friendName = aNode.textContent.trim();
         const isExcluded = currentExcludedIds.includes(friendID);
 
-        const img = document.createElement('img');
-        img.src = isExcluded ? prohibitionUrl : tickCircleUrl;
-        img.title = isExcluded ? chrome.i18n.getMessage('cafInclude') : chrome.i18n.getMessage('cafExclude');
-        // img.style.cssText = 'width:16px; height:16px; margin-left:5px; cursor:pointer; vertical-align:middle;';
+        const icon = document.createElement('span');
+        icon.textContent = isExcluded ? prohibitionIcon : tickCircleIcon;
+        icon.title = isExcluded ? chrome.i18n.getMessage('cafInclude') : chrome.i18n.getMessage('cafExclude');
+        icon.style.cssText = 'margin-right:5px; cursor:pointer; font-size:14px; user-select:none;';
 
-        img.addEventListener('click', async () => {
-            const { call_exclude_id: current } = await chrome.storage.sync.get({ call_exclude_id: [] });
-            const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+        icon.className = 'caf-status-icon';
+        icon.dataset.friendId = friendID;
+        icon.dataset.friendName = friendName;
 
-            if (currentIds.includes(friendID)) {
-                // Remove from exclusion list
-                const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== friendID);
-                await chrome.storage.sync.set({ call_exclude_id: updated });
-                img.src = tickCircleUrl;
-                img.title = chrome.i18n.getMessage('cafExclude');
-            } else {
-                // Add to exclusion list
-                const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
-                normalized.push({ id: friendID, name: friendName });
-                await chrome.storage.sync.set({ call_exclude_id: normalized });
-                img.src = prohibitionUrl;
-                img.title = chrome.i18n.getMessage('cafInclude');
-            }
-        });
-
-        aNode.insertAdjacentElement('beforebegin', img);
+        aNode.insertAdjacentElement('beforebegin', icon);
     }
+
+    document.addEventListener('click', async (e) => {
+        if (!e.target.classList.contains('caf-status-icon')) return;
+
+        const icon = e.target;
+        const friendID = parseInt(icon.dataset.friendId);
+        const friendName = icon.dataset.friendName;
+
+        const { call_exclude_id: current } = await chrome.storage.sync.get({ call_exclude_id: [] });
+        const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+
+        if (currentIds.includes(friendID)) {
+            // Remove from exclusion list
+            const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== friendID);
+            await chrome.storage.sync.set({ call_exclude_id: updated });
+            icon.textContent = tickCircleIcon;
+            icon.title = chrome.i18n.getMessage('cafExclude');
+        } else {
+            // Add to exclusion list
+            const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
+            normalized.push({ id: friendID, name: friendName });
+            await chrome.storage.sync.set({ call_exclude_id: normalized });
+            icon.textContent = prohibitionIcon;
+            icon.title = chrome.i18n.getMessage('cafInclude');
+        }
+    });
 }
 
 (async () => {
