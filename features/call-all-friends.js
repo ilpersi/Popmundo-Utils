@@ -33,23 +33,21 @@ async function onSubmitClick() {
         }
     }
 
-    // XPATH used to search friend id in the relationship page
-    const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
+    // CSS Selector used to search friend id in the relationship page
+    const RELATIONS_SELECTOR = 'td > a[href*="/World/Popmundo.aspx/Character/"]';
     // Regex to extract the character friend id from the href of a elems
     const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
 
     // We search for friend ID in the relationship page
-    let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
-    let relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
-    Logger.debug(relationsXPathHelp.prettyPrint());
+    let relationsNodes = document.querySelectorAll(RELATIONS_SELECTOR);
 
     // Support both old integer array format and new [{id, name}] format
     const excludedIds = savedOptions.call_exclude_id.map(e => typeof e === 'object' ? e.id : e);
 
     let ignoreCnt = 0;
     let friendsInfo = [];
-    for (let i = 0; i < relationsNodes.snapshotLength; i++) {
-        let barNode = relationsNodes.snapshotItem(i);
+    for (let i = 0; i < relationsNodes.length; i++) {
+        let barNode = relationsNodes[i];
         let href = barNode.getAttribute('href');
 
         var friendMatch = RELATIONS_ID_RE.exec(href);
@@ -256,7 +254,7 @@ async function injectCallAllHTML() {
  * tick-circle.png = excluded (click to re-include).
  */
 async function injectCallAllExcludeButtons() {
-    const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
+    const RELATIONS_SELECTOR = 'td > a[href*="/World/Popmundo.aspx/Character/"]';
     const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g;
 
     const prohibitionIcon = '🚫';
@@ -265,12 +263,11 @@ async function injectCallAllExcludeButtons() {
     const { call_exclude_id: excludeList } = await chrome.storage.sync.get({ call_exclude_id: [] });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
 
-    const relationsXPathHelp = new XPathHelper(RELATIONS_XPATH);
-    const relationsNodes = relationsXPathHelp.getOrderedSnapshot(document);
+    const relationsNodes = document.querySelectorAll(RELATIONS_SELECTOR);
 
-    if (relationsNodes.snapshotLength === 0) return;
+    if (relationsNodes.length === 0) return;
 
-    const firstNode = relationsNodes.snapshotItem(0);
+    const firstNode = relationsNodes[0];
     const parentTable = firstNode.closest('table');
     const originalDisplay = parentTable ? parentTable.style.display : '';
 
@@ -278,8 +275,8 @@ async function injectCallAllExcludeButtons() {
         parentTable.style.display = 'none';
     }
 
-    for (let i = 0; i < relationsNodes.snapshotLength; i++) {
-        const aNode = relationsNodes.snapshotItem(i);
+    for (let i = 0; i < relationsNodes.length; i++) {
+        const aNode = relationsNodes[i];
         const href = aNode.getAttribute('href');
 
         RELATIONS_ID_RE.lastIndex = 0;

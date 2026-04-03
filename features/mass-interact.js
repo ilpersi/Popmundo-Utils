@@ -134,12 +134,12 @@ async function onSubmitClick() {
         }
     }
     // try {
-    // XPATH used to search character id in the present characters page
-    const PRESENT_CHARS_XPATH = '//tr[contains(@id, "ctl00_cphLeftColumn_ctl00_repCharactersPresent") and contains(@id, "trCharacterRow")]';
-    // Additional XPATH to make sure that the interact link is present for a specific character
-    const INTERACT_A_XPATH = './td[@class="right"]/a[contains(@href, "/World/Popmundo.aspx/Interact/")]';
-    // XPATH to get the character a element from the present character list
-    const CHAR_A_XPATH = './td[2]/a';
+    // CSS Selector used to search character id in the present characters page
+    const PRESENT_CHARS_SELECTOR = 'tr[id*="ctl00_cphLeftColumn_ctl00_repCharactersPresent"][id*="trCharacterRow"]';
+    // Additional Selector to make sure that the interact link is present for a specific character
+    const INTERACT_A_SELECTOR = 'td.right > a[href*="/World/Popmundo.aspx/Interact/"]';
+    // Selector to get the character a element from the present character list
+    const CHAR_A_SELECTOR = 'td:nth-child(2) > a';
     // XPATH used to check i the interact select box is present
     const INTERACT_SELECT_XPATH = '//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option';
     // Regex to extract the character id from the href of a elems
@@ -173,8 +173,8 @@ async function onSubmitClick() {
         // We assume relations are one page only
         let isNextPage = false;
 
-        // XPATH used to search friend id in the relationship page
-        const RELATIONS_XPATH = '//td/a[contains(@href, "/World/Popmundo.aspx/Character/")]';
+        // CSS Selector used to search friend id in the relationship page
+        const RELATIONS_SELECTOR = 'td > a[href*="/World/Popmundo.aspx/Character/"]';
         // XPATH to check if there is another relations page
         const RELATIONS_NEXT_XPATH = "//a[contains(@href, 'btnGoNext')]";
 
@@ -212,11 +212,10 @@ async function onSubmitClick() {
             doc = parser.parseFromString(relHTML, "text/html");
 
             // We search for friend ID in the relationship page
-            let relationsXPathHelp = new XPathHelper(RELATIONS_XPATH, doc);
-            let relationsNodes = relationsXPathHelp.getOrderedSnapshot(doc);
+            let relationsNodes = doc.querySelectorAll(RELATIONS_SELECTOR);
 
-            for (let i = 0; i < relationsNodes.snapshotLength; i++) {
-                let relNode = relationsNodes.snapshotItem(i);
+            for (let i = 0; i < relationsNodes.length; i++) {
+                let relNode = relationsNodes[i];
                 let href = relNode.getAttribute('href');
 
                 let friendMatch = RELATIONS_ID_RE.exec(href);
@@ -258,13 +257,8 @@ async function onSubmitClick() {
         // console.log('Ignore acquitance ' + relationURL);
     } // if (savedOptions.mass_interact_ignore_acquaintance)
 
-    // XPath Helpers to search for characters
-    let presentCharsTRXPathHelp = new XPathHelper(PRESENT_CHARS_XPATH);
-    let interactAXpathHelp = new XPathHelper(INTERACT_A_XPATH);
-    let charAXpathHelp = new XPathHelper(CHAR_A_XPATH);
-
-    //let charsTRNodes = presentCharsTRXPathHelp.getUnorderedNodeIterator (document);
-    let charsTRNodes = presentCharsTRXPathHelp.getOrderedSnapshot(document);
+    // CSS Selector Helpers to search for characters
+    let charsTRNodes = document.querySelectorAll(PRESENT_CHARS_SELECTOR);
 
     let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
 
@@ -274,17 +268,14 @@ async function onSubmitClick() {
     let charsInfo = [];
     let charTRNode = null;
 
-    for (let charCnt = 0; charCnt < charsTRNodes.snapshotLength; charCnt++) {
+    for (let charCnt = 0; charCnt < charsTRNodes.length; charCnt++) {
         //while (charTRNode = charsTRNodes.iterateNext()) {
-        charTRNode = charsTRNodes.snapshotItem(charCnt);
+        charTRNode = charsTRNodes[charCnt];
         // For some characters (including yourself) the Interact link is not present. When this is the case we skip that character.
-        let aNodeSnapshot = interactAXpathHelp.getUnorderedNodeSnapshot(charTRNode);
+        let interactANode = charTRNode.querySelector(INTERACT_A_SELECTOR);
 
-        if (aNodeSnapshot.snapshotLength == 1) {
-            let interactANode = aNodeSnapshot.snapshotItem(0);
-
-            let charNode = charAXpathHelp.getAnyUnorderedNode(charTRNode);
-            let charANode = charNode.singleNodeValue
+        if (interactANode) {
+            let charANode = charTRNode.querySelector(CHAR_A_SELECTOR);
 
             let href = charANode.getAttribute('href');
 
@@ -510,9 +501,9 @@ function injectMassInteractHTML() {
  * tick-circle.png = excluded (click to re-include).
  */
 async function injectMassInteractExcludeButtons() {
-    const PRESENT_CHARS_XPATH = '//tr[contains(@id, "ctl00_cphLeftColumn_ctl00_repCharactersPresent") and contains(@id, "trCharacterRow")]';
-    const INTERACT_A_XPATH = './td[@class="right"]/a[contains(@href, "/World/Popmundo.aspx/Interact/")]';
-    const CHAR_A_XPATH = './td[2]/a';
+    const PRESENT_CHARS_SELECTOR = 'tr[id*="ctl00_cphLeftColumn_ctl00_repCharactersPresent"][id*="trCharacterRow"]';
+    const INTERACT_A_SELECTOR = 'td.right > a[href*="/World/Popmundo.aspx/Interact/"]';
+    const CHAR_A_SELECTOR = 'td:nth-child(2) > a';
     const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g;
 
     const prohibitionIcon = '🚫';
@@ -521,14 +512,11 @@ async function injectMassInteractExcludeButtons() {
     const { mass_interact_exclude_id: excludeList } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
 
-    const presentCharsTRXPathHelp = new XPathHelper(PRESENT_CHARS_XPATH);
-    const interactAXpathHelp = new XPathHelper(INTERACT_A_XPATH);
-    const charAXpathHelp = new XPathHelper(CHAR_A_XPATH);
-    const charsTRNodes = presentCharsTRXPathHelp.getOrderedSnapshot(document);
+    const charsTRNodes = document.querySelectorAll(PRESENT_CHARS_SELECTOR);
 
-    if (charsTRNodes.snapshotLength === 0) return;
+    if (charsTRNodes.length === 0) return;
 
-    const firstNode = charsTRNodes.snapshotItem(0);
+    const firstNode = charsTRNodes[0];
     const parentTable = firstNode.closest('table');
     const originalDisplay = parentTable ? parentTable.style.display : '';
 
@@ -536,13 +524,12 @@ async function injectMassInteractExcludeButtons() {
         parentTable.style.display = 'none';
     }
 
-    for (let charCnt = 0; charCnt < charsTRNodes.snapshotLength; charCnt++) {
-        const charTRNode = charsTRNodes.snapshotItem(charCnt);
-        const aNodeSnapshot = interactAXpathHelp.getUnorderedNodeSnapshot(charTRNode);
-        if (aNodeSnapshot.snapshotLength !== 1) continue;
+    for (let charCnt = 0; charCnt < charsTRNodes.length; charCnt++) {
+        const charTRNode = charsTRNodes[charCnt];
+        const interactANode = charTRNode.querySelector(INTERACT_A_SELECTOR);
+        if (!interactANode) continue;
 
-        const charNode = charAXpathHelp.getAnyUnorderedNode(charTRNode);
-        const charANode = charNode.singleNodeValue;
+        const charANode = charTRNode.querySelector(CHAR_A_SELECTOR);
         if (!charANode) continue;
 
         const href = charANode.getAttribute('href');
