@@ -113,23 +113,23 @@ function checkCrewLinks(aElem, elemID) {
 function handleIconLink(options) {
     let linkDB = [
         // Band links
-        { 'option': 'band_upcoming_shows', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/UpcomingPerformances/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/UpcomingPerformances/', 'img': 'images/calendar-list.png', 'title': chrome.i18n.getMessage('linkUpcomingShows') },
-        { 'option': 'band_popularity_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/Popularity/', 'img': 'images/star.png', 'title': chrome.i18n.getMessage('linkPopularity') },
+        { 'option': 'band_upcoming_shows', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/UpcomingPerformances/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/UpcomingPerformances/', 'icon': '📅', 'title': chrome.i18n.getMessage('linkUpcomingShows') },
+        { 'option': 'band_popularity_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkBandLinks, 'href': '/World/Popmundo.aspx/Artist/Popularity/', 'icon': '⭐', 'title': chrome.i18n.getMessage('linkPopularity') },
         // Crew links
-        { 'option': 'crew_top_heist_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Artist/TopHeists/', 'img': 'images/star.png', 'title': chrome.i18n.getMessage('linkTopHeists') },
+        { 'option': 'crew_top_heist_shortcut', 'xpath': "//a[contains(@href, 'Artist/')]", 're': /\/Artist\/(\d+)/m, 'urlCheck': '/Artist/Popularity/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Artist/TopHeists/', 'icon': '⭐', 'title': chrome.i18n.getMessage('linkTopHeists') },
         // Character links
-        { 'option': 'character_send_message', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Conversation/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Conversations/Conversation/', 'img': 'images/mail--arrow.png', 'title': chrome.i18n.getMessage('linkSendMessage') },
-        { 'option': 'character_offer_an_item', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/OfferItem/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Character/OfferItem/', 'img': 'images/box--arrow.png', 'title': chrome.i18n.getMessage('linkOfferItem') },
-        { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'img': 'images/mobile-phone.png', 'title': chrome.i18n.getMessage('linkCall') },
+        { 'option': 'character_send_message', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Conversation/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Conversations/Conversation/', 'icon': '✉️', 'title': chrome.i18n.getMessage('linkSendMessage') },
+        { 'option': 'character_offer_an_item', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/OfferItem/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Character/OfferItem/', 'icon': '📦', 'title': chrome.i18n.getMessage('linkOfferItem') },
+        { 'option': 'character_call', 'xpath': "//a[contains(@href, 'Character/')]", 're': /\/Character\/(\d+)/m, 'urlCheck': '/Phone/', 'advanceCheckCB': checkCharLinks, 'href': '/World/Popmundo.aspx/Interact/Phone/', 'icon': '📱', 'title': chrome.i18n.getMessage('linkCall') },
         // City links
-        { 'option': 'city_other_vehicles', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/RoadTrip/', 'href': '/World/Popmundo.aspx/City/RoadTrip/', 'img': 'images/car--arrow.png', 'title': chrome.i18n.getMessage('linkOtherVehicles') },
-        { 'option': 'city_find_locales', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/City/Locales/', 'href': '/World/Popmundo.aspx/City/Locales/', 'img': 'images/magnifier.png', 'title': chrome.i18n.getMessage('linkFindLocales') },
-        { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'img': 'images/paper-plane--plus.png', 'title': chrome.i18n.getMessage('linkCharterJet') },
-        { 'option': 'city_book_regular_flight', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/BookFlight/', 'href': '/World/Popmundo.aspx/City/BookFlight/', 'img': 'images/paper-plane--arrow.png', 'title': chrome.i18n.getMessage('linkBookFlight') },
+        { 'option': 'city_other_vehicles', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/RoadTrip/', 'href': '/World/Popmundo.aspx/City/RoadTrip/', 'icon': '🚗', 'title': chrome.i18n.getMessage('linkOtherVehicles') },
+        { 'option': 'city_find_locales', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/City/Locales/', 'href': '/World/Popmundo.aspx/City/Locales/', 'icon': '🔍', 'title': chrome.i18n.getMessage('linkFindLocales') },
+        { 'option': 'city_charter_vip_jet', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/PrivateJet/', 'href': '/World/Popmundo.aspx/City/PrivateJet/', 'icon': '🛩️', 'title': chrome.i18n.getMessage('linkCharterJet') },
+        { 'option': 'city_book_regular_flight', 'xpath': "//a[contains(@href, 'City/')]", 're': /\/City\/(\d+)/m, 'urlCheck': '/BookFlight/', 'href': '/World/Popmundo.aspx/City/BookFlight/', 'icon': '✈️', 'title': chrome.i18n.getMessage('linkBookFlight') },
         // Locale links
-        { 'option': 'locale_show_reconnaissance', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Locale/Reconnaissance/', 'img': 'images/binocular.png', 'title': chrome.i18n.getMessage('linkReconnaissance') },
-        { 'option': 'move_to_shortcut', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/MoveToLocale/', 'img': 'images/movetolocale.png', 'title': chrome.i18n.getMessage('linkMoveToLocale') },
-        { 'option': 'locale_characters_present', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/CharactersPresent/', 'img': 'images/users.png', 'title': chrome.i18n.getMessage('linkCharactersPresent') },
+        { 'option': 'locale_show_reconnaissance', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'advanceCheckCB': checkCrewLinks, 'href': '/World/Popmundo.aspx/Locale/Reconnaissance/', 'icon': '👀', 'title': chrome.i18n.getMessage('linkReconnaissance') },
+        { 'option': 'move_to_shortcut', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/MoveToLocale/', 'icon': '🚶', 'title': chrome.i18n.getMessage('linkMoveToLocale') },
+        { 'option': 'locale_characters_present', 'xpath': "//a[contains(@href, 'Locale/')]", 're': /\/Locale\/(\d+)/m, 'urlCheck': '/Locale/', 'href': '/World/Popmundo.aspx/Locale/CharactersPresent/', 'icon': '🧑‍🤝‍🧑', 'title': chrome.i18n.getMessage('linkCharactersPresent') },
     ];
 
     for (let linkInfo of linkDB) {
@@ -166,15 +166,17 @@ function handleIconLink(options) {
             // New a elem
             var newAElem = document.createElement('a');
             newAElem.setAttribute('href', window.location.origin + linkInfo.href + linkMatch[1]);
+            newAElem.style.textDecoration = 'none';
             // moveAElem.textContent = ' ';
 
-            // Icon img
-            let imgElem = document.createElement('img');
-            imgElem.setAttribute('src', chrome.runtime.getURL(linkInfo.img));
-            imgElem.setAttribute('title', linkInfo.title);
+            // Icon span
+            let iconElem = document.createElement('span');
+            iconElem.textContent = linkInfo.icon;
+            iconElem.setAttribute('title', linkInfo.title);
+            iconElem.style.cssText = 'font-size:14px; user-select:none;';
 
-            // Include incon in link
-            newAElem.appendChild(imgElem);
+            // Include icon in link
+            newAElem.appendChild(iconElem);
 
             // Empty space between previous text/icon
             let pElem = document.createElement('span');
