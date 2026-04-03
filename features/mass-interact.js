@@ -212,7 +212,7 @@ async function onSubmitClick() {
             doc = parser.parseFromString(relHTML, "text/html");
 
             // We search for friend ID in the relationship page
-            let relationsNodes = doc.querySelectorAll(RELATIONS_SELECTOR);
+            let relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR, doc).getAll();
 
             for (let i = 0; i < relationsNodes.length; i++) {
                 let relNode = relationsNodes[i];
@@ -258,7 +258,7 @@ async function onSubmitClick() {
     } // if (savedOptions.mass_interact_ignore_acquaintance)
 
     // CSS Selector Helpers to search for characters
-    let charsTRNodes = document.querySelectorAll(PRESENT_CHARS_SELECTOR);
+    let charsTRNodes = new CssSelectorHelper(PRESENT_CHARS_SELECTOR).getAll();
 
     let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
 
@@ -272,10 +272,10 @@ async function onSubmitClick() {
         //while (charTRNode = charsTRNodes.iterateNext()) {
         charTRNode = charsTRNodes[charCnt];
         // For some characters (including yourself) the Interact link is not present. When this is the case we skip that character.
-        let interactANode = charTRNode.querySelector(INTERACT_A_SELECTOR);
+        let interactANode = new CssSelectorHelper(INTERACT_A_SELECTOR, charTRNode).getSingle();
 
         if (interactANode) {
-            let charANode = charTRNode.querySelector(CHAR_A_SELECTOR);
+            let charANode = new CssSelectorHelper(CHAR_A_SELECTOR, charTRNode).getSingle();
 
             let href = charANode.getAttribute('href');
 
@@ -512,7 +512,7 @@ async function injectMassInteractExcludeButtons() {
     const { mass_interact_exclude_id: excludeList } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
 
-    const charsTRNodes = document.querySelectorAll(PRESENT_CHARS_SELECTOR);
+    const charsTRNodes = new CssSelectorHelper(PRESENT_CHARS_SELECTOR).getAll();
 
     if (charsTRNodes.length === 0) return;
 
@@ -526,10 +526,10 @@ async function injectMassInteractExcludeButtons() {
 
     for (let charCnt = 0; charCnt < charsTRNodes.length; charCnt++) {
         const charTRNode = charsTRNodes[charCnt];
-        const interactANode = charTRNode.querySelector(INTERACT_A_SELECTOR);
+        const interactANode = new CssSelectorHelper(INTERACT_A_SELECTOR, charTRNode).getSingle();
         if (!interactANode) continue;
 
-        const charANode = charTRNode.querySelector(CHAR_A_SELECTOR);
+        const charANode = new CssSelectorHelper(CHAR_A_SELECTOR, charTRNode).getSingle();
         if (!charANode) continue;
 
         const href = charANode.getAttribute('href');

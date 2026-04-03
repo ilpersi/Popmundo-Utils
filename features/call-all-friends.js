@@ -39,7 +39,7 @@ async function onSubmitClick() {
     const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
 
     // We search for friend ID in the relationship page
-    let relationsNodes = document.querySelectorAll(RELATIONS_SELECTOR);
+    let relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR).getAll();
 
     // Support both old integer array format and new [{id, name}] format
     const excludedIds = savedOptions.call_exclude_id.map(e => typeof e === 'object' ? e.id : e);
@@ -263,7 +263,7 @@ async function injectCallAllExcludeButtons() {
     const { call_exclude_id: excludeList } = await chrome.storage.sync.get({ call_exclude_id: [] });
     const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
 
-    const relationsNodes = document.querySelectorAll(RELATIONS_SELECTOR);
+    const relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR).getAll();
 
     if (relationsNodes.length === 0) return;
 
