@@ -3,9 +3,9 @@
  *
  */
 async function drawTimerIcon() {
-    // Image SRC for the clock Icon
-    const TIMER_WARN_ICON_SRC = chrome.runtime.getURL('images/clock--exclamation.png');
-    const TIMER_OK_ICON_SRC = chrome.runtime.getURL('images/clock-select-remain.png');
+    // Emoji icons for the clock
+    const TIMER_WARN_ICON = '⏰';
+    const TIMER_OK_ICON = '⏳';
 
     // XPaths required by the logic
     const ITEM_TR_XPATH = "//tr[contains(@id, 'trItemGroup')]";
@@ -16,7 +16,7 @@ async function drawTimerIcon() {
     let myID = Utils.getMyID();
 
     // We get the saved timers
-    let items = await chrome.storage.sync.get({ 'timers': {} });
+    let items = await chrome.storage.sync.get({ 'timers': {}, 'enhanced_links_font_size': 16 });
     
     // Current Character has saved timers
     if (items.timers.hasOwnProperty(myID)) {
@@ -59,16 +59,15 @@ async function drawTimerIcon() {
                             let timerDate = new Date(myTimers[itemID]['timerTimeStamp']);
                             let nowTime = new Date();
 
-                            let imgSrc = nowTime >= timerDate ? TIMER_WARN_ICON_SRC : TIMER_OK_ICON_SRC;
-                            let imgTXT = "" + timerDate;
-                            if (nowTime >= timerDate) imgTXT = chrome.i18n.getMessage('iltTimerExpired') + imgTXT;
+                            let iconTXT = nowTime >= timerDate ? TIMER_WARN_ICON : TIMER_OK_ICON;
+                            let dateTXT = "" + timerDate;
+                            if (nowTime >= timerDate) dateTXT = chrome.i18n.getMessage('iltTimerExpired') + dateTXT;
 
-                            let newImg = document.createElement('img');
-
-                            newImg.setAttribute('src', imgSrc);
-                            newImg.setAttribute('alt', imgTXT);
-                            newImg.setAttribute('title', imgTXT);
-                            iconXpathResult.singleNodeValue.appendChild(newImg);
+                            let newIcon = document.createElement('span');
+                            newIcon.textContent = iconTXT;
+                            newIcon.setAttribute('title', dateTXT);
+                            newIcon.style.cssText = `font-size:${items.enhanced_links_font_size}px; cursor:help; margin-left:5px; user-select:none;`;
+                            iconXpathResult.singleNodeValue.appendChild(newIcon);
                         }
                     }
                 }

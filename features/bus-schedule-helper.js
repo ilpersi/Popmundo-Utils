@@ -222,11 +222,12 @@ class ScheduleList {
     }
 }
 
-const tourBusHelperOptionsValues = { 'tb_enable': true, 'tb_book_after': 'previous_event', 'tb_hour_range': 2 };
+const tourBusHelperOptionsValues = { 'tb_enable': true, 'tb_book_after': 'previous_event', 'tb_hour_range': 2, 'enhanced_links_font_size': 16 };
 
 let isEnabled = true;
 let bookAfter = 'previous_event';
 let bookRange = 2;
+let enhancedLinksFontSize = 16;
 
 function manageTourBusHelper() {
     // If feature is disabled, we do nothing.
@@ -365,10 +366,11 @@ function manageTourBusHelper() {
                             if (departureNode && arrivalNode && departureDateNode && departureDateValue !== '' && departureTimeNode && departureTimeValue !== '') {
 
                                 // Travel Icon
-                                let imgElem = document.createElement('img');
-                                imgElem.setAttribute('src', chrome.runtime.getURL('images/book-transport.png'));
-                                imgElem.setAttribute('title', chrome.i18n.getMessage('bshBookTransport', [previousShow.cityName, currentShow.cityName, departureDateTxt, departureTimeTxt]));
-                                imgElem.addEventListener('click', event => {
+                                let iconElem = document.createElement('span');
+                                iconElem.textContent = '🚌';
+                                iconElem.setAttribute('title', chrome.i18n.getMessage('bshBookTransport', [previousShow.cityName, currentShow.cityName, departureDateTxt, departureTimeTxt]));
+                                iconElem.style.cssText = `font-size:${enhancedLinksFontSize}px; cursor:pointer; margin-left:5px; user-select:none;`;
+                                iconElem.addEventListener('click', event => {
                                     // console.log(`CURRENT ${currentShow} PREVIOUS ${previousShow}`);
 
                                     departureNode.value = previousShow.cityId;
@@ -378,7 +380,7 @@ function manageTourBusHelper() {
                                     arrivalNode.scrollIntoView({ behavior: "smooth" });
                                 });
 
-                                currentShow.appendNode.appendChild(imgElem);
+                                currentShow.appendNode.appendChild(iconElem);
 
                             }
                         }
@@ -399,6 +401,7 @@ chrome.storage.sync.get(tourBusHelperOptionsValues, items => {
     isEnabled = items.tb_enable;
     bookAfter = items.tb_book_after;
     bookRange = items.tb_hour_range;
+    enhancedLinksFontSize = items.enhanced_links_font_size;
 
     manageTourBusHelper();
 });
@@ -421,6 +424,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
                         break;
                     case 'tb_hour_range':
                         bookRange = newValue;
+                        break;
+                    case 'enhanced_links_font_size':
+                        enhancedLinksFontSize = newValue;
                         break;
                     default:
                         reload = false;
