@@ -195,6 +195,8 @@ async function onSubmitClick() {
 
         // We reload the page so we get all the notifications prited out in the green banners.
         if (succesCalls > 0) {
+            let storage = await chrome.storage.sync.get({ global_call_all_friends_count: 0 });
+            await chrome.storage.sync.set({ global_call_all_friends_count: storage.global_call_all_friends_count + succesCalls });
             location.reload();
         }
     }
@@ -242,6 +244,14 @@ async function injectCallAllHTML() {
         callAllDiv.appendChild(callAllH2);
         callAllDiv.appendChild(callAllP1);
         callAllDiv.appendChild(callAllP3);
+
+        const { global_call_all_friends_count: totalCalls } = await chrome.storage.sync.get({ 'global_call_all_friends_count': 0 });
+        if (totalCalls > 0) {
+            let callAllP4 = document.createElement('p');
+            callAllP4.innerHTML = chrome.i18n.getMessage('cafTotalCallsMsg', [String(totalCalls)]);
+            callAllDiv.appendChild(callAllP4);
+        }
+
         callAllDiv.appendChild(callAllP2);
 
         endRelationsNode.singleNodeValue.parentNode.insertBefore(callAllDiv, endRelationsNode.singleNodeValue.nextSibling);

@@ -119,7 +119,7 @@ async function onSubmitClick() {
         "mass_interact_change_diapers": 95,
         "mass_interact_pick_up": 93,
         "mass_interact_kiss_on_forehead": 103,
-        
+
     };
 
     // The script will randomly choose one of the following interactions
@@ -339,7 +339,7 @@ async function onSubmitClick() {
     const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
         'ctl00$cphTopColumn$ctl00$btnInteract'];
 
-    
+
 
     // How many characters did we actually interact with? This is the counter for it. It is only increased when at least one interaction is available
     let totalCharactersCnt = 0;
@@ -443,10 +443,14 @@ async function onSubmitClick() {
     }
 
     // Final update message with some statistics
-    if (totalInteractionsCnt > 0)
+    if (totalInteractionsCnt > 0) {
+        let storage = await chrome.storage.sync.get({ global_mass_interact_count: 0 });
+        await chrome.storage.sync.set({ global_mass_interact_count: storage.global_mass_interact_count + totalInteractionsCnt });
+
         statusPElem.innerHTML = chrome.i18n.getMessage('miStatusFinalInteracted', [String(totalInteractionsCnt), String(totalCharactersCnt)]);
-    else
+    } else {
         statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteraction');
+    }
 
     // } catch (error) { console.log(error.message); console.log(error.stack);}
 }
@@ -489,6 +493,15 @@ function injectMassInteractHTML() {
         MassInteractDiv.appendChild(MassInteractH2);
         MassInteractDiv.appendChild(MassInteractP1);
         MassInteractDiv.appendChild(MassInteractP3);
+
+        chrome.storage.sync.get({ 'global_mass_interact_count': 0 }, ({ global_mass_interact_count: totalInteractions }) => {
+            if (totalInteractions > 0) {
+                let MassInteractP4 = document.createElement('p');
+                MassInteractP4.innerHTML = chrome.i18n.getMessage('miTotalInteractionsMsg', [String(totalInteractions)]);
+                MassInteractDiv.insertBefore(MassInteractP4, MassInteractP2);
+            }
+        });
+
         MassInteractDiv.appendChild(MassInteractP2);
 
         findFriendsNode.singleNodeValue.parentNode.insertBefore(MassInteractDiv, findFriendsNode.singleNodeValue.nextSibling);

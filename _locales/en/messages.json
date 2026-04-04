@@ -7,7 +7,6 @@
         "message": "Misc utilities for Popmundo",
         "description": "Extension description shown in the browser extension list"
     },
-
     "optPageTitle": {
         "message": "Popmundo Utils Options",
         "description": "Title of the options page tab"
@@ -20,12 +19,11 @@
         "message": "Options saved.",
         "description": "Status message shown after saving options"
     },
-
     "navGottaGoFast": {
         "message": "Autograph Collector",
         "description": "Sidebar navigation label for the Autograph Collector section"
-    }
-    ,"navCallAllFriends": {
+    },
+    "navCallAllFriends": {
         "message": "Call All Friends",
         "description": "Sidebar navigation label for the Call All Friends section"
     },
@@ -141,7 +139,6 @@
         "message": "Remove All",
         "description": "Button text to clear an entire exclusion list"
     },
-
     "optElTitle": {
         "message": "Enhanced Links",
         "description": "Enhanced Links section card title"
@@ -230,7 +227,6 @@
         "message": "Top Heists link",
         "description": "Label for the crew Top Heists link option"
     },
-
     "optMiTitle": {
         "message": "Mass Interact",
         "description": "Mass Interact section card title"
@@ -243,70 +239,174 @@
         "message": "Verbal & Social",
         "description": "Category label for verbal and social interactions"
     },
-    "optMiGreet": { "message": "Greet" },
-    "optMiSmile": { "message": "Smile" },
-    "optMiWink": { "message": "Wink" },
-    "optMiInsult": { "message": "Insult" },
-    "optMiTalkTo": { "message": "Talk to" },
-    "optMiTease": { "message": "Tease" },
-    "optMiShareOpinions": { "message": "Share Opinions" },
-    "optMiGossip": { "message": "Gossip" },
-    "optMiProfoundDiscussion": { "message": "Profound Discussion" },
-    "optMiComfort": { "message": "Comfort" },
-    "optMiFraternize": { "message": "Fraternize" },
-    "optMiOfferAdvice": { "message": "Offer Advice" },
-    "optMiCompliment": { "message": "Compliment" },
-    "optMiPraise": { "message": "Praise" },
-    "optMiTellNaughtyJoke": { "message": "Tell Naughty Joke" },
-    "optMiTellJoke": { "message": "Tell Joke" },
-    "optMiShareSecrets": { "message": "Share Secrets" },
-    "optMiHangOut": { "message": "Hang Out" },
-    "optMiHexySexy": { "message": "Hey Sexy..." },
+    "optMiGreet": {
+        "message": "Greet"
+    },
+    "optMiSmile": {
+        "message": "Smile"
+    },
+    "optMiWink": {
+        "message": "Wink"
+    },
+    "optMiInsult": {
+        "message": "Insult"
+    },
+    "optMiTalkTo": {
+        "message": "Talk to"
+    },
+    "optMiTease": {
+        "message": "Tease"
+    },
+    "optMiShareOpinions": {
+        "message": "Share Opinions"
+    },
+    "optMiGossip": {
+        "message": "Gossip"
+    },
+    "optMiProfoundDiscussion": {
+        "message": "Profound Discussion"
+    },
+    "optMiComfort": {
+        "message": "Comfort"
+    },
+    "optMiFraternize": {
+        "message": "Fraternize"
+    },
+    "optMiOfferAdvice": {
+        "message": "Offer Advice"
+    },
+    "optMiCompliment": {
+        "message": "Compliment"
+    },
+    "optMiPraise": {
+        "message": "Praise"
+    },
+    "optMiTellNaughtyJoke": {
+        "message": "Tell Naughty Joke"
+    },
+    "optMiTellJoke": {
+        "message": "Tell Joke"
+    },
+    "optMiShareSecrets": {
+        "message": "Share Secrets"
+    },
+    "optMiHangOut": {
+        "message": "Hang Out"
+    },
+    "optMiHexySexy": {
+        "message": "Hey Sexy..."
+    },
     "optMiGroupPhysical": {
         "message": "Physical",
         "description": "Category label for physical interactions"
     },
-    "optMiShakeHands": { "message": "Shake Hands" },
-    "optMiRubElbows": { "message": "Rub Elbows" },
-    "optMiHug": { "message": "Hug" },
-    "optMiTickle": { "message": "Tickle" },
-    "optMiPatOnBack": { "message": "Pat on Back" },
-    "optMiBraidHair": { "message": "Braid Hair" },
-    "optMiBuyADrink": { "message": "Buy a Drink" },
-    "optMiStrollHandInHand": { "message": "Stroll Hand in Hand" },
-    "optMiFlexBiceps": { "message": "Flex Biceps" },
-    "optMiCaress": { "message": "Caress" },
-    "optMiAskForADance": { "message": "Ask for a Dance" },
-    "optMiHighFive": { "message": "High Five" },
-    "optMiArmWrestle": { "message": "Arm Wrestle" },
-    "optMiKissCheeks": { "message": "Kiss Cheeks" },
-    "optMiEmbrace": { "message": "Embrace" },
-    "optMiPlayWith": { "message": "Play With" },
-    "optMiPickUp": { "message": "Pick Up" },
-    "optMiChangeDiapers": { "message": "Change Diapers" },
-    "optMiKissOnForehead": { "message": "Kiss on Forehead" },
-    "optMiGiveMassage": { "message": "Give Massage" },
+    "optMiShakeHands": {
+        "message": "Shake Hands"
+    },
+    "optMiRubElbows": {
+        "message": "Rub Elbows"
+    },
+    "optMiHug": {
+        "message": "Hug"
+    },
+    "optMiTickle": {
+        "message": "Tickle"
+    },
+    "optMiPatOnBack": {
+        "message": "Pat on Back"
+    },
+    "optMiBraidHair": {
+        "message": "Braid Hair"
+    },
+    "optMiBuyADrink": {
+        "message": "Buy a Drink"
+    },
+    "optMiStrollHandInHand": {
+        "message": "Stroll Hand in Hand"
+    },
+    "optMiFlexBiceps": {
+        "message": "Flex Biceps"
+    },
+    "optMiCaress": {
+        "message": "Caress"
+    },
+    "optMiAskForADance": {
+        "message": "Ask for a Dance"
+    },
+    "optMiHighFive": {
+        "message": "High Five"
+    },
+    "optMiArmWrestle": {
+        "message": "Arm Wrestle"
+    },
+    "optMiKissCheeks": {
+        "message": "Kiss Cheeks"
+    },
+    "optMiEmbrace": {
+        "message": "Embrace"
+    },
+    "optMiPlayWith": {
+        "message": "Play With"
+    },
+    "optMiPickUp": {
+        "message": "Pick Up"
+    },
+    "optMiChangeDiapers": {
+        "message": "Change Diapers"
+    },
+    "optMiKissOnForehead": {
+        "message": "Kiss on Forehead"
+    },
+    "optMiGiveMassage": {
+        "message": "Give Massage"
+    },
     "optMiGroupRomantic": {
         "message": "Romantic",
         "description": "Category label for romantic interactions"
     },
-    "optMiKiss": { "message": "Kiss" },
-    "optMiKissPassionately": { "message": "Kiss Passionately" },
-    "optMiMakeLove": { "message": "Make Love" },
-    "optMiFiveMinuteQuickie": { "message": "5 Minute Quickie" },
-    "optMiTantricSex": { "message": "Tantric Sex" },
-    "optMiEnjoyKobeSutra": { "message": "Enjoy Kobe Sutra" },
+    "optMiKiss": {
+        "message": "Kiss"
+    },
+    "optMiKissPassionately": {
+        "message": "Kiss Passionately"
+    },
+    "optMiMakeLove": {
+        "message": "Make Love"
+    },
+    "optMiFiveMinuteQuickie": {
+        "message": "5 Minute Quickie"
+    },
+    "optMiTantricSex": {
+        "message": "Tantric Sex"
+    },
+    "optMiEnjoyKobeSutra": {
+        "message": "Enjoy Kobe Sutra"
+    },
     "optMiGroupSpecial": {
         "message": "Special",
         "description": "Category label for special interactions"
     },
-    "optMiBless": { "message": "Bless" },
-    "optMiDoFunnyMagic": { "message": "Do Funny Magic" },
-    "optMiSeekApprenticeship": { "message": "Seek Apprenticeship" },
-    "optMiSingTo": { "message": "Sing To" },
-    "optMiSerenade": { "message": "Serenade" },
-    "optMiGuide": { "message": "Guide" },
-    "optMiGoogleGoogle": { "message": "Google-Google" },
+    "optMiBless": {
+        "message": "Bless"
+    },
+    "optMiDoFunnyMagic": {
+        "message": "Do Funny Magic"
+    },
+    "optMiSeekApprenticeship": {
+        "message": "Seek Apprenticeship"
+    },
+    "optMiSingTo": {
+        "message": "Sing To"
+    },
+    "optMiSerenade": {
+        "message": "Serenade"
+    },
+    "optMiGuide": {
+        "message": "Guide"
+    },
+    "optMiGoogleGoogle": {
+        "message": "Google-Google"
+    },
     "optMiGroupSettings": {
         "message": "Settings",
         "description": "Category label for mass interact settings"
@@ -347,7 +447,6 @@
         "message": "Ignore new acquaintances",
         "description": "Label for the ignore new acquaintances toggle in mass interact"
     },
-
     "optMiscTitle": {
         "message": "Misc Options",
         "description": "Misc Options section card title"
@@ -420,7 +519,6 @@
         "message": "Enable mass item sender",
         "description": "Label for the enable/disable toggle of the mass item sender feature"
     },
-
     "optPopupTitle": {
         "message": "Popup Options",
         "description": "Popup Options section card title"
@@ -453,7 +551,6 @@
         "message": "Show details popup",
         "description": "Label for the show details popup option"
     },
-
     "optTbTitle": {
         "message": "Tour Bus Book Helper",
         "description": "Tour Bus Helper section card title"
@@ -498,7 +595,6 @@
         "message": "Number of hours after the trigger event before the route is booked.",
         "description": "Tooltip for the hour range input"
     },
-
     "navDeveloper": {
         "message": "Developer",
         "description": "Sidebar navigation label for the Developer section (shown in development builds or with ?debug=true)"
@@ -535,7 +631,6 @@
         "message": "Error",
         "description": "Log level option: error (least verbose, default for production)"
     },
-
     "menuTitle": {
         "message": "Popmundo Utils",
         "description": "In-game sidebar menu title"
@@ -552,7 +647,6 @@
         "message": "Report an Issue",
         "description": "In-game sidebar menu item that opens the GitHub issue tracker"
     },
-
     "linkUpcomingShows": {
         "message": "Upcoming Shows",
         "description": "Title attribute on the Upcoming Shows icon link"
@@ -605,7 +699,6 @@
         "message": "Characters Present",
         "description": "Title attribute on the Characters Present icon link"
     },
-
     "cafH2": {
         "message": "Call all your contacts",
         "description": "Heading for the Call All Friends in-game panel"
@@ -622,16 +715,28 @@
         "message": "Ignored $COUNT$ friend(s). ",
         "description": "Status prefix when some friends are excluded",
         "placeholders": {
-            "count": { "content": "$1", "example": "3" }
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
         }
     },
     "cafStatusChecking": {
         "message": "Checking friend $INDEX$ out of $TOTAL$ ($NAME$).",
         "description": "Status while checking each friend for call availability",
         "placeholders": {
-            "index": { "content": "$1", "example": "1" },
-            "total": { "content": "$2", "example": "20" },
-            "name": { "content": "$3", "example": "Jane" }
+            "index": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "20"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
         }
     },
     "cafStatusNoFriends": {
@@ -642,28 +747,48 @@
         "message": "Calling $CALLABLE$ friends out of $TOTAL$...",
         "description": "Status at the start of the calling phase",
         "placeholders": {
-            "callable": { "content": "$1", "example": "15" },
-            "total": { "content": "$2", "example": "20" }
+            "callable": {
+                "content": "$1",
+                "example": "15"
+            },
+            "total": {
+                "content": "$2",
+                "example": "20"
+            }
         }
     },
     "cafStatusCallingOne": {
         "message": "Calling friend $INDEX$ out of $TOTAL$ ($NAME$)...",
         "description": "Status while calling each friend",
         "placeholders": {
-            "index": { "content": "$1", "example": "1" },
-            "total": { "content": "$2", "example": "15" },
-            "name": { "content": "$3", "example": "Jane" }
+            "index": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "15"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
         }
     },
     "cafStatusSuccess": {
         "message": "Successfully called $COUNT$ friends out of $TOTAL$.",
         "description": "Final status after all calls are complete",
         "placeholders": {
-            "count": { "content": "$1", "example": "14" },
-            "total": { "content": "$2", "example": "15" }
+            "count": {
+                "content": "$1",
+                "example": "14"
+            },
+            "total": {
+                "content": "$2",
+                "example": "15"
+            }
         }
     },
-
     "miH2": {
         "message": "Mass Interact with present characters",
         "description": "Heading for the Mass Interact in-game panel"
@@ -684,83 +809,130 @@
         "message": "Analyzing relations page $PAGE$ to get current acquaintances...",
         "description": "Status while parsing each page of the relations list",
         "placeholders": {
-            "page": { "content": "$1", "example": "1" }
+            "page": {
+                "content": "$1",
+                "example": "1"
+            }
         }
     },
     "miStatusSkippingAcquaintance": {
         "message": "Skipping $NAME$ as new acquaintances are not allowed...",
         "description": "Status when a character is skipped because they are a new acquaintance",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "miStatusSkippingExcluded": {
         "message": "Skipping $NAME$ as the ID is in the ignore list...",
         "description": "Status when a character is skipped because their ID is in the exclusion list",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "miStatusTotalSkipped": {
         "message": "Ignored a total of $TOTAL$ present characters.",
         "description": "Summary of skipped characters",
         "placeholders": {
-            "total": { "content": "$1", "example": "5" }
+            "total": {
+                "content": "$1",
+                "example": "5"
+            }
         }
     },
     "miStatusNewAcqSkip": {
         "message": " $COUNT$ new acquaintance(s).",
         "description": "Appended to the skipped summary for new acquaintances",
         "placeholders": {
-            "count": { "content": "$1", "example": "2" }
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
         }
     },
     "miStatusIgnoreSkip": {
         "message": " $COUNT$ ignored character(s).",
         "description": "Appended to the skipped summary for explicitly ignored characters",
         "placeholders": {
-            "count": { "content": "$1", "example": "3" }
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
         }
     },
     "miStatusTotalInteractions": {
         "message": "Total performed interactions: $TOTAL$.",
         "description": "Running count of interactions performed",
         "placeholders": {
-            "total": { "content": "$1", "example": "42" }
+            "total": {
+                "content": "$1",
+                "example": "42"
+            }
         }
     },
     "miStatusCheckingChar": {
         "message": "Checking character $INDEX$ out of $TOTAL$ ($NAME$).",
         "description": "Status while checking interaction options for each character",
         "placeholders": {
-            "index": { "content": "$1", "example": "3" },
-            "total": { "content": "$2", "example": "10" },
-            "name": { "content": "$3", "example": "Jane" }
+            "index": {
+                "content": "$1",
+                "example": "3"
+            },
+            "total": {
+                "content": "$2",
+                "example": "10"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
         }
     },
     "miStatusInteracting": {
         "message": "Interacting with friend $INDEX$ out of $TOTAL$ ($NAME$). Interaction # $INTERACTION$...",
         "description": "Status while performing each interaction",
         "placeholders": {
-            "index": { "content": "$1", "example": "3" },
-            "total": { "content": "$2", "example": "10" },
-            "name": { "content": "$3", "example": "Jane" },
-            "interaction": { "content": "$4", "example": "2" }
+            "index": {
+                "content": "$1",
+                "example": "3"
+            },
+            "total": {
+                "content": "$2",
+                "example": "10"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            },
+            "interaction": {
+                "content": "$4",
+                "example": "2"
+            }
         }
     },
     "miStatusFinalInteracted": {
         "message": "Interacted a total of $INTERACTIONS$ with $CHARS$ characters!",
         "description": "Final summary shown after all mass interactions complete",
         "placeholders": {
-            "interactions": { "content": "$1", "example": "30" },
-            "chars": { "content": "$2", "example": "10" }
+            "interactions": {
+                "content": "$1",
+                "example": "30"
+            },
+            "chars": {
+                "content": "$2",
+                "example": "10"
+            }
         }
     },
     "miStatusNoInteraction": {
         "message": "No interaction has been performed.",
         "description": "Status when mass interact finds no interactions to perform"
     },
-
     "ggfTitle": {
         "message": "Collect Autographs",
         "description": "Heading for the Gotta Go Fast autograph collection panel"
@@ -821,7 +993,10 @@
         "message": "Number of autograph books found: $COUNT$",
         "description": "Log message when autograph books are detected in inventory",
         "placeholders": {
-            "count": { "content": "$1", "example": "3" }
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
         }
     },
     "ggfNoBooksFound": {
@@ -840,8 +1015,14 @@
         "message": "Waiting: $MINUTES$ minutes and $SECONDS$ seconds remaining...",
         "description": "Countdown timer message shown during cooldown",
         "placeholders": {
-            "minutes": { "content": "$1", "example": "5" },
-            "seconds": { "content": "$2", "example": "30" }
+            "minutes": {
+                "content": "$1",
+                "example": "5"
+            },
+            "seconds": {
+                "content": "$2",
+                "example": "30"
+            }
         }
     },
     "ggfContinuing": {
@@ -852,74 +1033,116 @@
         "message": "Moving to location of <b>$NAME$</b>",
         "description": "Log entry when navigating to a character's location. Contains HTML.",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "ggfMaybeLeft": {
         "message": "Maybe $NAME$ is no longer in the city, or something happened!",
         "description": "Warning log when a character's location cannot be found",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "ggfErrorNavigating": {
         "message": "Error navigating to $NAME$: $ERROR$",
         "description": "Error log when navigation to a character fails",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" },
-            "error": { "content": "$2", "example": "Network error" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "error": {
+                "content": "$2",
+                "example": "Network error"
+            }
         }
     },
     "ggfNotAvailable": {
         "message": "Apparently <b>$NAME$</b> is no longer available or does not allow item usage.",
         "description": "Log when a character's interact page has no item-use dropdown. Contains HTML.",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "ggfStoringChar": {
         "message": "Storing char $NAME$ ($ID$) in storage so they won't be tried again.",
         "description": "Warning log when a character is added to the blocked list",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" },
-            "id": { "content": "$2", "example": "12345" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "id": {
+                "content": "$2",
+                "example": "12345"
+            }
         }
     },
     "ggfWaitingCooldown": {
         "message": "Waiting for book cooldown ($MINUTES$ min remaining)...",
         "description": "Log when all books are on cooldown",
         "placeholders": {
-            "minutes": { "content": "$1", "example": "4" }
+            "minutes": {
+                "content": "$1",
+                "example": "4"
+            }
         }
     },
     "ggfCollectingFrom": {
         "message": "Collecting autograph from <b>$NAME$</b> using book ID: $BOOKID$",
         "description": "Log when using a book on a character. Contains HTML.",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" },
-            "bookid": { "content": "$2", "example": "98765" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "bookid": {
+                "content": "$2",
+                "example": "98765"
+            }
         }
     },
     "ggfErrorCollecting": {
         "message": "Error collecting autograph from $NAME$: $ERROR$",
         "description": "Error log when autograph collection fails for a character",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" },
-            "error": { "content": "$2", "example": "Network error" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "error": {
+                "content": "$2",
+                "example": "Network error"
+            }
         }
     },
     "ggfAutographCollected": {
         "message": "Autograph collected from $NAME$",
         "description": "Success log when an autograph is successfully collected",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "ggfAutographCompleted": {
         "message": "Autograph operation completed for $NAME$",
         "description": "Info log when the autograph use completed without explicit success/error status",
         "placeholders": {
-            "name": { "content": "$1", "example": "Jane" }
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
         }
     },
     "ggfNoEligible": {
@@ -930,7 +1153,10 @@
         "message": "Cooldown of $MINUTES$ min before next use\u2026",
         "description": "Log when waiting for book cooldown between characters",
         "placeholders": {
-            "minutes": { "content": "$1", "example": "6" }
+            "minutes": {
+                "content": "$1",
+                "example": "6"
+            }
         }
     },
     "ggfScriptError": {
@@ -949,13 +1175,18 @@
         "message": "Logs",
         "description": "Heading for the autograph collection log panel"
     },
-
     "remTodayIs": {
         "message": "Today is day $DAY$ of year $YEAR$.",
         "description": "Prefix for reminder notifications indicating the current in-game date",
         "placeholders": {
-            "day": { "content": "$1", "example": "27" },
-            "year": { "content": "$2", "example": "24" }
+            "day": {
+                "content": "$1",
+                "example": "27"
+            },
+            "year": {
+                "content": "$2",
+                "example": "24"
+            }
         }
     },
     "remDay28": {
@@ -986,7 +1217,10 @@
         "message": "Your $NAME$ is ready to be used.",
         "description": "Notification when an item timer has expired and the item is ready",
         "placeholders": {
-            "name": { "content": "$1", "example": "Autograph Book" }
+            "name": {
+                "content": "$1",
+                "example": "Autograph Book"
+            }
         }
     },
     "remUseLink": {
@@ -997,48 +1231,52 @@
         "message": "Dismiss Notification",
         "description": "Link text to dismiss a ready item notification"
     },
-
     "itTimerButtonSuffix": {
         "message": " & Timer",
         "description": "Suffix appended to item use buttons to create the Use & Timer button"
     },
-
     "itMinRegex": {
         "message": "(\\d{1,})\\s+minutes",
         "description": "Regula expression to find minutes in timer notifications"
     },
-
     "itHourRegex": {
         "message": "(\\d{1,})\\s+hours",
         "description": "Regula expression to find hours in timer notifications"
     },
-
     "itDaysRegex": {
         "message": "(\\d{1,})\\s+days",
         "description": "Regula expression to find days in timer notifications"
     },
-
     "itWeeksRegex": {
         "message": "(\\d{1,})\\s+weeks",
         "description": "Regula expression to find weeks in timer notifications"
     },
-
     "iltTimerExpired": {
         "message": "Timer expired: ",
         "description": "Prefix added to the item date/time when its timer has expired"
     },
-
     "bshBookTransport": {
         "message": "Book Transport from $FROM$ to $TO$ on $DATE$ at $TIME$",
         "description": "Tooltip on the book-transport icon in the band schedule helper",
         "placeholders": {
-            "from": { "content": "$1", "example": "London" },
-            "to":   { "content": "$2", "example": "Paris" },
-            "date": { "content": "$3", "example": "Day 12" },
-            "time": { "content": "$4", "example": "20:00" }
+            "from": {
+                "content": "$1",
+                "example": "London"
+            },
+            "to": {
+                "content": "$2",
+                "example": "Paris"
+            },
+            "date": {
+                "content": "$3",
+                "example": "Day 12"
+            },
+            "time": {
+                "content": "$4",
+                "example": "20:00"
+            }
         }
     },
-
     "misPickItemsPlaceholder": {
         "message": "If you want to offer multiple items, click here and select them from the list.",
         "description": "Closed multi-select dropdown summary on Offer Item when nothing is checked"
@@ -1051,7 +1289,10 @@
         "message": "$COUNT$ items selected",
         "description": "Multi-select dropdown summary when two or more items are checked",
         "placeholders": {
-            "count": { "content": "$1", "example": "3" }
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
         }
     },
     "misDdHeaderAria": {
@@ -1078,14 +1319,20 @@
         "message": "Offer failed: $DETAIL$",
         "description": "Multi-offer stopped after network error, missing form, or server notification error",
         "placeholders": {
-            "detail": { "content": "$1", "example": "Invalid view state" }
+            "detail": {
+                "content": "$1",
+                "example": "Invalid view state"
+            }
         }
     },
     "misOfferQueueDone": {
         "message": "Successfully submitted $COUNT$ offers.",
         "description": "Summary after all queued Offer Item POSTs completed without error",
         "placeholders": {
-            "count": { "content": "$1", "example": "3" }
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
         }
     },
     "misDisableHint": {
@@ -1096,8 +1343,14 @@
         "message": "Sending $CURRENT$ of $TOTAL$…",
         "description": "Progress label next to the multi-select header while queued Offer Item POSTs run",
         "placeholders": {
-            "current": { "content": "$1", "example": "1" },
-            "total": { "content": "$2", "example": "3" }
+            "current": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "3"
+            }
         }
     },
     "misLoadingPendingOffers": {
@@ -1112,7 +1365,30 @@
         "message": "This item has already been offered to someone. See $LINK$.",
         "description": "Small hint below a disabled row in the mass-offer list; $LINK$ is replaced with an <a> tag to Character/ItemsOffered",
         "placeholders": {
-            "link": { "content": "$1", "example": "<a>Items offered</a>" }
+            "link": {
+                "content": "$1",
+                "example": "<a>Items offered</a>"
+            }
+        }
+    },
+    "cafTotalCallsMsg": {
+        "message": "📞 Popmundo lifeline! You've successfully made <strong>$TOTAL$</strong> calls using this tool. Your operator must be exhausted!",
+        "description": "Fun summary message for total calls made",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "10"
+            }
+        }
+    },
+    "miTotalInteractionsMsg": {
+        "message": "🎭 Social butterfly! You have successfully performed <strong>$TOTAL$</strong> interactions using this tool. Keep building those bridges!",
+        "description": "Fun summary message for total mass interactions",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "20"
+            }
         }
     }
 }
