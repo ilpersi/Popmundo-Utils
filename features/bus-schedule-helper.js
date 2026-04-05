@@ -25,19 +25,12 @@ class ScheduleItem {
         this.trNode = trScheduleNode;
         this.index = index;
 
-        const ICON_XPATH = "./td[1]/img";
-        const DATE_TIME_XPATH = "./td[2]";
-        const DURATION_XPATH = "./td[3]/text()";
-        const NAME_XPATH = "./td[4]/a/text()";
-        const CITY_NAME_XPATH = "./td[5]/a/text()";
-        const CITY_ID_XPATH = "./td[5]/a/@href";
-        const APPEND_TD_XPATH = "./td[6]";
+        const tds = new CssSelectorHelper('td', this.trNode).getAll();
 
         // Item Type logic
-        let rowXpathHelper = new XPathHelper(ICON_XPATH);
-        let imgNode = rowXpathHelper.getFirstOrderedNode(this.trNode);
-        if (imgNode.singleNodeValue) {
-            let imgSrc = imgNode.singleNodeValue.getAttribute('src');
+        let imgNode = new CssSelectorHelper('img', tds[0]).getSingle();
+        if (imgNode) {
+            let imgSrc = imgNode.getAttribute('src');
 
             if (imgSrc.includes('TinyIcon_Schedule_Show.png'))
                 this.type = "SHOW";
@@ -64,13 +57,12 @@ class ScheduleItem {
         }
 
         // Date & time logic
-        rowXpathHelper.xpath = DATE_TIME_XPATH;
-        let txtDateNode = rowXpathHelper.getFirstOrderedNode(this.trNode);
-        if (txtDateNode.singleNodeValue) {
+        let txtDateNode = tds[1];
+        if (txtDateNode) {
 
             // The node can also have additional child nodes (like span elements), so me make sure to only consider text ones
             let txtDate = '';
-            txtDateNode.singleNodeValue.childNodes.forEach(childNode => {
+            txtDateNode.childNodes.forEach(childNode => {
                 if (childNode.nodeType === Node.TEXT_NODE)
                     txtDate += childNode.textContent.replaceAll("\n", "").replaceAll(" ", "");
             });
@@ -81,29 +73,25 @@ class ScheduleItem {
         }
 
         // Duration logic
-        rowXpathHelper.xpath = DURATION_XPATH;
-        let txtDurationNode = rowXpathHelper.getString(this.trNode, true);
+        let txtDurationNode = tds[2] ? tds[2].textContent : '';
         let durationInt = parseInt(txtDurationNode.replace(/[^0-9]/g, ''));
         this.duration = isNaN(durationInt) ? 0 : durationInt;
 
         // Name logic
-        rowXpathHelper.xpath = NAME_XPATH;
-        this.name = rowXpathHelper.getString(this.trNode, true);
+        let nameNode = tds[3] ? new CssSelectorHelper('a', tds[3]).getSingle() : null;
+        this.name = nameNode ? nameNode.textContent.trim() : '';
 
-        // City Name logic
-        rowXpathHelper.xpath = CITY_NAME_XPATH;
-        this.cityName = rowXpathHelper.getString(this.trNode, true);
-
-        // City ID logic
-        rowXpathHelper.xpath = CITY_ID_XPATH;
-        let cityHref = rowXpathHelper.getString(this.trNode, true);
-        let cityInt = parseInt(cityHref.replace(/[^0-9]/g, ''));
-        this.cityId = isNaN(cityInt) ? 0 : cityInt;
+        // City Name logic / ID logic
+        let cityNode = tds[4] ? new CssSelectorHelper('a', tds[4]).getSingle() : null;
+        if (cityNode) {
+            this.cityName = cityNode.textContent.trim();
+            let cityHref = cityNode.getAttribute('href');
+            let cityInt = parseInt(cityHref.replace(/[^0-9]/g, ''));
+            this.cityId = isNaN(cityInt) ? 0 : cityInt;
+        }
 
         // We keep a reference to the last TD element of the row, in case we need to append additional content
-        rowXpathHelper = new XPathHelper(APPEND_TD_XPATH);
-        let appendTDNode = rowXpathHelper.getFirstOrderedNode(this.trNode);
-        if (appendTDNode.singleNodeValue) this.appendNode = appendTDNode.singleNodeValue;
+        this.appendNode = tds[5] ? tds[5] : null;
     }
 
     /**
@@ -233,57 +221,49 @@ function manageTourBusHelper() {
     // If feature is disabled, we do nothing.
     if (!isEnabled) return;
 
-    // XPaths used to check if we the functionality shoud be available or not
-    const BOOKING_ASSISTANT_XPATH = "boolean(count(//a[contains(@href, '/Artist/BookingAssistant')]) >= 1)";
-    const BOOK_TRANSPORT_XPATH = "boolean(count(//input[@type = 'submit' and contains(@name, 'BookTransport')]) >= 1)"
+    // Selectors used to check if we the functionality shoud be available or not
+    const BOOKING_ASSISTANT_CSS = "a[href*='/Artist/BookingAssistant']";
+    const BOOK_TRANSPORT_CSS = "input[type='submit'][name*='BookTransport']";
 
     // We only apply this content script to a band you are part of
-    let isBandXpathHelper = new XPathHelper(BOOKING_ASSISTANT_XPATH);
-    let isBand = isBandXpathHelper.getBoolean(document, true);
+    let isBand = new CssSelectorHelper(BOOKING_ASSISTANT_CSS).getSingle() !== null;
 
     // The booking feature is only available for VIPs, so we make sure the book transport button is there...
-    let canBookXpathHelper = new XPathHelper(BOOK_TRANSPORT_XPATH);
-    let canBook = canBookXpathHelper.getBoolean(document, true);
+    let canBook = new CssSelectorHelper(BOOK_TRANSPORT_CSS).getSingle() !== null;
 
     if (isBand && canBook) {
-        const SCHEDULE_ROWS_XPATH = "//table[@id='tableschedule']/tbody/tr";
+        const SCHEDULE_ROWS_CSS = "table#tableschedule tbody tr, table#tableschedule tr"; // Support missing tbody
 
         let scheduleItems = new ScheduleList();
 
-        let scheduleRowsXpathHelper = new XPathHelper(SCHEDULE_ROWS_XPATH);
-        let scheduleRowsNodes = scheduleRowsXpathHelper.getOrderedSnapshot(document);
+        let scheduleRowsNodes = new CssSelectorHelper(SCHEDULE_ROWS_CSS).getAll();
 
-        for (let i = 0; i < scheduleRowsNodes.snapshotLength; i++) {
-            let trNode = scheduleRowsNodes.snapshotItem(i);
-            let scheduleRow = new ScheduleItem(trNode, i);
-            scheduleItems.push(scheduleRow);
+        for (let i = 0; i < scheduleRowsNodes.length; i++) {
+            let trNode = scheduleRowsNodes[i];
+            // Make sure it's not a header row
+            if (new CssSelectorHelper('td', trNode).getAll().length > 0) {
+                let scheduleRow = new ScheduleItem(trNode, i);
+                scheduleItems.push(scheduleRow);
+            }
         }
 
-        const DEPARTURE_CITY_XPATH = "//select[contains(@name, 'DepartureCity')]";
-        const ARRIVAL_CITY_XPATH = "//select[contains(@name, 'ArrivalCity')]";
-        const DEPARTURE_DATE_XPATH = "//select[contains(@name, 'DepartureDate')]";
-        const DEPARTURE_TIME_XPATH = "//select[contains(@name, 'DepartureTime')]";
-        const DEPARTURE_TIME_VALUE_XPATH = "//select[contains(@name, 'DepartureTime')]//option";
+        const DEPARTURE_CITY_CSS = "select[name*='DepartureCity']";
+        const ARRIVAL_CITY_CSS = "select[name*='ArrivalCity']";
+        const DEPARTURE_DATE_CSS = "select[name*='DepartureDate']";
+        const DEPARTURE_TIME_CSS = "select[name*='DepartureTime']";
+        const DEPARTURE_TIME_VALUE_CSS = "select[name*='DepartureTime'] option";
 
         // Departure select element
-        let bookXpathHelper = new XPathHelper(DEPARTURE_CITY_XPATH);
-        let departureFirstNode = bookXpathHelper.getFirstOrderedNode(document);
-        let departureNode = departureFirstNode.singleNodeValue;
+        let departureNode = new CssSelectorHelper(DEPARTURE_CITY_CSS).getSingle();
 
         // Arrival select element
-        bookXpathHelper.xpath = ARRIVAL_CITY_XPATH;
-        let arrivalFirstNode = bookXpathHelper.getFirstOrderedNode(document);
-        let arrivalNode = arrivalFirstNode.singleNodeValue
+        let arrivalNode = new CssSelectorHelper(ARRIVAL_CITY_CSS).getSingle();
 
         // Departure date element
-        bookXpathHelper.xpath = DEPARTURE_DATE_XPATH;
-        let departureDateFirstNode = bookXpathHelper.getFirstOrderedNode(document);
-        let departureDateNode = departureDateFirstNode.singleNodeValue;
+        let departureDateNode = new CssSelectorHelper(DEPARTURE_DATE_CSS).getSingle();
 
         // Departure time element
-        bookXpathHelper.xpath = DEPARTURE_TIME_XPATH;
-        let departureTimeFirstNode = bookXpathHelper.getFirstOrderedNode(document);
-        let departureTimeNode = departureTimeFirstNode.singleNodeValue;
+        let departureTimeNode = new CssSelectorHelper(DEPARTURE_TIME_CSS).getSingle();
 
         // We loop trough all the shows
         scheduleItems.getShows().forEach(currentShow => {
@@ -305,56 +285,58 @@ function manageTourBusHelper() {
 
                         // Transport is not booked
                         if (transports.length == 0 && currentShow.appendNode != null) {
-                            const DEPARTURE_DATE_VALUE_XPATH = `//select[contains(@name, 'DepartureDate')]//option[text()='${previousShow.date}']`;
-
                             // Departure date value
                             let departureDateValue = '', departureDateTxt = '';
-                            bookXpathHelper.xpath = DEPARTURE_DATE_VALUE_XPATH;
-                            let departureOptionNodeValue = bookXpathHelper.getFirstOrderedNode(document);
-                            if (departureOptionNodeValue.singleNodeValue) {
-                                departureDateValue = departureOptionNodeValue.singleNodeValue.getAttribute('value');
-                                departureDateTxt = departureOptionNodeValue.singleNodeValue.textContent;
+                            let depDateOptions = new CssSelectorHelper('option', departureDateNode).getAll();
+                            let departureOptionNodeValue = Array.from(depDateOptions).find(opt => opt.textContent.includes(previousShow.date));
+
+                            if (departureOptionNodeValue) {
+                                departureDateValue = departureOptionNodeValue.getAttribute('value');
+                                departureDateTxt = departureOptionNodeValue.textContent;
                             }
 
                             // Departure time value
                             let departureTimeValue = '', departureTimeTxt = '';
-                            bookXpathHelper.xpath = DEPARTURE_TIME_VALUE_XPATH;
-                            let timeOptionValueNodes = bookXpathHelper.getOrderedSnapshot(document);
+                            let timeOptionValueNodes = new CssSelectorHelper(DEPARTURE_TIME_VALUE_CSS).getAll();
 
                             // We get events between the two shows so that if there is none, we always use the previous_show logic
                             let eventsBetween = scheduleItems.getEventsBetweenShows(previousShow.index, currentShow.index);
 
                             if (bookAfter === 'previous_show' || (bookAfter === 'previous_event' && eventsBetween.length === 0)) {
-                                for (let i = 0; i < timeOptionValueNodes.snapshotLength; i++) {
-                                    let timeOptionNode = timeOptionValueNodes.snapshotItem(i);
+                                for (let i = 0; i < timeOptionValueNodes.length; i++) {
+                                    let timeOptionNode = timeOptionValueNodes[i];
                                     let timeValue = timeOptionNode.textContent;
                                     if (timeValue == previousShow.time) {
                                         let valueIndex = i + bookRange;
 
                                         // This may happen if previous show is at 22:00
-                                        if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = i + 1;
+                                        if (valueIndex >= timeOptionValueNodes.length) valueIndex = i + 1;
 
-                                        let valueNode = timeOptionValueNodes.snapshotItem(valueIndex);
-                                        departureTimeValue = valueNode.getAttribute('value');
-                                        departureTimeTxt = valueNode.textContent;
+                                        let valueNode = timeOptionValueNodes[valueIndex];
+                                        if (valueNode) {
+                                            departureTimeValue = valueNode.getAttribute('value');
+                                            departureTimeTxt = valueNode.textContent;
+                                        }
                                         break;
                                     }
                                 }
                             } else if (bookAfter === 'previous_event' && eventsBetween.length > 0) {
                                 let lastEvent = eventsBetween.at(-1);
 
-                                for (let i = 0; i < timeOptionValueNodes.snapshotLength; i++) {
-                                    let timeOptionNode = timeOptionValueNodes.snapshotItem(i);
+                                for (let i = 0; i < timeOptionValueNodes.length; i++) {
+                                    let timeOptionNode = timeOptionValueNodes[i];
                                     let timeValue = timeOptionNode.textContent;
                                     if (timeValue == lastEvent.time) {
                                         let valueIndex = i + bookRange;
 
                                         // This may happen if previous show is at 22:00
-                                        if (valueIndex >= timeOptionValueNodes.snapshotLength) valueIndex = timeOptionValueNodes.snapshotLength - 1;
+                                        if (valueIndex >= timeOptionValueNodes.length) valueIndex = timeOptionValueNodes.length - 1;
 
-                                        let valueNode = timeOptionValueNodes.snapshotItem(valueIndex);
-                                        departureTimeValue = valueNode.getAttribute('value');
-                                        departureTimeTxt = valueNode.textContent;
+                                        let valueNode = timeOptionValueNodes[valueIndex];
+                                        if (valueNode) {
+                                            departureTimeValue = valueNode.getAttribute('value');
+                                            departureTimeTxt = valueNode.textContent;
+                                        }
                                         break;
                                     }
                                 }
@@ -370,15 +352,11 @@ function manageTourBusHelper() {
                                 iconElem.textContent = '🚌';
                                 iconElem.setAttribute('title', chrome.i18n.getMessage('bshBookTransport', [previousShow.cityName, currentShow.cityName, departureDateTxt, departureTimeTxt]));
                                 iconElem.style.cssText = `font-size:${enhancedLinksFontSize}px; cursor:pointer; margin-left:5px; user-select:none;`;
-                                iconElem.addEventListener('click', event => {
-                                    // console.log(`CURRENT ${currentShow} PREVIOUS ${previousShow}`);
-
-                                    departureNode.value = previousShow.cityId;
-                                    arrivalNode.value = currentShow.cityId;
-                                    departureDateNode.value = departureDateValue;
-                                    departureTimeNode.value = departureTimeValue;
-                                    arrivalNode.scrollIntoView({ behavior: "smooth" });
-                                });
+                                iconElem.classList.add('bsh-book-transport');
+                                iconElem.dataset.departureCity = previousShow.cityId;
+                                iconElem.dataset.arrivalCity = currentShow.cityId;
+                                iconElem.dataset.departureDate = departureDateValue;
+                                iconElem.dataset.departureTime = departureTimeValue;
 
                                 currentShow.appendNode.appendChild(iconElem);
 
@@ -395,6 +373,25 @@ function manageTourBusHelper() {
     }
 
 }
+
+document.addEventListener('click', event => {
+    if (!event.target.classList.contains('bsh-book-transport')) return;
+
+    let iconElem = event.target;
+
+    let departureNode = new CssSelectorHelper("select[name*='DepartureCity']").getSingle();
+    let arrivalNode = new CssSelectorHelper("select[name*='ArrivalCity']").getSingle();
+    let departureDateNode = new CssSelectorHelper("select[name*='DepartureDate']").getSingle();
+    let departureTimeNode = new CssSelectorHelper("select[name*='DepartureTime']").getSingle();
+
+    if (departureNode && arrivalNode && departureDateNode && departureTimeNode) {
+        departureNode.value = iconElem.dataset.departureCity;
+        arrivalNode.value = iconElem.dataset.arrivalCity;
+        departureDateNode.value = iconElem.dataset.departureDate;
+        departureTimeNode.value = iconElem.dataset.departureTime;
+        arrivalNode.scrollIntoView({ behavior: "smooth" });
+    }
+});
 
 // When page is loaded we get value from settings and start the logic.
 chrome.storage.sync.get(tourBusHelperOptionsValues, items => {
