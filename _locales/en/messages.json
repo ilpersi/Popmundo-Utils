@@ -227,6 +227,10 @@
         "message": "Top Heists link",
         "description": "Label for the crew Top Heists link option"
     },
+    "optElIconTitle": {
+        "message": "Custom icon character",
+        "description": "Tooltip for the icon character text input next to each enhanced link toggle"
+    },
     "optMiTitle": {
         "message": "Mass Interact",
         "description": "Mass Interact section card title"

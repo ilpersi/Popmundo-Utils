@@ -4,18 +4,31 @@ const globalOptions = {
     'searchable_tables': true,
     'fast_character_switch': true,
     'band_popularity_shortcut': false,
+    'band_popularity_shortcut_icon': '⭐',
     'band_upcoming_shows': false,
+    'band_upcoming_shows_icon': '📅',
     'character_send_message': false,
+    'character_send_message_icon': '✉️',
     'character_offer_an_item': false,
+    'character_offer_an_item_icon': '📦',
     'character_call': false,
+    'character_call_icon': '📱',
     'city_book_regular_flight': false,
+    'city_book_regular_flight_icon': '✈️',
     'city_charter_vip_jet': false,
+    'city_charter_vip_jet_icon': '🛩️',
     'city_other_vehicles': false,
+    'city_other_vehicles_icon': '🚗',
     'city_find_locales': false,
+    'city_find_locales_icon': '🔍',
     'locale_characters_present': false,
+    'locale_characters_present_icon': '🧑‍🤝‍🧑',
     'move_to_shortcut': true,
+    'move_to_shortcut_icon': '🚶',
     'crew_top_heist_shortcut': false,
+    'crew_top_heist_shortcut_icon': '⭐',
     'locale_show_reconnaissance': false,
+    'locale_show_reconnaissance_icon': '👀',
     'enhanced_links_font_size': 16,
     'log_level': Logger.ERROR,
 };
@@ -172,7 +185,8 @@ function handleIconLink(options) {
 
             // Icon span
             let iconElem = document.createElement('span');
-            iconElem.textContent = linkInfo.icon;
+            let iconOptionKey = linkInfo.option + '_icon';
+            iconElem.textContent = (options[iconOptionKey] && options[iconOptionKey].trim()) ? options[iconOptionKey] : linkInfo.icon;
             iconElem.setAttribute('title', linkInfo.title);
             iconElem.style.cssText = `font-size:${options.enhanced_links_font_size}px; user-select:none;`;
 

@@ -3,22 +3,35 @@ const optionDetails = [
     { 'name': 'enhanced_links_font_size', 'default': 16, 'save_cb': saveInteger, 'load_cb': loadInteger },
     // band
     { 'name': 'band_popularity_shortcut', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'band_popularity_shortcut_icon', 'default': '⭐', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'band_upcoming_shows', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'band_upcoming_shows_icon', 'default': '📅', 'save_cb': saveSelect, 'load_cb': loadSelect },
     // character
     { 'name': 'character_send_message', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'character_send_message_icon', 'default': '✉️', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'character_offer_an_item', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'character_offer_an_item_icon', 'default': '📦', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'character_call', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'character_call_icon', 'default': '📱', 'save_cb': saveSelect, 'load_cb': loadSelect },
     // city
     { 'name': 'city_book_regular_flight', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_book_regular_flight_icon', 'default': '✈️', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'city_charter_vip_jet', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_charter_vip_jet_icon', 'default': '🛩️', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'city_other_vehicles', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_other_vehicles_icon', 'default': '🚗', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'city_find_locales', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'city_find_locales_icon', 'default': '🔍', 'save_cb': saveSelect, 'load_cb': loadSelect },
     // locale
     { 'name': 'locale_characters_present', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'locale_characters_present_icon', 'default': '🧑‍🤝‍🧑', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'move_to_shortcut', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'move_to_shortcut_icon', 'default': '🚶', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'locale_show_reconnaissance', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'locale_show_reconnaissance_icon', 'default': '👀', 'save_cb': saveSelect, 'load_cb': loadSelect },
     // crew
     { 'name': 'crew_top_heist_shortcut', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'crew_top_heist_shortcut_icon', 'default': '⭐', 'save_cb': saveSelect, 'load_cb': loadSelect },
 
     // misc options
     { 'name': 'searchable_tables', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },

@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title data-i18n="optPageTitle">Popmundo Utils Options</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="../libs/bootstrap.min-5.3.1.css" rel="stylesheet" type="text/css" />
@@ -85,6 +86,11 @@
 
         .form-check-label {
             cursor: pointer;
+        }
+
+        [id$="_icon"] {
+            flex-shrink: 0;
+            min-height: 2.5rem;
         }
     </style>
 </head>
@@ -278,17 +284,23 @@
                             <div class="option-group-title" data-i18n="optElGroupBand">Band</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="band_popularity_shortcut">
-                                        <label class="form-check-label" for="band_popularity_shortcut"
-                                            data-i18n="optElPopularity">Popularity link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="band_popularity_shortcut">
+                                            <label class="form-check-label" for="band_popularity_shortcut"
+                                                data-i18n="optElPopularity">Popularity link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="band_popularity_shortcut_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="band_upcoming_shows">
-                                        <label class="form-check-label" for="band_upcoming_shows"
-                                            data-i18n="optElUpcomingShows">Upcoming Shows link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="band_upcoming_shows">
+                                            <label class="form-check-label" for="band_upcoming_shows"
+                                                data-i18n="optElUpcomingShows">Upcoming Shows link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="band_upcoming_shows_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                             </div>
@@ -296,24 +308,33 @@
                             <div class="option-group-title" data-i18n="optElGroupCharacter">Character</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="character_send_message">
-                                        <label class="form-check-label" for="character_send_message"
-                                            data-i18n="optElSendMessage">Send Message link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="character_send_message">
+                                            <label class="form-check-label" for="character_send_message"
+                                                data-i18n="optElSendMessage">Send Message link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="character_send_message_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="character_call">
-                                        <label class="form-check-label" for="character_call" data-i18n="optElCall">Call
-                                            link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="character_call">
+                                            <label class="form-check-label" for="character_call" data-i18n="optElCall">Call
+                                                link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="character_call_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="character_offer_an_item">
-                                        <label class="form-check-label" for="character_offer_an_item"
-                                            data-i18n="optElOfferItem">Offer an Item link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="character_offer_an_item">
+                                            <label class="form-check-label" for="character_offer_an_item"
+                                                data-i18n="optElOfferItem">Offer an Item link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="character_offer_an_item_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                             </div>
@@ -321,31 +342,43 @@
                             <div class="option-group-title" data-i18n="optElGroupCity">City</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="city_book_regular_flight">
-                                        <label class="form-check-label" for="city_book_regular_flight"
-                                            data-i18n="optElBookFlight">Book Regular Flight link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="city_book_regular_flight">
+                                            <label class="form-check-label" for="city_book_regular_flight"
+                                                data-i18n="optElBookFlight">Book Regular Flight link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="city_book_regular_flight_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="city_charter_vip_jet">
-                                        <label class="form-check-label" for="city_charter_vip_jet"
-                                            data-i18n="optElCharterJet">Charter VIP Jet link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="city_charter_vip_jet">
+                                            <label class="form-check-label" for="city_charter_vip_jet"
+                                                data-i18n="optElCharterJet">Charter VIP Jet link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="city_charter_vip_jet_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="city_other_vehicles">
-                                        <label class="form-check-label" for="city_other_vehicles"
-                                            data-i18n="optElOtherVehicles">Other Vehicles link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="city_other_vehicles">
+                                            <label class="form-check-label" for="city_other_vehicles"
+                                                data-i18n="optElOtherVehicles">Other Vehicles link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="city_other_vehicles_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="city_find_locales">
-                                        <label class="form-check-label" for="city_find_locales"
-                                            data-i18n="optElFindLocales">Find Locales link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="city_find_locales">
+                                            <label class="form-check-label" for="city_find_locales"
+                                                data-i18n="optElFindLocales">Find Locales link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="city_find_locales_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                             </div>
@@ -353,24 +386,33 @@
                             <div class="option-group-title" data-i18n="optElGroupLocale">Locale</div>
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="locale_characters_present">
-                                        <label class="form-check-label" for="locale_characters_present"
-                                            data-i18n="optElCharactersPresent">Characters Present link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="locale_characters_present">
+                                            <label class="form-check-label" for="locale_characters_present"
+                                                data-i18n="optElCharactersPresent">Characters Present link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="locale_characters_present_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="move_to_shortcut">
-                                        <label class="form-check-label" for="move_to_shortcut"
-                                            data-i18n="optElMoveToLocale">Move to Locale link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="move_to_shortcut">
+                                            <label class="form-check-label" for="move_to_shortcut"
+                                                data-i18n="optElMoveToLocale">Move to Locale link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="move_to_shortcut_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="locale_show_reconnaissance">
-                                        <label class="form-check-label" for="locale_show_reconnaissance"
-                                            data-i18n="optElReconnaissance">Reconnaissance link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="locale_show_reconnaissance">
+                                            <label class="form-check-label" for="locale_show_reconnaissance"
+                                                data-i18n="optElReconnaissance">Reconnaissance link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="locale_show_reconnaissance_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                             </div>
@@ -378,10 +420,13 @@
                             <div class="option-group-title" data-i18n="optElGroupCrew">Crew</div>
                             <div class="row g-2">
                                 <div class="col-sm-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="crew_top_heist_shortcut">
-                                        <label class="form-check-label" for="crew_top_heist_shortcut"
-                                            data-i18n="optElTopHeists">Top Heists link</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check form-switch mb-0 flex-grow-1">
+                                            <input class="form-check-input" type="checkbox" id="crew_top_heist_shortcut">
+                                            <label class="form-check-label" for="crew_top_heist_shortcut"
+                                                data-i18n="optElTopHeists">Top Heists link</label>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="crew_top_heist_shortcut_icon" style="width:3.5em" maxlength="10" data-i18n-title="optElIconTitle" title="Custom icon character">
                                     </div>
                                 </div>
                             </div>
