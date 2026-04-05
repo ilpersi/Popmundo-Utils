@@ -14,7 +14,8 @@
     const STORAGE_KEYS = {
         BOOK_NAME: 'autograph_book_name',
         BLOCKED_CHARS: 'chars-block-itens',
-        BOOK_LAST_USE: 'autograph_book_last_use'
+        BOOK_LAST_USE: 'autograph_book_last_use',
+        TOTAL_COLLECTED: 'ggf_total_autographs_collected'
     };
 
     // =============================================================================
@@ -41,7 +42,7 @@
             const typeCell = `<span style="color: ${typeColor}; font-weight: 600;">${type}</span>`;
 
             if (JQ('#autograph-logs tbody').length) {
-                if (logMaxRowsOption > 0 ) {
+                if (logMaxRowsOption > 0) {
                     let rowCount = JQ('#autograph-logs tbody tr').length;
 
                     if (rowCount >= logMaxRowsOption) JQ("#autograph-logs tbody tr:first-child").remove();
@@ -566,8 +567,12 @@
 
             if (notification.Status === "success") {
                 log(chrome.i18n.getMessage('ggfAutographCollected', [person.name]), 'success');
+                await incrementTotalCollected();
+                updateCounterUI();
             } else if (notification.Status === "normal") {
                 log(chrome.i18n.getMessage('ggfAutographCompleted', [person.name]), 'info');
+                await incrementTotalCollected();
+                updateCounterUI();
             }
 
             return { success: true, bookIds };
@@ -611,14 +616,50 @@
     }
 
     // =============================================================================
+    // Global Counter
+    // =============================================================================
+
+    function getTotalCollected() {
+        return new Promise((resolve) => {
+            chrome.storage.local.get([STORAGE_KEYS.TOTAL_COLLECTED], (items) => {
+                resolve(items[STORAGE_KEYS.TOTAL_COLLECTED] || 0);
+            });
+        });
+    }
+
+    function incrementTotalCollected() {
+        return new Promise((resolve) => {
+            getTotalCollected().then((total) => {
+                const newTotal = total + 1;
+                chrome.storage.local.set({ [STORAGE_KEYS.TOTAL_COLLECTED]: newTotal }, () => resolve(newTotal));
+            });
+        });
+    }
+
+    function getFunMessage(count) {
+        if (count === 0) return chrome.i18n.getMessage('ggfTotalCollected0');
+        if (count < 10) return chrome.i18n.getMessage('ggfTotalCollected10', [String(count)]);
+        if (count < 50) return chrome.i18n.getMessage('ggfTotalCollected50', [String(count)]);
+        if (count < 100) return chrome.i18n.getMessage('ggfTotalCollected100', [String(count)]);
+        if (count < 500) return chrome.i18n.getMessage('ggfTotalCollected500', [String(count)]);
+        return chrome.i18n.getMessage('ggfTotalCollectedLegendary', [String(count)]);
+    }
+
+    async function updateCounterUI() {
+        const count = await getTotalCollected();
+        const msg = getFunMessage(count);
+        JQ('#autograph-counter').html(msg);
+    }
+
+    // =============================================================================
     // Initialization (DOM ready)
     // =============================================================================
 
     JQ(document).ready(async function () {
-        const { collect_autograph: isEnabled = true, collect_autograph_scroll: scrollIntoViewOptionLocal, autograph_log_max_rows: logMaxRowsOptionLocal } = 
-        await new Promise(resolve =>
-            chrome.storage.sync.get({ collect_autograph: true, collect_autograph_scroll: true, autograph_log_max_rows: 0}, resolve)
-        );
+        const { collect_autograph: isEnabled = true, collect_autograph_scroll: scrollIntoViewOptionLocal, autograph_log_max_rows: logMaxRowsOptionLocal } =
+            await new Promise(resolve =>
+                chrome.storage.sync.get({ collect_autograph: true, collect_autograph_scroll: true, autograph_log_max_rows: 0 }, resolve)
+            );
 
         scrollIntoViewOption = scrollIntoViewOptionLocal
         logMaxRowsOption = logMaxRowsOptionLocal
@@ -628,6 +669,7 @@
         JQ('#checkedlist').before(`<div class="box" id="autograph-box"><h2>${chrome.i18n.getMessage('ggfTitle')}</h2></div>`);
         JQ('#autograph-box').append(`<p>${chrome.i18n.getMessage('ggfDescription')}</p>`);
         JQ('#autograph-box').append(`<p><small>${chrome.i18n.getMessage('ggfDisableHint')}</small></p>`);
+        JQ('#autograph-box').append(`<p id="autograph-counter"></p>`);
 
         const popupTheme = Utils.getPopupTheme();
 
@@ -643,7 +685,7 @@
             `</div>`;
 
         JQ('#autograph-box').append(`<p><a href="#" id="ggf-how-to-use-link">${chrome.i18n.getMessage('ggfHowToUse')}</a></p>`);
-        
+
         tippy('#ggf-how-to-use-link', {
             content: howToUseContent,
             allowHTML: true,
@@ -668,6 +710,7 @@
             '<div id="timer-message" style="font-weight: bold; color: red; padding: 6px 0;"></div>' +
             '</div>'
         );
+        updateCounterUI();
         JQ('#autograph-box').append(
 
             '<table id="autograph-logs" class="data">' +

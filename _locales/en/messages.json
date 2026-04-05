@@ -1390,5 +1390,59 @@
                 "example": "20"
             }
         }
+    },
+    "ggfTotalCollected0": {
+        "message": "No autographs yet. Time to hit the streets! 🚶‍♂️",
+        "description": "Fun message when total collected autographs is 0"
+    },
+    "ggfTotalCollected10": {
+        "message": "Off to a good start with $COUNT$ autographs! 🌟",
+        "description": "Fun message when total collected autographs is < 10",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "5"
+            }
+        }
+    },
+    "ggfTotalCollected50": {
+        "message": "Look at you! $COUNT$ autographs and counting. 🤩",
+        "description": "Fun message when total collected autographs is < 50",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "20"
+            }
+        }
+    },
+    "ggfTotalCollected100": {
+        "message": "Incredible! $COUNT$ autographs. You're a true fan! 🎉",
+        "description": "Fun message when total collected autographs is < 100",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "75"
+            }
+        }
+    },
+    "ggfTotalCollected500": {
+        "message": "Wow! $COUNT$ autographs. Your groupies must be impressed! 🎸",
+        "description": "Fun message when total collected autographs is < 500",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "200"
+            }
+        }
+    },
+    "ggfTotalCollectedLegendary": {
+        "message": "Legendary status achieved: $COUNT$ autographs! They should make a movie about you! 🎥",
+        "description": "Fun message when total collected autographs is >= 500",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "500"
+            }
+        }
     }
 }
