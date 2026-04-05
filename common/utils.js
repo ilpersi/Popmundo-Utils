@@ -51,7 +51,7 @@ class Utils {
      * @memberof Utils
      */
     static getMyID() {
-        let idHolderElem = document.querySelector('div.idHolder');
+        let idHolderElem = new CssSelectorHelper('div.idHolder').getSingle();
 
         return idHolderElem ? parseInt(idHolderElem.textContent) : 0;
     }
@@ -367,7 +367,7 @@ class Utils {
      * @memberof Utils
      */
     static isGreatHeist() {
-        let ghImg = document.querySelector('img[src*="Crime"]');
+        let ghImg = new CssSelectorHelper('img[src*="Crime"]').getSingle();
         return ghImg != null;
     }
 }
@@ -528,15 +528,14 @@ class Scoring {
             // Regex used to get the score value from the a element title
             const TITLE_RE = /(\d{1,2})\/26/gm;
 
-            // The XPATH to get scores from
-            const SCORE_LINK_XPATH = '//a[contains(@href, "Scoring")]';
+            // CSS Selector to get scores from
+            const SCORE_LINK_SELECTOR = 'a[href*="Scoring"]';
 
             // Let's get the scoring nodes
-            let xpathHelper = new XPathHelper(SCORE_LINK_XPATH, domTree);
-            let scoreNodes = xpathHelper.getOrderedSnapshot(domTree);
+            let scoreNodes = new CssSelectorHelper(SCORE_LINK_SELECTOR, domTree).getAll();
 
-            for (let i = 0; i < scoreNodes.snapshotLength; i++) {
-                let scoreNode = scoreNodes.snapshotItem(i);
+            for (let i = 0; i < scoreNodes.length; i++) {
+                let scoreNode = scoreNodes[i];
 
                 // Using the regex, we get the score value
                 var titleMatch = TITLE_RE.exec(scoreNode.getAttribute('title'));
@@ -582,14 +581,13 @@ class Scoring {
 
         if (items.progress_bar_percent) {
 
-            // The Xpath for the bars mostly used on char and artis pages
-            const PROGRESS_BAR_PATH = '//div[contains(@class, "rogressBar")]';
+            // The Selector for the bars mostly used on char and artis pages
+            const PROGRESS_BAR_SELECTOR = 'div[class*="rogressBar"]';
 
-            let xpathHelper = new XPathHelper(PROGRESS_BAR_PATH, domTree);
-            let barNodes = xpathHelper.getOrderedSnapshot(domTree);
+            let barNodes = new CssSelectorHelper(PROGRESS_BAR_SELECTOR, domTree).getAll();
 
-            for (let i = 0; i < barNodes.snapshotLength; i++) {
-                let node = barNodes.snapshotItem(i);
+            for (let i = 0; i < barNodes.length; i++) {
+                let node = barNodes[i];
 
                 let barClass = node.getAttribute('class');
                 let percentage = node.getAttribute('title');
@@ -606,40 +604,38 @@ class Scoring {
                             percentage = String(parseInt(percentage)) + '%';
                         }
 
-                        node.setAttribute('style', 'display: grid;');
-
-                        let childDiv = node.childNodes[0];
-                        childDiv.setAttribute('style', childDiv.getAttribute('style') + " grid-area: 1/1/1/3;");
+                        node.setAttribute('style', 'position: relative;');
 
                         let spanElement = domTree.createElement('span');
-                        spanElement.setAttribute('style', 'grid-area: 1/2/1/2; color: black; font-size: 10px;');
+                        spanElement.setAttribute('style', 'position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; color: black; font-size: 10px;');
                         spanElement.textContent = percentage;
 
                         node.appendChild(spanElement);
                     }
                 } else {
                     // When a level bar is there, to simplify the logic we write the status on the last colored bar of the level bar
-                    const LEVEL_PATH = "./div[contains(@class, 'high') or contains(@class, 'full')][last()]/div";
-                    let levelHelper = new XPathHelper(LEVEL_PATH);
+                    let highFullDivs = Array.from(node.children).filter(child => child.classList.contains('high') || child.classList.contains('full'));
+                    let lastHighFullDiv = highFullDivs.pop();
 
-                    let divNodeSnapshot = levelHelper.getFirstOrderedNode(node);
-                    if (divNodeSnapshot.singleNodeValue) {
-                        let spanElement = domTree.createElement('span');
-                        spanElement.setAttribute('style', 'color: black; font-size: 10px;');
-                        spanElement.textContent = percentage;
+                    if (lastHighFullDiv) {
+                        let innerDiv = new CssSelectorHelper('div', lastHighFullDiv).getSingle();
+                        if (innerDiv) {
+                            let spanElement = domTree.createElement('span');
+                            spanElement.setAttribute('style', 'color: black; font-size: 10px;');
+                            spanElement.textContent = percentage;
 
-                        divNodeSnapshot.singleNodeValue.appendChild(spanElement);
+                            innerDiv.appendChild(spanElement);
+                        }
                     }
                 }
 
             }
 
-            const PLUS_NEG_HOLDER = '//div[@class="plusMinusBar"]';
-            xpathHelper = new XPathHelper(PLUS_NEG_HOLDER, domTree);
-            barNodes = xpathHelper.getOrderedSnapshot(domTree);
+            const PLUS_NEG_HOLDER_SELECTOR = 'div.plusMinusBar';
+            barNodes = new CssSelectorHelper(PLUS_NEG_HOLDER_SELECTOR, domTree).getAll();
 
-            for (let i = 0; i < barNodes.snapshotLength; i++) {
-                let node = barNodes.snapshotItem(i);
+            for (let i = 0; i < barNodes.length; i++) {
+                let node = barNodes[i];
                 let percentage = node.getAttribute('title');
 
                 // When percentage is zero, we do not write the value
@@ -653,14 +649,11 @@ class Scoring {
 
                 // The parent TD element
                 let tdElem = node.parentNode;
-                tdElem.setAttribute('style', 'display: grid; align-items: center; grid-auto-columns: auto;');
-
-                // The plusMinusBar DIV Element
-                node.setAttribute('style', 'grid-area: 1/1/1/3;');
+                tdElem.setAttribute('style', 'position: relative;');
 
                 // The new SPAN element with the bar value
                 let spanElement = domTree.createElement('span');
-                spanElement.setAttribute('style', 'grid-row: 1/1; color: black; z-index: 1; font-size: 10px; top: 50%; grid-column: 1/3;');
+                spanElement.setAttribute('style', 'position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; color: black; z-index: 1; font-size: 10px;');
                 spanElement.textContent = percentage;
                 // We append the new SPAN to the TD element
                 tdElem.appendChild(spanElement);

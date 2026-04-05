@@ -53,9 +53,11 @@ function manageCharacterTooltips() {
             
             fetcher.fetch(href)
                 .then(async (html) => {
-
-                    html = html.replace(Utils.progressBarJSRE, Utils.createProgressBar);
-
+                    html = html
+                        .replace(Utils.starsJSRE, Utils.createStarCount)
+                        .replace(Utils.progressBarJSRE, Utils.createProgressBar)
+                        .replace(Utils.plusMinusBarJSRE, Utils.createPlusMinusBar);
+                    
                     // Initialize the DOM parser
                     let parser = new DOMParser();
 
@@ -66,25 +68,22 @@ function manageCharacterTooltips() {
                     let scoring = new Scoring();
                     await scoring.applyBarPercentage(doc);
 
-                    // This xpath is to manage the content we want to display in the popup
-                    let divXpathHelper = new XPathHelper('//*[@id="ppm-content"]/div[position()<3]', doc);
-
-                    // This xpath is to make sure that images in pop-up have the right src
-                    let imgSrcXpathHelper = new XPathHelper("//img[contains(@src, '../')]", doc);
-
+                    // We use CSS Selectors instead of slow XPaths to fix Firefox freezing.
                     let infoHTML = '';
-                    let divNodes = divXpathHelper.getOrderedSnapshot(doc);
-                    if (divNodes.snapshotLength > 0) {
+                    let allDivs = new CssSelectorHelper('#ppm-content > div', doc).getAll();
+                    
+                    // We only want the first two div elements like the original xpath position()<3
+                    let divNodes = Array.from(allDivs).slice(0, 2); 
 
-                        for (let i = 0; i < divNodes.snapshotLength; i++) {
-                            let divNode = divNodes.snapshotItem(i);
+                    if (divNodes.length > 0) {
+
+                        for (let i = 0; i < divNodes.length; i++) {
+                            let divNode = divNodes[i];
 
                             // Let's fix images src when required
-                            // console.dir(divNode)
-                            let imgNodes = imgSrcXpathHelper.getOrderedSnapshot(divNode);
-                            for (let j = 0; j < imgNodes.snapshotLength; j++) {
-                                let imgNode = imgNodes.snapshotItem(j);
-
+                            let imgNodes = new CssSelectorHelper('img[src*="../"]', divNode).getAll();
+                            for (let j = 0; j < imgNodes.length; j++) {
+                                let imgNode = imgNodes[j];
                                 imgNode.setAttribute('src', '/' + imgNode.getAttribute('src').replaceAll('../', '') );
                             }
 

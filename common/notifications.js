@@ -231,6 +231,6 @@ class Notifications {
     areLoading() {
         let notifications = this.getNotificationsAsText(null, true);
 
-        return document.querySelector("div.notification-loading") != null && notifications.length == 0;
+        return new CssSelectorHelper('div.notification-loading').getSingle() != null && notifications.length == 0;
     }
 }

@@ -170,7 +170,7 @@ class Logger {
         const copyBtn = document.createElement('button');
         copyBtn.textContent = 'Copy';
         copyBtn.addEventListener('click', () => {
-            const text = [...log.querySelectorAll('.pm-entry')]
+            const text = [...new CssSelectorHelper('.pm-entry', log).getAll()]
                 .map(el => el.textContent)
                 .join('\n');
             navigator.clipboard.writeText(text).then(() => {

@@ -88,12 +88,12 @@
     function findYourOffersTable(doc) {
         const pnlOffers = doc.getElementById('ctl00_cphLeftColumn_ctl00_pnlOffers');
         if (pnlOffers && pnlOffers.previousElementSibling) {
-            const t = pnlOffers.previousElementSibling.querySelector('table.data');
+            const t = new CssSelectorHelper('table.data', pnlOffers.previousElementSibling).getSingle();
             if (t) {
                 return t;
             }
         }
-        const yourItemLink = doc.querySelector('a[id*="repYourOffers"][id*="lnkItem"]');
+        const yourItemLink = new CssSelectorHelper('a[id*="repYourOffers"][id*="lnkItem"]', doc).getSingle();
         if (yourItemLink) {
             const t = yourItemLink.closest('table');
             if (t) {
@@ -116,7 +116,7 @@
         }
         /** @type {Set<string>} */
         const ids = new Set();
-        const links = table.querySelectorAll('a[href*="ItemDetails"]');
+        const links = new CssSelectorHelper('a[href*="ItemDetails"]', table).getAll();
         for (let i = 0; i < links.length; i++) {
             const href = links[i].getAttribute('href') || '';
             const m = /\/Character\/ItemDetails\/(\d+)/.exec(href);

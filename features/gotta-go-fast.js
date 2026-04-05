@@ -251,12 +251,12 @@
             const postDoc = parser.parseFromString(postHtml, "text/html");
 
             // Step 5: Extract people from table (language-independent)
-            const peopleTable = postDoc.querySelector('#tablepeople');
+            const peopleTable = new CssSelectorHelper('#tablepeople', postDoc).getSingle();
 
             if (peopleTable) {
-                Array.from(peopleTable.querySelectorAll('tbody tr')).forEach(row => {
-                    const characterLink = row.querySelector('a');
-                    const statusCell = row.querySelectorAll('td')[1];
+                Array.from(new CssSelectorHelper('tbody tr', peopleTable).getAll()).forEach(row => {
+                    const characterLink = new CssSelectorHelper('a', row).getSingle();
+                    const statusCell = new CssSelectorHelper('td', row).getAll()[1];
                     const statusText = statusCell ? statusCell.textContent.trim() : '';
                     const isAvailable = !statusText || statusText === '';
 
@@ -302,8 +302,8 @@
             const doc = parser.parseFromString(html, "text/html");
 
             // Step 3: Detect navigation method and execute
-            const linkInteract = doc.querySelector('#ctl00_cphRightColumn_ctl00_lnkInteract');
-            const btnInteract = doc.querySelector('#ctl00_cphRightColumn_ctl00_btnInteract');
+            const linkInteract = new CssSelectorHelper('#ctl00_cphRightColumn_ctl00_lnkInteract', doc).getSingle();
+            const btnInteract = new CssSelectorHelper('#ctl00_cphRightColumn_ctl00_btnInteract', doc).getSingle();
 
             if (linkInteract) {
                 const href = linkInteract.getAttribute('href');
@@ -345,8 +345,8 @@
                             });
 
                             const postDoc = parser.parseFromString(postHtml, "text/html");
-                            const redirectLink = postDoc.querySelector('#ctl00_cphRightColumn_ctl00_lnkInteract')?.getAttribute('href') ||
-                                postDoc.querySelector('a[href*="/Locale/MoveToLocale/"]')?.getAttribute('href');
+                            const redirectLink = new CssSelectorHelper('#ctl00_cphRightColumn_ctl00_lnkInteract', postDoc).getSingle()?.getAttribute('href') ||
+                                new CssSelectorHelper('a[href*="/Locale/MoveToLocale/"]', postDoc).getSingle()?.getAttribute('href');
 
                             if (redirectLink && !redirectLink.startsWith('javascript:')) {
                                 finalUrl = redirectLink.startsWith('http') ? redirectLink : Utils.getServerLink(redirectLink);
@@ -387,9 +387,9 @@
                 }
             }
 
-            const characterPresentation = doc.querySelector('.characterPresentation');
+            const characterPresentation = new CssSelectorHelper('.characterPresentation', doc).getSingle();
             if (characterPresentation) {
-                const links = characterPresentation.querySelectorAll('a');
+                const links = new CssSelectorHelper('a', characterPresentation).getAll();
                 if (links.length > 0) {
                     const lastLink = links[links.length - 1];
                     const href = lastLink.getAttribute('href');
@@ -429,8 +429,8 @@
                         });
 
                         const postDoc = parser.parseFromString(postHtml, "text/html");
-                        const redirectLink = postDoc.querySelector('#ctl00_cphRightColumn_ctl00_lnkInteract')?.getAttribute('href') ||
-                            postDoc.querySelector('a[href*="/Locale/MoveToLocale/"]')?.getAttribute('href');
+                        const redirectLink = new CssSelectorHelper('#ctl00_cphRightColumn_ctl00_lnkInteract', postDoc).getSingle()?.getAttribute('href') ||
+                            new CssSelectorHelper('a[href*="/Locale/MoveToLocale/"]', postDoc).getSingle()?.getAttribute('href');
 
                         if (redirectLink && !redirectLink.startsWith('javascript:')) {
                             finalUrl = redirectLink.startsWith('http') ? redirectLink : Utils.getServerLink(redirectLink);
@@ -482,7 +482,7 @@
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, "text/html");
 
-            const select = doc.querySelector('#ctl00_cphTopColumn_ctl00_ddlUseItem');
+            const select = new CssSelectorHelper('#ctl00_cphTopColumn_ctl00_ddlUseItem', doc).getSingle();
 
             if (!select) {
                 log(chrome.i18n.getMessage('ggfNotAvailable', [person.name]));
@@ -500,7 +500,7 @@
             const fallbackNames = ['Livro de autógrafos', 'Autograph book'];
             const searchNames = bookName ? [bookName, ...fallbackNames] : fallbackNames;
 
-            const options = select.querySelectorAll('option');
+            const options = new CssSelectorHelper('option', select).getAll();
             options.forEach(option => {
                 const optionText = option.textContent.trim();
                 const optionValue = option.getAttribute('value');

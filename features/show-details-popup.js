@@ -48,7 +48,10 @@ function manageDetailsTooltips() {
             let theme = popupTheme.DATA_THEME;
             fetcher.fetch(href)
                 .then(async (html) => {
-                    html = html.replace(Utils.starsJSRE, Utils.createStarCount);
+                    html = html
+                        .replace(Utils.starsJSRE, Utils.createStarCount)
+                        .replace(Utils.progressBarJSRE, Utils.createProgressBar)
+                        .replace(Utils.plusMinusBarJSRE, Utils.createPlusMinusBar);
 
                     // Initialize the DOM parser
                     let parser = new DOMParser();
