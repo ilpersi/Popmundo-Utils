@@ -384,16 +384,22 @@ class TimedFetch {
     #delay = 750;
     #lastCall = Date.now() - this.#delay;
     #cache = {};
-    #useCache = true;
     #pending = false;
 
     /**
-     * Creates an instance of TimedFetch.
-     * @param {boolean} [useCache=true] Should we use the built-in cache?
-     * @memberof TimedFetch
+     * Singleton constructor. On first call the instance is stored on `window._timedFetchInstance`
+     * and returned normally. On every subsequent call the existing instance is returned directly,
+     * so all content scripts on the same page share one queue and one cache.
+     *
+     * The instance is kept on `window` rather than a static field because `utils.js` can be
+     * executed more than once per page (e.g. the OfferItem entry in manifest.json re-lists it),
+     * which would reset a static field and break the singleton guarantee.
      */
-    constructor(useCache = true) {
-        this.#useCache = useCache;
+    constructor() {
+        if (!window._timedFetchInstance) {
+            window._timedFetchInstance = this;
+        }
+        return window._timedFetchInstance;
     }
 
     /**
@@ -422,15 +428,21 @@ class TimedFetch {
      * For more details on the parameters, check the offical fetch documentation: https://developer.mozilla.org/en-US/docs/Web/API/fetch
      *
      * @param {string} resource The resource to fetch
-     * @param {*} [options={}] An object containing any custom settings that you want to apply to the request.
+     * @param {Object} [options={}] An object containing any custom settings that you want to apply to the request.
+     * @param {boolean} [useCache=true] Whether to read from and write to the in-memory cache.
+     *   The cache is keyed by HTTP method + URL, so GET and POST to the same resource are
+     *   stored independently. Pass false for operations that must always hit the network
+     *   (mass actions, form submissions, notification polling, etc.).
      * @return {string} The HTML content of the desired page
      * @memberof TimedFetch
      */
-    async fetch(resource, options = {}) {
+    async fetch(resource, options = {}, useCache = true) {
+        const method = (options.method || 'GET').toUpperCase();
+        const cacheKey = `${method}:${resource}`;
 
         // We can use a cached response, let's go for it!
-        if (this.#useCache && this.#cache.hasOwnProperty(resource)) {
-            return this.#cache[resource];
+        if (useCache && this.#cache.hasOwnProperty(cacheKey)) {
+            return this.#cache[cacheKey];
         }
 
         // Wait until no other request is in-flight AND the cooldown has elapsed.
@@ -448,8 +460,8 @@ class TimedFetch {
                 throw new Error('Bad response status: ' + response.status);
             }
             const html = await response.text();
-            if (this.#useCache) {
-                this.#cache[resource] = html;
+            if (useCache) {
+                this.#cache[cacheKey] = html;
             }
             return html;
         } finally {

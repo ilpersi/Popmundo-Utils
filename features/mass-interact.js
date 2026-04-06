@@ -144,7 +144,7 @@ async function onSubmitClick() {
     const INTERACT_SELECT_XPATH = '//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option';
     // Regex to extract the character id from the href of a elems
     const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
-    const fetcher = new TimedFetch(false);
+    const fetcher = new TimedFetch();
 
     // We'll use this to log progression and give feedback to the user
     const statusPElem = document.getElementById('mass-interact-status-p');
@@ -160,7 +160,7 @@ async function onSubmitClick() {
 
         // We get the content of the Character page
         let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
-        let charHTML = await fetcher.fetch(charURL);
+        let charHTML = await fetcher.fetch(charURL, {}, false);
 
         // We parse the character page
         let parser = new DOMParser();
@@ -207,7 +207,7 @@ async function onSubmitClick() {
             }
 
             // We finally perform the real fetch
-            let relHTML = await fetcher.fetch(relationURL, fetchOptions);
+            let relHTML = await fetcher.fetch(relationURL, fetchOptions, false);
 
             doc = parser.parseFromString(relHTML, "text/html");
 
@@ -358,7 +358,7 @@ async function onSubmitClick() {
             statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusCheckingChar', [String(charIndex + 1), String(charsInfo.length), charDict.name]);
 
             let interactUrl = Utils.getServerLink(charDict.href);
-            let html = await fetcher.fetch(interactUrl);
+            let html = await fetcher.fetch(interactUrl, {}, false);
 
             // Initialize the DOM parser
             let parser = new DOMParser();
@@ -425,7 +425,7 @@ async function onSubmitClick() {
                 statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusInteracting', [String(charIndex + 1), String(charsInfo.length), charDict.name, String(interactionCnt)]);
 
                 // Synchronous fetch request
-                html = await fetcher.fetch(interactUrl, { "body": formDataNew, "method": "POST" });
+                html = await fetcher.fetch(interactUrl, { "body": formDataNew, "method": "POST" }, false);
 
                 // We update the parser content so to make sure the while does not go in infinite loop
                 parser = new DOMParser();

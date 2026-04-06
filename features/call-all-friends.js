@@ -81,7 +81,7 @@ async function onSubmitClick() {
     // We randomly sort the interactions and create an iterator base on it
     let interactionIterator = Utils.cycle(Utils.shuffle(INTERACTIONS));
 
-    const fetcher = new TimedFetch(false);
+    const fetcher = new TimedFetch();
 
     // Phase 1: check each friend sequentially to determine which can be called
     let friendsDetails = [];
@@ -96,7 +96,7 @@ async function onSubmitClick() {
 
         let interactUrl = Utils.getServerLink(`${interactPath}${friendDict.id}`);
         try {
-            const html = await fetcher.fetch(interactUrl);
+            const html = await fetcher.fetch(interactUrl, {}, false);
 
             // Initialize the DOM parser
             let parser = new DOMParser();
@@ -184,7 +184,7 @@ async function onSubmitClick() {
                 await fetcher.fetch(friendDetails.interactUrl, {
                     "body": friendDetails.formData,
                     "method": "POST",
-                });
+                }, false);
                 succesCalls += 1;
             } catch (error) {
                 console.error(`Failed to call ${friendDetails.name}:`, error);
@@ -343,4 +343,4 @@ async function injectCallAllExcludeButtons() {
 if (window.location.href.includes(Utils.getMyID())) {
     injectCallAllHTML();
     injectCallAllExcludeButtons();
-}s
+}

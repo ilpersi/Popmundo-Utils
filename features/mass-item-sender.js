@@ -6,7 +6,7 @@
     // =============================================================================
 
     const JQ = jQuery.noConflict();
-    const fetcher = new TimedFetch(false);
+    const fetcher = new TimedFetch();
     const notifications = new Notifications();
 
     /** Game / extension element ids for Character → Offer Item (ASP.NET WebForms). */
@@ -133,7 +133,7 @@
      */
     async function fetchOfferedItemInstanceIds(fetcherInst) {
         const url = Utils.getServerLink(ITEMS_OFFERED_PATH);
-        const html = await fetcherInst.fetch(url, { method: 'GET', credentials: 'same-origin' });
+        const html = await fetcherInst.fetch(url, { method: 'GET', credentials: 'same-origin' }, false);
         return parseOfferedItemInstanceIdsFromHtml(html);
     }
 
@@ -267,7 +267,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: built.body
-            });
+            }, false);
             const nextDoc = new DOMParser().parseFromString(responseText, 'text/html');
             const notification = await notificationsInst.getPageNotifications(fetcherInst);
             const ok = notification.Status !== 'error';

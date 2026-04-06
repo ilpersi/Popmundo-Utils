@@ -7,7 +7,7 @@
     let scrollIntoViewOption = true;
     let logMaxRowsOption = 0;
 
-    const fetcher = new TimedFetch(false);
+    const fetcher = new TimedFetch();
     const notifications = new Notifications();
     const JQ = jQuery.noConflict();
     const BOOK_COOLDOWN_MS = 6 * 60 * 1000; // 6 minutes per book
@@ -214,7 +214,7 @@
 
         try {
             // Step 1: Initial GET to obtain the form
-            const html = await fetcher.fetch(peopleOnlineUrl, { method: "GET" });
+            const html = await fetcher.fetch(peopleOnlineUrl, { method: "GET" }, false);
 
             // Step 2: Parse HTML and extract FormData
             const parser = new DOMParser();
@@ -247,7 +247,7 @@
             const postHtml = await fetcher.fetch(peopleOnlineUrl, {
                 method: "POST",
                 body: formDataOrig
-            });
+            }, false);
 
             const postDoc = parser.parseFromString(postHtml, "text/html");
 
@@ -296,7 +296,7 @@
 
         try {
             // Step 1: Initial GET of character page via HTTP
-            const html = await fetcher.fetch(characterUrl, { method: "GET" });
+            const html = await fetcher.fetch(characterUrl, { method: "GET" }, false);
 
             // Step 2: Parse HTML with DOMParser
             const parser = new DOMParser();
@@ -310,7 +310,7 @@
                 const href = linkInteract.getAttribute('href');
                 if (href && !href.startsWith('javascript:')) {
                     finalUrl = href.startsWith('http') ? href : Utils.getServerLink(href);
-                    await fetcher.fetch(finalUrl, { method: "GET" });
+                    await fetcher.fetch(finalUrl, { method: "GET" }, false);
                     log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                     notifications.getPageNotifications(fetcher);
                     return;
@@ -322,7 +322,7 @@
 
                 if (btnHref && !btnHref.startsWith('javascript:')) {
                     finalUrl = btnHref.startsWith('http') ? btnHref : Utils.getServerLink(btnHref);
-                    await fetcher.fetch(finalUrl, { method: "GET" });
+                    await fetcher.fetch(finalUrl, { method: "GET" }, false);
                     log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                     notifications.getPageNotifications(fetcher);
                     return;
@@ -343,7 +343,7 @@
                             const postHtml = await fetcher.fetch(characterUrl, {
                                 method: "POST",
                                 body: formData
-                            });
+                            }, false);
 
                             const postDoc = parser.parseFromString(postHtml, "text/html");
                             const redirectLink = new CssSelectorHelper('#ctl00_cphRightColumn_ctl00_lnkInteract', postDoc).getSingle()?.getAttribute('href') ||
@@ -378,7 +378,7 @@
                         const postHtml = await fetcher.fetch(postUrl, {
                             method: "POST",
                             body: formData
-                        });
+                        }, false);
 
                         const postDoc = parser.parseFromString(postHtml, "text/html");
                         log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
@@ -398,7 +398,7 @@
                         const locationId = href.split('/').pop();
                         if (locationId) {
                             finalUrl = Utils.getServerLink('World/Popmundo.aspx/Locale/MoveToLocale/' + locationId + '/' + charId);
-                            await fetcher.fetch(finalUrl, { method: "GET" });
+                            await fetcher.fetch(finalUrl, { method: "GET" }, false);
                             log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                             notifications.getPageNotifications(fetcher);
                             return;
@@ -427,7 +427,7 @@
                         const postHtml = await fetcher.fetch(characterUrl, {
                             method: "POST",
                             body: formData
-                        });
+                        }, false);
 
                         const postDoc = parser.parseFromString(postHtml, "text/html");
                         const redirectLink = new CssSelectorHelper('#ctl00_cphRightColumn_ctl00_lnkInteract', postDoc).getSingle()?.getAttribute('href') ||
@@ -449,7 +449,7 @@
                 const relativePath = locationLink.split('/World/')[1];
                 if (relativePath) {
                     finalUrl = Utils.getServerLink('World/' + relativePath);
-                    await fetcher.fetch(finalUrl, { method: "GET" });
+                    await fetcher.fetch(finalUrl, { method: "GET" }, false);
                     log(chrome.i18n.getMessage('ggfMovingToLocation', [charName]), 'info');
                     notifications.getPageNotifications(fetcher);
                     return;
@@ -478,7 +478,7 @@
         let bookIds = [];
 
         try {
-            const html = await fetcher.fetch(interactUrl, { method: "GET" });
+            const html = await fetcher.fetch(interactUrl, { method: "GET" }, false);
 
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, "text/html");
@@ -555,7 +555,7 @@
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 body: urlParams.toString()
-            });
+            }, false);
             const notification = await notifications.getPageNotifications(fetcher);
 
             if (notification.Status === "error") {

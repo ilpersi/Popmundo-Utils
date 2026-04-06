@@ -177,7 +177,7 @@ class Notifications {
         };
         let returnValue = null;
 
-        await fetcher.fetch(url, options)
+        await fetcher.fetch(url, options, false)
             .then((responseText) => {
                 const wrapper = JSON.parse(responseText);
                 const raw = typeof wrapper.d === "string" ? JSON.parse(wrapper.d) : wrapper.d;
