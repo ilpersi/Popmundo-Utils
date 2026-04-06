@@ -207,7 +207,6 @@ async function onSubmitClick() {
  *
  */
 async function injectCallAllHTML() {
-    await Logger.init();
     const END_RELATION_XPATH = '//div[@id="ctl00_cphLeftColumn_ctl00_pnlEndMultiple"]';
 
     let endRelationsXPathHelp = new XPathHelper(END_RELATION_XPATH);
@@ -340,10 +339,8 @@ async function injectCallAllExcludeButtons() {
     });
 }
 
-(async () => {
-    if (window.location.href.includes(Utils.getMyID())) {
-        await Logger.init();
-        injectCallAllHTML();
-        injectCallAllExcludeButtons();
-    }
-})();
+
+if (window.location.href.includes(Utils.getMyID())) {
+    injectCallAllHTML();
+    injectCallAllExcludeButtons();
+}s

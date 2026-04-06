@@ -321,11 +321,12 @@ function renderIngameMenu(install_type) {
 }
 
 // We initially get the options from the sync storage
-chrome.storage.sync.get(globalOptions, items => {
+chrome.storage.sync.get(globalOptions, async (items) => {
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
 
+    await Logger.init()
     if (items.log_level === Logger.DEBUG || Logger.debugMode) Logger.createDebugPanel();
 });
 
