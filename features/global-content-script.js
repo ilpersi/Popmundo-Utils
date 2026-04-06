@@ -322,12 +322,22 @@ function renderIngameMenu(install_type) {
 
 // We initially get the options from the sync storage
 chrome.storage.sync.get(globalOptions, async (items) => {
+    await Logger.init()
+    if (items.log_level === Logger.DEBUG || Logger.debugMode) Logger.createDebugPanel();
+
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
 
-    await Logger.init()
-    if (items.log_level === Logger.DEBUG || Logger.debugMode) Logger.createDebugPanel();
+    let myCharID = Utils.getMyID();
+    if (myCharID != 0) {
+        await chrome.runtime.sendMessage({
+            'type': 'storage.session',
+            'payload': 'set',
+            'param': { 'my_char_id': charID },
+        });
+    }
+
 });
 
 // This is the logic that takes care of performing the hot-reload of the extention
@@ -354,7 +364,7 @@ chrome.storage.local.get(localStorage, (local) => {
 chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName == 'local') {
         for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-            if (key == 'hot-reload' && newValue == true ) {
+            if (key == 'hot-reload' && newValue == true) {
                 location.reload();
             }
         }

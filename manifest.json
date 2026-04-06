@@ -246,14 +246,6 @@
         },
         {
             "matches": [
-                "https://*.popmundo.com/World/Popmundo.aspx/Character"
-            ],
-            "js": [
-                "features/local-storage-char-id.js"
-            ]
-        },
-        {
-            "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/OfferItem",
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/OfferItem/*"
             ],
