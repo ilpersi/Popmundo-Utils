@@ -334,7 +334,7 @@ chrome.storage.sync.get(globalOptions, async (items) => {
         await chrome.runtime.sendMessage({
             'type': 'storage.session',
             'payload': 'set',
-            'param': { 'my_char_id': charID },
+            'param': { 'my_char_id': myCharID },
         });
     }
 
