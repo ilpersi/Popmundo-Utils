@@ -621,7 +621,7 @@
 
     function getTotalCollected() {
         return new Promise((resolve) => {
-            chrome.storage.local.get([STORAGE_KEYS.TOTAL_COLLECTED], (items) => {
+            chrome.storage.sync.get([STORAGE_KEYS.TOTAL_COLLECTED], (items) => {
                 resolve(items[STORAGE_KEYS.TOTAL_COLLECTED] || 0);
             });
         });
@@ -631,7 +631,7 @@
         return new Promise((resolve) => {
             getTotalCollected().then((total) => {
                 const newTotal = total + 1;
-                chrome.storage.local.set({ [STORAGE_KEYS.TOTAL_COLLECTED]: newTotal }, () => resolve(newTotal));
+                chrome.storage.sync.set({ [STORAGE_KEYS.TOTAL_COLLECTED]: newTotal }, () => resolve(newTotal));
             });
         });
     }
