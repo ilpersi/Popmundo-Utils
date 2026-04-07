@@ -168,6 +168,7 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Locale/CharactersPresent/*"
             ],
             "js": [
+                "common/notifications.js",
                 "features/mass-interact.js"
             ]
         },
@@ -256,6 +257,15 @@
                 "common/xpath-helper.js",
                 "common/css-helper.js",
                 "features/mass-item-sender.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/ChooseCharacter",
+                "https://*.popmundo.com/World/ChooseCharacter.aspx"
+            ],
+            "js": [
+                "features/manage-player-db.js"
             ]
         }
     ],

@@ -10,7 +10,7 @@ async function onSubmitClick() {
         'call_all_sms_pic': false, // 58
         'call_all_sms_txt': false, // 61
         'call_all_gossip': false,  // 121
-        'call_exclude_id': [],
+        'call_exclude_id': {},
     }
 
     const optionsMap = {
@@ -23,6 +23,13 @@ async function onSubmitClick() {
 
     // The script will randomly choose one of the following interactions
     let INTERACTIONS = [];
+
+    // Check that the current character ID is available
+    const myCharID = Utils.getMyID();
+    if (myCharID == 0) {
+        new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
+        return;
+    }
 
     // We build the array of possible interactions based on the saved options
     let savedOptions = await chrome.storage.sync.get(optionsGet);
@@ -41,8 +48,12 @@ async function onSubmitClick() {
     // We search for friend ID in the relationship page
     let relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR).getAll();
 
-    // Support both old integer array format and new [{id, name}] format
-    const excludedIds = savedOptions.call_exclude_id.map(e => typeof e === 'object' ? e.id : e);
+    // Get exclusion list for the current character from the per-character map
+    const excludeMap = (typeof savedOptions.call_exclude_id === 'object' && !Array.isArray(savedOptions.call_exclude_id) && savedOptions.call_exclude_id !== null)
+        ? savedOptions.call_exclude_id
+        : {};
+    const charExcludeList = Array.isArray(excludeMap[String(myCharID)]) ? excludeMap[String(myCharID)] : [];
+    const excludedIds = charExcludeList.map(e => e.id);
 
     let ignoreCnt = 0;
     let friendsInfo = [];
@@ -269,8 +280,17 @@ async function injectCallAllExcludeButtons() {
     const prohibitionIcon = '🚫';
     const tickCircleIcon = '✅';
 
-    const { call_exclude_id: excludeList, enhanced_links_font_size: fontSize } = await chrome.storage.sync.get({ call_exclude_id: [], enhanced_links_font_size: 16 });
-    const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
+    // Check that the current character ID is available before showing icons
+    const myCharID = Utils.getMyID();
+    if (myCharID == 0) {
+        new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
+        return;
+    }
+
+    const { call_exclude_id: rawExcludeMap, enhanced_links_font_size: fontSize } = await chrome.storage.sync.get({ call_exclude_id: {}, enhanced_links_font_size: 16 });
+    const excludeMap = (typeof rawExcludeMap === 'object' && !Array.isArray(rawExcludeMap) && rawExcludeMap !== null) ? rawExcludeMap : {};
+    const charExcludeList = Array.isArray(excludeMap[String(myCharID)]) ? excludeMap[String(myCharID)] : [];
+    const currentExcludedIds = charExcludeList.map(e => e.id);
 
     const relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR).getAll();
 
@@ -318,21 +338,25 @@ async function injectCallAllExcludeButtons() {
         const icon = e.target;
         const friendID = parseInt(icon.dataset.friendId);
         const friendName = icon.dataset.friendName;
+        const charKey = String(myCharID);
 
-        const { call_exclude_id: current } = await chrome.storage.sync.get({ call_exclude_id: [] });
-        const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+        const { call_exclude_id: rawMap } = await chrome.storage.sync.get({ call_exclude_id: {} });
+        const currentMap = (typeof rawMap === 'object' && !Array.isArray(rawMap) && rawMap !== null) ? rawMap : {};
+        const currentList = Array.isArray(currentMap[charKey]) ? currentMap[charKey] : [];
+        const currentIds = currentList.map(e => e.id);
 
         if (currentIds.includes(friendID)) {
             // Remove from exclusion list
-            const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== friendID);
-            await chrome.storage.sync.set({ call_exclude_id: updated });
+            const updated = currentList.filter(e => e.id !== friendID);
+            currentMap[charKey] = updated;
+            await chrome.storage.sync.set({ call_exclude_id: currentMap });
             icon.textContent = tickCircleIcon;
             icon.title = chrome.i18n.getMessage('cafExclude');
         } else {
             // Add to exclusion list
-            const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
-            normalized.push({ id: friendID, name: friendName });
-            await chrome.storage.sync.set({ call_exclude_id: normalized });
+            const newList = [...currentList, { id: friendID, name: friendName }];
+            currentMap[charKey] = newList;
+            await chrome.storage.sync.set({ call_exclude_id: currentMap });
             icon.textContent = prohibitionIcon;
             icon.title = chrome.i18n.getMessage('cafInclude');
         }

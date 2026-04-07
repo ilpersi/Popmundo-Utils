@@ -31,6 +31,7 @@ const globalOptions = {
     'locale_show_reconnaissance_icon': '👀',
     'enhanced_links_font_size': 16,
     'log_level': Logger.ERROR,
+    'all_characters_details': {"id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {}},
 };
 
 // Let's be sure that there is no JQuery conflict
@@ -320,23 +321,65 @@ function renderIngameMenu(install_type) {
 
 }
 
+/**
+ * Make sure that the current_char_details variable is up to date in session storage.
+ * Important note: Popmundo is managing different IDs so to allow flexibility in querying data,
+ * the information is redundated. And both IDs and names are used as keys and values.
+ *
+ * @param {Object} charactersDB The characters DB as it is currently saved in local storage.
+ */
+async function updateCurrentCharacter(charactersDB) {
+    
+    // We don't use the div based approach on Character selection page as there are multiple ones
+    // and we still have to select the current one.
+    if (!window.location.href.includes('ChooseCharacter')) {
+        let myCharDetails = { 'id': 0, 'name': '' };
+        let myCharID = Utils.getMyID();
+        if (myCharID != 0) {
+            myCharDetails.id = myCharID;
+
+            let nameNode = new CssSelectorHelper("#ppm-content > div.box.ofauto.charPresBox > h2").getSingle();
+            if (nameNode) {
+                myCharDetails.name = nameNode.textContent;
+            }
+
+            if (myCharDetails.name !== '') {
+                // Let's update current character details in session storage
+                await chrome.runtime.sendMessage({
+                    'type': 'storage.session',
+                    'payload': 'set',
+                    'param': { 'current_char_details': myCharDetails },
+                });
+
+                charactersDB["id-name"][myCharDetails.id] = myCharDetails.name;
+                charactersDB["name-id"][myCharDetails.name] = myCharDetails.id;
+            }
+        }
+
+        Logger.debug('myCharDetails: ' + JSON.stringify(myCharDetails));
+    }
+
+    // Let's also update all characters uuids in local storage.
+    let charactersUUIDs = new CssSelectorHelper("#ctl00_ctl08_ucCharacterBar_ddlCurrentCharacter > option").getAll();
+    charactersUUIDs.forEach(option => {
+        if (option.value != "0") {
+            charactersDB["uuid-name"][option.value] = option.textContent;
+            charactersDB["name-uuid"][option.textContent] = option.value;
+        }
+    });
+
+    Logger.debug('Updated character DB: ' + JSON.stringify(charactersDB));
+    await chrome.storage.sync.set({ all_characters_details: charactersDB });
+}
+
 // We initially get the options from the sync storage
 chrome.storage.sync.get(globalOptions, async (items) => {
     await Logger.init()
-    if (items.log_level === Logger.DEBUG || Logger.debugMode) Logger.createDebugPanel();
 
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
-
-    let myCharID = Utils.getMyID();
-    if (myCharID != 0) {
-        await chrome.runtime.sendMessage({
-            'type': 'storage.session',
-            'payload': 'set',
-            'param': { 'my_char_id': myCharID },
-        });
-    }
+    updateCurrentCharacter(items.all_characters_details);
 
 });
 

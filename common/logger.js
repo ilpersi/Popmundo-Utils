@@ -67,6 +67,8 @@ class Logger {
     static async init() {
         const { log_level } = await chrome.storage.sync.get({ log_level: Logger.ERROR });
         Logger.#level = log_level;
+
+        if ((this.#level === Logger.DEBUG || Logger.debugMode) && !this.#debugPanel) Logger.createDebugPanel();
     }
 
     /**

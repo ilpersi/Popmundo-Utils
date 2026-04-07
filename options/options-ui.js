@@ -1,9 +1,9 @@
 /**
- * Renders a Bootstrap list-group for an exclusion list stored as [{id, name}].
- * Called by loadExcludeList (options.js) and by the Remove button click handler.
+ * Renders a Bootstrap list-group for the exclusion list of the currently selected character.
+ * Called by initCharSelect and by the Remove button click handler.
  *
  * @param {string} storageKey  The chrome.storage.sync key (also the hidden input id).
- * @param {Array}  data        Array of {id, name} objects.
+ * @param {Array}  data        Array of {id, name} objects for the currently selected character.
  */
 function renderExcludeList(storageKey, data) {
     const container = document.getElementById(storageKey + '_list');
@@ -24,7 +24,7 @@ function renderExcludeList(storageKey, data) {
 
     const sorted = data.slice().sort((a, b) => a.name.localeCompare(b.name));
 
-    sorted.forEach((entry, index) => {
+    sorted.forEach((entry) => {
         const col = document.createElement('div');
         col.className = 'col';
 
@@ -33,7 +33,7 @@ function renderExcludeList(storageKey, data) {
 
         const nameSpan = document.createElement('span');
         nameSpan.className = 'small text-truncate me-1';
-        nameSpan.title = `${entry.name} — #${entry.id}`;
+        nameSpan.title = `${entry.name} \u2014 #${entry.id}`;
         nameSpan.textContent = `${entry.name} \u2014 #${entry.id}`;
 
         const removeBtn = document.createElement('button');
@@ -42,10 +42,15 @@ function renderExcludeList(storageKey, data) {
         removeBtn.textContent = chrome.i18n.getMessage('optExcludeListRemove') || 'Remove';
         removeBtn.addEventListener('click', () => {
             const hidden = document.getElementById(storageKey);
-            let current = [];
-            try { current = JSON.parse(hidden.value || '[]'); } catch (_) {}
-            const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== entry.id);
-            hidden.value = JSON.stringify(updated);
+            let map = {};
+            try { map = JSON.parse(hidden.value || '{}'); } catch (_) {}
+            const select = document.getElementById(storageKey + '_char_select');
+            const charId = select ? select.value : null;
+            if (!charId) return;
+            const currentList = Array.isArray(map[charId]) ? map[charId] : [];
+            const updated = currentList.filter(e => e.id !== entry.id);
+            map[charId] = updated;
+            hidden.value = JSON.stringify(map);
             renderExcludeList(storageKey, updated);
         });
 
@@ -56,6 +61,105 @@ function renderExcludeList(storageKey, data) {
     });
 
     container.appendChild(row);
+}
+
+/**
+ * Shows a "select a character" placeholder in the exclusion list container.
+ *
+ * @param {string} storageKey  The chrome.storage.sync key (also the hidden input id).
+ */
+function renderExcludeListNoChar(storageKey) {
+    const container = document.getElementById(storageKey + '_list');
+    if (!container) return;
+    container.innerHTML = '';
+    const msg = document.createElement('p');
+    msg.className = 'text-muted small mb-0';
+    msg.textContent = chrome.i18n.getMessage('optNoCharacterSelected') || 'Select a character above to view or manage exclusions.';
+    container.appendChild(msg);
+}
+
+/**
+ * Populates the character selector combo box from session storage and the exclusion map,
+ * then renders the exclusion list for the currently active character.
+ * Called from loadExcludeList (options.js) inside the chrome.storage.sync callback.
+ *
+ * @param {string} selectId    ID of the <select> element.
+ * @param {string} storageKey  The chrome.storage.sync key (also the hidden input id).
+ * @param {Object} map         The full per-character exclusion map { "charId": [{id, name}] }.
+ */
+async function initCharSelect(selectId, storageKey, map) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    // Get current character from session storage
+    const sessionData = await chrome.storage.session.get(['current_char_details']);
+    const currentChar = sessionData.current_char_details;
+
+    // Get all known characters from the DB in sync storage (id -> name)
+    const syncData = await chrome.storage.sync.get({ all_characters_details: { 'id-name': {} } });
+    const idNameMap = (syncData.all_characters_details && syncData.all_characters_details['id-name'])
+        ? syncData.all_characters_details['id-name']
+        : {};
+
+    // Build char map: id (string) -> name
+    // Start with the full DB, then fall back to #id for any exclusion-map char not yet in the DB
+    const charMap = {};
+    Object.entries(idNameMap).forEach(([id, name]) => {
+        charMap[id] = name;
+    });
+    Object.keys(map).forEach(id => {
+        if (!charMap[id]) charMap[id] = `#${id}`;
+    });
+
+    // Preserve previously selected value (if any)
+    const previousValue = select.value;
+
+    // Repopulate the select options
+    const placeholderText = chrome.i18n.getMessage('optSelectCharPlaceholder') || '-- Select a character --';
+    select.innerHTML = `<option value="">${placeholderText}</option>`;
+    Object.entries(charMap)
+        .sort((a, b) => a[1].localeCompare(b[1]))
+        .forEach(([id, name]) => {
+            const opt = document.createElement('option');
+            opt.value = id;
+            opt.textContent = name;
+            select.appendChild(opt);
+        });
+
+    // Determine which char to select
+    let selectedId = '';
+    if (previousValue && charMap[previousValue]) {
+        selectedId = previousValue;
+    } else if (currentChar && currentChar.id && currentChar.id != 0 && charMap[String(currentChar.id)]) {
+        selectedId = String(currentChar.id);
+    } else if (Object.keys(charMap).length === 1) {
+        selectedId = Object.keys(charMap)[0];
+    }
+
+    select.value = selectedId;
+
+    // Render for the selected char
+    if (selectedId) {
+        renderExcludeList(storageKey, Array.isArray(map[selectedId]) ? map[selectedId] : []);
+    } else {
+        renderExcludeListNoChar(storageKey);
+    }
+
+    // Register change handler (only once — remove old listener by cloning)
+    const freshSelect = select.cloneNode(true);
+    select.parentNode.replaceChild(freshSelect, select);
+    freshSelect.value = selectedId;
+    freshSelect.addEventListener('change', () => {
+        const charId = freshSelect.value;
+        const hidden = document.getElementById(storageKey);
+        let currentMap = {};
+        try { currentMap = JSON.parse(hidden.value || '{}'); } catch (_) {}
+        if (charId) {
+            renderExcludeList(storageKey, Array.isArray(currentMap[charId]) ? currentMap[charId] : []);
+        } else {
+            renderExcludeListNoChar(storageKey);
+        }
+    });
 }
 
 /**
@@ -120,7 +224,16 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', () => {
             const storageKey = btn.dataset.excludeClear;
             const hidden = document.getElementById(storageKey);
-            if (hidden) hidden.value = '[]';
+            const select = document.getElementById(storageKey + '_char_select');
+            const charId = select ? select.value : null;
+            let map = {};
+            try { map = JSON.parse(hidden?.value || '{}'); } catch (_) {}
+            if (charId) {
+                map[charId] = [];
+            } else {
+                map = {};
+            }
+            if (hidden) hidden.value = JSON.stringify(map);
             renderExcludeList(storageKey, []);
         });
     });

@@ -439,6 +439,22 @@
         "message": "Include in Call All Friends",
         "description": "Tooltip on the tick-circle icon next to a character currently excluded from Call All Friends"
     },
+    "charIdZeroError": {
+        "message": "Character not identified. Please navigate to your character page first.",
+        "description": "Error shown when the current character ID cannot be determined"
+    },
+    "optSelectCharLabel": {
+        "message": "Character",
+        "description": "Label for the character selector combo box in the options page exclusion list"
+    },
+    "optSelectCharPlaceholder": {
+        "message": "-- Select a character --",
+        "description": "Placeholder option in the character selector combo box"
+    },
+    "optNoCharacterSelected": {
+        "message": "Select a character above to view or manage exclusions.",
+        "description": "Message shown when no character is selected in the options exclusion list"
+    },
     "optMiMaxChars": {
         "message": "Max characters (1\u2013100)",
         "description": "Label for the maximum characters input in mass interact"

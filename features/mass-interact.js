@@ -1,3 +1,23 @@
+/**
+ * Gets the current character details (id and name) from session storage.
+ * Uses the message-passing pattern since this is a content script.
+ *
+ * @returns {Promise<{id: number, name: string}>}
+ */
+function getMyCharDetails() {
+    return new Promise((resolve) => {
+        chrome.runtime.sendMessage({
+            'type': 'storage.session',
+            'payload': 'get',
+            'param': ['current_char_details'],
+        })
+            .then((items) => {
+                const details = items['current_char_details'];
+                resolve((details && details.id) ? details : { id: 0, name: '' });
+            });
+    });
+}
+
 async function onSubmitClick() {
 
     const optionsGet = {
@@ -52,7 +72,7 @@ async function onSubmitClick() {
         "mass_interact_seek_apprenticeship": false,
         "mass_interact_sing_to": false,
         "mass_interact_serenade": false,
-        'mass_interact_exclude_id': [],
+        'mass_interact_exclude_id': {},
         'mass_interact_max_chars': 99,
         'mass_interact_ignore_acquaintance': false,
         'mass_interact_guide': false,
@@ -121,6 +141,14 @@ async function onSubmitClick() {
         "mass_interact_kiss_on_forehead": 103,
 
     };
+
+    // Check that the current character ID is available
+    const myCharDetails = await getMyCharDetails();
+    const myCharID = myCharDetails.id;
+    if (myCharID == 0) {
+        new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
+        return;
+    }
 
     // The script will randomly choose one of the following interactions
     let INTERACTIONS = [];
@@ -262,8 +290,12 @@ async function onSubmitClick() {
 
     let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
 
-    // Support both old integer array format and new [{id, name}] format
-    const excludedIds = savedOptions.mass_interact_exclude_id.map(e => typeof e === 'object' ? e.id : e);
+    // Get exclusion list for the current character from the per-character map
+    const excludeMap = (typeof savedOptions.mass_interact_exclude_id === 'object' && !Array.isArray(savedOptions.mass_interact_exclude_id) && savedOptions.mass_interact_exclude_id !== null)
+        ? savedOptions.mass_interact_exclude_id
+        : {};
+    const charExcludeList = Array.isArray(excludeMap[String(myCharID)]) ? excludeMap[String(myCharID)] : [];
+    const excludedIds = charExcludeList.map(e => e.id);
 
     let charsInfo = [];
     let charTRNode = null;
@@ -522,8 +554,18 @@ async function injectMassInteractExcludeButtons() {
     const prohibitionIcon = '🚫';
     const tickCircleIcon = '✅';
 
-    const { mass_interact_exclude_id: excludeList, enhanced_links_font_size: fontSize } = await chrome.storage.sync.get({ mass_interact_exclude_id: [], enhanced_links_font_size: 16 });
-    const currentExcludedIds = excludeList.map(e => typeof e === 'object' ? e.id : e);
+    // Check that the current character ID is available before showing icons
+    const myCharDetails = await getMyCharDetails();
+    const myCharID = myCharDetails.id;
+    if (myCharID == 0) {
+        new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
+        return;
+    }
+
+    const { mass_interact_exclude_id: rawExcludeMap, enhanced_links_font_size: fontSize } = await chrome.storage.sync.get({ mass_interact_exclude_id: {}, enhanced_links_font_size: 16 });
+    const excludeMap = (typeof rawExcludeMap === 'object' && !Array.isArray(rawExcludeMap) && rawExcludeMap !== null) ? rawExcludeMap : {};
+    const charExcludeList = Array.isArray(excludeMap[String(myCharID)]) ? excludeMap[String(myCharID)] : [];
+    const currentExcludedIds = charExcludeList.map(e => e.id);
 
     const charsTRNodes = new CssSelectorHelper(PRESENT_CHARS_SELECTOR).getAll();
 
@@ -576,21 +618,25 @@ async function injectMassInteractExcludeButtons() {
         const icon = e.target;
         const charID = parseInt(icon.dataset.charId);
         const charName = icon.dataset.charName;
+        const charKey = String(myCharID);
 
-        const { mass_interact_exclude_id: current } = await chrome.storage.sync.get({ mass_interact_exclude_id: [] });
-        const currentIds = current.map(e => typeof e === 'object' ? e.id : e);
+        const { mass_interact_exclude_id: rawMap } = await chrome.storage.sync.get({ mass_interact_exclude_id: {} });
+        const currentMap = (typeof rawMap === 'object' && !Array.isArray(rawMap) && rawMap !== null) ? rawMap : {};
+        const currentList = Array.isArray(currentMap[charKey]) ? currentMap[charKey] : [];
+        const currentIds = currentList.map(e => e.id);
 
         if (currentIds.includes(charID)) {
             // Remove from exclusion list
-            const updated = current.filter(e => (typeof e === 'object' ? e.id : e) !== charID);
-            await chrome.storage.sync.set({ mass_interact_exclude_id: updated });
+            const updated = currentList.filter(e => e.id !== charID);
+            currentMap[charKey] = updated;
+            await chrome.storage.sync.set({ mass_interact_exclude_id: currentMap });
             icon.textContent = tickCircleIcon;
             icon.title = chrome.i18n.getMessage('miExclude');
         } else {
             // Add to exclusion list
-            const normalized = current.map(e => typeof e === 'object' ? e : { id: e, name: `#${e}` });
-            normalized.push({ id: charID, name: charName });
-            await chrome.storage.sync.set({ mass_interact_exclude_id: normalized });
+            const newList = [...currentList, { id: charID, name: charName }];
+            currentMap[charKey] = newList;
+            await chrome.storage.sync.set({ mass_interact_exclude_id: currentMap });
             icon.textContent = prohibitionIcon;
             icon.title = chrome.i18n.getMessage('miInclude');
         }
