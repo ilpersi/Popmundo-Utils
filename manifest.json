@@ -241,7 +241,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"
             ],
             "js": [
-                "features/item-list-timers.js",
                 "features/gotta-go-fast.js"
             ]
         },
