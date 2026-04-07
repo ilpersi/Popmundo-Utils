@@ -110,6 +110,11 @@ async function initCharSelect(selectId, storageKey, map) {
     Object.keys(map).forEach(id => {
         if (!charMap[id]) charMap[id] = `#${id}`;
     });
+    // If the DB is empty (single-character player who hasn't visited ChooseCharacter yet),
+    // fall back to the current character from session storage
+    if (Object.keys(charMap).length === 0 && currentChar && currentChar.id && currentChar.id != 0) {
+        charMap[String(currentChar.id)] = currentChar.name || `#${currentChar.id}`;
+    }
 
     // Preserve previously selected value (if any)
     const previousValue = select.value;
