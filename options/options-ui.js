@@ -243,9 +243,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // ── Reset icon chars to defaults ──
+    document.getElementById('reset_icons').addEventListener('click', () => {
+        optionDetails
+            .filter(o => o.name.endsWith('_icon'))
+            .forEach(o => loadSelect(o.name, o.default));
+    });
+
     // ── Show Developer tab in development builds or when ?debug=true is in the URL ──
     const debugParam = new URLSearchParams(window.location.search).get('debug') === 'true';
-    debugger;
     chrome.storage.local.get('install_type', ({ install_type }) => {
         if (install_type === 'development' || debugParam) {
             document.getElementById('nav-developer').classList.remove('d-none');

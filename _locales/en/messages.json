@@ -231,6 +231,10 @@
         "message": "Custom icon character",
         "description": "Tooltip for the icon character text input next to each enhanced link toggle"
     },
+    "optElResetIcons": {
+        "message": "Reset Icons to Default",
+        "description": "Button to reset all enhanced link icon characters to their default values"
+    },
     "optMiTitle": {
         "message": "Mass Interact",
         "description": "Mass Interact section card title"
