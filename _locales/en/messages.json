@@ -499,6 +499,14 @@
         "message": "Searchable tables",
         "description": "Label for the searchable tables option"
     },
+    "optMiscSearchableSelects": {
+        "message": "Searchable selects",
+        "description": "Label for the searchable selects option"
+    },
+    "searchableSelectsPlaceholder": {
+        "message": "Filter...",
+        "description": "Placeholder text for the filter input injected above enhanced select elements"
+    },
     "optMiscMessageHelper": {
         "message": "Message helper",
         "description": "Label for the message helper option"

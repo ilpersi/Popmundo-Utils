@@ -55,7 +55,8 @@
             "js": [
                 "libs/jquery-3.6.1.min.js",
                 "libs/jquery.dataTables.min.js",
-                "features/global-content-script.js"
+                "features/global-content-script.js",
+                "features/searchable-selects.js"
             ]
         },
         {

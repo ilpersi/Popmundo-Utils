@@ -34,6 +34,7 @@ const optionDetails = [
     { 'name': 'crew_top_heist_shortcut_icon', 'default': '⭐', 'save_cb': saveSelect, 'load_cb': loadSelect },
 
     // misc options
+    { 'name': 'searchable_selects', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'searchable_tables', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'progress_bar_percent', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'score_highlight', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
