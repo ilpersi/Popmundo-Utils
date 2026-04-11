@@ -76,28 +76,44 @@ class DatalistEnhancer {
         selectEl.parentNode.insertBefore(input, selectEl);
         selectEl.parentNode.insertBefore(datalist, selectEl);
 
-        // On focus: clear the input so the full datalist is immediately visible
+        // On pointerdown: clear before focus so the value is empty when the browser
+        // evaluates which datalist suggestions to display.
+        // On click: explicitly open the picker — Firefox does not auto-open the
+        // datalist dropdown on first click the way Chrome does; showPicker() fixes that.
+        // On focus: clear for keyboard navigation (Tab), which has no pointerdown/click.
+        const onPointerDown = () => { input.value = ''; };
+        const onClick = () => { try { input.showPicker(); } catch (_) {} };
         const onFocus = () => { input.value = ''; };
+        input.addEventListener('pointerdown', onPointerDown);
+        input.addEventListener('click', onClick);
         input.addEventListener('focus', onFocus);
 
-        const onChange = () => {
+        // Fires on every keystroke and on datalist selection in all browsers.
+        // Only acts on an exact option match, so partial typing has no side-effects.
+        const onInput = () => {
             const match = Array.from(selectEl.options).find(o => o.text === input.value);
-            if (match) {
+            if (match && selectEl.value !== match.value) {
                 selectEl.value = match.value;
                 selectEl.dispatchEvent(new Event('change', { bubbles: true }));
-            } else {
-                // No match (user cleared or typed something invalid) — restore displayed value
-                this._syncInputFromSelect(input, selectEl);
             }
         };
-        input.addEventListener('change', onChange);
+        // Restore the displayed value if the user blurs without a valid selection.
+        const onBlur = () => {
+            const match = Array.from(selectEl.options).find(o => o.text === input.value);
+            if (!match) this._syncInputFromSelect(input, selectEl);
+        };
+        input.addEventListener('input', onInput);
+        input.addEventListener('blur', onBlur);
 
-        return { input, datalist, onFocus, onChange };
+        return { input, datalist, onPointerDown, onClick, onFocus, onInput, onBlur };
     }
 
     destroy(selectEl, state) {
+        state.input.removeEventListener('pointerdown', state.onPointerDown);
+        state.input.removeEventListener('click', state.onClick);
         state.input.removeEventListener('focus', state.onFocus);
-        state.input.removeEventListener('change', state.onChange);
+        state.input.removeEventListener('input', state.onInput);
+        state.input.removeEventListener('blur', state.onBlur);
         state.input.parentNode?.removeChild(state.input);
         state.datalist.parentNode?.removeChild(state.datalist);
         selectEl.style.display = '';
