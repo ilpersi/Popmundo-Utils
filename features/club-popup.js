@@ -22,6 +22,23 @@ function manageClubTooltips() {
         'maxWidth': 500,
         // 'delay': [0, 500], // We wait a second to hide the tooltip because there may be interesting links to click
         'theme': popupTheme.LOADING_THEME,
+        'popperOptions': {
+            'modifiers': [
+                {
+                    'name': 'preventOverflow',
+                    'options': {
+                        'boundary': 'viewport',
+                        'padding': 8,
+                    },
+                },
+                {
+                    'name': 'flip',
+                    'options': {
+                        'fallbackPlacements': ['top', 'bottom', 'left', 'right'],
+                    },
+                },
+            ],
+        },
 
         'onCreate': function (instance) {
             // Setup our own custom state properties

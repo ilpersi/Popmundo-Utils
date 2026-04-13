@@ -20,6 +20,23 @@ function manageDetailsTooltips() {
         'maxWidth': 500,
         //'delay': [0, 500000], // Uncomment if you need to debug the tippy tooltip
         'theme': popupTheme.LOADING_THEME,
+        'popperOptions': {
+            'modifiers': [
+                {
+                    'name': 'preventOverflow',
+                    'options': {
+                        'boundary': 'viewport',
+                        'padding': 8,
+                    },
+                },
+                {
+                    'name': 'flip',
+                    'options': {
+                        'fallbackPlacements': ['top', 'bottom', 'left', 'right'],
+                    },
+                },
+            ],
+        },
 
         'onCreate': function (instance) {
             // Setup our own custom state properties
