@@ -41,8 +41,8 @@ class DatalistEnhancer {
         Object.assign(input.style, {
             display: 'block',
             boxSizing: 'border-box',
-            width: '100%',
             // Mirror the native select's visual style (theme-aware)
+            width:           cs.width,
             borderWidth:     cs.borderWidth,
             borderStyle:     cs.borderStyle,
             borderColor:     cs.borderColor,
