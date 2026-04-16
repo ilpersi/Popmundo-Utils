@@ -1,3 +1,7 @@
+# Excluded extensions
 *.zip
 *.md
 *.DS_Store
+
+# Force Include README file
+!README.md
