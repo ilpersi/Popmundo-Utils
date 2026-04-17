@@ -1,149 +1,260 @@
 /**
- * Get day of the year and year number for a specific data
+ * Get day of the year and year number for a specific date.
  *
- * @param {Date} [date=new Date()] The input date 
- * @return {object} An object with two keys 'year' for the number of the year and 'day' for the number of the day
+ * @param {Date} [date=new Date()] The input date
+ * @return {{year: number, day: number}} year = Popmundo year number, day = day within that year (1–56)
  */
 function getDayDetails(date = new Date()) {
-
     const YEAR_DAYS = 56;
     const DAY_DURATION = 1000 * 60 * 60 * 24;
     const DAY1 = new Date(2003, 0, 1, 0, 0, 0);
 
     let yesterday = new Date(date - DAY_DURATION);
-    // we make sure we do not include current day in computations
     yesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59);
 
-    // We cound the difference in days sinche the beginning. We make sure to add one to include today in the computation
-    let dayDifference = Math.ceil((yesterday - DAY1) / (DAY_DURATION)) + 1;
+    let dayDifference = Math.ceil((yesterday - DAY1) / DAY_DURATION) + 1;
     let yearNumber = Math.ceil(dayDifference / YEAR_DAYS);
-
-    // As we use module operator, on day 56 we get 0
     let dayOfYear = parseInt(dayDifference % YEAR_DAYS);
     dayOfYear = dayOfYear === 0 ? 56 : dayOfYear;
 
-    // console.log('Day ' + dayOfYear + ' of year ' + yearNumber);
     return { year: yearNumber, day: dayOfYear };
+}
 
+/**
+ * Replace BBCode tags in reminder text with their HTML equivalents.
+ * Recognised tags:
+ *   [year]                                → current Popmundo year number
+ *   [yearday]                             → current day within the Popmundo year
+ *   [localeid=NNN name=SSS]               → anchor linking to a locale
+ *   [itemdetailsid=NNN name=SSS]          → anchor linking to an item-details page
+ * Names containing spaces must be quoted: name="My Name Here"
+ *
+ * @param {string} text        Raw reminder text with BBCode tags
+ * @param {{year: number, day: number}} dayDetails
+ * @return {string} HTML string safe for assignment to innerHTML
+ */
+function parseBBCode(text, dayDetails) {
+    let result = text;
+
+    result = result.replace(/\[year\]/g, String(dayDetails.year));
+    result = result.replace(/\[yearday\]/g, String(dayDetails.day));
+
+    result = result.replace(
+        /\[localeid=(\d+)\s+name=(?:"([^"]*)"|([\S]+))\]/g,
+        (_, id, quotedName, unquotedName) => {
+            const name = quotedName !== undefined ? quotedName : unquotedName;
+            const href = Utils.getServerLink(`/World/Popmundo.aspx/Locale/${id}`);
+            return `<a href="${href}">${name}</a>`;
+        }
+    );
+
+    result = result.replace(
+        /\[itemdetailsid=(\d+)\s+name=(?:"([^"]*)"|([\S]+))\]/g,
+        (_, id, quotedName, unquotedName) => {
+            const name = quotedName !== undefined ? quotedName : unquotedName;
+            const href = Utils.getServerLink(`/World/Popmundo.aspx/Locale/ItemDetails/${id}`);
+            return `<a href="${href}">${name}</a>`;
+        }
+    );
+
+    return result;
+}
+
+/**
+ * Build the instance ID that uniquely identifies one occurrence of a custom reminder.
+ * Uses Popmundo year + day so each calendar instance is tracked independently.
+ *
+ * @param {string} reminderId  The reminder's persistent ID
+ * @param {number} year        Current Popmundo year
+ * @param {number} day         Current Popmundo day
+ * @return {string}
+ */
+function makeInstanceId(reminderId, year, day) {
+    return `${reminderId}-y${year}-d${day}`;
+}
+
+/**
+ * Extract the Popmundo year embedded in a dismissed instance ID.
+ *
+ * @param {string} instanceId
+ * @return {number|null}
+ */
+function extractYearFromInstanceId(instanceId) {
+    const match = instanceId.match(/-y(\d+)-d\d+$/);
+    return match ? parseInt(match[1]) : null;
+}
+
+/**
+ * Remove dismissed entries whose Popmundo year is more than 1 year behind the current one.
+ *
+ * @param {string[]} dismissed   Array of dismissed instance IDs
+ * @param {number}   currentYear Current Popmundo year
+ * @return {string[]} Cleaned array
+ */
+function cleanupDismissedReminders(dismissed, currentYear) {
+    return dismissed.filter(id => {
+        const year = extractYearFromInstanceId(id);
+        return year === null || (currentYear - year) <= 1;
+    });
+}
+
+/**
+ * Create and display a reminder notification via the Notifications class.
+ *
+ * @param {Notifications} notifications
+ * @param {string}        notifId   HTML id for the notification div
+ * @param {string}        html      Inner HTML content (may contain anchor tags)
+ * @return {Element|null}
+ */
+function showReminderNotification(notifications, notifId, html) {
+    const node = notifications.notifySuccess(notifId);
+    if (node) node.innerHTML = html;
+    return node;
 }
 
 function checkReminders() {
+    const dateDetails = getDayDetails();
+    const jsDay = new Date().getDay(); // 0 = Sunday
+    const isoDay = jsDay === 0 ? 7 : jsDay; // ISO: 1 = Monday … 7 = Sunday
 
-    // Only possible workaround to inject custom scripts via content scripts
-    // It is not the best solution, but what happens is that the injected script will trigger a custom deleteAndredirect used later on in the script
-    let s = document.createElement('script');
-    s.src = chrome.runtime.getURL('/injected-js/reminders-injected.js');
-    s.onload = function() { this.remove(); };
-    (document.head || document.documentElement).appendChild(s);
+    const STORAGE_DEFAULTS = {
+        timers: {},
+        user_reminders: [],
+        dismissed_reminders: [],
+        reminders_show_timers: true,
+    };
 
-    // Custom event triggered by the injected script
-    document.addEventListener('deleteAndredirect', function (e) {
-        let data = e.detail;
+    // ------------------------------------------------------------------
+    // Single DOM event handler for dismiss and navigate actions.
+    // Notification links dispatch 'pmUtilsReminder' via click delegation
+    // below; this listener performs the actual storage updates.
+    // ------------------------------------------------------------------
+    document.addEventListener('pmUtilsReminder', function (e) {
+        const { action, reminderId, itemId } = e.detail;
 
-        chrome.storage.sync.get(TIMERS_STORAGE_VALUE)
-            .then((items) => {
+        if (action === 'dismiss') {
+            // Remove the notification element immediately
+            const notifEl = document.getElementById(`reminder-${reminderId}`);
+            if (notifEl) notifEl.remove();
 
-                // Is character id present?
-                if (items.timers.hasOwnProperty(data.characterID)) {
-                    let timers = items.timers;
-
-                    // Is the item id present in the storage?
-                    if (timers[data.characterID].hasOwnProperty(data.itemID)) {
-                        delete timers[data.characterID][data.itemID];
-                        chrome.storage.sync.set({ "timers": timers }, null);
+            if (reminderId.startsWith('timer-')) {
+                // Timer reminder: delete the entry from the timers storage key
+                const parts = reminderId.split('-');
+                const charId = parts[1];
+                const tItemId = parts[2];
+                chrome.storage.sync.get({ timers: {} }).then(data => {
+                    if (data.timers[charId] && data.timers[charId][tItemId]) {
+                        delete data.timers[charId][tItemId];
+                        chrome.storage.sync.set({ timers: data.timers });
                     }
-                }
-            });
-
-        if (data.redirect) {
-            // https://74.popmundo.com/World/Popmundo.aspx/Character/ItemDetails/12345
-            let itemHREF = Utils.getServerLink(`/World/Popmundo.aspx/Character/ItemDetails/${data.itemID}`);
-            window.location.href = itemHREF;
-        } else {
-            // We should delete the notification
-        }
-    });
-
-    // Storage key for item timers
-    const TIMERS_STORAGE_VALUE = { 'timers': {} };
-
-    let dateDetails = getDayDetails();
-    let todayStr = chrome.i18n.getMessage('remTodayIs', [String(dateDetails.day), String(dateDetails.year)]);
-
-    const REMINDERS = [
-        // { dayNumber: 26, reminder: `Test day 26.` },
-        { dayNumber: 27, id: `day-27-${dateDetails.year}`, type: 'html', reminder: `Remember to visit <a href="${Utils.getServerLink('/World/Popmundo.aspx/Locale/4141')}">Stockholm's Graveyard</a> and use the <a href="${Utils.getServerLink('/World/Popmundo.aspx/Locale/ItemDetails/103487217')}">Frank Blomdahl Minneslund</a> Monolith to get 3 experince points.` },
-        { dayNumber: 28, id: `day-28-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay28') },
-        { dayNumber: 40, id: `day-40-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay40') },
-        { dayNumber: 48, id: `day-48-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay48') },
-        { dayNumber: 52, id: `day-52-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay52') },
-        { dayNumber: 54, id: `day-54-${dateDetails.year}`, type: 'text', reminder: chrome.i18n.getMessage('remDay54') },
-    ];
-
-    if (Utils.isGreatHeist()) {
-        let nowDate = new Date();
-        
-        if (nowDate.getDay() == 4) {
-            let cardReminder = {
-                dayNumber: dateDetails.day,
-                id: `tgh-card-day-${dateDetails.year}-${dateDetails.day}`,
-                type: 'text',
-                reminder: chrome.i18n.getMessage('remThursdayCards'),
-            };
-
-            REMINDERS.push(cardReminder);
-        } 
-
-    }
-
-    let notificationData = [];
-    REMINDERS.forEach((info) => {
-        if (info.dayNumber == dateDetails.day) {
-            let details = {
-                id: info.id,
-                type: info.type,
-                content: `${todayStr} ${info.reminder}`,
-            };
-
-            notificationData.push(details);
-        }
-    });
-
-    chrome.storage.sync.get(TIMERS_STORAGE_VALUE)
-        .then((items) => {
-
-            let nowTimeStamp = Date.now();
-            let myID = Utils.getMyID();
-
-            if (items.timers.hasOwnProperty(myID)) {
-                let timers = items.timers[myID];
-
-                for (const [itemID, itemDetails] of Object.entries(timers)) {
-                    if (nowTimeStamp < itemDetails.timerTimeStamp) continue;
-
-                    let details = {
-                        id: itemID,
-                        type: 'html',
-                        content: `${chrome.i18n.getMessage('remItemReady', [itemDetails.name])} <a id='item-${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, true)'>${chrome.i18n.getMessage('remUseLink')}</a>
-                        or <a id='${itemID}' onclick='deleteAndredirect(${myID}, ${itemID}, false)'>${chrome.i18n.getMessage('remDismissLink')}</a>.`,
-                    };
-
-                    notificationData.push(details);
-                }
+                });
+            } else {
+                // Custom reminder: persist this instance as dismissed
+                chrome.storage.sync.get({ dismissed_reminders: [] }).then(data => {
+                    const instanceId = makeInstanceId(reminderId, dateDetails.year, dateDetails.day);
+                    const cleaned = cleanupDismissedReminders(data.dismissed_reminders, dateDetails.year);
+                    if (!cleaned.includes(instanceId)) {
+                        cleaned.push(instanceId);
+                        chrome.storage.sync.set({ dismissed_reminders: cleaned });
+                    }
+                });
             }
 
-            let notifications = new Notifications();
-            // notifications.deleteAll();
-
-            notificationData.forEach((details) => {
-                if ('text' === details.type)
-                    notifications.notifySuccess(details.id, details.content);
-                else if ('html' === details.type) {
-                    let notificationNode = notifications.notifySuccess(details.id);
-                    notificationNode.innerHTML = details.content;
+        } else if (action === 'navigate') {
+            // Timer reminder: dismiss the entry and redirect to the item-details page
+            const parts = reminderId.split('-');
+            const charId = parts[1];
+            const actualItemId = itemId || parts[2];
+            chrome.storage.sync.get({ timers: {} }).then(data => {
+                if (data.timers[charId] && data.timers[charId][actualItemId]) {
+                    delete data.timers[charId][actualItemId];
+                    chrome.storage.sync.set({ timers: data.timers });
                 }
             });
+            window.location.href = Utils.getServerLink(`/World/Popmundo.aspx/Character/ItemDetails/${actualItemId}`);
+        }
+    });
+
+    chrome.storage.sync.get(STORAGE_DEFAULTS).then(items => {
+        const notifications = new Notifications();
+        const isGH = Utils.isGreatHeist();
+        const myID = Utils.getMyID();
+        const nowTimestamp = Date.now();
+        const todayStr = chrome.i18n.getMessage('remTodayIs', [String(dateDetails.day), String(dateDetails.year)]);
+        const dismissLabel = chrome.i18n.getMessage('remDismissLink');
+
+        // Clean up stale dismissed entries and rebuild the lookup set
+        const cleanedDismissed = cleanupDismissedReminders(items.dismissed_reminders, dateDetails.year);
+        if (cleanedDismissed.length !== items.dismissed_reminders.length) {
+            chrome.storage.sync.set({ dismissed_reminders: cleanedDismissed });
+        }
+        const dismissedSet = new Set(cleanedDismissed);
+
+        // ------------------------------------------------------------------
+        // Custom reminders
+        // ------------------------------------------------------------------
+        items.user_reminders.forEach(reminder => {
+            if (!reminder.active) return;
+            if (isGH && !reminder.forGreatHeist) return;
+            if (!isGH && !reminder.forPopmundo) return;
+
+            const fires = (reminder.type === 'yearday' && reminder.dayValue === dateDetails.day)
+                       || (reminder.type === 'weekday' && reminder.dayValue === isoDay);
+            if (!fires) return;
+
+            const instanceId = makeInstanceId(reminder.id, dateDetails.year, dateDetails.day);
+            if (dismissedSet.has(instanceId)) return;
+
+            const parsedText = parseBBCode(reminder.text, dateDetails);
+            const dismissHref = `<a href="#" data-pm-action="dismiss" data-pm-rid="${reminder.id}">${dismissLabel}</a>`;
+            showReminderNotification(
+                notifications,
+                `reminder-${reminder.id}`,
+                `${todayStr} ${parsedText} ${dismissHref}`
+            );
         });
+
+        // ------------------------------------------------------------------
+        // Timer reminders
+        // ------------------------------------------------------------------
+        if (items.reminders_show_timers && items.timers[myID]) {
+            const useLabel = chrome.i18n.getMessage('remUseLink');
+
+            Object.entries(items.timers[myID]).forEach(([itemID, itemDetails]) => {
+                if (nowTimestamp < itemDetails.timerTimeStamp) return;
+
+                const reminderId = `timer-${myID}-${itemID}`;
+                const itemReadyText = chrome.i18n.getMessage('remItemReady', [itemDetails.name]);
+                const navHref = `<a href="#" data-pm-action="navigate" data-pm-rid="${reminderId}" data-pm-iid="${itemID}">${useLabel}</a>`;
+                const dismissHref = `<a href="#" data-pm-action="dismiss" data-pm-rid="${reminderId}">${dismissLabel}</a>`;
+                showReminderNotification(
+                    notifications,
+                    `reminder-${reminderId}`,
+                    `${itemReadyText} ${navHref} or ${dismissHref}.`
+                );
+            });
+        }
+
+        // ------------------------------------------------------------------
+        // Click delegation: intercept action links inside the notifications
+        // container and dispatch the pmUtilsReminder custom event.
+        // ------------------------------------------------------------------
+        const notifContainer = document.getElementById('notifications');
+        if (notifContainer) {
+            notifContainer.addEventListener('click', function (e) {
+                const link = e.target.closest('[data-pm-action]');
+                if (!link) return;
+                e.preventDefault();
+                document.dispatchEvent(new CustomEvent('pmUtilsReminder', {
+                    detail: {
+                        action: link.dataset.pmAction,
+                        reminderId: link.dataset.pmRid,
+                        itemId: link.dataset.pmIid || null,
+                    }
+                }));
+            });
+        }
+    });
 }
 
 checkReminders();

@@ -1476,5 +1476,174 @@
                 "example": "500"
             }
         }
+    },
+
+    "navReminders": {
+        "message": "Reminders",
+        "description": "Sidebar nav label for the Reminders options section"
+    },
+    "optRemTitle": {
+        "message": "Reminders",
+        "description": "Card heading for the Reminders options section"
+    },
+    "optRemDescription": {
+        "message": "Manage your custom reminders and control item timer notifications.",
+        "description": "Description paragraph at the top of the Reminders options section"
+    },
+    "optRemGroupTimers": {
+        "message": "Timer Notifications",
+        "description": "Group heading for the timer-notifications toggle in Reminders options"
+    },
+    "optRemShowTimers": {
+        "message": "Show item timer notifications",
+        "description": "Checkbox label to enable/disable item timer notifications"
+    },
+    "optRemGroupReminders": {
+        "message": "Custom Reminders",
+        "description": "Group heading for the custom reminders list in Reminders options"
+    },
+    "optRemAddButton": {
+        "message": "Add Reminder",
+        "description": "Button label to open the add-reminder modal"
+    },
+    "optRemAddModalTitle": {
+        "message": "Add Reminder",
+        "description": "Modal title when creating a new reminder"
+    },
+    "optRemEditModalTitle": {
+        "message": "Edit Reminder",
+        "description": "Modal title when editing an existing reminder"
+    },
+    "optRemTypeLabel": {
+        "message": "Trigger Type",
+        "description": "Label for the trigger-type radio group in the reminder modal"
+    },
+    "optRemTypeYearday": {
+        "message": "Day of Popmundo Year (1\u201356)",
+        "description": "Radio option label for year-day trigger type"
+    },
+    "optRemTypeWeekday": {
+        "message": "Day of Week",
+        "description": "Radio option label for weekday trigger type"
+    },
+    "optRemYeardayLabel": {
+        "message": "Popmundo Year Day (1\u201356)",
+        "description": "Input label for the year-day number field in the reminder modal"
+    },
+    "optRemWeekdayLabel": {
+        "message": "Day of Week",
+        "description": "Select label for the weekday picker in the reminder modal"
+    },
+    "optRemGameLabel": {
+        "message": "Game",
+        "description": "Label for the game-flag checkboxes in the reminder modal"
+    },
+    "optRemForPopmundo": {
+        "message": "Popmundo",
+        "description": "Checkbox label for the Popmundo game flag"
+    },
+    "optRemForGreatHeist": {
+        "message": "The Great Heist",
+        "description": "Checkbox label for The Great Heist game flag"
+    },
+    "optRemActiveLabel": {
+        "message": "Active",
+        "description": "Toggle label for enabling/disabling a reminder"
+    },
+    "optRemTextLabel": {
+        "message": "Reminder Text",
+        "description": "Label for the reminder text textarea in the modal"
+    },
+    "optRemTextPlaceholder": {
+        "message": "Enter reminder text\u2026",
+        "description": "Placeholder for the reminder text textarea"
+    },
+    "optRemDescriptionLabel": {
+        "message": "Description (optional)",
+        "description": "Label for the optional description textarea in the reminder modal"
+    },
+    "optRemDescriptionPlaceholder": {
+        "message": "Enter a short description\u2026",
+        "description": "Placeholder for the optional description textarea"
+    },
+    "optRemBBCodeHelp": {
+        "message": "Available tags: [year], [yearday], [localeid=NNN name=SSS], [itemdetailsid=NNN name=SSS]. Use quotes for names with spaces, e.g. name=\"My Place\".",
+        "description": "Help text explaining the BBCode tags available in reminder text"
+    },
+    "optRemSaveButton": {
+        "message": "Add",
+        "description": "Confirm button in the reminder modal when creating a new reminder"
+    },
+    "optRemUpdateButton": {
+        "message": "Update",
+        "description": "Confirm button in the reminder modal when editing an existing reminder"
+    },
+    "optRemCancelButton": {
+        "message": "Cancel",
+        "description": "Cancel button in the reminder modal"
+    },
+    "optRemEditButton": {
+        "message": "Edit",
+        "description": "Edit action button on a reminder card"
+    },
+    "optRemDeleteButton": {
+        "message": "Delete",
+        "description": "Delete action button on a reminder card"
+    },
+    "optRemNoReminders": {
+        "message": "No reminders yet. Click \u2018Add Reminder\u2019 to create one.",
+        "description": "Empty-state message shown when there are no custom reminders"
+    },
+    "optRemTypeRequired": {
+        "message": "Please select a trigger type.",
+        "description": "Validation error when no trigger type is selected in the reminder modal"
+    },
+    "optRemDayInvalid": {
+        "message": "Day value must be between 1 and 56.",
+        "description": "Validation error when the year-day value is out of range"
+    },
+    "optRemGameRequired": {
+        "message": "Please select at least one game.",
+        "description": "Validation error when neither game flag is checked in the reminder modal"
+    },
+    "optRemTextRequired": {
+        "message": "Please enter the reminder text.",
+        "description": "Validation error when the reminder text field is empty"
+    },
+    "optRemInactive": {
+        "message": "Inactive",
+        "description": "Badge label shown on inactive reminder cards"
+    },
+    "optRemYeardayBadge": {
+        "message": "Year Day",
+        "description": "Badge prefix for year-day reminder type on cards (followed by the day number)"
+    },
+    "optRemWeekday1": {
+        "message": "Monday",
+        "description": "Weekday name for ISO day 1"
+    },
+    "optRemWeekday2": {
+        "message": "Tuesday",
+        "description": "Weekday name for ISO day 2"
+    },
+    "optRemWeekday3": {
+        "message": "Wednesday",
+        "description": "Weekday name for ISO day 3"
+    },
+    "optRemWeekday4": {
+        "message": "Thursday",
+        "description": "Weekday name for ISO day 4"
+    },
+    "optRemWeekday5": {
+        "message": "Friday",
+        "description": "Weekday name for ISO day 5"
+    },
+    "optRemWeekday6": {
+        "message": "Saturday",
+        "description": "Weekday name for ISO day 6"
+    },
+    "optRemWeekday7": {
+        "message": "Sunday",
+        "description": "Weekday name for ISO day 7"
     }
 }

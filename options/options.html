@@ -114,6 +114,7 @@
                             Interact</a>
                         <a class="nav-link" href="#" data-tab="tab-misc" data-i18n="navMiscOptions">Misc Options</a>
                         <a class="nav-link" href="#" data-tab="tab-popup" data-i18n="navPopupOptions">Popup Options</a>
+                        <a class="nav-link" href="#" data-tab="tab-reminders" data-i18n="navReminders">Reminders</a>
                         <a class="nav-link" href="#" data-tab="tab-tour-bus" data-i18n="navTourBusHelper">Tour Bus
                             Helper</a>
                         <a class="nav-link d-none" href="#" data-tab="tab-developer" id="nav-developer" data-i18n="navDeveloper">Developer</a>
@@ -1092,6 +1093,39 @@
                     </div>
                 </div>
 
+                <!-- ── Reminders ── -->
+                <div id="tab-reminders" class="tab-content-section d-none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" data-i18n="optRemTitle">Reminders</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3" data-i18n="optRemDescription">Manage your custom reminders and control item timer notifications.</p>
+
+                            <div class="option-group-title" data-i18n="optRemGroupTimers">Timer Notifications</div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="reminders_show_timers">
+                                        <label class="form-check-label" for="reminders_show_timers" data-i18n="optRemShowTimers">Show item timer notifications</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="option-group-title" data-i18n="optRemGroupReminders">Custom Reminders</div>
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-sm btn-primary" id="add-reminder-btn" data-i18n="optRemAddButton">Add Reminder</button>
+                            </div>
+
+                            <!-- Hidden inputs: round-trip user_reminders and dismissed_reminders through Save -->
+                            <input type="hidden" id="user_reminders">
+                            <input type="hidden" id="dismissed_reminders">
+
+                            <div id="user_reminders_list"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ── Tour Bus Helper ── -->
                 <div id="tab-tour-bus" class="tab-content-section d-none">
                     <div class="card">
@@ -1174,6 +1208,103 @@
             </div><!-- /col-lg-9 -->
         </div><!-- /row -->
     </div><!-- /container-fluid -->
+
+    <!-- ── Reminder add/edit modal ── -->
+    <div class="modal fade" id="reminderModal" tabindex="-1" aria-labelledby="reminderModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reminderModalTitle" data-i18n="optRemAddModalTitle">Add Reminder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Trigger type -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" data-i18n="optRemTypeLabel">Trigger Type</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reminder_type" id="type_yearday" value="yearday">
+                                <label class="form-check-label" for="type_yearday" data-i18n="optRemTypeYearday">Day of Popmundo Year (1–56)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reminder_type" id="type_weekday" value="weekday">
+                                <label class="form-check-label" for="type_weekday" data-i18n="optRemTypeWeekday">Day of Week</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Year-day input (shown when type = yearday) -->
+                    <div class="mb-3" id="yearday_input_group">
+                        <label for="reminder_yearday" class="form-label" data-i18n="optRemYeardayLabel">Popmundo Year Day (1–56)</label>
+                        <input type="number" class="form-control form-control-sm" id="reminder_yearday" min="1" max="56" style="width:100px;">
+                    </div>
+
+                    <!-- Weekday select (shown when type = weekday) -->
+                    <div class="mb-3 d-none" id="weekday_input_group">
+                        <label for="reminder_weekday" class="form-label" data-i18n="optRemWeekdayLabel">Day of Week</label>
+                        <select class="form-select form-select-sm" id="reminder_weekday" style="width:160px;">
+                            <option value="1" data-i18n="optRemWeekday1">Monday</option>
+                            <option value="2" data-i18n="optRemWeekday2">Tuesday</option>
+                            <option value="3" data-i18n="optRemWeekday3">Wednesday</option>
+                            <option value="4" data-i18n="optRemWeekday4">Thursday</option>
+                            <option value="5" data-i18n="optRemWeekday5">Friday</option>
+                            <option value="6" data-i18n="optRemWeekday6">Saturday</option>
+                            <option value="7" data-i18n="optRemWeekday7">Sunday</option>
+                        </select>
+                    </div>
+
+                    <!-- Game flags -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" data-i18n="optRemGameLabel">Game</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="reminder_for_popmundo" checked>
+                                <label class="form-check-label" for="reminder_for_popmundo" data-i18n="optRemForPopmundo">Popmundo</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="reminder_for_great_heist" checked>
+                                <label class="form-check-label" for="reminder_for_great_heist" data-i18n="optRemForGreatHeist">The Great Heist</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active toggle -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="reminder_active" checked>
+                            <label class="form-check-label" for="reminder_active" data-i18n="optRemActiveLabel">Active</label>
+                        </div>
+                    </div>
+
+                    <!-- Reminder text -->
+                    <div class="mb-3">
+                        <label for="reminder_text" class="form-label fw-semibold" data-i18n="optRemTextLabel">Reminder Text</label>
+                        <textarea class="form-control form-control-sm" id="reminder_text" rows="3"
+                            placeholder="Enter reminder text…"
+                            data-i18n-placeholder="optRemTextPlaceholder"></textarea>
+                        <div class="form-text" data-i18n="optRemBBCodeHelp">Available tags: [year], [yearday], [localeid=NNN name=SSS], [itemdetailsid=NNN name=SSS].</div>
+                    </div>
+
+                    <!-- Optional description -->
+                    <div class="mb-3">
+                        <label for="reminder_description" class="form-label" data-i18n="optRemDescriptionLabel">Description (optional)</label>
+                        <textarea class="form-control form-control-sm" id="reminder_description" rows="2"
+                            placeholder="Enter a short description…"
+                            data-i18n-placeholder="optRemDescriptionPlaceholder"></textarea>
+                    </div>
+
+                    <!-- Validation message -->
+                    <div id="reminder_validation" class="text-danger small d-none"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" data-i18n="optRemCancelButton">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="save-reminder-btn" data-i18n="optRemSaveButton">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="options.js"></script>
     <script src="../libs/popper.min.js"></script>

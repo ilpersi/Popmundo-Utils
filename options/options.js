@@ -126,6 +126,11 @@ const optionDetails = [
     { 'name': 'mass_interact_pick_up', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_kiss_on_forehead', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 
+    // reminders options
+    { 'name': 'reminders_show_timers', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'user_reminders', 'default': [], 'save_cb': saveReminders, 'load_cb': loadReminders },
+    { 'name': 'dismissed_reminders', 'default': [], 'save_cb': saveReminderPassthrough, 'load_cb': loadReminderPassthrough },
+
     // developer options (only shown in development builds)
     { 'name': 'log_level', 'default': 3, 'save_cb': saveInteger, 'load_cb': loadInteger },
 ]
@@ -246,6 +251,42 @@ function loadSelect(optionName, optionValue) {
         formElem.value = String(optionValue);
     }
 
+}
+
+function saveReminders(optionName, defaultValue) {
+    const hidden = document.getElementById(optionName);
+    if (!hidden) return defaultValue;
+    try {
+        const parsed = JSON.parse(hidden.value || '[]');
+        return Array.isArray(parsed) ? parsed : defaultValue;
+    } catch (_) {
+        return defaultValue;
+    }
+}
+
+function loadReminders(optionName, optionValue) {
+    const reminders = Array.isArray(optionValue) ? optionValue : [];
+    const hidden = document.getElementById(optionName);
+    if (hidden) hidden.value = JSON.stringify(reminders);
+    renderRemindersList(optionName, reminders);
+}
+
+// dismissed_reminders is managed by the content script; the options page just
+// round-trips the stored value so Save does not wipe it.
+function saveReminderPassthrough(optionName, defaultValue) {
+    const hidden = document.getElementById(optionName);
+    if (!hidden) return defaultValue;
+    try {
+        const parsed = JSON.parse(hidden.value || '[]');
+        return Array.isArray(parsed) ? parsed : defaultValue;
+    } catch (_) {
+        return defaultValue;
+    }
+}
+
+function loadReminderPassthrough(optionName, optionValue) {
+    const hidden = document.getElementById(optionName);
+    if (hidden) hidden.value = JSON.stringify(Array.isArray(optionValue) ? optionValue : []);
 }
 
 // Saves options to chrome.storage

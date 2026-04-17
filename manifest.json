@@ -277,14 +277,6 @@
             "matches": [
                 "https://*.popmundo.com/*"
             ]
-        },
-        {
-            "resources": [
-                "/injected-js/reminders-injected.js"
-            ],
-            "matches": [
-                "https://*.popmundo.com/*"
-            ]
         }
     ],
     "options_page": "options/options.html"

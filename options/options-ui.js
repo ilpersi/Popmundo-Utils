@@ -167,6 +167,297 @@ async function initCharSelect(selectId, storageKey, map) {
     });
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Reminders UI
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** ID of the reminder currently open in the modal (null when adding). */
+let currentEditingReminderId = null;
+
+/**
+ * Render the reminder list cards inside #user_reminders_list.
+ * Called by loadReminders in options.js after storage is read.
+ *
+ * @param {string} storageKey  The hidden input id (always 'user_reminders')
+ * @param {Array}  reminders   Array of reminder objects
+ */
+function renderRemindersList(storageKey, reminders) {
+    const container = document.getElementById(storageKey + '_list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!reminders || reminders.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'text-muted small mb-0';
+        empty.textContent = chrome.i18n.getMessage('optRemNoReminders') || "No reminders yet. Click 'Add Reminder' to create one.";
+        container.appendChild(empty);
+        return;
+    }
+
+    const row = document.createElement('div');
+    row.className = 'row g-2';
+
+    reminders.forEach(reminder => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4';
+        col.appendChild(buildReminderCard(reminder));
+        row.appendChild(col);
+    });
+
+    container.appendChild(row);
+}
+
+/**
+ * Build a single reminder card element.
+ *
+ * @param {Object} reminder
+ * @return {HTMLElement}
+ */
+function buildReminderCard(reminder) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'border rounded p-2 h-100' + (reminder.active ? '' : ' opacity-50 bg-light');
+    wrapper.dataset.reminderId = reminder.id;
+
+    // ── Header row: badges + action buttons ──────────────────────────────────
+    const header = document.createElement('div');
+    header.className = 'd-flex justify-content-between align-items-start mb-1';
+
+    const badges = document.createElement('div');
+    badges.className = 'd-flex gap-1 flex-wrap';
+
+    if (!reminder.active) {
+        const b = document.createElement('span');
+        b.className = 'badge bg-secondary';
+        b.textContent = chrome.i18n.getMessage('optRemInactive') || 'Inactive';
+        badges.appendChild(b);
+    }
+
+    // Type badge
+    const typeBadge = document.createElement('span');
+    typeBadge.className = 'badge bg-info text-dark';
+    if (reminder.type === 'yearday') {
+        typeBadge.textContent = (chrome.i18n.getMessage('optRemYeardayBadge') || 'Year Day') + ' ' + reminder.dayValue;
+    } else {
+        typeBadge.textContent = chrome.i18n.getMessage('optRemWeekday' + reminder.dayValue) || reminder.dayValue;
+    }
+    badges.appendChild(typeBadge);
+
+    // Game badges
+    if (reminder.forPopmundo) {
+        const b = document.createElement('span');
+        b.className = 'badge bg-primary';
+        b.textContent = chrome.i18n.getMessage('optRemForPopmundo') || 'Popmundo';
+        badges.appendChild(b);
+    }
+    if (reminder.forGreatHeist) {
+        const b = document.createElement('span');
+        b.className = 'badge bg-success';
+        b.textContent = chrome.i18n.getMessage('optRemForGreatHeist') || 'The Great Heist';
+        badges.appendChild(b);
+    }
+
+    // Action buttons
+    const actions = document.createElement('div');
+    actions.className = 'd-flex gap-1 flex-shrink-0 ms-2';
+
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'btn btn-sm btn-outline-primary py-0 px-2';
+    editBtn.textContent = chrome.i18n.getMessage('optRemEditButton') || 'Edit';
+    editBtn.addEventListener('click', () => openReminderModal(reminder));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'btn btn-sm btn-outline-danger py-0 px-2';
+    deleteBtn.textContent = chrome.i18n.getMessage('optRemDeleteButton') || 'Delete';
+    deleteBtn.addEventListener('click', () => deleteReminder(reminder.id));
+
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+
+    header.appendChild(badges);
+    header.appendChild(actions);
+    wrapper.appendChild(header);
+
+    // ── Optional description ──────────────────────────────────────────────────
+    if (reminder.description) {
+        const desc = document.createElement('div');
+        desc.className = 'small text-muted mb-1';
+        desc.textContent = reminder.description;
+        wrapper.appendChild(desc);
+    }
+
+    // ── Text preview ──────────────────────────────────────────────────────────
+    const textPreview = document.createElement('div');
+    textPreview.className = 'small text-truncate font-monospace';
+    textPreview.title = reminder.text;
+    textPreview.textContent = reminder.text;
+    wrapper.appendChild(textPreview);
+
+    return wrapper;
+}
+
+/**
+ * Open the add/edit modal, pre-populated with the given reminder (or blank for add).
+ *
+ * @param {Object|null} reminder  Existing reminder to edit, or null to add new.
+ */
+function openReminderModal(reminder = null) {
+    currentEditingReminderId = reminder ? reminder.id : null;
+
+    const isEdit = reminder !== null;
+    const modalTitleEl = document.getElementById('reminderModalTitle');
+    if (modalTitleEl) {
+        modalTitleEl.textContent = chrome.i18n.getMessage(
+            isEdit ? 'optRemEditModalTitle' : 'optRemAddModalTitle'
+        ) || (isEdit ? 'Edit Reminder' : 'Add Reminder');
+    }
+
+    // Trigger type
+    const typeYearday = document.getElementById('type_yearday');
+    const typeWeekday = document.getElementById('type_weekday');
+    if (typeYearday) typeYearday.checked = !isEdit || reminder.type === 'yearday';
+    if (typeWeekday) typeWeekday.checked = isEdit && reminder.type === 'weekday';
+
+    // Day value
+    const yeardayInput = document.getElementById('reminder_yearday');
+    if (yeardayInput) yeardayInput.value = (isEdit && reminder.type === 'yearday') ? reminder.dayValue : '';
+
+    const weekdaySelect = document.getElementById('reminder_weekday');
+    if (weekdaySelect) weekdaySelect.value = (isEdit && reminder.type === 'weekday') ? String(reminder.dayValue) : '1';
+
+    // Game flags (both on by default for new reminders)
+    const pmCb = document.getElementById('reminder_for_popmundo');
+    if (pmCb) pmCb.checked = !isEdit || reminder.forPopmundo;
+    const ghCb = document.getElementById('reminder_for_great_heist');
+    if (ghCb) ghCb.checked = !isEdit || reminder.forGreatHeist;
+
+    // Active
+    const activeCb = document.getElementById('reminder_active');
+    if (activeCb) activeCb.checked = !isEdit || reminder.active;
+
+    // Text / description
+    const textArea = document.getElementById('reminder_text');
+    if (textArea) textArea.value = isEdit ? reminder.text : '';
+    const descArea = document.getElementById('reminder_description');
+    if (descArea) descArea.value = (isEdit && reminder.description) ? reminder.description : '';
+
+    // Confirm button label: "Add" for new, "Update" for edit
+    const confirmBtn = document.getElementById('save-reminder-btn');
+    if (confirmBtn) {
+        confirmBtn.textContent = chrome.i18n.getMessage(
+            isEdit ? 'optRemUpdateButton' : 'optRemSaveButton'
+        ) || (isEdit ? 'Update' : 'Add');
+    }
+
+    // Clear validation
+    const validationEl = document.getElementById('reminder_validation');
+    if (validationEl) validationEl.classList.add('d-none');
+
+    updateTypeInputVisibility();
+
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('reminderModal'));
+    modal.show();
+}
+
+/** Toggle yearday/weekday input groups based on selected radio. */
+function updateTypeInputVisibility() {
+    const isYearday = document.getElementById('type_yearday')?.checked ?? true;
+    document.getElementById('yearday_input_group')?.classList.toggle('d-none', !isYearday);
+    document.getElementById('weekday_input_group')?.classList.toggle('d-none', isYearday);
+}
+
+/** Show a validation error message inside the modal. */
+function showReminderValidationError(message) {
+    const el = document.getElementById('reminder_validation');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.remove('d-none');
+}
+
+/**
+ * Validate the modal form, build a reminder object, update the hidden input,
+ * re-render the list, and close the modal.
+ */
+function validateAndSaveReminder() {
+    const type = document.querySelector('input[name="reminder_type"]:checked')?.value;
+    if (!type) {
+        showReminderValidationError(chrome.i18n.getMessage('optRemTypeRequired') || 'Please select a trigger type.');
+        return;
+    }
+
+    let dayValue;
+    if (type === 'yearday') {
+        dayValue = parseInt(document.getElementById('reminder_yearday')?.value ?? '', 10);
+        if (isNaN(dayValue) || dayValue < 1 || dayValue > 56) {
+            showReminderValidationError(chrome.i18n.getMessage('optRemDayInvalid') || 'Day value must be between 1 and 56.');
+            return;
+        }
+    } else {
+        dayValue = parseInt(document.getElementById('reminder_weekday')?.value ?? '1', 10);
+    }
+
+    const forPopmundo = document.getElementById('reminder_for_popmundo')?.checked ?? false;
+    const forGreatHeist = document.getElementById('reminder_for_great_heist')?.checked ?? false;
+    if (!forPopmundo && !forGreatHeist) {
+        showReminderValidationError(chrome.i18n.getMessage('optRemGameRequired') || 'Please select at least one game.');
+        return;
+    }
+
+    const text = (document.getElementById('reminder_text')?.value ?? '').trim();
+    if (!text) {
+        showReminderValidationError(chrome.i18n.getMessage('optRemTextRequired') || 'Please enter the reminder text.');
+        return;
+    }
+
+    const active = document.getElementById('reminder_active')?.checked ?? true;
+    const description = (document.getElementById('reminder_description')?.value ?? '').trim();
+
+    const reminder = {
+        id: currentEditingReminderId || crypto.randomUUID(),
+        type,
+        dayValue,
+        forPopmundo,
+        forGreatHeist,
+        active,
+        text,
+        description,
+    };
+
+    // Update hidden input
+    const hidden = document.getElementById('user_reminders');
+    let reminders = [];
+    try { reminders = JSON.parse(hidden?.value || '[]'); } catch (_) {}
+
+    if (currentEditingReminderId) {
+        const idx = reminders.findIndex(r => r.id === currentEditingReminderId);
+        if (idx >= 0) reminders[idx] = reminder;
+        else reminders.push(reminder);
+    } else {
+        reminders.push(reminder);
+    }
+
+    if (hidden) hidden.value = JSON.stringify(reminders);
+    renderRemindersList('user_reminders', reminders);
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('reminderModal')).hide();
+}
+
+/**
+ * Remove a reminder by id from the hidden input and re-render the list.
+ *
+ * @param {string} reminderId
+ */
+function deleteReminder(reminderId) {
+    const hidden = document.getElementById('user_reminders');
+    let reminders = [];
+    try { reminders = JSON.parse(hidden?.value || '[]'); } catch (_) {}
+    reminders = reminders.filter(r => r.id !== reminderId);
+    if (hidden) hidden.value = JSON.stringify(reminders);
+    renderRemindersList('user_reminders', reminders);
+}
+
 /**
  * Applies chrome.i18n translations to all elements with data-i18n* attributes.
  * Must be called before Bootstrap tooltip initialization.
@@ -255,6 +546,20 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.storage.local.get('install_type', ({ install_type }) => {
         if (install_type === 'development' || debugParam) {
             document.getElementById('nav-developer').classList.remove('d-none');
+        }
+    });
+
+    // ── Reminders ──
+    document.getElementById('add-reminder-btn')?.addEventListener('click', () => openReminderModal());
+    document.getElementById('save-reminder-btn')?.addEventListener('click', validateAndSaveReminder);
+    document.getElementById('type_yearday')?.addEventListener('change', updateTypeInputVisibility);
+    document.getElementById('type_weekday')?.addEventListener('change', updateTypeInputVisibility);
+
+    // Move focus away before Bootstrap sets aria-hidden on the modal, which would
+    // trigger an accessibility violation if a button inside the modal has focus.
+    document.getElementById('reminderModal')?.addEventListener('hide.bs.modal', () => {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
         }
     });
 });
