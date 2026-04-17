@@ -1478,6 +1478,10 @@
         }
     },
 
+    "optUnsavedWarning": {
+        "message": "You have unsaved changes.",
+        "description": "Warning shown near the Save button when the options form has been modified but not yet saved"
+    },
     "navReminders": {
         "message": "Reminders",
         "description": "Sidebar nav label for the Reminders options section"

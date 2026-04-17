@@ -52,6 +52,7 @@ function renderExcludeList(storageKey, data) {
             map[charId] = updated;
             hidden.value = JSON.stringify(map);
             renderExcludeList(storageKey, updated);
+            markDirty();
         });
 
         cell.appendChild(nameSpan);
@@ -165,6 +166,23 @@ async function initCharSelect(selectId, storageKey, map) {
             renderExcludeListNoChar(storageKey);
         }
     });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Unsaved-changes tracking
+// ─────────────────────────────────────────────────────────────────────────────
+
+let isDirty = false;
+
+function markDirty() {
+    if (isDirty) return;
+    isDirty = true;
+    document.getElementById('unsaved-warning')?.classList.remove('d-none');
+}
+
+function clearDirty() {
+    isDirty = false;
+    document.getElementById('unsaved-warning')?.classList.add('d-none');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -440,6 +458,7 @@ function validateAndSaveReminder() {
 
     if (hidden) hidden.value = JSON.stringify(reminders);
     renderRemindersList('user_reminders', reminders);
+    markDirty();
 
     bootstrap.Modal.getOrCreateInstance(document.getElementById('reminderModal')).hide();
 }
@@ -456,6 +475,7 @@ function deleteReminder(reminderId) {
     reminders = reminders.filter(r => r.id !== reminderId);
     if (hidden) hidden.value = JSON.stringify(reminders);
     renderRemindersList('user_reminders', reminders);
+    markDirty();
 }
 
 /**
@@ -494,6 +514,42 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Localize UI before tooltip init so title attributes are already translated ──
     localizeUI();
 
+    // ── Unsaved-changes warning element (inserted after the status span) ──
+    const statusEl = document.getElementById('status');
+    if (statusEl) {
+        const warning = document.createElement('span');
+        warning.id = 'unsaved-warning';
+        warning.className = 'text-warning small fw-semibold d-none';
+        warning.textContent = chrome.i18n.getMessage('optUnsavedWarning') || 'You have unsaved changes.';
+        statusEl.insertAdjacentElement('afterend', warning);
+    }
+
+    // Mark dirty on any form-element change outside the reminder modal
+    document.addEventListener('change', function (e) {
+        if (e.target.closest('#reminderModal')) return;
+        markDirty();
+    });
+    document.addEventListener('input', function (e) {
+        if (e.target.closest('#reminderModal')) return;
+        if (e.target.matches('input[type="text"], input[type="number"], textarea, select')) {
+            markDirty();
+        }
+    });
+
+    // Warn before navigating away with unsaved changes
+    window.addEventListener('beforeunload', function (e) {
+        if (isDirty) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    // Clear dirty state after the main Save button persists everything
+    document.getElementById('save')?.addEventListener('click', function () {
+        // Delay slightly so save_options can complete and show its own status message
+        setTimeout(clearDirty, 150);
+    });
+
     // ── Tab switching ──
     const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
     const sections = document.querySelectorAll('.tab-content-section');
@@ -531,6 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (hidden) hidden.value = JSON.stringify(map);
             renderExcludeList(storageKey, []);
+            markDirty();
         });
     });
 
@@ -539,6 +596,7 @@ document.addEventListener('DOMContentLoaded', function () {
         optionDetails
             .filter(o => o.name.endsWith('_icon'))
             .forEach(o => loadSelect(o.name, o.default));
+        markDirty();
     });
 
     // ── Show Developer tab in development builds or when ?debug=true is in the URL ──
