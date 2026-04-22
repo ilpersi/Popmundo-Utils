@@ -5,8 +5,11 @@
  *
  */
 async function updatePlayerDB() {
+    // all_characters_details is stored in local (not sync) storage because its size can exceed
+    // the 8192 byte per-item quota imposed by chrome.storage.sync. Character data is tied to
+    // game sessions and does not need to roam across devices.
     const all_characters_details_default = {"id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {}};
-    const { all_characters_details: charactersDB } = await chrome.storage.sync.get({ all_characters_details: all_characters_details_default });
+    const { all_characters_details: charactersDB } = await chrome.storage.local.get({ all_characters_details: all_characters_details_default });
 
     Logger.debug('Saved character DB: ' + JSON.stringify(charactersDB));
 
@@ -27,7 +30,7 @@ async function updatePlayerDB() {
     });
 
     Logger.debug('Updated character DB: ' + JSON.stringify(charactersDB));
-    await chrome.storage.sync.set({ all_characters_details: charactersDB });
+    await chrome.storage.local.set({ all_characters_details: charactersDB });
 }
 
 (async () => {

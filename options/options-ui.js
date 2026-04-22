@@ -96,10 +96,11 @@ async function initCharSelect(selectId, storageKey, map) {
     const sessionData = await chrome.storage.session.get(['current_char_details']);
     const currentChar = sessionData.current_char_details;
 
-    // Get all known characters from the DB in sync storage (id -> name)
-    const syncData = await chrome.storage.sync.get({ all_characters_details: { 'id-name': {} } });
-    const idNameMap = (syncData.all_characters_details && syncData.all_characters_details['id-name'])
-        ? syncData.all_characters_details['id-name']
+    // all_characters_details lives in local (not sync) storage to avoid the 8192 byte per-item
+    // quota limit imposed by chrome.storage.sync.
+    const localData = await chrome.storage.local.get({ all_characters_details: { 'id-name': {} } });
+    const idNameMap = (localData.all_characters_details && localData.all_characters_details['id-name'])
+        ? localData.all_characters_details['id-name']
         : {};
 
     // Build char map: id (string) -> name

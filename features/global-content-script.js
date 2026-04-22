@@ -31,7 +31,6 @@ const globalOptions = {
     'locale_show_reconnaissance_icon': '👀',
     'enhanced_links_font_size': 16,
     'log_level': Logger.ERROR,
-    'all_characters_details': {"id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {}},
 };
 
 // Let's be sure that there is no JQuery conflict
@@ -369,7 +368,11 @@ async function updateCurrentCharacter(charactersDB) {
     });
 
     Logger.debug('Updated character DB: ' + JSON.stringify(charactersDB));
-    await chrome.storage.sync.set({ all_characters_details: charactersDB });
+
+    // all_characters_details is stored in local (not sync) storage because its size can exceed
+    // the 8192 byte per-item quota imposed by chrome.storage.sync. Character data is tied to
+    // game sessions and does not need to roam across devices.
+    await chrome.storage.local.set({ all_characters_details: charactersDB });
 }
 
 // We initially get the options from the sync storage
@@ -379,7 +382,12 @@ chrome.storage.sync.get(globalOptions, async (items) => {
     if (items.searchable_tables) searchableTables();
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
-    updateCurrentCharacter(items.all_characters_details);
+
+    // all_characters_details lives in local storage (not sync) to avoid the 8192 byte
+    // per-item quota limit imposed by chrome.storage.sync.
+    const localDefaults = { all_characters_details: {"id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {}} };
+    const localItems = await chrome.storage.local.get(localDefaults);
+    updateCurrentCharacter(localItems.all_characters_details);
 
 });
 
