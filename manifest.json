@@ -37,7 +37,8 @@
                 "common/xpath-helper.js",
                 "common/css-helper.js",
                 "common/utils.js",
-                "common/logger.js"
+                "common/logger.js",
+                "common/popup-helper.js"
             ]
         },
         {
@@ -88,7 +89,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Help/SkillType/*"
             ],
             "js": [
-                "common/popup-helper.js",
                 "features/skill-popup-script.js"
             ]
         },
@@ -98,7 +98,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist*"
             ],
             "js": [
-                "common/popup-helper.js",
                 "features/song-popup-script.js"
             ]
         },
@@ -180,7 +179,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Charts/MostAchievementPoints"
             ],
             "js": [
-                "common/popup-helper.js",
                 "features/character-popup.js"
             ]
         },
@@ -214,7 +212,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist/BookShow/*"
             ],
             "js": [
-                "common/popup-helper.js",
                 "features/club-popup.js"
             ]
         },
@@ -226,7 +223,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist"
             ],
             "js": [
-                "common/popup-helper.js",
                 "features/show-details-popup.js"
             ]
         },
@@ -235,7 +231,6 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Items/*"
             ],
             "js": [
-                "common/popup-helper.js",
                 "features/gotta-go-fast.js"
             ]
         },
