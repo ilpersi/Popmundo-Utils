@@ -44,7 +44,7 @@ class DatalistEnhancer {
             let widthInt = parseInt(cs.width);
             newWidth = cs.width.replace(widthInt, widthInt + widthIncrease);
         } else if (typeof cs.width === "number") {
-            newWidth = cs.width = widthIncrease;
+            newWidth = cs.width + widthIncrease;
         }
 
         Object.assign(input.style, {
