@@ -38,11 +38,20 @@ class DatalistEnhancer {
         input.setAttribute('data-pu-select-filter', '1');
         input.placeholder = chrome.i18n.getMessage('searchableSelectsPlaceholder') || 'Filter...';
 
+        let newWidth = "100%"
+        const widthIncrease = 20;
+        if (typeof cs.width === "string") {
+            let widthInt = parseInt(cs.width);
+            newWidth = cs.width.replace(widthInt, widthInt + widthIncrease);
+        } else if (typeof cs.width === "number") {
+            newWidth = cs.width = widthIncrease;
+        }
+
         Object.assign(input.style, {
             display: 'block',
             boxSizing: 'border-box',
             // Mirror the native select's visual style (theme-aware)
-            width:           cs.width,
+            width:           newWidth,
             borderWidth:     cs.borderWidth,
             borderStyle:     cs.borderStyle,
             borderColor:     cs.borderColor,
