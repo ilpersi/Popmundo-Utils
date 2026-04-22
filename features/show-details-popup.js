@@ -3,7 +3,7 @@ const showDetailsPopUpOptionsValues = { 'show_details_popup': true };
 var showDetailPopUp = false;
 
 /**
- * The main logic for the show details pop-up. This relies on the tippy.js library.
+ * The main logic for the show details pop-up. This relies on the Floating UI library.
  *
  */
 function manageDetailsTooltips() {
@@ -11,32 +11,13 @@ function manageDetailsTooltips() {
     let popupTheme = Utils.getPopupTheme();
     let fetcher = new TimedFetch();
 
-    // Initialization of the tippy element
-    tippy('a[href^="/World/Popmundo.aspx/Artist/PerformanceDetails/"]', {
-        'arrow': false,
+    // Initialization of the popup element
+    new PmPopup('a[href^="/World/Popmundo.aspx/Artist/PerformanceDetails/"]', {
         'content': showDetailPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
-        'allowHTML': true,
         'followCursor': true,
         'maxWidth': 500,
-        //'delay': [0, 500000], // Uncomment if you need to debug the tippy tooltip
+        //'placement': 'bottom', // Uncomment if you need to debug the popup
         'theme': popupTheme.LOADING_THEME,
-        'popperOptions': {
-            'modifiers': [
-                {
-                    'name': 'preventOverflow',
-                    'options': {
-                        'boundary': 'viewport',
-                        'padding': 8,
-                    },
-                },
-                {
-                    'name': 'flip',
-                    'options': {
-                        'fallbackPlacements': ['top', 'bottom', 'left', 'right'],
-                    },
-                },
-            ],
-        },
 
         'onCreate': function (instance) {
             // Setup our own custom state properties
@@ -121,7 +102,7 @@ function manageDetailsTooltips() {
             instance._src = null;
             instance._error = null;
         },
-    })
+    });
 }
 
 // When settings are changed, we update the global showDetailPopUp varialbe
@@ -134,7 +115,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 });
 
-// When page is loaded we get value from settings and se start the tippy logic.
+// When page is loaded we get value from settings and start the popup logic.
 chrome.storage.sync.get(showDetailsPopUpOptionsValues, items => {
     showDetailPopUp = items.show_details_popup;
 

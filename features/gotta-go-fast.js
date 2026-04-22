@@ -686,9 +686,8 @@
 
         JQ('#autograph-box').append(`<p><a href="#" id="ggf-how-to-use-link">${chrome.i18n.getMessage('ggfHowToUse')}</a></p>`);
 
-        tippy('#ggf-how-to-use-link', {
+        new PmPopup('#ggf-how-to-use-link', {
             content: howToUseContent,
-            allowHTML: true,
             interactive: true,
             placement: 'bottom-start',
             theme: popupTheme.DATA_THEME,

@@ -7,32 +7,13 @@ function manageSongTooltips() {
     let popupTheme = Utils.getPopupTheme();
     let fetcher = new TimedFetch();
 
-    // Initialization of the tippy element
-    tippy('a[href^="/World/Popmundo.aspx/Character/Song/"]', {
-        'arrow': false,
+    // Initialization of the popup element
+    new PmPopup('a[href^="/World/Popmundo.aspx/Character/Song/"]', {
         'content': showSongPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
-        'allowHTML': true,
         'followCursor': true,
         'maxWidth': 500,
-        //'delay': [0, 500000], // Uncomment if you need to debug the tippy tooltip
+        //'placement': 'bottom', // Uncomment if you need to debug the popup
         'theme': popupTheme.LOADING_THEME,
-        'popperOptions': {
-            'modifiers': [
-                {
-                    'name': 'preventOverflow',
-                    'options': {
-                        'boundary': 'viewport',
-                        'padding': 8,
-                    },
-                },
-                {
-                    'name': 'flip',
-                    'options': {
-                        'fallbackPlacements': ['top', 'bottom', 'left', 'right'],
-                    },
-                },
-            ],
-        },
 
         'onCreate': function (instance) {
             // Setup our own custom state properties
@@ -147,7 +128,7 @@ function manageSongTooltips() {
             instance._src = null;
             instance._error = null;
         },
-    })
+    });
 
 }
 
@@ -161,7 +142,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 });
 
-// When page is loaded we get value from settings and start the tippy logic.
+// When page is loaded we get value from settings and start the popup logic.
 chrome.storage.sync.get(songOptionsValues, items => {
     showSongPopUp = items.song_popup;
 

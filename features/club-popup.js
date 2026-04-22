@@ -3,7 +3,7 @@ const clubPopUpOptionsValues = { 'show_club_popup': true };
 var showClubPopUp = false;
 
 /**
- * The main logic for the club info pop-up. This relies on the tippy.js library.
+ * The main logic for the club info pop-up. This relies on the Floating UI library.
  *
  */
 function manageClubTooltips() {
@@ -11,34 +11,14 @@ function manageClubTooltips() {
     let popupTheme = Utils.getPopupTheme();
     let fetcher = new TimedFetch();
 
-    // Initialization of the tippy element
-    tippy('a[href^="/World/Popmundo.aspx/Locale/"]', {
-        'arrow': false,
+    // Initialization of the popup element
+    new PmPopup('a[href^="/World/Popmundo.aspx/Locale/"]', {
         'content': showClubPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
-        'allowHTML': true,
         'followCursor': false,
-        'hideOnClick': false,
         'interactive': true,
         'maxWidth': 500,
-        // 'delay': [0, 500], // We wait a second to hide the tooltip because there may be interesting links to click
+        // Popup stays open so the user can click links inside it
         'theme': popupTheme.LOADING_THEME,
-        'popperOptions': {
-            'modifiers': [
-                {
-                    'name': 'preventOverflow',
-                    'options': {
-                        'boundary': 'viewport',
-                        'padding': 8,
-                    },
-                },
-                {
-                    'name': 'flip',
-                    'options': {
-                        'fallbackPlacements': ['top', 'bottom', 'left', 'right'],
-                    },
-                },
-            ],
-        },
 
         'onCreate': function (instance) {
             // Setup our own custom state properties
@@ -122,7 +102,7 @@ function manageClubTooltips() {
             instance._src = null;
             instance._error = null;
         },
-    })
+    });
 }
 
 // When settings are changed, we update the global showClubPopUp varialbe
@@ -135,7 +115,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 });
 
-// When page is loaded we get value from settings and se start the tippy logic.
+// When page is loaded we get value from settings and start the popup logic.
 // We only apply the logic for popmundo, not for TGH
 if (!Utils.isGreatHeist()) {
     chrome.storage.sync.get(clubPopUpOptionsValues, items => {

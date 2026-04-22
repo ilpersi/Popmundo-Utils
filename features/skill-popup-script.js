@@ -3,7 +3,7 @@ const skillOptionsValues = { 'recent_progress_popup': true };
 var showSkillPopUp = false;
 
 /**
- * The main logic for the skill pop-up. This relies on the tippy.js library.
+ * The main logic for the skill pop-up. This relies on the Floating UI library.
  *
  */
 function manageSkillTooltips() {
@@ -11,32 +11,13 @@ function manageSkillTooltips() {
     let popupTheme = Utils.getPopupTheme();
     let fetcher = new TimedFetch();
 
-    // Initialization of the tippy element
-    tippy('a[href^="/World/Popmundo.aspx/Help/SkillType"]', {
-        'arrow': false,
+    // Initialization of the popup element
+    new PmPopup('a[href^="/World/Popmundo.aspx/Help/SkillType"]', {
         'content': showSkillPopUp ? `<span style="color: ${popupTheme.COLOR};">Loading...</span>` : '',
-        'allowHTML': true,
         'followCursor': true,
         'maxWidth': 500,
-        //'delay': [0, 500000], // Uncomment if you need to debug the tippy tooltip
+        //'placement': 'bottom', // Uncomment if you need to debug the popup
         'theme': popupTheme.LOADING_THEME,
-        'popperOptions': {
-            'modifiers': [
-                {
-                    'name': 'preventOverflow',
-                    'options': {
-                        'boundary': 'viewport',
-                        'padding': 8,
-                    },
-                },
-                {
-                    'name': 'flip',
-                    'options': {
-                        'fallbackPlacements': ['top', 'bottom', 'left', 'right'],
-                    },
-                },
-            ],
-        },
 
         'onCreate': function (instance) {
             // Setup our own custom state properties
@@ -113,7 +94,7 @@ function manageSkillTooltips() {
             instance._src = null;
             instance._error = null;
         },
-    })
+    });
 }
 
 // When settings are changed, we update the global showPopUp varialbe
@@ -126,7 +107,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 });
 
-// When page is loaded we get value from settings and se start the tippy logic.
+// When page is loaded we get value from settings and start the popup logic.
 chrome.storage.sync.get(skillOptionsValues, items => {
     showSkillPopUp = items.recent_progress_popup;
 
