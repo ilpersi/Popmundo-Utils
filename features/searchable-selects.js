@@ -114,7 +114,12 @@ class DatalistEnhancer {
         input.addEventListener('input', onInput);
         input.addEventListener('blur', onBlur);
 
-        return { input, datalist, onPointerDown, onClick, onFocus, onInput, onBlur };
+        // Sync the visible input whenever the underlying select's value is changed
+        // programmatically (e.g. by bus-schedule-helper setting .value + firing 'change').
+        const onSelectChange = () => { this._syncInputFromSelect(input, selectEl); };
+        selectEl.addEventListener('change', onSelectChange);
+
+        return { input, datalist, onPointerDown, onClick, onFocus, onInput, onBlur, onSelectChange };
     }
 
     destroy(selectEl, state) {
@@ -123,6 +128,7 @@ class DatalistEnhancer {
         state.input.removeEventListener('focus', state.onFocus);
         state.input.removeEventListener('input', state.onInput);
         state.input.removeEventListener('blur', state.onBlur);
+        selectEl.removeEventListener('change', state.onSelectChange);
         state.input.parentNode?.removeChild(state.input);
         state.datalist.parentNode?.removeChild(state.datalist);
         selectEl.style.display = '';

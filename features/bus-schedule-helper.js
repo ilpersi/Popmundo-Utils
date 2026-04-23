@@ -210,12 +210,14 @@ class ScheduleList {
     }
 }
 
-const tourBusHelperOptionsValues = { 'tb_enable': true, 'tb_book_after': 'previous_event', 'tb_hour_range': 2, 'enhanced_links_font_size': 16 };
+const tourBusHelperOptionsValues = { 'tb_enable': true, 'tb_book_after': 'previous_event', 'tb_hour_range': 2, 'enhanced_links_font_size': 16,
+        'searchable_selects': false };
 
 let isEnabled = true;
 let bookAfter = 'previous_event';
 let bookRange = 2;
 let enhancedLinksFontSize = 16;
+let searchable_selects = false;
 
 function manageTourBusHelper() {
     // If feature is disabled, we do nothing.
@@ -389,7 +391,18 @@ document.addEventListener('click', event => {
         arrivalNode.value = iconElem.dataset.arrivalCity;
         departureDateNode.value = iconElem.dataset.departureDate;
         departureTimeNode.value = iconElem.dataset.departureTime;
-        arrivalNode.scrollIntoView({ behavior: "smooth" });
+
+        // When Searchabe selects is enabled, the select with the arrival node is not visible.
+        if (!searchable_selects)
+            arrivalNode.scrollIntoView({ behavior: "smooth" });
+        else {
+            departureNode.dispatchEvent(new Event('change', { bubbles: true }));
+            arrivalNode.dispatchEvent(new Event('change', { bubbles: true }));
+            departureDateNode.dispatchEvent(new Event('change', { bubbles: true }));
+            departureTimeNode.dispatchEvent(new Event('change', { bubbles: true }));
+            arrivalNode.parentNode.scrollIntoView({ behavior: "smooth" });
+        }
+            
     }
 });
 
@@ -399,6 +412,7 @@ chrome.storage.sync.get(tourBusHelperOptionsValues, items => {
     bookAfter = items.tb_book_after;
     bookRange = items.tb_hour_range;
     enhancedLinksFontSize = items.enhanced_links_font_size;
+    searchable_selects = items.searchable_selects;
 
     manageTourBusHelper();
 });
@@ -424,6 +438,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
                         break;
                     case 'enhanced_links_font_size':
                         enhancedLinksFontSize = newValue;
+                        break;
+                    case 'searchable_selects':
+                        searchable_selects = newValue;
                         break;
                     default:
                         reload = false;
