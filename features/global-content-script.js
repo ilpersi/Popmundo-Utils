@@ -328,7 +328,7 @@ function renderIngameMenu(install_type) {
  * @param {Object} charactersDB The characters DB as it is currently saved in local storage.
  */
 async function updateCurrentCharacter(charactersDB) {
-    
+
     // We don't use the div based approach on Character selection page as there are multiple ones
     // and we still have to select the current one.
     if (!window.location.href.includes('ChooseCharacter')) {
@@ -356,23 +356,23 @@ async function updateCurrentCharacter(charactersDB) {
         }
 
         Logger.debug('myCharDetails: ' + JSON.stringify(myCharDetails));
+
+        // Let's also update all characters uuids in local storage.
+        let charactersUUIDs = new CssSelectorHelper("#ctl00_ctl08_ucCharacterBar_ddlCurrentCharacter > option").getAll();
+        charactersUUIDs.forEach(option => {
+            if (option.value != "0") {
+                charactersDB["uuid-name"][option.value] = option.textContent;
+                charactersDB["name-uuid"][option.textContent] = option.value;
+            }
+        });
+
+        Logger.debug('Updated character DB: ' + JSON.stringify(charactersDB));
+
+        // all_characters_details is stored in local (not sync) storage because its size can exceed
+        // the 8192 byte per-item quota imposed by chrome.storage.sync. Character data is tied to
+        // game sessions and does not need to roam across devices.
+        await chrome.storage.local.set({ all_characters_details: charactersDB });
     }
-
-    // Let's also update all characters uuids in local storage.
-    let charactersUUIDs = new CssSelectorHelper("#ctl00_ctl08_ucCharacterBar_ddlCurrentCharacter > option").getAll();
-    charactersUUIDs.forEach(option => {
-        if (option.value != "0") {
-            charactersDB["uuid-name"][option.value] = option.textContent;
-            charactersDB["name-uuid"][option.textContent] = option.value;
-        }
-    });
-
-    Logger.debug('Updated character DB: ' + JSON.stringify(charactersDB));
-
-    // all_characters_details is stored in local (not sync) storage because its size can exceed
-    // the 8192 byte per-item quota imposed by chrome.storage.sync. Character data is tied to
-    // game sessions and does not need to roam across devices.
-    await chrome.storage.local.set({ all_characters_details: charactersDB });
 }
 
 // We initially get the options from the sync storage
@@ -385,7 +385,7 @@ chrome.storage.sync.get(globalOptions, async (items) => {
 
     // all_characters_details lives in local storage (not sync) to avoid the 8192 byte
     // per-item quota limit imposed by chrome.storage.sync.
-    const localDefaults = { all_characters_details: {"id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {}} };
+    const localDefaults = { all_characters_details: { "id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {} } };
     const localItems = await chrome.storage.local.get(localDefaults);
     updateCurrentCharacter(localItems.all_characters_details);
 
