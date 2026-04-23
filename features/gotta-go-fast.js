@@ -6,6 +6,9 @@
     let collectionInProgress = false;
     let scrollIntoViewOption = true;
     let logMaxRowsOption = 0;
+    let keepAliveEnabled = false;
+    let keepAliveIntervalMs = 5 * 60 * 1000;
+    let keepAliveLastReload = 0;
 
     const fetcher = new TimedFetch();
     const notifications = new Notifications();
@@ -15,7 +18,9 @@
         BOOK_NAME: 'autograph_book_name',
         BLOCKED_CHARS: 'chars-block-itens',
         BOOK_LAST_USE: 'autograph_book_last_use',
-        TOTAL_COLLECTED: 'ggf_total_autographs_collected'
+        TOTAL_COLLECTED: 'ggf_total_autographs_collected',
+        KEEP_ALIVE_RESUME: 'ggf_keep_alive_resume',
+        KEEP_ALIVE_STATE: 'ggf_keep_alive_state',
     };
 
     // =============================================================================
@@ -138,6 +143,37 @@
                 chrome.storage.local.set({ [STORAGE_KEYS.BOOK_LAST_USE]: pruned }, resolve);
             });
         });
+    }
+
+    // =============================================================================
+    // Keep-alive state
+    // =============================================================================
+
+    function saveKeepAliveState(queue, lastCycleIds) {
+        return new Promise(resolve =>
+            chrome.storage.local.set({
+                [STORAGE_KEYS.KEEP_ALIVE_RESUME]: true,
+                [STORAGE_KEYS.KEEP_ALIVE_STATE]: { queue, lastCycleIds }
+            }, resolve)
+        );
+    }
+
+    function getKeepAliveState() {
+        return new Promise(resolve =>
+            chrome.storage.local.get([STORAGE_KEYS.KEEP_ALIVE_RESUME, STORAGE_KEYS.KEEP_ALIVE_STATE], items => {
+                if (items[STORAGE_KEYS.KEEP_ALIVE_RESUME] === true && items[STORAGE_KEYS.KEEP_ALIVE_STATE]) {
+                    resolve(items[STORAGE_KEYS.KEEP_ALIVE_STATE]);
+                } else {
+                    resolve(null);
+                }
+            })
+        );
+    }
+
+    function clearKeepAliveState() {
+        return new Promise(resolve =>
+            chrome.storage.local.remove([STORAGE_KEYS.KEEP_ALIVE_RESUME, STORAGE_KEYS.KEEP_ALIVE_STATE], resolve)
+        );
     }
 
     // =============================================================================
@@ -657,13 +693,26 @@
     // =============================================================================
 
     JQ(document).ready(async function () {
-        const { collect_autograph: isEnabled = true, collect_autograph_scroll: scrollIntoViewOptionLocal, autograph_log_max_rows: logMaxRowsOptionLocal } =
-            await new Promise(resolve =>
-                chrome.storage.sync.get({ collect_autograph: true, collect_autograph_scroll: true, autograph_log_max_rows: 0 }, resolve)
-            );
+        const {
+            collect_autograph: isEnabled = true,
+            collect_autograph_scroll: scrollIntoViewOptionLocal,
+            autograph_log_max_rows: logMaxRowsOptionLocal,
+            autograph_keep_alive: keepAliveEnabledLocal,
+            autograph_keep_alive_interval: keepAliveIntervalLocal,
+        } = await new Promise(resolve =>
+            chrome.storage.sync.get({
+                collect_autograph: true,
+                collect_autograph_scroll: true,
+                autograph_log_max_rows: 0,
+                autograph_keep_alive: false,
+                autograph_keep_alive_interval: 5,
+            }, resolve)
+        );
 
-        scrollIntoViewOption = scrollIntoViewOptionLocal
-        logMaxRowsOption = logMaxRowsOptionLocal
+        scrollIntoViewOption = scrollIntoViewOptionLocal;
+        logMaxRowsOption = logMaxRowsOptionLocal;
+        keepAliveEnabled = keepAliveEnabledLocal;
+        keepAliveIntervalMs = Math.max(5, keepAliveIntervalLocal) * 60 * 1000;
 
         if (!isEnabled) return;
 
@@ -753,12 +802,20 @@
             if (collectionInProgress) return;
             collectionInProgress = true;
             keepCollecting = true;
+            keepAliveLastReload = Date.now();
             JQ('#start-collection').prop('disabled', true);
             JQ('#start-collection').prop('value', chrome.i18n.getMessage('ggfCollecting'));
             const waitSeconds = s => new Promise(r => setTimeout(r, s * 1000));
 
             while (keepCollecting) {
                 try {
+                    if (keepAliveEnabled && (Date.now() - keepAliveLastReload) >= keepAliveIntervalMs) {
+                        log(chrome.i18n.getMessage('ggfKeepAliveReloading'), 'info');
+                        await saveKeepAliveState(queue, lastCycleIds);
+                        location.reload();
+                        return;
+                    }
+
                     if (queue.length === 0) {
                         const freshQueue = await getPeopleToCollect();
                         const blockedChars = await getBlockedChars();
@@ -815,6 +872,17 @@
             })
                 .then(() => log(chrome.i18n.getMessage('ggfBlockedCleared')));
         });
+
+        // Auto-resume after keep-alive reload
+        const keepAliveState = await getKeepAliveState();
+        await clearKeepAliveState();
+        if (keepAliveEnabled && keepAliveState && Array.isArray(keepAliveState.queue) && keepAliveState.queue.length > 0) {
+            queue = keepAliveState.queue;
+            lastCycleIds = keepAliveState.lastCycleIds || [];
+            log(chrome.i18n.getMessage('ggfKeepAliveResuming'), 'info');
+            keepAliveLastReload = Date.now();
+            JQ('#start-collection').trigger('click');
+        }
     });
 
 })();

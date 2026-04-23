@@ -47,6 +47,8 @@ const optionDetails = [
     { 'name': 'collect_autograph_scroll', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'autograph_book_name', 'default': 'Autograph book', 'save_cb': saveSelect, 'load_cb': loadSelect },
     { 'name': 'autograph_log_max_rows', 'default': 0, 'save_cb': saveInteger, 'load_cb': loadInteger },
+    { 'name': 'autograph_keep_alive', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'autograph_keep_alive_interval', 'default': 5, 'save_cb': saveInteger, 'load_cb': loadInteger },
     { 'name': 'mass_item_sender', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 
     // pop up options

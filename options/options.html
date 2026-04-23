@@ -184,6 +184,32 @@
                                         value="0">
                                 </div>
                             </div>
+
+                            <div class="option-group-title mt-3" data-i18n="optGGFGroupKeepAlive">Keep-Alive</div>
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="autograph_keep_alive">
+                                        <label class="form-check-label" for="autograph_keep_alive"
+                                            data-i18n="optGGFKeepAlive">Enable keep-alive page reload</label>
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Periodically reloads the page to prevent the game from logging you out during long collection runs."
+                                            data-i18n-title="optGGFKeepAliveTooltip" class="text-muted ms-1"
+                                            style="cursor:help;">&#9432;</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="autograph_keep_alive_interval" class="form-label">
+                                        <span data-i18n="optGGFKeepAliveInterval">Reload interval (minutes)</span>
+                                        <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="How often to reload the page to keep the session alive. Minimum 5 minutes."
+                                            data-i18n-title="optGGFKeepAliveIntervalTooltip" class="text-muted ms-1"
+                                            style="cursor:help;">&#9432;</span>
+                                    </label>
+                                    <input type="number" class="form-control form-control-sm" id="autograph_keep_alive_interval"
+                                        value="5" min="5">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

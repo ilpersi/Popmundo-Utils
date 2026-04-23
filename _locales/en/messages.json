@@ -83,6 +83,26 @@
         "message": "The maximu number of rows to be kept in the log. Set to zero for unlimited rows.",
         "description": "Tooltip for Autograph collector max rows"
     },
+    "optGGFGroupKeepAlive": {
+        "message": "Keep-Alive",
+        "description": "Keep-alive options group title in Autograph Collector settings"
+    },
+    "optGGFKeepAlive": {
+        "message": "Enable keep-alive page reload",
+        "description": "Label for the keep-alive toggle in Autograph Collector settings"
+    },
+    "optGGFKeepAliveTooltip": {
+        "message": "Periodically reloads the page to prevent the game from logging you out during long collection runs.",
+        "description": "Tooltip for the keep-alive toggle"
+    },
+    "optGGFKeepAliveInterval": {
+        "message": "Reload interval (minutes)",
+        "description": "Label for the keep-alive interval field"
+    },
+    "optGGFKeepAliveIntervalTooltip": {
+        "message": "How often to reload the page to keep the session alive. Minimum 5 minutes.",
+        "description": "Tooltip for the keep-alive interval field"
+    },
     "optCafTitle": {
         "message": "Call All Friends",
         "description": "Call All Friends section card title"
@@ -1476,6 +1496,14 @@
                 "example": "500"
             }
         }
+    },
+    "ggfKeepAliveReloading": {
+        "message": "Keep-alive: reloading page to maintain session...",
+        "description": "Log message shown immediately before a keep-alive page reload"
+    },
+    "ggfKeepAliveResuming": {
+        "message": "Keep-alive: resuming autograph collection after page reload.",
+        "description": "Log message shown when auto-resuming after a keep-alive reload"
     },
 
     "optUnsavedWarning": {
