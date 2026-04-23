@@ -242,6 +242,9 @@ async function onSubmitClick() {
             // We search for friend ID in the relationship page
             let relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR, doc).getAll();
 
+            // No existing relations are present. Maybe a new character?
+            if (relationsNodes.length === 0) break;
+
             for (let i = 0; i < relationsNodes.length; i++) {
                 let relNode = relationsNodes[i];
                 let href = relNode.getAttribute('href');
