@@ -38,6 +38,7 @@ foreach ($Dir in $IncludeDirs) {
 }
 
 # Build zip with paths relative to $ScriptDir
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $ZipStream = [System.IO.File]::Open(
     (Join-Path $ScriptDir $Output),
@@ -46,7 +47,7 @@ $ZipStream = [System.IO.File]::Open(
 $Archive = [System.IO.Compression.ZipArchive]::new($ZipStream, [System.IO.Compression.ZipArchiveMode]::Create)
 
 foreach ($File in $FilesToZip) {
-    $RelPath = [System.IO.Path]::GetRelativePath($ScriptDir, $File) -replace '\\', '/'
+    $RelPath = $File.Substring($ScriptDir.Length).TrimStart('\', '/') -replace '\\', '/'
     $Entry = $Archive.CreateEntry($RelPath, [System.IO.Compression.CompressionLevel]::Optimal)
     $EntryStream = $Entry.Open()
     $FileStream = [System.IO.File]::OpenRead($File)

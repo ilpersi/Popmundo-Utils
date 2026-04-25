@@ -101,7 +101,8 @@ function Get-Token {
         redirect_uri  = $redirectUri
         grant_type    = "authorization_code"
     }
-    $response = Invoke-RestMethod -Method Post -Uri $CWSTokenUrl -Body $body
+    $response = Invoke-RestMethod -Method Post -Uri $CWSTokenUrl -Body $body `
+        -ContentType "application/x-www-form-urlencoded"
 
     if (-not $response.refresh_token) {
         Write-Error "Failed to obtain refresh token: $($response | ConvertTo-Json)"
@@ -148,6 +149,7 @@ function Invoke-Pack {
         }
     }
 
+    Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $ZipStream = [System.IO.File]::Open(
         (Join-Path $ScriptDir $Output),
@@ -158,7 +160,7 @@ function Invoke-Pack {
     )
 
     foreach ($File in $FilesToZip) {
-        $RelPath    = [System.IO.Path]::GetRelativePath($ScriptDir, $File) -replace '\\', '/'
+        $RelPath    = $File.Substring($ScriptDir.Length).TrimStart('\', '/') -replace '\\', '/'
         $Entry      = $Archive.CreateEntry($RelPath, [System.IO.Compression.CompressionLevel]::Optimal)
         $EntryStream = $Entry.Open()
         $FileStream  = [System.IO.File]::OpenRead($File)
@@ -218,7 +220,8 @@ function Get-AccessToken($creds) {
         grant_type    = "refresh_token"
     }
 
-    $response = Invoke-RestMethod -Method Post -Uri $CWSTokenUrl -Body $body
+    $response = Invoke-RestMethod -Method Post -Uri $CWSTokenUrl -Body $body `
+        -ContentType "application/x-www-form-urlencoded"
     if (-not $response.access_token) {
         Write-Error "Failed to obtain access token: $response"
         exit 1
@@ -231,16 +234,26 @@ function Get-AccessToken($creds) {
 # ---------------------------------------------------------------------------
 
 function Invoke-Upload($ZipPath, $AccessToken, $creds) {
-    $headers = @{
-        "Authorization"    = "Bearer $AccessToken"
-        "x-goog-api-version" = "2"
-    }
+    Add-Type -AssemblyName System.Net.Http
 
-    $response = Invoke-RestMethod -Method Put `
-        -Uri "$CWSUploadUrl/$($creds.ExtensionId)" `
-        -Headers $headers `
-        -ContentType "application/zip" `
-        -InFile $ZipPath
+    $client = [System.Net.Http.HttpClient]::new()
+    $client.DefaultRequestHeaders.Add("Authorization", "Bearer $AccessToken")
+    $client.DefaultRequestHeaders.Add("x-goog-api-version", "2")
+
+    $content = [System.Net.Http.ByteArrayContent]::new([System.IO.File]::ReadAllBytes($ZipPath))
+    $content.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::new("application/zip")
+
+    $uri          = "$CWSUploadUrl/$($creds.ExtensionId)"
+    Write-Host "  PUT $uri"
+    $responseMsg  = $client.PutAsync($uri, $content).Result
+    $responseBody = $responseMsg.Content.ReadAsStringAsync().Result
+    $client.Dispose()
+
+    try { $response = $responseBody | ConvertFrom-Json }
+    catch {
+        Write-Error "Upload request failed (HTTP $([int]$responseMsg.StatusCode)): $responseBody"
+        exit 1
+    }
 
     if ($response.uploadState -eq "FAILURE") {
         Write-Error "Upload failed: $($response.itemError | ConvertTo-Json)"
