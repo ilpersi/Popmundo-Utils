@@ -5,3 +5,6 @@
 
 # Force Include README file
 !README.md
+
+# Chrome Web Store publish credentials
+.cws_credentials.json
