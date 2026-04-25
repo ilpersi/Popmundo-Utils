@@ -150,30 +150,28 @@
     // =============================================================================
 
     function saveKeepAliveState(queue, lastCycleIds) {
-        return new Promise(resolve =>
-            chrome.storage.local.set({
-                [STORAGE_KEYS.KEEP_ALIVE_RESUME]: true,
-                [STORAGE_KEYS.KEEP_ALIVE_STATE]: { queue, lastCycleIds }
-            }, resolve)
-        );
+        sessionStorage.setItem(STORAGE_KEYS.KEEP_ALIVE_RESUME, 'true');
+        sessionStorage.setItem(STORAGE_KEYS.KEEP_ALIVE_STATE, JSON.stringify({ queue, lastCycleIds }));
+        return Promise.resolve();
     }
 
     function getKeepAliveState() {
-        return new Promise(resolve =>
-            chrome.storage.local.get([STORAGE_KEYS.KEEP_ALIVE_RESUME, STORAGE_KEYS.KEEP_ALIVE_STATE], items => {
-                if (items[STORAGE_KEYS.KEEP_ALIVE_RESUME] === true && items[STORAGE_KEYS.KEEP_ALIVE_STATE]) {
-                    resolve(items[STORAGE_KEYS.KEEP_ALIVE_STATE]);
-                } else {
-                    resolve(null);
-                }
-            })
-        );
+        const resume = sessionStorage.getItem(STORAGE_KEYS.KEEP_ALIVE_RESUME);
+        const stateStr = sessionStorage.getItem(STORAGE_KEYS.KEEP_ALIVE_STATE);
+        if (resume === 'true' && stateStr) {
+            try {
+                return Promise.resolve(JSON.parse(stateStr));
+            } catch {
+                return Promise.resolve(null);
+            }
+        }
+        return Promise.resolve(null);
     }
 
     function clearKeepAliveState() {
-        return new Promise(resolve =>
-            chrome.storage.local.remove([STORAGE_KEYS.KEEP_ALIVE_RESUME, STORAGE_KEYS.KEEP_ALIVE_STATE], resolve)
-        );
+        sessionStorage.removeItem(STORAGE_KEYS.KEEP_ALIVE_RESUME);
+        sessionStorage.removeItem(STORAGE_KEYS.KEEP_ALIVE_STATE);
+        return Promise.resolve();
     }
 
     // =============================================================================
