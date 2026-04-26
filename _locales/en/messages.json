@@ -993,6 +993,14 @@
         "message": "No interaction has been performed.",
         "description": "Status when mass interact finds no interactions to perform"
     },
+    "miStatusNoInteractions": {
+        "message": "No interaction types selected. Please enable at least one interaction option in the extension settings.",
+        "description": "Status when no interaction types are selected in the extension options"
+    },
+    "miError": {
+        "message": "An error occurred. Check the browser console for details.",
+        "description": "Generic error shown in the Mass Interact panel when an unexpected error occurs"
+    },
     "ggfTitle": {
         "message": "Collect Autographs",
         "description": "Heading for the Gotta Go Fast autograph collection panel"

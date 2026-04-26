@@ -14,487 +14,496 @@ function getMyCharDetails() {
             .then((items) => {
                 const details = items['current_char_details'];
                 resolve((details && details.id) ? details : { id: 0, name: '' });
-            });
+            })
+            .catch(() => resolve({ id: 0, name: '' }));
     });
 }
 
-async function onSubmitClick() {
-
-    const optionsGet = {
-        "mass_interact_greet": true,
-        "mass_interact_smile": true,
-        "mass_interact_wink": false,
-        "mass_interact_insult": false,
-        "mass_interact_share_opinions": false,
-        "mass_interact_gossip": false,
-        "mass_interact_have_profound_discussion": false,
-        "mass_interact_comfort": false,
-        "mass_interact_talk_to": true,
-        "mass_interact_tease": false,
-        "mass_interact_fraternize": false,
-        "mass_interact_offer_advice": false,
-        "mass_interact_please_stop_flirting_with_me": false,
-        "mass_interact_say_im_sorry": false,
-        "mass_interact_compliment": false,
-        "mass_interact_hey_sexy_how_you_doin": false,
-        "mass_interact_praise": false,
-        "mass_interact_tell_naughty_joke": false,
-        "mass_interact_say_i_love_you": false,
-        "mass_interact_i_dont_want_to_be_friends": false,
-        "mass_interact_share_secrets": false,
-        "mass_interact_hang_out": false,
-        "mass_interact_play_with": false,
-        "mass_interact_pat_on_back": false,
-        "mass_interact_braid_hair": false,
-        "mass_interact_shake_hands": false,
-        "mass_interact_rub_elbows": false,
-        "mass_interact_hug": false,
-        "mass_interact_tickle": false,
-        "mass_interact_buy_a_drink": false,
-        "mass_interact_stroll_hand_in_hand": false,
-        "mass_interact_flex_biceps": false,
-        "mass_interact_caress": false,
-        "mass_interact_ask_for_a_dance": false,
-        "mass_interact_high_five": false,
-        "mass_interact_arm_wrestle": false,
-        "mass_interact_kiss_cheeks": false,
-        "mass_interact_embrace": false,
-        "mass_interact_kiss": false,
-        "mass_interact_kiss_passionately": false,
-        "mass_interact_enjoy_kobe_sutra": false,
-        "mass_interact_5_minute_quickie": false,
-        "mass_interact_tantric_sex": false,
-        "mass_interact_make_love": false,
-        "mass_interact_give_massage": false,
-        "mass_interact_bless": false,
-        "mass_interact_do_funny_magic": false,
-        "mass_interact_tell_joke": false,
-        "mass_interact_seek_apprenticeship": false,
-        "mass_interact_sing_to": false,
-        "mass_interact_serenade": false,
-        'mass_interact_exclude_id': {},
-        'mass_interact_max_chars': 99,
-        'mass_interact_ignore_acquaintance': false,
-        'mass_interact_guide': false,
-        'mass_interact_google': false,
-        'mass_interact_change_diapers': false,
-        'mass_interact_pick_up': false,
-        'mass_interact_kiss_on_forehead': false,
-    };
-
-    let optionsMap = {
-        "mass_interact_greet": 1,
-        "mass_interact_smile": 54,
-        "mass_interact_wink": 161,
-        "mass_interact_insult": 15,
-        "mass_interact_share_opinions": 62,
-        "mass_interact_gossip": 65,
-        "mass_interact_have_profound_discussion": 34,
-        "mass_interact_comfort": 51,
-        "mass_interact_talk_to": 3,
-        "mass_interact_tease": 5,
-        "mass_interact_fraternize": 57,
-        "mass_interact_offer_advice": 68,
-        "mass_interact_please_stop_flirting_with_me": 154,
-        "mass_interact_say_im_sorry": 166,
-        "mass_interact_compliment": 14,
-        "mass_interact_hey_sexy_how_you_doin": 71,
-        "mass_interact_praise": 75,
-        "mass_interact_tell_naughty_joke": 76,
-        "mass_interact_say_i_love_you": 77,
-        "mass_interact_i_dont_want_to_be_friends": 156,
-        "mass_interact_share_secrets": 69,
-        "mass_interact_hang_out": 70,
-        "mass_interact_play_with": 18,
-        "mass_interact_pat_on_back": 63,
-        "mass_interact_braid_hair": 66,
-        "mass_interact_shake_hands": 55,
-        "mass_interact_rub_elbows": 59,
-        "mass_interact_hug": 8,
-        "mass_interact_tickle": 12,
-        "mass_interact_buy_a_drink": 7,
-        "mass_interact_stroll_hand_in_hand": 129,
-        "mass_interact_flex_biceps": 89,
-        "mass_interact_caress": 30,
-        "mass_interact_ask_for_a_dance": 35,
-        "mass_interact_high_five": 60,
-        "mass_interact_arm_wrestle": 67,
-        "mass_interact_kiss_cheeks": 56,
-        "mass_interact_embrace": 64,
-        "mass_interact_kiss": 9,
-        "mass_interact_kiss_passionately": 10,
-        "mass_interact_enjoy_kobe_sutra": 164,
-        "mass_interact_5_minute_quickie": 13,
-        "mass_interact_tantric_sex": 19,
-        "mass_interact_make_love": 11,
-        "mass_interact_give_massage": 44,
-        "mass_interact_bless": 39,
-        "mass_interact_do_funny_magic": 33,
-        "mass_interact_tell_joke": 4,
-        "mass_interact_seek_apprenticeship": 29,
-        "mass_interact_sing_to": 21,
-        "mass_interact_serenade": 78,
-        "mass_interact_guide": 94,
-        "mass_interact_google": 6,
-        "mass_interact_change_diapers": 95,
-        "mass_interact_pick_up": 93,
-        "mass_interact_kiss_on_forehead": 103,
-
-    };
-
-    // Check that the current character ID is available
-    const myCharDetails = await getMyCharDetails();
-    const myCharID = myCharDetails.id;
-    if (myCharID == 0) {
-        new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
-        return;
-    }
-
-    // The script will randomly choose one of the following interactions
-    let INTERACTIONS = [];
-
-    // We build the array of possible interactions based on the saved options
-    let savedOptions = await chrome.storage.sync.get(optionsGet);
-    for (let optionName in optionsMap) {
-        if (savedOptions.hasOwnProperty(optionName)) {
-            if (savedOptions[optionName])
-                INTERACTIONS.push(optionsMap[optionName]);
-        }
-    }
-    // try {
-    // CSS Selector used to search character id in the present characters page
-    const PRESENT_CHARS_SELECTOR = 'tr[id*="ctl00_cphLeftColumn_ctl00_repCharactersPresent"][id*="trCharacterRow"]';
-    // Additional Selector to make sure that the interact link is present for a specific character
-    const INTERACT_A_SELECTOR = 'td.right > a[href*="/World/Popmundo.aspx/Interact/"]';
-    // Selector to get the character a element from the present character list
-    const CHAR_A_SELECTOR = 'td:nth-child(2) > a';
-    // XPATH used to check i the interact select box is present
-    const INTERACT_SELECT_XPATH = '//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option';
-    // Regex to extract the character id from the href of a elems
-    const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
-    const fetcher = new TimedFetch();
-
-    // We'll use this to log progression and give feedback to the user
+async function onSubmitClick(submitBtn) {
     const statusPElem = document.getElementById('mass-interact-status-p');
+    if (submitBtn) submitBtn.disabled = true;
 
-    // We'll use this to save the list of current friends
-    let currentFriendsIDs = [];
-    if (savedOptions.mass_interact_ignore_acquaintance) {
-        // XPATH for the Relations link in the Character Page
-        const RELATIONS_A_XPATH = "//a[contains(@href, '/World/Popmundo.aspx/Character/Relations/')]";
+    try {
+        const optionsGet = {
+            "mass_interact_greet": true,
+            "mass_interact_smile": true,
+            "mass_interact_wink": false,
+            "mass_interact_insult": false,
+            "mass_interact_share_opinions": false,
+            "mass_interact_gossip": false,
+            "mass_interact_have_profound_discussion": false,
+            "mass_interact_comfort": false,
+            "mass_interact_talk_to": true,
+            "mass_interact_tease": false,
+            "mass_interact_fraternize": false,
+            "mass_interact_offer_advice": false,
+            "mass_interact_please_stop_flirting_with_me": false,
+            "mass_interact_say_im_sorry": false,
+            "mass_interact_compliment": false,
+            "mass_interact_hey_sexy_how_you_doin": false,
+            "mass_interact_praise": false,
+            "mass_interact_tell_naughty_joke": false,
+            "mass_interact_say_i_love_you": false,
+            "mass_interact_i_dont_want_to_be_friends": false,
+            "mass_interact_share_secrets": false,
+            "mass_interact_hang_out": false,
+            "mass_interact_play_with": false,
+            "mass_interact_pat_on_back": false,
+            "mass_interact_braid_hair": false,
+            "mass_interact_shake_hands": false,
+            "mass_interact_rub_elbows": false,
+            "mass_interact_hug": false,
+            "mass_interact_tickle": false,
+            "mass_interact_buy_a_drink": false,
+            "mass_interact_stroll_hand_in_hand": false,
+            "mass_interact_flex_biceps": false,
+            "mass_interact_caress": false,
+            "mass_interact_ask_for_a_dance": false,
+            "mass_interact_high_five": false,
+            "mass_interact_arm_wrestle": false,
+            "mass_interact_kiss_cheeks": false,
+            "mass_interact_embrace": false,
+            "mass_interact_kiss": false,
+            "mass_interact_kiss_passionately": false,
+            "mass_interact_enjoy_kobe_sutra": false,
+            "mass_interact_5_minute_quickie": false,
+            "mass_interact_tantric_sex": false,
+            "mass_interact_make_love": false,
+            "mass_interact_give_massage": false,
+            "mass_interact_bless": false,
+            "mass_interact_do_funny_magic": false,
+            "mass_interact_tell_joke": false,
+            "mass_interact_seek_apprenticeship": false,
+            "mass_interact_sing_to": false,
+            "mass_interact_serenade": false,
+            'mass_interact_exclude_id': {},
+            'mass_interact_max_chars': 99,
+            'mass_interact_ignore_acquaintance': false,
+            'mass_interact_guide': false,
+            'mass_interact_google': false,
+            'mass_interact_change_diapers': false,
+            'mass_interact_pick_up': false,
+            'mass_interact_kiss_on_forehead': false,
+        };
 
-        // Status update
-        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusCheckingRelations');
+        let optionsMap = {
+            "mass_interact_greet": 1,
+            "mass_interact_smile": 54,
+            "mass_interact_wink": 161,
+            "mass_interact_insult": 15,
+            "mass_interact_share_opinions": 62,
+            "mass_interact_gossip": 65,
+            "mass_interact_have_profound_discussion": 34,
+            "mass_interact_comfort": 51,
+            "mass_interact_talk_to": 3,
+            "mass_interact_tease": 5,
+            "mass_interact_fraternize": 57,
+            "mass_interact_offer_advice": 68,
+            "mass_interact_please_stop_flirting_with_me": 154,
+            "mass_interact_say_im_sorry": 166,
+            "mass_interact_compliment": 14,
+            "mass_interact_hey_sexy_how_you_doin": 71,
+            "mass_interact_praise": 75,
+            "mass_interact_tell_naughty_joke": 76,
+            "mass_interact_say_i_love_you": 77,
+            "mass_interact_i_dont_want_to_be_friends": 156,
+            "mass_interact_share_secrets": 69,
+            "mass_interact_hang_out": 70,
+            "mass_interact_play_with": 18,
+            "mass_interact_pat_on_back": 63,
+            "mass_interact_braid_hair": 66,
+            "mass_interact_shake_hands": 55,
+            "mass_interact_rub_elbows": 59,
+            "mass_interact_hug": 8,
+            "mass_interact_tickle": 12,
+            "mass_interact_buy_a_drink": 7,
+            "mass_interact_stroll_hand_in_hand": 129,
+            "mass_interact_flex_biceps": 89,
+            "mass_interact_caress": 30,
+            "mass_interact_ask_for_a_dance": 35,
+            "mass_interact_high_five": 60,
+            "mass_interact_arm_wrestle": 67,
+            "mass_interact_kiss_cheeks": 56,
+            "mass_interact_embrace": 64,
+            "mass_interact_kiss": 9,
+            "mass_interact_kiss_passionately": 10,
+            "mass_interact_enjoy_kobe_sutra": 164,
+            "mass_interact_5_minute_quickie": 13,
+            "mass_interact_tantric_sex": 19,
+            "mass_interact_make_love": 11,
+            "mass_interact_give_massage": 44,
+            "mass_interact_bless": 39,
+            "mass_interact_do_funny_magic": 33,
+            "mass_interact_tell_joke": 4,
+            "mass_interact_seek_apprenticeship": 29,
+            "mass_interact_sing_to": 21,
+            "mass_interact_serenade": 78,
+            "mass_interact_guide": 94,
+            "mass_interact_google": 6,
+            "mass_interact_change_diapers": 95,
+            "mass_interact_pick_up": 93,
+            "mass_interact_kiss_on_forehead": 103,
 
-        // We get the content of the Character page
-        let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
-        let charHTML = await fetcher.fetch(charURL, {}, false);
+        };
 
-        // We parse the character page
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(charHTML, "text/html");
-
-        let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH, doc);
-        let relationANode = relationAXpathHelp.getFirstOrderedNode(doc);
-        let relationURL = Utils.getServerLink(relationANode.singleNodeValue.getAttribute('href'));
-
-        // We assume relations are one page only
-        let isNextPage = false;
-
-        // CSS Selector used to search friend id in the relationship page
-        const RELATIONS_SELECTOR = 'td > a[href*="/World/Popmundo.aspx/Character/"]';
-        // XPATH to check if there is another relations page
-        const RELATIONS_NEXT_XPATH = "//a[contains(@href, 'btnGoNext')]";
-
-        // Regex to extract the character friend id from the href of a elems
-        const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
-        const RELATIONS_NEXT_RE = /javascript:__doPostBack\('([^']+?)',''\)/gm;
-
-        let relPageCnt = 1;
-        let eventTarget = '';
-        do {
-
-            // We update the status message
-            statusPElem.innerHTML = chrome.i18n.getMessage('miStatusAnalyzingRelations', [String(relPageCnt)]);
-
-            // If there is more than one page, the logic is doing a postBack, so we save current form info
-            let docForm = doc.getElementById('aspnetForm');
-            let formDataOrig = new FormData(docForm);
-
-            // Standard options
-            let fetchOptions = {
-                "method": "POST"
-            };
-
-            // We mimick the doPostBack call
-            if (isNextPage) {
-                formDataOrig.set('__EVENTTARGET', eventTarget);
-                formDataOrig.set('__EVENTARGUMENT', '');
-
-                fetchOptions.body = formDataOrig;
-            }
-
-            // We finally perform the real fetch
-            let relHTML = await fetcher.fetch(relationURL, fetchOptions, false);
-
-            doc = parser.parseFromString(relHTML, "text/html");
-
-            // We search for friend ID in the relationship page
-            let relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR, doc).getAll();
-
-            // No existing relations are present. Maybe a new character?
-            if (relationsNodes.length === 0) break;
-
-            for (let i = 0; i < relationsNodes.length; i++) {
-                let relNode = relationsNodes[i];
-                let href = relNode.getAttribute('href');
-
-                let friendMatch = RELATIONS_ID_RE.exec(href);
-                if (friendMatch) {
-                    // We convert the friend id to integer and add to the total list
-                    currentFriendsIDs.push(parseInt(friendMatch[1]));
-                }
-
-                // We make sure the regex is working in the next iteration
-                RELATIONS_ID_RE.lastIndex = 0;
-            }
-
-            // We search for next page link
-            let relationsNextXPathHelp = new XPathHelper(RELATIONS_NEXT_XPATH, doc);
-            let relationsNextNode = relationsNextXPathHelp.getFirstOrderedNode(doc);
-
-            // Next page element is found
-            if (relationsNextNode.singleNodeValue) {
-                // console.log('rel next ' + relationsNextNode.singleNodeValue.getAttribute('href'));
-                let nextPageHref = relationsNextNode.singleNodeValue.getAttribute('href');
-
-                // href matches the expected regex
-                let goNextMatch = RELATIONS_NEXT_RE.exec(nextPageHref);
-                if (goNextMatch) {
-                    relPageCnt += 1;
-                    eventTarget = goNextMatch[1];
-                    isNextPage = true;
-
-                    // We make sure the regex is working in the next iteration
-                    RELATIONS_NEXT_RE.lastIndex = 0;
-                }
-
-            } else {
-                isNextPage = false;
-            }
-
-        } while (isNextPage);
-
-        // console.log('Ignore acquitance ' + relationURL);
-    } // if (savedOptions.mass_interact_ignore_acquaintance)
-
-    // CSS Selector Helpers to search for characters
-    let charsTRNodes = new CssSelectorHelper(PRESENT_CHARS_SELECTOR).getAll();
-
-    let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
-
-    // Get exclusion list for the current character from the per-character map
-    const excludeMap = (typeof savedOptions.mass_interact_exclude_id === 'object' && !Array.isArray(savedOptions.mass_interact_exclude_id) && savedOptions.mass_interact_exclude_id !== null)
-        ? savedOptions.mass_interact_exclude_id
-        : {};
-    const charExcludeList = Array.isArray(excludeMap[String(myCharID)]) ? excludeMap[String(myCharID)] : [];
-    const excludedIds = charExcludeList.map(e => e.id);
-
-    let charsInfo = [];
-    let charTRNode = null;
-
-    for (let charCnt = 0; charCnt < charsTRNodes.length; charCnt++) {
-        //while (charTRNode = charsTRNodes.iterateNext()) {
-        charTRNode = charsTRNodes[charCnt];
-        // For some characters (including yourself) the Interact link is not present. When this is the case we skip that character.
-        let interactANode = new CssSelectorHelper(INTERACT_A_SELECTOR, charTRNode).getSingle();
-
-        if (interactANode) {
-            let charANode = new CssSelectorHelper(CHAR_A_SELECTOR, charTRNode).getSingle();
-
-            let href = charANode.getAttribute('href');
-
-            let charMatch = CHAR_ID_RE.exec(href);
-            if (charMatch) {
-                // We convert the char id to integer
-                let charID = parseInt(charMatch[1]);
-
-                let charData = {
-                    'id': charID,
-                    'name': charANode.textContent,
-                    'href': interactANode.getAttribute('href'),
-                }
-
-                // We check if we allow new acquaintances
-                if (savedOptions.mass_interact_ignore_acquaintance) {
-                    if (!currentFriendsIDs.includes(charID)) {
-                        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingAcquaintance', [charData.name]);
-
-                        // We make sure the regex is working in the next iteration
-                        CHAR_ID_RE.lastIndex = 0;
-
-                        totalSkip += 1;
-                        newAcqSkip += 1;
-                        continue;
-                    }
-                }
-
-                // We make sure not to include ids in the exclusion list
-                if (!excludedIds.includes(charData.id)) {
-                    charsInfo.push(charData);
-                } else {
-                    statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingExcluded', [charData.name]);
-
-                    totalSkip += 1;
-                    ignoreSkip += 1;
-                }
-            }
-
-            // We make sure the regex is working in the next iteration
-            CHAR_ID_RE.lastIndex = 0;
-        }
-    }
-
-    let statusIgnoreTxt = '';
-    if (totalSkip > 0) {
-        statusIgnoreTxt = chrome.i18n.getMessage('miStatusTotalSkipped', [String(totalSkip)]);
-
-        if (newAcqSkip > 0) {
-            statusIgnoreTxt += chrome.i18n.getMessage('miStatusNewAcqSkip', [String(newAcqSkip)]);
+        // Check that the current character ID is available
+        const myCharDetails = await getMyCharDetails();
+        const myCharID = myCharDetails.id;
+        if (myCharID == 0) {
+            new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
+            return;
         }
 
-        if (ignoreSkip > 0) {
-            statusIgnoreTxt += chrome.i18n.getMessage('miStatusIgnoreSkip', [String(ignoreSkip)]);
+        // The script will randomly choose one of the following interactions
+        let INTERACTIONS = [];
+
+        // We build the array of possible interactions based on the saved options
+        let savedOptions = await chrome.storage.sync.get(optionsGet);
+        for (let optionName in optionsMap) {
+            if (savedOptions.hasOwnProperty(optionName)) {
+                if (savedOptions[optionName])
+                    INTERACTIONS.push(optionsMap[optionName]);
+            }
         }
 
-        statusIgnoreTxt += '<br/><br/>';
-    }
+        if (INTERACTIONS.length === 0) {
+            if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteractions');
+            return;
+        }
 
-    // The list of fields that we will include in the fetch call payload when actually interacting with a character.
-    const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
-        'ctl00$cphTopColumn$ctl00$btnInteract'];
+        // CSS Selector used to search character id in the present characters page
+        const PRESENT_CHARS_SELECTOR = 'tr[id*="ctl00_cphLeftColumn_ctl00_repCharactersPresent"][id*="trCharacterRow"]';
+        // Additional Selector to make sure that the interact link is present for a specific character
+        const INTERACT_A_SELECTOR = 'td.right > a[href*="/World/Popmundo.aspx/Interact/"]';
+        // Selector to get the character a element from the present character list
+        const CHAR_A_SELECTOR = 'td:nth-child(2) > a';
+        // XPATH used to check i the interact select box is present
+        const INTERACT_SELECT_XPATH = '//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option';
+        // Regex to extract the character id from the href of a elems
+        const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
+        const fetcher = new TimedFetch();
 
+        // We'll use this to save the list of current friends
+        let currentFriendsIDs = [];
+        if (savedOptions.mass_interact_ignore_acquaintance) {
+            // XPATH for the Relations link in the Character Page
+            const RELATIONS_A_XPATH = "//a[contains(@href, '/World/Popmundo.aspx/Character/Relations/')]";
 
+            // Status update
+            if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusCheckingRelations');
 
-    // How many characters did we actually interact with? This is the counter for it. It is only increased when at least one interaction is available
-    let totalCharactersCnt = 0;
+            // We get the content of the Character page
+            let charURL = Utils.getServerLink('/World/Popmundo.aspx/Character');
+            let charHTML = await fetcher.fetch(charURL, {}, false);
 
-    // The total counter of interactions performed
-    let totalInteractionsCnt = 0;
-
-    // We have to manage async requests in sequence, so it is not possible to use forEach: we go old style for :)
-    // To avoid any issue with server throtling, the logic is performed in a synchronous serial way with sleep delays.
-    for (let charIndex = 0; charIndex < charsInfo.length; charIndex++) {
-        let charDict = charsInfo[charIndex];
-
-        if (totalCharactersCnt < savedOptions['mass_interact_max_chars']) {
-            let totalInteractionsMsg = chrome.i18n.getMessage('miStatusTotalInteractions', [String(totalInteractionsCnt)]) + '<br/><br/>';
-
-            statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusCheckingChar', [String(charIndex + 1), String(charsInfo.length), charDict.name]);
-
-            let interactUrl = Utils.getServerLink(charDict.href);
-            let html = await fetcher.fetch(interactUrl, {}, false);
-
-            // Initialize the DOM parser
+            // We parse the character page
             let parser = new DOMParser();
+            let doc = parser.parseFromString(charHTML, "text/html");
 
-            // Parse the text
-            let doc = parser.parseFromString(html, "text/html");
+            let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH, doc);
+            let relationANode = relationAXpathHelp.getFirstOrderedNode(doc);
+            let relationURL = Utils.getServerLink(relationANode.singleNodeValue.getAttribute('href'));
 
-            // This XPATH makes sure that the Interact Select is is there
-            let interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
-            let interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
+            // We assume relations are one page only
+            let isNextPage = false;
 
-            // If interactions are available for this char, we are going to use them so we increment the counter of total characters we interacted with
-            if (interactOptionsNodeSnapshot.snapshotLength > 0)
-                totalCharactersCnt += 1;
+            // CSS Selector used to search friend id in the relationship page
+            const RELATIONS_SELECTOR = 'td > a[href*="/World/Popmundo.aspx/Character/"]';
+            // XPATH to check if there is another relations page
+            const RELATIONS_NEXT_XPATH = "//a[contains(@href, 'btnGoNext')]";
 
-            // Random interaction is an empty array by default, if interactions are available, it is randomly filled
-            let randomInteraction = 1; // Greet
+            // Regex to extract the character friend id from the href of a elems
+            const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
+            const RELATIONS_NEXT_RE = /javascript:__doPostBack\('([^']+?)',''\)/gm;
 
-            // The interaction counter for the current character, mainly used to give feedback on the form page.
-            let interactionCnt = 1;
+            let relPageCnt = 1;
+            let eventTarget = '';
+            do {
 
-            while (interactOptionsNodeSnapshot.snapshotLength > 0) {
-                let availableInteractions = [];
+                // We update the status message
+                if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusAnalyzingRelations', [String(relPageCnt)]);
 
-                // We loop and we push possible values in availableInteractions
-                for (let i = 0; i < interactOptionsNodeSnapshot.snapshotLength; i++) {
-                    let interactionOption = interactOptionsNodeSnapshot.snapshotItem(i);
-                    let value = parseInt(interactionOption.getAttribute('value'));
-                    let dataGroup = interactionOption.hasAttribute('data-group') ? String(interactionOption.getAttribute('data-group')) : '';
-
-                    if (value !== 0 && dataGroup !== 'Phone') {
-                        availableInteractions.push(value);
-                    }
-
-                }
-
-                // We intersect possible available interactions with possible ones
-                let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
-
-                // We finally choose a random interaction
-                if (possibleInteractions.length > 0)
-                    randomInteraction = possibleInteractions[Math.floor(Math.random() * possibleInteractions.length)];
-                else
-                    break;
-
-                // We get the form fields
+                // If there is more than one page, the logic is doing a postBack, so we save current form info
                 let docForm = doc.getElementById('aspnetForm');
                 let formDataOrig = new FormData(docForm);
 
-                // We make sure to set the correct values
-                formDataOrig.set('__EVENTTARGET', '');
-                formDataOrig.set('__EVENTARGUMENT', '');
-                formDataOrig.set('ctl00$cphTopColumn$ctl00$btnInteract', 'Interact');
-                formDataOrig.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', randomInteraction);
+                // Standard options
+                let fetchOptions = {
+                    "method": "POST"
+                };
 
-                // We don't need all the fields, so we make sure to only take the relevant ones
-                let formDataNew = new FormData();
-                bodyFields.forEach((key) => {
-                    formDataNew.set(key, formDataOrig.get(key));
-                });
+                // We mimick the doPostBack call
+                if (isNextPage) {
+                    formDataOrig.set('__EVENTTARGET', eventTarget);
+                    formDataOrig.set('__EVENTARGUMENT', '');
 
-                totalInteractionsMsg = chrome.i18n.getMessage('miStatusTotalInteractions', [String(totalInteractionsCnt)]) + '<br/><br/>';
+                    fetchOptions.body = formDataOrig;
+                }
 
-                statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusInteracting', [String(charIndex + 1), String(charsInfo.length), charDict.name, String(interactionCnt)]);
+                // We finally perform the real fetch
+                let relHTML = await fetcher.fetch(relationURL, fetchOptions, false);
 
-                // Synchronous fetch request
-                html = await fetcher.fetch(interactUrl, { "body": formDataNew, "method": "POST" }, false);
+                doc = parser.parseFromString(relHTML, "text/html");
 
-                // We update the parser content so to make sure the while does not go in infinite loop
-                parser = new DOMParser();
-                doc = parser.parseFromString(html, "text/html");
-                // As we are updating the parser content, we also need to update the XpathHelper
-                interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
-                interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
+                // We search for friend ID in the relationship page
+                let relationsNodes = new CssSelectorHelper(RELATIONS_SELECTOR, doc).getAll();
 
-                // We increase the counters
-                interactionCnt++;
-                totalInteractionsCnt++;
+                // No existing relations are present. Maybe a new character?
+                if (relationsNodes.length === 0) break;
+
+                for (let i = 0; i < relationsNodes.length; i++) {
+                    let relNode = relationsNodes[i];
+                    let href = relNode.getAttribute('href');
+
+                    let friendMatch = RELATIONS_ID_RE.exec(href);
+                    if (friendMatch) {
+                        // We convert the friend id to integer and add to the total list
+                        currentFriendsIDs.push(parseInt(friendMatch[1]));
+                    }
+
+                    // We make sure the regex is working in the next iteration
+                    RELATIONS_ID_RE.lastIndex = 0;
+                }
+
+                // We search for next page link
+                let relationsNextXPathHelp = new XPathHelper(RELATIONS_NEXT_XPATH, doc);
+                let relationsNextNode = relationsNextXPathHelp.getFirstOrderedNode(doc);
+
+                // Next page element is found
+                if (relationsNextNode.singleNodeValue) {
+                    let nextPageHref = relationsNextNode.singleNodeValue.getAttribute('href');
+
+                    // href matches the expected regex
+                    let goNextMatch = RELATIONS_NEXT_RE.exec(nextPageHref);
+                    if (goNextMatch) {
+                        relPageCnt += 1;
+                        eventTarget = goNextMatch[1];
+                        isNextPage = true;
+
+                        // We make sure the regex is working in the next iteration
+                        RELATIONS_NEXT_RE.lastIndex = 0;
+                    }
+
+                } else {
+                    isNextPage = false;
+                }
+
+            } while (isNextPage);
+
+        } // if (savedOptions.mass_interact_ignore_acquaintance)
+
+        // CSS Selector Helpers to search for characters
+        let charsTRNodes = new CssSelectorHelper(PRESENT_CHARS_SELECTOR).getAll();
+
+        let totalSkip = 0, ignoreSkip = 0, newAcqSkip = 0;
+
+        // Get exclusion list for the current character from the per-character map
+        const excludeMap = (typeof savedOptions.mass_interact_exclude_id === 'object' && !Array.isArray(savedOptions.mass_interact_exclude_id) && savedOptions.mass_interact_exclude_id !== null)
+            ? savedOptions.mass_interact_exclude_id
+            : {};
+        const charExcludeList = Array.isArray(excludeMap[String(myCharID)]) ? excludeMap[String(myCharID)] : [];
+        const excludedIds = charExcludeList.map(e => e.id);
+
+        let charsInfo = [];
+        let charTRNode = null;
+
+        for (let charCnt = 0; charCnt < charsTRNodes.length; charCnt++) {
+            charTRNode = charsTRNodes[charCnt];
+            // For some characters (including yourself) the Interact link is not present. When this is the case we skip that character.
+            let interactANode = new CssSelectorHelper(INTERACT_A_SELECTOR, charTRNode).getSingle();
+
+            if (interactANode) {
+                let charANode = new CssSelectorHelper(CHAR_A_SELECTOR, charTRNode).getSingle();
+
+                let href = charANode.getAttribute('href');
+
+                let charMatch = CHAR_ID_RE.exec(href);
+                if (charMatch) {
+                    // We convert the char id to integer
+                    let charID = parseInt(charMatch[1]);
+
+                    let charData = {
+                        'id': charID,
+                        'name': charANode.textContent,
+                        'href': interactANode.getAttribute('href'),
+                    }
+
+                    // We check if we allow new acquaintances
+                    if (savedOptions.mass_interact_ignore_acquaintance) {
+                        if (!currentFriendsIDs.includes(charID)) {
+                            if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingAcquaintance', [charData.name]);
+
+                            // We make sure the regex is working in the next iteration
+                            CHAR_ID_RE.lastIndex = 0;
+
+                            totalSkip += 1;
+                            newAcqSkip += 1;
+                            continue;
+                        }
+                    }
+
+                    // We make sure not to include ids in the exclusion list
+                    if (!excludedIds.includes(charData.id)) {
+                        charsInfo.push(charData);
+                    } else {
+                        if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusSkippingExcluded', [charData.name]);
+
+                        totalSkip += 1;
+                        ignoreSkip += 1;
+                    }
+                }
+
+                // We make sure the regex is working in the next iteration
+                CHAR_ID_RE.lastIndex = 0;
             }
         }
 
+        let statusIgnoreTxt = '';
+        if (totalSkip > 0) {
+            statusIgnoreTxt = chrome.i18n.getMessage('miStatusTotalSkipped', [String(totalSkip)]);
+
+            if (newAcqSkip > 0) {
+                statusIgnoreTxt += chrome.i18n.getMessage('miStatusNewAcqSkip', [String(newAcqSkip)]);
+            }
+
+            if (ignoreSkip > 0) {
+                statusIgnoreTxt += chrome.i18n.getMessage('miStatusIgnoreSkip', [String(ignoreSkip)]);
+            }
+
+            statusIgnoreTxt += '<br/><br/>';
+        }
+
+        // The list of fields that we will include in the fetch call payload when actually interacting with a character.
+        const bodyFields = ['__EVENTTARGET', '__EVENTARGUMENT', '__VIEWSTATE', '__VIEWSTATEGENERATOR', '__EVENTVALIDATION', 'ctl00$cphTopColumn$ctl00$ddlInteractionTypes',
+            'ctl00$cphTopColumn$ctl00$btnInteract'];
+
+
+
+        // How many characters did we actually interact with? This is the counter for it. It is only increased when at least one interaction is available
+        let totalCharactersCnt = 0;
+
+        // The total counter of interactions performed
+        let totalInteractionsCnt = 0;
+
+        // We have to manage async requests in sequence, so it is not possible to use forEach: we go old style for :)
+        // To avoid any issue with server throtling, the logic is performed in a synchronous serial way with sleep delays.
+        for (let charIndex = 0; charIndex < charsInfo.length; charIndex++) {
+            let charDict = charsInfo[charIndex];
+
+            if (totalCharactersCnt < savedOptions['mass_interact_max_chars']) {
+                let totalInteractionsMsg = chrome.i18n.getMessage('miStatusTotalInteractions', [String(totalInteractionsCnt)]) + '<br/><br/>';
+
+                if (statusPElem) statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusCheckingChar', [String(charIndex + 1), String(charsInfo.length), charDict.name]);
+
+                let interactUrl = Utils.getServerLink(charDict.href);
+                let html = await fetcher.fetch(interactUrl, {}, false);
+
+                // Initialize the DOM parser
+                let parser = new DOMParser();
+
+                // Parse the text
+                let doc = parser.parseFromString(html, "text/html");
+
+                // This XPATH makes sure that the Interact Select is is there
+                let interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
+                let interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
+
+                // If interactions are available for this char, we are going to use them so we increment the counter of total characters we interacted with
+                if (interactOptionsNodeSnapshot.snapshotLength > 0)
+                    totalCharactersCnt += 1;
+
+                // Random interaction is an empty array by default, if interactions are available, it is randomly filled
+                let randomInteraction = 1; // Greet
+
+                // The interaction counter for the current character, mainly used to give feedback on the form page.
+                let interactionCnt = 1;
+
+                while (interactOptionsNodeSnapshot.snapshotLength > 0) {
+                    let availableInteractions = [];
+
+                    // We loop and we push possible values in availableInteractions
+                    for (let i = 0; i < interactOptionsNodeSnapshot.snapshotLength; i++) {
+                        let interactionOption = interactOptionsNodeSnapshot.snapshotItem(i);
+                        let value = parseInt(interactionOption.getAttribute('value'));
+                        let dataGroup = interactionOption.hasAttribute('data-group') ? String(interactionOption.getAttribute('data-group')) : '';
+
+                        if (value !== 0 && dataGroup !== 'Phone') {
+                            availableInteractions.push(value);
+                        }
+
+                    }
+
+                    // We intersect possible available interactions with possible ones
+                    let possibleInteractions = availableInteractions.filter(value => INTERACTIONS.includes(value));
+
+                    // We finally choose a random interaction
+                    if (possibleInteractions.length > 0)
+                        randomInteraction = possibleInteractions[Math.floor(Math.random() * possibleInteractions.length)];
+                    else
+                        break;
+
+                    // We get the form fields
+                    let docForm = doc.getElementById('aspnetForm');
+                    let formDataOrig = new FormData(docForm);
+
+                    // We make sure to set the correct values
+                    formDataOrig.set('__EVENTTARGET', '');
+                    formDataOrig.set('__EVENTARGUMENT', '');
+                    formDataOrig.set('ctl00$cphTopColumn$ctl00$btnInteract', 'Interact');
+                    formDataOrig.set('ctl00$cphTopColumn$ctl00$ddlInteractionTypes', randomInteraction);
+
+                    // We don't need all the fields, so we make sure to only take the relevant ones
+                    let formDataNew = new FormData();
+                    bodyFields.forEach((key) => {
+                        formDataNew.set(key, formDataOrig.get(key));
+                    });
+
+                    totalInteractionsMsg = chrome.i18n.getMessage('miStatusTotalInteractions', [String(totalInteractionsCnt)]) + '<br/><br/>';
+
+                    if (statusPElem) statusPElem.innerHTML = `${statusIgnoreTxt}${totalInteractionsMsg}` + chrome.i18n.getMessage('miStatusInteracting', [String(charIndex + 1), String(charsInfo.length), charDict.name, String(interactionCnt)]);
+
+                    // Synchronous fetch request
+                    html = await fetcher.fetch(interactUrl, { "body": formDataNew, "method": "POST" }, false);
+
+                    // We update the parser content so to make sure the while does not go in infinite loop
+                    parser = new DOMParser();
+                    doc = parser.parseFromString(html, "text/html");
+                    // As we are updating the parser content, we also need to update the XpathHelper
+                    interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
+                    interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
+
+                    // We increase the counters
+                    interactionCnt++;
+                    totalInteractionsCnt++;
+                }
+            }
+
+        }
+
+        // Final update message with some statistics
+        if (totalInteractionsCnt > 0) {
+            let storage = await chrome.storage.sync.get({ global_mass_interact_count: 0 });
+            await chrome.storage.sync.set({ global_mass_interact_count: storage.global_mass_interact_count + totalInteractionsCnt });
+
+            if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusFinalInteracted', [String(totalInteractionsCnt), String(totalCharactersCnt)]);
+        } else {
+            if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteraction');
+        }
+
+    } catch (error) {
+        console.error('Mass interact error:', error);
+        if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miError');
+        new Notifications().notifyError(null, String(error));
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
     }
-
-    // Final update message with some statistics
-    if (totalInteractionsCnt > 0) {
-        let storage = await chrome.storage.sync.get({ global_mass_interact_count: 0 });
-        await chrome.storage.sync.set({ global_mass_interact_count: storage.global_mass_interact_count + totalInteractionsCnt });
-
-        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusFinalInteracted', [String(totalInteractionsCnt), String(totalCharactersCnt)]);
-    } else {
-        statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteraction');
-    }
-
-    // } catch (error) { console.log(error.message); console.log(error.stack);}
 }
 
 /**
  * This function will inject the required HTML elements to make the "Mass Interact" functionality available in the character present page
  *
  */
-function injectMassInteractHTML() {
+async function injectMassInteractHTML() {
     const FIND_FRIENDS_XPATH = '//div[@id="ctl00_cphLeftColumn_ctl00_divFilters"]';
 
     let findFriendsXPathHelp = new XPathHelper(FIND_FRIENDS_XPATH);
@@ -521,7 +530,7 @@ function injectMassInteractHTML() {
         MassInteractSubmit.setAttribute('type', 'submit');
         MassInteractSubmit.setAttribute('value', chrome.i18n.getMessage('miButton'));
         MassInteractSubmit.setAttribute('class', 'cns');
-        MassInteractSubmit.onclick = () => { onSubmitClick(); return false; };
+        MassInteractSubmit.onclick = () => { onSubmitClick(MassInteractSubmit); return false; };
 
         MassInteractP2.appendChild(MassInteractSubmit);
 
@@ -529,13 +538,12 @@ function injectMassInteractHTML() {
         MassInteractDiv.appendChild(MassInteractP1);
         MassInteractDiv.appendChild(MassInteractP3);
 
-        chrome.storage.sync.get({ 'global_mass_interact_count': 0 }, ({ global_mass_interact_count: totalInteractions }) => {
-            if (totalInteractions > 0) {
-                let MassInteractP4 = document.createElement('p');
-                MassInteractP4.innerHTML = chrome.i18n.getMessage('miTotalInteractionsMsg', [String(totalInteractions)]);
-                MassInteractDiv.insertBefore(MassInteractP4, MassInteractP2);
-            }
-        });
+        const { global_mass_interact_count: totalInteractions } = await chrome.storage.sync.get({ 'global_mass_interact_count': 0 });
+        if (totalInteractions > 0) {
+            let MassInteractP4 = document.createElement('p');
+            MassInteractP4.innerHTML = chrome.i18n.getMessage('miTotalInteractionsMsg', [String(totalInteractions)]);
+            MassInteractDiv.appendChild(MassInteractP4);
+        }
 
         MassInteractDiv.appendChild(MassInteractP2);
 
@@ -623,25 +631,30 @@ async function injectMassInteractExcludeButtons() {
         const charName = icon.dataset.charName;
         const charKey = String(myCharID);
 
-        const { mass_interact_exclude_id: rawMap } = await chrome.storage.sync.get({ mass_interact_exclude_id: {} });
-        const currentMap = (typeof rawMap === 'object' && !Array.isArray(rawMap) && rawMap !== null) ? rawMap : {};
-        const currentList = Array.isArray(currentMap[charKey]) ? currentMap[charKey] : [];
-        const currentIds = currentList.map(e => e.id);
+        try {
+            const { mass_interact_exclude_id: rawMap } = await chrome.storage.sync.get({ mass_interact_exclude_id: {} });
+            const currentMap = (typeof rawMap === 'object' && !Array.isArray(rawMap) && rawMap !== null) ? rawMap : {};
+            const currentList = Array.isArray(currentMap[charKey]) ? currentMap[charKey] : [];
+            const currentIds = currentList.map(e => e.id);
 
-        if (currentIds.includes(charID)) {
-            // Remove from exclusion list
-            const updated = currentList.filter(e => e.id !== charID);
-            currentMap[charKey] = updated;
-            await chrome.storage.sync.set({ mass_interact_exclude_id: currentMap });
-            icon.textContent = tickCircleIcon;
-            icon.title = chrome.i18n.getMessage('miExclude');
-        } else {
-            // Add to exclusion list
-            const newList = [...currentList, { id: charID, name: charName }];
-            currentMap[charKey] = newList;
-            await chrome.storage.sync.set({ mass_interact_exclude_id: currentMap });
-            icon.textContent = prohibitionIcon;
-            icon.title = chrome.i18n.getMessage('miInclude');
+            if (currentIds.includes(charID)) {
+                // Remove from exclusion list
+                const updated = currentList.filter(e => e.id !== charID);
+                currentMap[charKey] = updated;
+                await chrome.storage.sync.set({ mass_interact_exclude_id: currentMap });
+                icon.textContent = tickCircleIcon;
+                icon.title = chrome.i18n.getMessage('miExclude');
+            } else {
+                // Add to exclusion list
+                const newList = [...currentList, { id: charID, name: charName }];
+                currentMap[charKey] = newList;
+                await chrome.storage.sync.set({ mass_interact_exclude_id: currentMap });
+                icon.textContent = prohibitionIcon;
+                icon.title = chrome.i18n.getMessage('miInclude');
+            }
+        } catch (error) {
+            console.error('Failed to update exclusion list:', error);
+            new Notifications().notifyError(null, String(error));
         }
     });
 }
