@@ -78,7 +78,8 @@
                 .then((items) => {
                     const blocked = items[STORAGE_KEYS.BLOCKED_CHARS];
                     resolve(Array.isArray(blocked) ? blocked : []);
-                });
+                })
+                .catch(() => resolve([]));
         });
     }
 
@@ -868,7 +869,8 @@
                 'payload': 'remove',
                 'param': STORAGE_KEYS.BLOCKED_CHARS,
             })
-                .then(() => log(chrome.i18n.getMessage('ggfBlockedCleared')));
+                .then(() => log(chrome.i18n.getMessage('ggfBlockedCleared')))
+                .catch(err => log(String(err), 'error'));
         });
 
         // Auto-resume after keep-alive reload
