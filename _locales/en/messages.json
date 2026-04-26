@@ -795,6 +795,14 @@
         "message": "No friends to call.",
         "description": "Status when no callable friends are found"
     },
+    "cafStatusNoInteractions": {
+        "message": "No call types selected. Please enable at least one call option in the extension settings.",
+        "description": "Status when no interaction types are selected in the extension options"
+    },
+    "cafError": {
+        "message": "An error occurred. Check the browser console for details.",
+        "description": "Generic error shown in the Call All Friends panel when an unexpected error occurs"
+    },
     "cafStatusCalling": {
         "message": "Calling $CALLABLE$ friends out of $TOTAL$...",
         "description": "Status at the start of the calling phase",
