@@ -876,7 +876,7 @@
         // Auto-resume after keep-alive reload
         const keepAliveState = await getKeepAliveState();
         await clearKeepAliveState();
-        if (keepAliveEnabled && keepAliveState && Array.isArray(keepAliveState.queue) && keepAliveState.queue.length > 0) {
+        if (keepAliveEnabled && keepAliveState && Array.isArray(keepAliveState.queue)) {
             queue = keepAliveState.queue;
             lastCycleIds = keepAliveState.lastCycleIds || [];
             log(chrome.i18n.getMessage('ggfKeepAliveResuming'), 'info');
