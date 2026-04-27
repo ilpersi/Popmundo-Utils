@@ -127,7 +127,7 @@ function Invoke-Pack {
 
     if (Test-Path $Output) { Remove-Item $Output }
 
-    $IncludeDirs  = @("_locales", "common", "features", "icons", "injected-js", "libs", "options")
+    $IncludeDirs  = @("_locales", "common", "features", "icons", "libs", "options")
     $IncludeFiles = @("manifest.json", "background.js")
     $ExcludeNames = @(".DS_Store", "Thumbs.db")
     $ExcludeExts  = @(".md", ".ps1", ".py", ".sh", ".zip")

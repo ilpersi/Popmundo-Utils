@@ -45,7 +45,6 @@ INCLUDE_DIRS = [
     "common",
     "features",
     "icons",
-    "injected-js",
     "libs",
     "options",
 ]

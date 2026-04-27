@@ -162,7 +162,6 @@ pack() {
         common \
         features \
         icons \
-        injected-js \
         libs \
         options \
         --exclude "*.DS_Store" \

@@ -19,7 +19,6 @@ zip -r "$OUTPUT" \
     common \
     features \
     icons \
-    injected-js \
     libs \
     options \
     --exclude "*.DS_Store" \
