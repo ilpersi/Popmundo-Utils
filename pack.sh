@@ -22,11 +22,13 @@ zip -r "$OUTPUT" \
     libs \
     options \
     --exclude "*.DS_Store" \
+    --excluce ".cws_credentials.json" \
     --exclude "*.md" \
     --exclude "*.ps1" \
     --exclude "*.py" \
     --exclude "*.sh" \
-    --exclude "*.zip"
+    --exclude "*.zip" \
+    --exclude "*.json"
 
 FILE_COUNT=$(unzip -l "$OUTPUT" | tail -1 | awk '{print $2}')
 SIZE_KB=$(du -k "$OUTPUT" | awk '{print $1}')

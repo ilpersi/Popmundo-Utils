@@ -15,8 +15,8 @@ if (Test-Path $Output) {
 $IncludeDirs = @("_locales", "common", "features", "icons", "libs", "options")
 $IncludeFiles = @("manifest.json", "background.js")
 
-$ExcludeNames = @(".DS_Store", "Thumbs.db")
-$ExcludeExts = @(".md", ".ps1", ".py", ".sh", ".zip")
+$ExcludeNames = @(".DS_Store", "Thumbs.db", ".cws_credentials.json")
+$ExcludeExts = @(".md", ".ps1", ".py", ".sh", ".zip", ".json")
 
 $FilesToZip = [System.Collections.Generic.List[string]]::new()
 

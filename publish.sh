@@ -165,11 +165,13 @@ pack() {
         libs \
         options \
         --exclude "*.DS_Store" \
+        --exclude ".cws_credentials.json" \
         --exclude "*.md" \
         --exclude "*.ps1" \
         --exclude "*.py" \
         --exclude "*.sh" \
         --exclude "*.zip" \
+        --exclude "*.json" \
         > /dev/null
 
     FILE_COUNT=$(unzip -l "$OUTPUT" | tail -1 | awk '{print $2}')

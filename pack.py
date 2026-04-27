@@ -23,6 +23,7 @@ INCLUDE_FILES = [
 EXCLUDE_NAMES = {
     ".DS_Store",
     "Thumbs.db",
+    ".cws_credentials.json",
 }
 
 EXCLUDE_EXTENSIONS = {
@@ -31,6 +32,7 @@ EXCLUDE_EXTENSIONS = {
     ".py",
     ".sh",
     ".zip",
+    ".json",
 }
 
 
