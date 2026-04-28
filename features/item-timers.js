@@ -158,6 +158,56 @@ async function timerOnClick(btnNode) {
 }
 
 /**
+ * Onclick event handler for the ⏱ span injected by injectUseAndTimerList(). Mirrors
+ * timerOnClick() but adapted for type="image" inputs: sets .x/.y coordinates so that
+ * background.js can derive the item ID from the intercepted request body.
+ *
+ * @param {HTMLInputElement} btnNode - The original Use/Tune image input.
+ */
+async function timerOnClickList(btnNode) {
+
+    let docForm = document.getElementById('aspnetForm');
+    let formData = new FormData(docForm);
+    let btnName = btnNode.getAttribute('name');
+    formData.set(btnName + '.x', '0');
+    formData.set(btnName + '.y', '0');
+
+    await fetch(location.href, {
+        "body": formData,
+        "method": "POST",
+    }).then((response) => {
+        if (response.ok && response.status >= 200 && response.status < 300) {
+            return response.text();
+        }
+    }).then((_html) => { });
+
+    await Utils.sleep(750);
+    btnNode.click();
+}
+
+/**
+ * Injects a ⏱ span next to each Use/Tune image button on the item list page.
+ * Clicking the span triggers the same double-submission flow as the detail page button.
+ */
+async function injectUseAndTimerList(fontSize) {
+
+    const USE_BTN_SELECTOR = "input[type='image'][title='Use'][src*='Static/Icons/Item_Use'], input[type='image'][title='Tune'][src*='Static/Icons/Item_Tune']";
+    let btnHelper = new CssSelectorHelper(USE_BTN_SELECTOR);
+    let btnResults = btnHelper.getAll();
+
+    for (let btnNode of btnResults) {
+
+        let timerSpan = document.createElement('span');
+        timerSpan.textContent = '⚡';
+        timerSpan.setAttribute('title', btnNode.getAttribute('title') + chrome.i18n.getMessage('itTimerButtonSuffix'));
+        timerSpan.style.cssText = `font-size:${fontSize}px; cursor:pointer; margin-left:3px; user-select:none;`;
+        timerSpan.onclick = () => { timerOnClickList(btnNode); return false; };
+
+        btnNode.parentNode.insertBefore(timerSpan, btnNode.nextSibling);
+    }
+}
+
+/**
  * This function will inject the "Use & Timer" button on the page
  *
  */
@@ -182,7 +232,7 @@ async function injectUseAndTimer() {
     }
 }
 
-async function drawTimerIcon() {
+async function drawTimerIcon(items) {
     // Emoji icons for the clock
     const TIMER_WARN_ICON = '⏰';
     const TIMER_OK_ICON = '⏳';
@@ -195,9 +245,6 @@ async function drawTimerIcon() {
     // We get the Character ID, we'll use this to check the timers
     let myID = Utils.getMyID();
 
-    // We get the saved timers
-    let items = await chrome.storage.sync.get({ 'timers': {}, 'enhanced_links_font_size': 16 });
-    
     // Current Character has saved timers
     if (items.timers.hasOwnProperty(myID)) {
 
@@ -261,10 +308,15 @@ async function drawTimerIcon() {
 }
 
 // If we are on a specific item page, we inject "Use and Timer" button
-if (!window.location.href.includes('Character/Items/'))
+if (!window.location.href.includes('Character/Items/')) {
     injectUseAndTimer();
-else
-    drawTimerIcon();
+} else {
+    (async () => {
+        let items = await chrome.storage.sync.get({ 'timers': {}, 'enhanced_links_font_size': 16 });
+        drawTimerIcon(items);
+        injectUseAndTimerList(items.enhanced_links_font_size);
+    })();
+}
 
 let maxIntervalCnt = 1;
 
