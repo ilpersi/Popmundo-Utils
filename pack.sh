@@ -27,8 +27,7 @@ zip -r "$OUTPUT" \
     --exclude "*.ps1" \
     --exclude "*.py" \
     --exclude "*.sh" \
-    --exclude "*.zip" \
-    --exclude "*.json"
+    --exclude "*.zip"
 
 FILE_COUNT=$(unzip -l "$OUTPUT" | tail -1 | awk '{print $2}')
 SIZE_KB=$(du -k "$OUTPUT" | awk '{print $1}')

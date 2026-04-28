@@ -32,7 +32,6 @@ EXCLUDE_EXTENSIONS = {
     ".py",
     ".sh",
     ".zip",
-    ".json",
 }
 
 

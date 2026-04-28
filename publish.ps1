@@ -130,7 +130,7 @@ function Invoke-Pack {
     $IncludeDirs  = @("_locales", "common", "features", "icons", "libs", "options")
     $IncludeFiles = @("manifest.json", "background.js")
     $ExcludeNames = @(".DS_Store", "Thumbs.db", ".cws_credentials.json")
-    $ExcludeExts  = @(".md", ".ps1", ".py", ".sh", ".zip", ".json")
+    $ExcludeExts  = @(".md", ".ps1", ".py", ".sh", ".zip")
 
     $FilesToZip = [System.Collections.Generic.List[string]]::new()
 

@@ -171,7 +171,6 @@ pack() {
         --exclude "*.py" \
         --exclude "*.sh" \
         --exclude "*.zip" \
-        --exclude "*.json" \
         > /dev/null
 
     FILE_COUNT=$(unzip -l "$OUTPUT" | tail -1 | awk '{print $2}')
