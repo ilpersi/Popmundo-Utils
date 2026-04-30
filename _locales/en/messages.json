@@ -19,6 +19,18 @@
         "message": "Options saved.",
         "description": "Status message shown after saving options"
     },
+    "optBrandTag": {
+        "message": "Settings",
+        "description": "Tag shown under the Popmundo Utils brand name in the options sidebar"
+    },
+    "optThemeToggleLight": {
+        "message": "Switch to dark theme",
+        "description": "Tooltip on the theme toggle button while the page is in light mode"
+    },
+    "optThemeToggleDark": {
+        "message": "Switch to light theme",
+        "description": "Tooltip on the theme toggle button while the page is in dark mode"
+    },
     "navGottaGoFast": {
         "message": "Autograph Collector",
         "description": "Sidebar navigation label for the Autograph Collector section"

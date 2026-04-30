@@ -4,132 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <title data-i18n="optPageTitle">Popmundo Utils Options</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="../libs/bootstrap.min-5.3.1.css" rel="stylesheet" type="text/css" />
-    <style>
-        body {
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .card {
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-header {
-            padding: 0.56rem 0.94rem;
-            background-color: #fff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 0.5rem 0.5rem 0 0 !important;
-        }
-
-        .card-body {
-            padding: 0.75rem 0.94rem;
-        }
-
-        .option-group-title {
-            text-transform: uppercase;
-            font-weight: 600;
-            font-size: 0.72rem;
-            letter-spacing: 0.06em;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
-            margin-top: 0.75rem;
-        }
-
-        .option-group-title:first-child {
-            margin-top: 0;
-        }
-
-        .sidebar-nav .nav-link {
-            color: #495057;
-            padding: 0.4rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.9rem;
-        }
-
-        .sidebar-nav .nav-link:hover {
-            background-color: #e9ecef;
-            color: #212529;
-        }
-
-        .sidebar-nav .nav-link.active {
-            background-color: #0d6efd;
-            color: #fff !important;
-        }
-
-        @media (max-width: 991.98px) {
-            .sidebar-nav {
-                overflow-x: auto;
-                white-space: nowrap;
-                padding-bottom: 0.5rem;
-            }
-
-            .sidebar-nav .nav {
-                flex-direction: row;
-                flex-wrap: nowrap;
-            }
-
-            .sidebar-nav .nav-link {
-                display: inline-block;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .sidebar-nav {
-                position: sticky;
-                top: 1rem;
-            }
-        }
-
-        .form-check-label {
-            cursor: pointer;
-        }
-
-        [id$="_icon"] {
-            flex-shrink: 0;
-            min-height: 2.5rem;
-        }
-    </style>
+    <link href="../common/theme.css" rel="stylesheet" type="text/css" />
+    <link href="options.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body class="py-3">
+<body>
     <!-- Whenever you add a new option, make sure to update the related logic in options.js -->
-    <div class="container-fluid px-3">
-        <div class="row g-3">
+    <div class="pm-shell">
 
-            <!-- Sidebar -->
-            <div class="col-lg-3">
-                <div class="sidebar-nav">
-                    <nav class="nav flex-column">
-                        <a class="nav-link active" href="#" data-tab="tab-ggf"
-                            data-i18n="navGottaGoFast">Autograph Collector</a>
-                        <a class="nav-link" href="#" data-tab="tab-call-friends"
-                            data-i18n="navCallAllFriends">Call All Friends</a>
-                        <a class="nav-link" href="#" data-tab="tab-enhanced-links" data-i18n="navEnhancedLinks">Enhanced
-                            Links</a>
-                        <a class="nav-link" href="#" data-tab="tab-mass-interact" data-i18n="navMassInteract">Mass
-                            Interact</a>
-                        <a class="nav-link" href="#" data-tab="tab-misc" data-i18n="navMiscOptions">Misc Options</a>
-                        <a class="nav-link" href="#" data-tab="tab-popup" data-i18n="navPopupOptions">Popup Options</a>
-                        <a class="nav-link" href="#" data-tab="tab-reminders" data-i18n="navReminders">Reminders</a>
-                        <a class="nav-link" href="#" data-tab="tab-tour-bus" data-i18n="navTourBusHelper">Tour Bus
-                            Helper</a>
-                        <a class="nav-link d-none" href="#" data-tab="tab-developer" id="nav-developer" data-i18n="navDeveloper">Developer</a>
-                    </nav>
-                </div>
+        <!-- Sidebar -->
+        <aside class="pm-sidebar sidebar-nav">
+            <div class="pm-brand">
+                <span class="pm-brand__mark" aria-hidden="true">P</span>
+                <span class="pm-brand__name" data-i18n="extName">Popmundo Utils</span>
             </div>
+            <div class="pm-brand__tag" data-i18n="optBrandTag">Settings</div>
 
-            <!-- Content -->
-            <div class="col-lg-9">
+            <nav class="pm-nav">
+                <a class="pm-nav__item nav-link active" href="#" data-tab="tab-ggf">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                        <span data-i18n="navGottaGoFast">Autograph Collector</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-ggf"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-call-friends">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 5l3-1 2 4-2 1c1 3 3 5 6 6l1-2 4 2-1 3c-7 1-15-7-13-13z"/></svg>
+                        <span data-i18n="navCallAllFriends">Call All Friends</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-call-friends"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-enhanced-links">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 1 0 5.7 5.7l1-1"/></svg>
+                        <span data-i18n="navEnhancedLinks">Enhanced Links</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-enhanced-links"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-mass-interact">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="11" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M14 18c.5-2 2-3.5 4-3.5"/></svg>
+                        <span data-i18n="navMassInteract">Mass Interact</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-mass-interact"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-misc">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 0 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 0 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+                        <span data-i18n="navMiscOptions">Misc Options</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-misc"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-popup">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5h18v12H8l-5 4z"/></svg>
+                        <span data-i18n="navPopupOptions">Popup Options</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-popup"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-reminders">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8a6 6 0 1 1 12 0v5l2 3H4l2-3z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+                        <span data-i18n="navReminders">Reminders</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-reminders"></span>
+                </a>
+                <a class="pm-nav__item nav-link" href="#" data-tab="tab-tour-bus">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17V7a2 2 0 0 1 2-2h11l4 4v8"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M9 18h6"/></svg>
+                        <span data-i18n="navTourBusHelper">Tour Bus Helper</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-tour-bus"></span>
+                </a>
+                <a class="pm-nav__item nav-link d-none" href="#" data-tab="tab-developer" id="nav-developer">
+                    <span class="pm-nav__label">
+                        <svg class="pm-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/></svg>
+                        <span data-i18n="navDeveloper">Developer</span>
+                    </span>
+                    <span class="pm-nav__count" data-tab-count="tab-developer"></span>
+                </a>
+            </nav>
 
-                <!-- Save / Status bar (always visible) -->
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <button id="save" class="btn btn-primary btn-sm" data-i18n="optSaveButton">Save</button>
-                    <span id="status" class="text-muted small"></span>
-                </div>
+            <div class="pm-sidebar__footer">
+                <span data-i18n="extName">Popmundo Utils</span>
+                <span class="pm-version">v1.1.5</span>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="pm-main">
+
+            <!-- Topbar -->
+            <div class="pm-topbar">
+                <button class="pm-iconbtn" id="theme-toggle" type="button" data-i18n-title="optThemeToggleLight" title="Switch to dark theme">
+                    <svg class="pm-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                    <svg class="pm-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                </button>
+            </div>
 
                 <!-- Autograph Collector -->
                 <div id="tab-ggf" class="tab-content-section">
@@ -271,7 +244,7 @@
                             <div class="row g-2 mb-2">
                                 <div class="col-sm-6">
                                     <label for="call_exclude_id_char_select" class="form-label" data-i18n="optSelectCharLabel">Character</label>
-                                    <select class="form-select form-select-sm" id="call_exclude_id_char_select">
+                                    <select class="form-select form-select-sm" id="call_exclude_id_char_select" data-no-dirty>
                                         <option value="" data-i18n="optSelectCharPlaceholder">-- Select a character --</option>
                                     </select>
                                 </div>
@@ -938,7 +911,7 @@
                                 </div>
                                 <div class="col-sm-6 col-12">
                                     <label for="mass_interact_exclude_id_char_select" class="form-label" data-i18n="optSelectCharLabel">Character</label>
-                                    <select class="form-select form-select-sm" id="mass_interact_exclude_id_char_select">
+                                    <select class="form-select form-select-sm" id="mass_interact_exclude_id_char_select" data-no-dirty>
                                         <option value="" data-i18n="optSelectCharPlaceholder">-- Select a character --</option>
                                     </select>
                                 </div>
@@ -1231,9 +1204,26 @@
                     </div>
                 </div>
 
-            </div><!-- /col-lg-9 -->
-        </div><!-- /row -->
-    </div><!-- /container-fluid -->
+        </main><!-- /pm-main -->
+    </div><!-- /pm-shell -->
+
+    <!-- ── Sticky save bar (shows when there are unsaved changes) ── -->
+    <div class="pm-savebar" id="savebar" role="status" aria-live="polite">
+        <div class="pm-savebar__msg">
+            <span class="pm-pulse-dot" aria-hidden="true"></span>
+            <span data-i18n="optUnsavedWarning">You have unsaved changes.</span>
+            <span id="status"></span>
+        </div>
+        <div class="pm-savebar__actions">
+            <button id="save" class="btn btn-primary btn-sm" type="button" data-i18n="optSaveButton">Save</button>
+        </div>
+    </div>
+
+    <!-- ── Toast (shown after save success) ── -->
+    <div class="pm-toast" id="saved-toast" role="status" aria-live="polite">
+        <span class="pm-toast__check" aria-hidden="true">&check;</span>
+        <span data-i18n="optSaved">Options saved.</span>
+    </div>
 
     <!-- ── Reminder add/edit modal ── -->
     <div class="modal fade" id="reminderModal" tabindex="-1" aria-labelledby="reminderModalTitle" aria-hidden="true">

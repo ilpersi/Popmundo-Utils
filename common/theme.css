@@ -1,0 +1,103 @@
+/* ============================================================================
+   Popmundo Utils — shared theme tokens
+
+   Design tokens derived from Popmundo's official skin CSS files. Every token
+   is prefixed `--pm-` so it never collides with Bootstrap (`--bs-*`) or any
+   other third-party variable.
+
+   This file is the single source of truth for color and shadow across the
+   options page (loaded by options.html) and is also intended to be loaded
+   by the in-game popup scripts in a later phase so popups can share the
+   same palette.
+
+   The active theme is selected by the `data-theme="light|dark"` attribute
+   on <html>. Default values match Popmundo's "default" (light) skin.
+   ============================================================================ */
+
+:root[data-theme="light"] {
+    --pm-bg:                #63767f;
+    --pm-bg-content:        #c8d0d4;
+    --pm-surface:           #ffffff;
+    --pm-surface-2:         #f4f4f4;
+    --pm-surface-3:         #d1d1d1;
+    --pm-header-bg:         #56686f;
+    --pm-header-bg-soft:    #67777f;
+    --pm-ink:               #000000;
+    --pm-ink-soft:          #1a1a1a;
+    --pm-ink-mute:          #555555;
+    --pm-ink-faint:         #888888;
+    --pm-link:              #09639a;
+    --pm-accent:            #ffcc00;
+    --pm-accent-deep:       #e6b800;
+    --pm-accent-soft:       #fff2bf;
+    --pm-accent-text:       #000000;
+    --pm-success:           #339933;
+    --pm-success-bright:    #00dd00;
+    --pm-error:             #cf2d2d;
+    --pm-border:            #cccccc;
+    --pm-border-strong:     #999999;
+    --pm-chip-bg:           #ffffff;
+    --pm-chip-bg-hover:     #c8d0d4;
+    --pm-chip-border-hover: #555555;
+    --pm-shadow-soft:       0 2px 4px rgba(0, 0, 0, 0.18);
+    --pm-shadow-lift:       0 6px 14px rgba(0, 0, 0, 0.22);
+}
+
+:root[data-theme="dark"] {
+    --pm-bg:                #1a1a1a;
+    --pm-bg-content:        #232323;
+    --pm-surface:           #2c2c2c;
+    --pm-surface-2:         #353535;
+    --pm-surface-3:         #3f3f3f;
+    --pm-header-bg:         #1c1c1c;
+    --pm-header-bg-soft:    #333333;
+    --pm-ink:               #ffffff;
+    --pm-ink-soft:          #dddddd;
+    --pm-ink-mute:          #aaaaaa;
+    --pm-ink-faint:         #777777;
+    --pm-link:              #ffcc00;
+    --pm-accent:            #ffcc00;
+    --pm-accent-deep:       #e6b800;
+    --pm-accent-soft:       rgba(255, 204, 0, 0.16);
+    --pm-accent-text:       #000000;
+    --pm-success:           #339933;
+    --pm-success-bright:    #00ff00;
+    --pm-error:             #dd0000;
+    --pm-border:            #444444;
+    --pm-border-strong:     #666666;
+    --pm-chip-bg:           #353535;
+    --pm-chip-bg-hover:     #3f3f3f;
+    --pm-chip-border-hover: #777777;
+    --pm-shadow-soft:       0 2px 4px rgba(0, 0, 0, 0.5);
+    --pm-shadow-lift:       0 6px 14px rgba(0, 0, 0, 0.7);
+}
+
+/* No theme attribute = light by default */
+:root:not([data-theme]) {
+    --pm-bg:                #63767f;
+    --pm-bg-content:        #c8d0d4;
+    --pm-surface:           #ffffff;
+    --pm-surface-2:         #f4f4f4;
+    --pm-surface-3:         #d1d1d1;
+    --pm-header-bg:         #56686f;
+    --pm-header-bg-soft:    #67777f;
+    --pm-ink:               #000000;
+    --pm-ink-soft:          #1a1a1a;
+    --pm-ink-mute:          #555555;
+    --pm-ink-faint:         #888888;
+    --pm-link:              #09639a;
+    --pm-accent:            #ffcc00;
+    --pm-accent-deep:       #e6b800;
+    --pm-accent-soft:       #fff2bf;
+    --pm-accent-text:       #000000;
+    --pm-success:           #339933;
+    --pm-success-bright:    #00dd00;
+    --pm-error:             #cf2d2d;
+    --pm-border:            #cccccc;
+    --pm-border-strong:     #999999;
+    --pm-chip-bg:           #ffffff;
+    --pm-chip-bg-hover:     #c8d0d4;
+    --pm-chip-border-hover: #555555;
+    --pm-shadow-soft:       0 2px 4px rgba(0, 0, 0, 0.18);
+    --pm-shadow-lift:       0 6px 14px rgba(0, 0, 0, 0.22);
+}

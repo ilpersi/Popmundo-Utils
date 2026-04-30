@@ -1,0 +1,797 @@
+/* ============================================================================
+   Popmundo Utils — Options page styles
+
+   Layered on top of Bootstrap 5.3.1. Tokens come from common/theme.css.
+   Custom components (sidebar, savebar, toast) are prefixed `pm-` so they
+   don't collide with Bootstrap utilities; Bootstrap classes still in use
+   (.card, .btn, .form-control, .form-check-input, .modal) are restyled
+   in-place via higher-specificity rules.
+
+   Phase 1 scope: visual treatment only — chrome (sidebar, topbar, savebar,
+   toast), card pattern, form controls, and modal. The Mass Interact chip
+   migration ships in Phase 2.
+   ============================================================================ */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   BASE
+   ────────────────────────────────────────────────────────────────────────── */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+body {
+    background: var(--pm-bg);
+    color: var(--pm-ink);
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    transition: background 200ms ease, color 200ms ease;
+    /* Override the .py-3 utility coming from the existing markup */
+    padding: 0 !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SHELL — sidebar + main grid
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-shell {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+}
+
+@media (max-width: 880px) {
+    .pm-shell { grid-template-columns: 1fr; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SIDEBAR
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-sidebar {
+    background: var(--pm-surface);
+    border-right: 1px solid var(--pm-border);
+    padding: 18px 14px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 880px) {
+    .pm-sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--pm-border);
+    }
+}
+
+.pm-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.pm-brand__mark {
+    background: var(--pm-accent);
+    color: #000;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 13px;
+    box-shadow: var(--pm-shadow-soft);
+    flex-shrink: 0;
+}
+
+.pm-brand__name {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--pm-ink);
+}
+
+.pm-brand__tag {
+    font-size: 10px;
+    color: var(--pm-ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding-left: 34px;
+    margin-bottom: 16px;
+}
+
+.pm-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Both .pm-nav__item and Bootstrap's .nav-link are on each link
+   (the existing JS targets .sidebar-nav .nav-link to wire up tab switching). */
+.pm-nav__item.nav-link,
+.pm-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    color: var(--pm-ink);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: normal;
+    text-decoration: none;
+    transition: background 120ms ease, color 120ms ease;
+}
+
+.pm-nav__item.nav-link:hover,
+.pm-sidebar .nav-link:hover {
+    background: var(--pm-surface-2);
+    color: var(--pm-ink);
+}
+
+.pm-nav__item.nav-link.active,
+.pm-nav__item.nav-link.active:hover,
+.pm-sidebar .nav-link.active,
+.pm-sidebar .nav-link.active:hover {
+    background: var(--pm-accent);
+    color: var(--pm-accent-text);
+    font-weight: bold;
+}
+
+.pm-nav__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.pm-nav__icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.pm-nav__count {
+    font-weight: bold;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    padding: 1px 7px;
+    border-radius: 7px;
+    background: var(--pm-surface-3);
+    color: var(--pm-ink-mute);
+    min-width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.pm-nav__count:empty {
+    display: none;
+}
+
+.pm-nav__item.nav-link.active .pm-nav__count {
+    background: rgba(0, 0, 0, 0.20);
+    color: var(--pm-accent-text);
+}
+
+.pm-nav__count.is-zero { opacity: 0.5; }
+
+.pm-sidebar__footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--pm-border);
+    font-size: 10px;
+    color: var(--pm-ink-mute);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pm-version {
+    font-weight: bold;
+    color: var(--pm-ink-soft);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MAIN
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-main {
+    background: var(--pm-bg-content);
+    padding: 18px 24px 90px 24px;
+    min-width: 0;
+}
+
+@media (max-width: 880px) {
+    .pm-main { padding: 16px 16px 90px 16px; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TOPBAR — currently just the theme toggle, search lives here in Phase 4
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.pm-iconbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border-strong);
+    border-radius: 7px;
+    color: var(--pm-ink);
+    cursor: pointer;
+    padding: 0;
+    transition: all 140ms ease;
+}
+
+.pm-iconbtn:hover {
+    background: var(--pm-accent);
+    border-color: var(--pm-accent);
+    color: var(--pm-accent-text);
+}
+
+.pm-iconbtn svg { width: 16px; height: 16px; }
+.pm-iconbtn .pm-icon-sun { display: none; }
+:root[data-theme="dark"] .pm-iconbtn .pm-icon-moon { display: none; }
+:root[data-theme="dark"] .pm-iconbtn .pm-icon-sun  { display: block; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   CARD — Bootstrap .card recolored to Popmundo's div.box pattern
+   (slate header bar + white body + 7px corners)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tab-content-section .card {
+    background: var(--pm-surface);
+    border: none;
+    border-radius: 7px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: var(--pm-shadow-soft);
+}
+
+:root[data-theme="dark"] .tab-content-section .card {
+    border: 1px solid var(--pm-border);
+}
+
+.tab-content-section .card-header {
+    background: var(--pm-header-bg);
+    color: #ffffff;
+    padding: 7px 12px !important;
+    border-bottom: none;
+    border-radius: 7px 7px 0 0 !important;
+}
+
+.tab-content-section .card-header h5 {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.tab-content-section .card-body {
+    background: var(--pm-surface);
+    color: var(--pm-ink);
+    padding: 14px;
+}
+
+.tab-content-section .card-body p {
+    color: var(--pm-ink-soft);
+}
+
+.tab-content-section .card-body .text-muted {
+    color: var(--pm-ink-mute) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   OPTION GROUP TITLES (the "General", "Keep-Alive" subheaders inside cards)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tab-content-section .option-group-title {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--pm-ink);
+    margin-bottom: 8px;
+    margin-top: 14px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--pm-border);
+}
+
+.tab-content-section .option-group-title:first-child {
+    margin-top: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FORM CONTROLS
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tab-content-section .form-control,
+.tab-content-section .form-select {
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border-strong);
+    color: var(--pm-ink);
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+:root[data-theme="dark"] .tab-content-section .form-control,
+:root[data-theme="dark"] .tab-content-section .form-select {
+    background: var(--pm-surface-2);
+}
+
+.tab-content-section .form-control:focus,
+.tab-content-section .form-select:focus {
+    background: var(--pm-surface);
+    color: var(--pm-ink);
+    border-color: var(--pm-accent);
+    box-shadow: 0 0 0 2px var(--pm-accent-soft);
+}
+
+:root[data-theme="dark"] .tab-content-section .form-control:focus,
+:root[data-theme="dark"] .tab-content-section .form-select:focus {
+    background: var(--pm-surface-2);
+}
+
+.tab-content-section .form-control::placeholder {
+    color: var(--pm-ink-faint);
+}
+
+/* Form labels */
+.tab-content-section .form-label {
+    color: var(--pm-ink);
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+/* Bootstrap switch toggles — recolor track, accent on check */
+.tab-content-section .form-check-input {
+    cursor: pointer;
+    background-color: var(--pm-surface-3);
+    border-color: var(--pm-border-strong);
+}
+
+.tab-content-section .form-check-input:checked {
+    background-color: var(--pm-accent);
+    border-color: var(--pm-accent-deep);
+}
+
+.tab-content-section .form-check-input:focus {
+    border-color: var(--pm-accent);
+    box-shadow: 0 0 0 2px var(--pm-accent-soft);
+}
+
+.tab-content-section .form-check-label {
+    color: var(--pm-ink);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* Inline icon-character inputs in Enhanced Links */
+[id$="_icon"] {
+    flex-shrink: 0;
+    min-height: 2rem;
+    text-align: center;
+}
+
+/* Misc utilities used in sub-templates */
+.tab-content-section .border-bottom {
+    border-color: var(--pm-border) !important;
+}
+
+.tab-content-section .form-text {
+    color: var(--pm-ink-mute);
+    font-size: 11px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   BUTTONS
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tab-content-section .btn,
+.pm-savebar .btn,
+.modal-footer .btn {
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.tab-content-section .btn-primary,
+.pm-savebar .btn-primary,
+.modal-footer .btn-primary {
+    background: var(--pm-accent);
+    color: var(--pm-accent-text);
+    border-color: var(--pm-accent-deep);
+}
+
+.tab-content-section .btn-primary:hover,
+.tab-content-section .btn-primary:focus,
+.tab-content-section .btn-primary:active,
+.pm-savebar .btn-primary:hover,
+.pm-savebar .btn-primary:focus,
+.pm-savebar .btn-primary:active,
+.modal-footer .btn-primary:hover,
+.modal-footer .btn-primary:focus,
+.modal-footer .btn-primary:active {
+    background: var(--pm-accent-deep);
+    color: var(--pm-accent-text);
+    border-color: var(--pm-accent-deep);
+    box-shadow: none;
+}
+
+.tab-content-section .btn-secondary,
+.modal-footer .btn-secondary {
+    background: var(--pm-surface-2);
+    color: var(--pm-ink);
+    border-color: var(--pm-border-strong);
+}
+
+.tab-content-section .btn-secondary:hover,
+.modal-footer .btn-secondary:hover {
+    background: var(--pm-surface-3);
+    color: var(--pm-ink);
+    border-color: var(--pm-ink-mute);
+}
+
+.tab-content-section .btn-outline-secondary {
+    background: transparent;
+    color: var(--pm-ink);
+    border-color: var(--pm-border-strong);
+}
+
+.tab-content-section .btn-outline-secondary:hover {
+    background: var(--pm-accent);
+    color: var(--pm-accent-text);
+    border-color: var(--pm-accent);
+}
+
+.tab-content-section .btn-outline-primary {
+    background: transparent;
+    color: var(--pm-link);
+    border-color: var(--pm-link);
+}
+
+.tab-content-section .btn-outline-primary:hover {
+    background: var(--pm-link);
+    color: #ffffff;
+    border-color: var(--pm-link);
+}
+
+.tab-content-section .btn-outline-danger {
+    background: transparent;
+    color: var(--pm-error);
+    border-color: var(--pm-error);
+}
+
+.tab-content-section .btn-outline-danger:hover {
+    background: var(--pm-error);
+    color: #ffffff;
+    border-color: var(--pm-error);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   STICKY SAVEBAR
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-savebar {
+    position: fixed;
+    left: 240px;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 24px;
+    background: var(--pm-header-bg);
+    color: #fff;
+    border-top: 1px solid #000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 280ms ease, opacity 200ms ease;
+    z-index: 1040; /* below Bootstrap modal (1055), above content */
+}
+
+@media (max-width: 880px) {
+    .pm-savebar { left: 0; }
+}
+
+.pm-savebar.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.pm-savebar__msg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.pm-savebar__msg em {
+    font-style: normal;
+    color: var(--pm-accent);
+    font-weight: bold;
+}
+
+.pm-savebar__actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.pm-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--pm-accent);
+    box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7);
+    animation: pmPulse 1.6s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pmPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7); }
+    70%  { box-shadow: 0 0 0 8px rgba(255, 204, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+}
+
+/* The legacy #status span stays in the savebar for save_options() to write
+   into; we don't want it visible (the toast does that job now). */
+.pm-savebar #status {
+    display: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TOAST — shown after save success
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-toast {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-success);
+    border-radius: 7px;
+    color: var(--pm-ink);
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: var(--pm-shadow-lift);
+    transform: translateY(-12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 240ms ease;
+    z-index: 1080;
+}
+
+.pm-toast.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.pm-toast__check {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--pm-success-bright);
+    color: #000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MODAL — Bootstrap modal restyle
+   ────────────────────────────────────────────────────────────────────────── */
+
+.modal-content {
+    background: var(--pm-surface);
+    color: var(--pm-ink);
+    border: 1px solid var(--pm-border-strong);
+    border-radius: 7px;
+}
+
+.modal-header {
+    background: var(--pm-header-bg);
+    color: #fff;
+    border-bottom: none;
+    border-radius: 7px 7px 0 0;
+    padding: 8px 14px;
+}
+
+.modal-header .modal-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.modal-header .btn-close {
+    filter: invert(1) opacity(0.8);
+}
+
+.modal-body {
+    color: var(--pm-ink);
+    padding: 16px;
+}
+
+.modal-body .form-label,
+.modal-body .form-label.fw-semibold {
+    color: var(--pm-ink);
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.modal-body .form-text {
+    color: var(--pm-ink-mute);
+    font-size: 11px;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border-strong);
+    color: var(--pm-ink);
+    border-radius: 7px;
+}
+
+:root[data-theme="dark"] .modal-body .form-control,
+:root[data-theme="dark"] .modal-body .form-select {
+    background: var(--pm-surface-2);
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+    border-color: var(--pm-accent);
+    box-shadow: 0 0 0 2px var(--pm-accent-soft);
+    color: var(--pm-ink);
+}
+
+.modal-body .form-check-input {
+    cursor: pointer;
+    background-color: var(--pm-surface-3);
+    border-color: var(--pm-border-strong);
+}
+
+.modal-body .form-check-input:checked {
+    background-color: var(--pm-accent);
+    border-color: var(--pm-accent-deep);
+}
+
+.modal-body .form-check-input:focus {
+    border-color: var(--pm-accent);
+    box-shadow: 0 0 0 2px var(--pm-accent-soft);
+}
+
+.modal-body .form-check-label {
+    color: var(--pm-ink);
+}
+
+.modal-body .text-danger {
+    color: var(--pm-error) !important;
+}
+
+.modal-footer {
+    background: var(--pm-surface);
+    border-top: 1px solid var(--pm-border);
+    padding: 10px 14px;
+    border-radius: 0 0 7px 7px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TOOLTIPS — Bootstrap tooltip restyle
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tooltip-inner {
+    background-color: var(--pm-header-bg);
+    color: #fff;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before { border-top-color: var(--pm-header-bg); }
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before { border-bottom-color: var(--pm-header-bg); }
+.tooltip.bs-tooltip-start .tooltip-arrow::before { border-left-color: var(--pm-header-bg); }
+.tooltip.bs-tooltip-end .tooltip-arrow::before { border-right-color: var(--pm-header-bg); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   REMINDER CARDS (rendered by options-ui.js into #user_reminders_list)
+   ────────────────────────────────────────────────────────────────────────── */
+
+#user_reminders_list [data-reminder-id] {
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border) !important;
+    color: var(--pm-ink);
+    border-radius: 7px !important;
+}
+
+#user_reminders_list [data-reminder-id].bg-light {
+    background: var(--pm-surface-2) !important;
+}
+
+#user_reminders_list .text-muted {
+    color: var(--pm-ink-mute) !important;
+}
+
+#user_reminders_list .badge.bg-secondary {
+    background-color: var(--pm-ink-mute) !important;
+    color: #fff !important;
+}
+
+#user_reminders_list .badge.bg-info {
+    background-color: var(--pm-link) !important;
+    color: #fff !important;
+}
+
+#user_reminders_list .badge.bg-primary {
+    background-color: var(--pm-accent) !important;
+    color: var(--pm-accent-text) !important;
+}
+
+#user_reminders_list .badge.bg-success {
+    background-color: var(--pm-success) !important;
+    color: #fff !important;
+}
+
+#user_reminders_list .font-monospace {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11px;
+    color: var(--pm-ink-soft);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   EXCLUSION LIST cells (rendered by options-ui.js)
+   ────────────────────────────────────────────────────────────────────────── */
+
+#mass_interact_exclude_id_list .border-bottom,
+#call_exclude_id_list .border-bottom {
+    border-color: var(--pm-border) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   The legacy dynamic #unsaved-warning span is no longer used — savebar now
+   surfaces the same information. Hide if it ever appears.
+   ────────────────────────────────────────────────────────────────────────── */
+
+#unsaved-warning {
+    display: none !important;
+}

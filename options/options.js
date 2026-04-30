@@ -303,12 +303,15 @@ function save_options() {
     });
 
     chrome.storage.sync.set(optionsToSave, function () {
-        // Update status to let user know options were saved.
+        // Legacy #status span (still required so feature scripts that look it
+        // up don't break) — invisible in the new save bar; the toast handles
+        // the visible confirmation.
         var status = document.getElementById('status');
-        status.textContent = chrome.i18n.getMessage('optSaved') || 'Options saved.';
-        setTimeout(function () {
-            status.textContent = '';
-        }, 1000);
+        if (status) {
+            status.textContent = chrome.i18n.getMessage('optSaved') || 'Options saved.';
+            setTimeout(function () { status.textContent = ''; }, 1000);
+        }
+        document.dispatchEvent(new CustomEvent('pm:options-saved'));
     });
 }
 
@@ -330,6 +333,7 @@ function restore_options() {
             if (optionsLoadCB.hasOwnProperty(option))
                 optionsLoadCB[option](option, items[option]);
         }
+        document.dispatchEvent(new CustomEvent('pm:options-restored'));
     });
 }
 document.addEventListener('DOMContentLoaded', restore_options);

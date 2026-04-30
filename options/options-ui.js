@@ -170,7 +170,7 @@ async function initCharSelect(selectId, storageKey, map) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Unsaved-changes tracking
+// Save UX — dirty-state tracking, sticky savebar visibility, success toast
 // ─────────────────────────────────────────────────────────────────────────────
 
 let isDirty = false;
@@ -178,12 +178,71 @@ let isDirty = false;
 function markDirty() {
     if (isDirty) return;
     isDirty = true;
-    document.getElementById('unsaved-warning')?.classList.remove('d-none');
+    document.getElementById('savebar')?.classList.add('is-visible');
 }
 
 function clearDirty() {
     isDirty = false;
-    document.getElementById('unsaved-warning')?.classList.add('d-none');
+    document.getElementById('savebar')?.classList.remove('is-visible');
+}
+
+function showSavedToast() {
+    const toast = document.getElementById('saved-toast');
+    if (!toast) return;
+    toast.classList.add('is-visible');
+    clearTimeout(showSavedToast._timer);
+    showSavedToast._timer = setTimeout(() => toast.classList.remove('is-visible'), 2200);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Theme — `pm_theme` is persisted in chrome.storage.sync independently of the
+// Save button so toggling takes effect immediately.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function applyTheme(theme) {
+    const next = (theme === 'dark') ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+        const titleKey = next === 'dark' ? 'optThemeToggleDark' : 'optThemeToggleLight';
+        const title = chrome.i18n.getMessage(titleKey);
+        if (title) btn.title = title;
+    }
+}
+
+function initTheme() {
+    chrome.storage.sync.get({ pm_theme: 'light' }, ({ pm_theme }) => {
+        applyTheme(pm_theme);
+    });
+}
+
+function toggleTheme() {
+    const current = document.documentElement.dataset.theme || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    chrome.storage.sync.set({ pm_theme: next });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sidebar per-tab counters. Counts checked switch toggles vs total. Tabs
+// without checkbox toggles get an empty badge that the CSS hides via :empty.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function recomputeTabCounts() {
+    document.querySelectorAll('.tab-content-section').forEach(section => {
+        const total = section.querySelectorAll('.form-check-input[type="checkbox"]').length;
+        const checked = section.querySelectorAll('.form-check-input[type="checkbox"]:checked').length;
+        const badge = document.querySelector(`[data-tab-count="${section.id}"]`);
+        if (!badge) return;
+        if (total === 0) {
+            badge.textContent = '';
+            badge.classList.remove('is-zero');
+            return;
+        }
+        badge.textContent = `${checked}/${total}`;
+        badge.classList.toggle('is-zero', checked === 0);
+    });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -515,23 +574,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Localize UI before tooltip init so title attributes are already translated ──
     localizeUI();
 
-    // ── Unsaved-changes warning element (inserted after the status span) ──
-    const statusEl = document.getElementById('status');
-    if (statusEl) {
-        const warning = document.createElement('span');
-        warning.id = 'unsaved-warning';
-        warning.className = 'text-warning small fw-semibold d-none';
-        warning.textContent = chrome.i18n.getMessage('optUnsavedWarning') || 'You have unsaved changes.';
-        statusEl.insertAdjacentElement('afterend', warning);
-    }
+    // ── Theme: load from storage and wire up the toggle button ──
+    initTheme();
+    document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
-    // Mark dirty on any form-element change outside the reminder modal
+    // Mark dirty on any form-element change outside the reminder modal.
+    // Also recompute the per-tab counters so the sidebar badges stay in sync.
+    // Elements marked [data-no-dirty] are view-only filters (e.g. the
+    // exclusion-list character pickers) and must not trigger dirty state.
     document.addEventListener('change', function (e) {
         if (e.target.closest('#reminderModal')) return;
+        if (e.target.closest('[data-no-dirty]')) return;
         markDirty();
+        recomputeTabCounts();
     });
     document.addEventListener('input', function (e) {
         if (e.target.closest('#reminderModal')) return;
+        if (e.target.closest('[data-no-dirty]')) return;
         if (e.target.matches('input[type="text"], input[type="number"], textarea, select')) {
             markDirty();
         }
@@ -545,10 +604,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Clear dirty state after the main Save button persists everything
-    document.getElementById('save')?.addEventListener('click', function () {
-        // Delay slightly so save_options can complete and show its own status message
-        setTimeout(clearDirty, 150);
+    // After the form is initially populated from storage, compute the counts.
+    document.addEventListener('pm:options-restored', recomputeTabCounts);
+
+    // After a successful save, clear dirty + show the toast. Fires from
+    // chrome.storage.sync.set's callback, so timing is exact (no heuristic).
+    document.addEventListener('pm:options-saved', function () {
+        clearDirty();
+        showSavedToast();
     });
 
     // ── Tab switching ──
