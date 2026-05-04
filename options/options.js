@@ -112,6 +112,10 @@ const optionDetails = [
     { 'name': 'mass_interact_embrace', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_kiss', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_kiss_passionately', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_make_love', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_5_minute_quickie', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_tantric_sex', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'mass_interact_enjoy_kobe_sutra', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_give_massage', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_bless', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_do_funny_magic', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
@@ -195,24 +199,36 @@ function loadCSVstring(optionName, optionValue) {
     }
 }
 
+// Polymorphic across two element shapes:
+//   - <input type="checkbox">  → reads/writes .checked
+//   - <button class="pm-chip">  → reads/writes the .is-on CSS class
+// This lets the chip-style toggles introduced in Phase 2 use the same
+// optionDetails entries the legacy checkbox toggles always used.
 function saveCheckBox(optionName, defaultVaule) {
     let result = defaultVaule;
 
-    let cbElem = document.getElementById(optionName);
-    if (cbElem != null) {
-        result = cbElem.checked;
+    let elem = document.getElementById(optionName);
+    if (elem != null) {
+        if (elem instanceof HTMLInputElement && elem.type === 'checkbox') {
+            result = elem.checked;
+        } else if (elem.classList.contains('pm-chip')) {
+            result = elem.classList.contains('is-on');
+        }
     }
 
     return result;
 }
 
 function loadCheckBox(optionName, optionValue) {
-    let cbElem = document.getElementById(optionName);
+    let elem = document.getElementById(optionName);
 
-    if (cbElem != null) {
-        cbElem.checked = optionValue;
+    if (elem != null) {
+        if (elem instanceof HTMLInputElement && elem.type === 'checkbox') {
+            elem.checked = optionValue;
+        } else if (elem.classList.contains('pm-chip')) {
+            elem.classList.toggle('is-on', !!optionValue);
+        }
     }
-
 }
 
 function loadInteger(optionName, optionValue) {

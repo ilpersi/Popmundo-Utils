@@ -225,14 +225,23 @@ function toggleTheme() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sidebar per-tab counters. Counts checked switch toggles vs total. Tabs
-// without checkbox toggles get an empty badge that the CSS hides via :empty.
+// Sidebar per-tab counters. Counts both checkbox toggles and chip toggles.
+// Elements marked [data-no-count] are excluded (e.g. settings checkboxes
+// that aren't part of the tab's "X enabled" semantic — like Mass Interact's
+// `ignore_acquaintance`, which is a behaviour flag, not an interaction).
+// Tabs whose total is zero get an empty badge hidden by the CSS :empty rule.
 // ─────────────────────────────────────────────────────────────────────────────
 
 function recomputeTabCounts() {
     document.querySelectorAll('.tab-content-section').forEach(section => {
-        const total = section.querySelectorAll('.form-check-input[type="checkbox"]').length;
-        const checked = section.querySelectorAll('.form-check-input[type="checkbox"]:checked').length;
+        const cbTotal = section.querySelectorAll('.form-check-input[type="checkbox"]:not([data-no-count])').length;
+        const cbChecked = section.querySelectorAll('.form-check-input[type="checkbox"]:checked:not([data-no-count])').length;
+        const chipTotal = section.querySelectorAll('.pm-chip[data-chip-id]').length;
+        const chipOn = section.querySelectorAll('.pm-chip[data-chip-id].is-on').length;
+
+        const total = cbTotal + chipTotal;
+        const checked = cbChecked + chipOn;
+
         const badge = document.querySelector(`[data-tab-count="${section.id}"]`);
         if (!badge) return;
         if (total === 0) {
@@ -243,6 +252,256 @@ function recomputeTabCounts() {
         badge.textContent = `${checked}/${total}`;
         badge.classList.toggle('is-zero', checked === 0);
     });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mass Interact chips (Phase 2)
+//
+// 52 in-game interactions rendered as toggleable chips, organized into four
+// thematic groups. Chip ids mirror the existing optionDetails keys
+// (`mass_interact_*`) so saveCheckBox / loadCheckBox in options.js drive
+// chip state and legacy form-switch toggles uniformly. Numeric `value` is
+// the in-game interaction ID — sourced from features/mass-interact.js's
+// optionsMap, which is the canonical mapping consumed at runtime.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MASS_INTERACT_GROUPS = [
+    {
+        key: 'verbal',
+        titleKey: 'optMiGroupVerbal',
+        titleFallback: 'Verbal & Social',
+        chips: [
+            { name: 'mass_interact_greet',                     value: 1,   i18n: 'optMiGreet',               fallback: 'Greet' },
+            { name: 'mass_interact_talk_to',                   value: 3,   i18n: 'optMiTalkTo',              fallback: 'Talk to' },
+            { name: 'mass_interact_tell_joke',                 value: 4,   i18n: 'optMiTellJoke',            fallback: 'Tell Joke' },
+            { name: 'mass_interact_tease',                     value: 5,   i18n: 'optMiTease',               fallback: 'Tease' },
+            { name: 'mass_interact_compliment',                value: 14,  i18n: 'optMiCompliment',          fallback: 'Compliment' },
+            { name: 'mass_interact_insult',                    value: 15,  i18n: 'optMiInsult',              fallback: 'Insult' },
+            { name: 'mass_interact_have_profound_discussion',  value: 34,  i18n: 'optMiProfoundDiscussion',  fallback: 'Profound Discussion' },
+            { name: 'mass_interact_comfort',                   value: 51,  i18n: 'optMiComfort',             fallback: 'Comfort' },
+            { name: 'mass_interact_smile',                     value: 54,  i18n: 'optMiSmile',               fallback: 'Smile' },
+            { name: 'mass_interact_fraternize',                value: 57,  i18n: 'optMiFraternize',          fallback: 'Fraternize' },
+            { name: 'mass_interact_share_opinions',            value: 62,  i18n: 'optMiShareOpinions',       fallback: 'Share Opinions' },
+            { name: 'mass_interact_gossip',                    value: 65,  i18n: 'optMiGossip',              fallback: 'Gossip' },
+            { name: 'mass_interact_offer_advice',              value: 68,  i18n: 'optMiOfferAdvice',         fallback: 'Offer Advice' },
+            { name: 'mass_interact_share_secrets',             value: 69,  i18n: 'optMiShareSecrets',        fallback: 'Share Secrets' },
+            { name: 'mass_interact_hang_out',                  value: 70,  i18n: 'optMiHangOut',             fallback: 'Hang Out' },
+            { name: 'mass_interact_hey_sexy_how_you_doin',     value: 71,  i18n: 'optMiHexySexy',            fallback: 'Hey Sexy...' },
+            { name: 'mass_interact_praise',                    value: 75,  i18n: 'optMiPraise',              fallback: 'Praise' },
+            { name: 'mass_interact_tell_naughty_joke',         value: 76,  i18n: 'optMiTellNaughtyJoke',     fallback: 'Tell Naughty Joke' },
+            { name: 'mass_interact_wink',                      value: 161, i18n: 'optMiWink',                fallback: 'Wink' }
+        ]
+    },
+    {
+        key: 'physical',
+        titleKey: 'optMiGroupPhysical',
+        titleFallback: 'Physical',
+        chips: [
+            { name: 'mass_interact_buy_a_drink',          value: 7,   i18n: 'optMiBuyADrink',         fallback: 'Buy a Drink' },
+            { name: 'mass_interact_hug',                  value: 8,   i18n: 'optMiHug',               fallback: 'Hug' },
+            { name: 'mass_interact_tickle',               value: 12,  i18n: 'optMiTickle',            fallback: 'Tickle' },
+            { name: 'mass_interact_play_with',            value: 18,  i18n: 'optMiPlayWith',          fallback: 'Play With' },
+            { name: 'mass_interact_caress',               value: 30,  i18n: 'optMiCaress',            fallback: 'Caress' },
+            { name: 'mass_interact_ask_for_a_dance',      value: 35,  i18n: 'optMiAskForADance',      fallback: 'Ask for a Dance' },
+            { name: 'mass_interact_give_massage',         value: 44,  i18n: 'optMiGiveMassage',       fallback: 'Give Massage' },
+            { name: 'mass_interact_shake_hands',          value: 55,  i18n: 'optMiShakeHands',        fallback: 'Shake Hands' },
+            { name: 'mass_interact_kiss_cheeks',          value: 56,  i18n: 'optMiKissCheeks',        fallback: 'Kiss Cheeks' },
+            { name: 'mass_interact_rub_elbows',           value: 59,  i18n: 'optMiRubElbows',         fallback: 'Rub Elbows' },
+            { name: 'mass_interact_high_five',            value: 60,  i18n: 'optMiHighFive',          fallback: 'High Five' },
+            { name: 'mass_interact_pat_on_back',          value: 63,  i18n: 'optMiPatOnBack',         fallback: 'Pat on Back' },
+            { name: 'mass_interact_embrace',              value: 64,  i18n: 'optMiEmbrace',           fallback: 'Embrace' },
+            { name: 'mass_interact_braid_hair',           value: 66,  i18n: 'optMiBraidHair',         fallback: 'Braid Hair' },
+            { name: 'mass_interact_arm_wrestle',          value: 67,  i18n: 'optMiArmWrestle',        fallback: 'Arm Wrestle' },
+            { name: 'mass_interact_flex_biceps',          value: 89,  i18n: 'optMiFlexBiceps',        fallback: 'Flex Biceps' },
+            { name: 'mass_interact_pick_up',              value: 93,  i18n: 'optMiPickUp',            fallback: 'Pick Up' },
+            { name: 'mass_interact_change_diapers',       value: 95,  i18n: 'optMiChangeDiapers',     fallback: 'Change Diapers' },
+            { name: 'mass_interact_kiss_on_forehead',     value: 103, i18n: 'optMiKissOnForehead',    fallback: 'Kiss on Forehead' },
+            { name: 'mass_interact_stroll_hand_in_hand',  value: 129, i18n: 'optMiStrollHandInHand',  fallback: 'Stroll Hand in Hand' }
+        ]
+    },
+    {
+        key: 'romantic',
+        titleKey: 'optMiGroupRomantic',
+        titleFallback: 'Romantic',
+        chips: [
+            { name: 'mass_interact_kiss',               value: 9,   i18n: 'optMiKiss',              fallback: 'Kiss' },
+            { name: 'mass_interact_kiss_passionately',  value: 10,  i18n: 'optMiKissPassionately',  fallback: 'Kiss Passionately' },
+            { name: 'mass_interact_make_love',          value: 11,  i18n: 'optMiMakeLove',          fallback: 'Make Love' },
+            { name: 'mass_interact_5_minute_quickie',   value: 13,  i18n: 'optMiFiveMinuteQuickie', fallback: '5 Minute Quickie' },
+            { name: 'mass_interact_tantric_sex',        value: 19,  i18n: 'optMiTantricSex',        fallback: 'Tantric Sex' },
+            { name: 'mass_interact_enjoy_kobe_sutra',   value: 164, i18n: 'optMiEnjoyKobeSutra',    fallback: 'Enjoy Kobe Sutra' }
+        ]
+    },
+    {
+        key: 'special',
+        titleKey: 'optMiGroupSpecial',
+        titleFallback: 'Special',
+        chips: [
+            { name: 'mass_interact_google',                value: 6,  i18n: 'optMiGoogleGoogle',        fallback: 'Google-Google' },
+            { name: 'mass_interact_sing_to',               value: 21, i18n: 'optMiSingTo',              fallback: 'Sing To' },
+            { name: 'mass_interact_seek_apprenticeship',   value: 29, i18n: 'optMiSeekApprenticeship',  fallback: 'Seek Apprenticeship' },
+            { name: 'mass_interact_do_funny_magic',        value: 33, i18n: 'optMiDoFunnyMagic',        fallback: 'Do Funny Magic' },
+            { name: 'mass_interact_bless',                 value: 39, i18n: 'optMiBless',               fallback: 'Bless' },
+            { name: 'mass_interact_serenade',              value: 78, i18n: 'optMiSerenade',            fallback: 'Serenade' },
+            { name: 'mass_interact_guide',                 value: 94, i18n: 'optMiGuide',               fallback: 'Guide' }
+        ]
+    }
+];
+
+function renderMassInteractChips() {
+    const container = document.getElementById('mass-interact-chip-groups');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const allLabel  = chrome.i18n.getMessage('optMiSelectAll')  || 'All';
+    const noneLabel = chrome.i18n.getMessage('optMiSelectNone') || 'None';
+
+    MASS_INTERACT_GROUPS.forEach(group => {
+        const section = document.createElement('div');
+        section.className = 'pm-chip-section';
+        section.dataset.groupKey = group.key;
+
+        // Header row: "GROUP TITLE  X / Y  ─── [All] [None]"
+        const head = document.createElement('div');
+        head.className = 'pm-chip-section__head';
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'pm-chip-section__label';
+
+        const title = document.createElement('span');
+        title.className = 'pm-chip-section__title';
+        title.textContent = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+        labelDiv.appendChild(title);
+
+        const count = document.createElement('span');
+        count.className = 'pm-chip-section__count';
+        count.dataset.groupCount = group.key;
+        labelDiv.appendChild(count);
+
+        const rule = document.createElement('div');
+        rule.className = 'pm-chip-section__rule';
+
+        const actions = document.createElement('div');
+        actions.className = 'pm-chip-section__actions';
+        ['all', 'none'].forEach(action => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pm-chip-section__action';
+            btn.dataset.action = action;
+            btn.dataset.group = group.key;
+            btn.textContent = action === 'all' ? allLabel : noneLabel;
+            actions.appendChild(btn);
+        });
+
+        head.appendChild(labelDiv);
+        head.appendChild(rule);
+        head.appendChild(actions);
+
+        // Chip grid
+        const grid = document.createElement('div');
+        grid.className = 'pm-chip-section__grid';
+        grid.dataset.groupGrid = group.key;
+
+        group.chips.forEach(chip => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.id = chip.name;
+            button.className = 'pm-chip';
+            button.dataset.chipId = chip.name;
+            button.dataset.groupKey = group.key;
+            const labelText = chrome.i18n.getMessage(chip.i18n) || chip.fallback;
+            button.dataset.search = labelText.toLowerCase();
+
+            const dot = document.createElement('span');
+            dot.className = 'pm-chip__dot';
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'pm-chip__name';
+            nameSpan.textContent = labelText;
+            const idSpan = document.createElement('span');
+            idSpan.className = 'pm-chip__id';
+            idSpan.textContent = '#' + chip.value;
+
+            button.appendChild(dot);
+            button.appendChild(nameSpan);
+            button.appendChild(idSpan);
+            grid.appendChild(button);
+        });
+
+        section.appendChild(head);
+        section.appendChild(grid);
+        container.appendChild(section);
+    });
+
+    updateMassInteractGroupCounts();
+}
+
+function updateMassInteractGroupCounts() {
+    MASS_INTERACT_GROUPS.forEach(group => {
+        const countEl = document.querySelector(`[data-group-count="${group.key}"]`);
+        const grid = document.querySelector(`[data-group-grid="${group.key}"]`);
+        if (!countEl || !grid) return;
+        const total = grid.querySelectorAll('.pm-chip').length;
+        const on = grid.querySelectorAll('.pm-chip.is-on').length;
+        countEl.textContent = `${on} / ${total}`;
+    });
+}
+
+function setupMassInteractKbdHint() {
+    const kbd = document.getElementById('mass-interact-search-kbd');
+    if (!kbd) return;
+    // Prefer the modern userAgentData API (Chrome/Edge); fall back to the
+    // deprecated navigator.platform (Firefox still relies on it). Both work
+    // inside the extension page since chrome-extension:// is a secure context.
+    const uaPlatform = navigator.userAgentData?.platform;
+    const platform = uaPlatform || navigator.platform || '';
+    const isMac = /mac|iphone|ipad|ipod/i.test(platform);
+    kbd.textContent = isMac ? '⌘K' : 'Ctrl+K';
+}
+
+function applyMassInteractSearch(query) {
+    const container = document.getElementById('mass-interact-chip-groups');
+    const empty = document.getElementById('mass-interact-empty');
+    if (!container) return;
+
+    const q = (query || '').trim().toLowerCase();
+    let visibleCount = 0;
+
+    container.querySelectorAll('.pm-chip').forEach(chip => {
+        const matches = !q || chip.dataset.search.includes(q);
+        chip.classList.toggle('pm-chip--hidden', !matches);
+        if (matches) visibleCount++;
+    });
+
+    container.querySelectorAll('.pm-chip-section').forEach(section => {
+        const anyVisible = section.querySelector('.pm-chip:not(.pm-chip--hidden)');
+        section.style.display = anyVisible ? '' : 'none';
+    });
+
+    empty?.classList.toggle('d-none', visibleCount > 0);
+}
+
+// "All / None" buttons act on chips currently visible in the group, so a
+// search-then-bulk-select ("kiss" → All) only enables the matching subset.
+function applyChipGroupAction(groupKey, action) {
+    const grid = document.querySelector(`[data-group-grid="${groupKey}"]`);
+    if (!grid) return;
+    const chips = grid.querySelectorAll('.pm-chip:not(.pm-chip--hidden)');
+    if (chips.length === 0) return;
+
+    const target = action === 'all';
+    let anyChanged = false;
+    chips.forEach(chip => {
+        if (chip.classList.contains('is-on') !== target) {
+            chip.classList.toggle('is-on', target);
+            anyChanged = true;
+        }
+    });
+
+    if (anyChanged) {
+        // Single synthetic change event triggers markDirty + recomputeTabCounts.
+        grid.dispatchEvent(new Event('change', { bubbles: true }));
+        updateMassInteractGroupCounts();
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -578,6 +837,52 @@ document.addEventListener('DOMContentLoaded', function () {
     initTheme();
     document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
+    // ── Sidebar version footer: read live from the manifest ──
+    const versionEl = document.getElementById('pm-version');
+    if (versionEl) versionEl.textContent = 'v' + chrome.runtime.getManifest().version;
+
+    // ── Mass Interact chips: render synchronously here so the chip DOM
+    //    exists by the time restore_options' chrome.storage callback fires
+    //    (loadCheckBox finds chips by id and applies the saved is-on state).
+    renderMassInteractChips();
+    setupMassInteractKbdHint();
+
+    // Chip click + per-group "All / None" buttons
+    document.getElementById('mass-interact-chip-groups')?.addEventListener('click', function (e) {
+        const chip = e.target.closest('.pm-chip');
+        if (chip) {
+            chip.classList.toggle('is-on');
+            // Bubbling change event triggers markDirty + recomputeTabCounts.
+            chip.dispatchEvent(new Event('change', { bubbles: true }));
+            updateMassInteractGroupCounts();
+            return;
+        }
+
+        const action = e.target.closest('.pm-chip-section__action');
+        if (action) {
+            applyChipGroupAction(action.dataset.group, action.dataset.action);
+        }
+    });
+
+    // Chip search filter
+    document.getElementById('mass-interact-search')?.addEventListener('input', function (e) {
+        applyMassInteractSearch(e.target.value);
+    });
+
+    // ⌘K / Ctrl+K to focus the chip search whenever the Mass Interact
+    // tab is the visible one. Doesn't shadow the shortcut on other tabs.
+    document.addEventListener('keydown', function (e) {
+        if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'k') return;
+        const massTab = document.getElementById('tab-mass-interact');
+        if (!massTab || massTab.classList.contains('d-none')) return;
+        e.preventDefault();
+        const search = document.getElementById('mass-interact-search');
+        if (search) {
+            search.focus();
+            search.select();
+        }
+    });
+
     // Mark dirty on any form-element change outside the reminder modal.
     // Also recompute the per-tab counters so the sidebar badges stay in sync.
     // Elements marked [data-no-dirty] are view-only filters (e.g. the
@@ -605,7 +910,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // After the form is initially populated from storage, compute the counts.
-    document.addEventListener('pm:options-restored', recomputeTabCounts);
+    document.addEventListener('pm:options-restored', function () {
+        recomputeTabCounts();
+        updateMassInteractGroupCounts();
+    });
 
     // After a successful save, clear dirty + show the toast. Fires from
     // chrome.storage.sync.set's callback, so timing is exact (no heuristic).

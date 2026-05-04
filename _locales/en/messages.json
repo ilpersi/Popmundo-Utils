@@ -451,6 +451,22 @@
         "message": "Settings",
         "description": "Category label for mass interact settings"
     },
+    "optMiSearchPlaceholder": {
+        "message": "Filter interactions…",
+        "description": "Placeholder for the chip search input on the Mass Interact tab"
+    },
+    "optMiSelectAll": {
+        "message": "All",
+        "description": "Per-group bulk-enable button on the Mass Interact tab"
+    },
+    "optMiSelectNone": {
+        "message": "None",
+        "description": "Per-group bulk-disable button on the Mass Interact tab"
+    },
+    "optMiNoResults": {
+        "message": "No interaction matches your search.",
+        "description": "Empty state shown when the chip search filter has no matches"
+    },
     "optMiExcludedChars": {
         "message": "Excluded Characters",
         "description": "Label for the excluded characters list in Mass Interact"
