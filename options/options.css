@@ -1004,6 +1004,61 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   LINK CHIP ROWS (Enhanced Links tab — Phase 3)
+   Each link is a chip (toggle) plus an inline icon-character input. Layout
+   uses CSS grid so rows wrap into columns based on container width.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-link-chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 6px;
+}
+
+.pm-link-chip-row {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    min-width: 0;
+}
+
+.pm-link-chip-row > .pm-chip {
+    flex: 1;
+    min-width: 0;
+}
+
+.pm-link-chip-row > .pm-chip > .pm-chip__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.pm-link-icon-input {
+    width: 3.2rem;
+    text-align: center;
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border-strong);
+    border-radius: 7px;
+    color: var(--pm-ink);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 4px 6px;
+    flex-shrink: 0;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+:root[data-theme="dark"] .pm-link-icon-input {
+    background: var(--pm-surface-2);
+}
+
+.pm-link-icon-input:focus {
+    outline: none;
+    border-color: var(--pm-accent);
+    box-shadow: 0 0 0 2px var(--pm-accent-soft);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    The legacy dynamic #unsaved-warning span is no longer used — savebar now
    surfaces the same information. Hide if it ever appears.
    ────────────────────────────────────────────────────────────────────────── */

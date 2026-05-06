@@ -505,6 +505,142 @@ function applyChipGroupAction(groupKey, action) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Enhanced Links chip rows (Phase 3)
+//
+// Each link is a chip-shaped toggle paired with an inline icon-character
+// input. Chip ids and icon-input ids both map to existing optionDetails
+// keys, so saveCheckBox / loadCheckBox (chip toggle) and saveSelect /
+// loadSelect (icon character) drive everything without any change to the
+// save/restore plumbing.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ENHANCED_LINKS_GROUPS = [
+    {
+        key: 'band',
+        titleKey: 'optElGroupBand',
+        titleFallback: 'Band',
+        chips: [
+            { name: 'band_popularity_shortcut',   iconName: 'band_popularity_shortcut_icon',   i18n: 'optElPopularity',     fallback: 'Popularity link' },
+            { name: 'band_upcoming_shows',        iconName: 'band_upcoming_shows_icon',        i18n: 'optElUpcomingShows',  fallback: 'Upcoming Shows link' }
+        ]
+    },
+    {
+        key: 'character',
+        titleKey: 'optElGroupCharacter',
+        titleFallback: 'Character',
+        chips: [
+            { name: 'character_send_message',     iconName: 'character_send_message_icon',     i18n: 'optElSendMessage',    fallback: 'Send Message link' },
+            { name: 'character_call',             iconName: 'character_call_icon',             i18n: 'optElCall',           fallback: 'Call link' },
+            { name: 'character_offer_an_item',    iconName: 'character_offer_an_item_icon',    i18n: 'optElOfferItem',      fallback: 'Offer an Item link' }
+        ]
+    },
+    {
+        key: 'city',
+        titleKey: 'optElGroupCity',
+        titleFallback: 'City',
+        chips: [
+            { name: 'city_book_regular_flight',   iconName: 'city_book_regular_flight_icon',   i18n: 'optElBookFlight',     fallback: 'Book Regular Flight link' },
+            { name: 'city_charter_vip_jet',       iconName: 'city_charter_vip_jet_icon',       i18n: 'optElCharterJet',     fallback: 'Charter VIP Jet link' },
+            { name: 'city_other_vehicles',        iconName: 'city_other_vehicles_icon',        i18n: 'optElOtherVehicles',  fallback: 'Other Vehicles link' },
+            { name: 'city_find_locales',          iconName: 'city_find_locales_icon',          i18n: 'optElFindLocales',    fallback: 'Find Locales link' }
+        ]
+    },
+    {
+        key: 'locale',
+        titleKey: 'optElGroupLocale',
+        titleFallback: 'Locale',
+        chips: [
+            { name: 'locale_characters_present',  iconName: 'locale_characters_present_icon',  i18n: 'optElCharactersPresent', fallback: 'Characters Present link' },
+            { name: 'move_to_shortcut',           iconName: 'move_to_shortcut_icon',           i18n: 'optElMoveToLocale',      fallback: 'Move to Locale link' },
+            { name: 'locale_show_reconnaissance', iconName: 'locale_show_reconnaissance_icon', i18n: 'optElReconnaissance',    fallback: 'Reconnaissance link' }
+        ]
+    },
+    {
+        key: 'crew',
+        titleKey: 'optElGroupCrew',
+        titleFallback: 'Crew',
+        chips: [
+            { name: 'crew_top_heist_shortcut',    iconName: 'crew_top_heist_shortcut_icon',    i18n: 'optElTopHeists',      fallback: 'Top Heists link' }
+        ]
+    }
+];
+
+function renderEnhancedLinksChips() {
+    const container = document.getElementById('enhanced-links-chip-groups');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const iconTitle = chrome.i18n.getMessage('optElIconTitle') || 'Custom icon character';
+
+    ENHANCED_LINKS_GROUPS.forEach(group => {
+        const section = document.createElement('div');
+        section.className = 'pm-chip-section';
+        section.dataset.groupKey = group.key;
+
+        // Header (no per-group count or All/None — groups are too small to need them)
+        const head = document.createElement('div');
+        head.className = 'pm-chip-section__head';
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'pm-chip-section__label';
+
+        const title = document.createElement('span');
+        title.className = 'pm-chip-section__title';
+        title.textContent = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+        labelDiv.appendChild(title);
+
+        const rule = document.createElement('div');
+        rule.className = 'pm-chip-section__rule';
+
+        head.appendChild(labelDiv);
+        head.appendChild(rule);
+        section.appendChild(head);
+
+        // Grid of chip-rows
+        const grid = document.createElement('div');
+        grid.className = 'pm-link-chip-grid';
+
+        group.chips.forEach(chip => {
+            const row = document.createElement('div');
+            row.className = 'pm-link-chip-row';
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.id = chip.name;
+            button.className = 'pm-chip';
+            button.dataset.chipId = chip.name;
+            const labelText = chrome.i18n.getMessage(chip.i18n) || chip.fallback;
+
+            const dot = document.createElement('span');
+            dot.className = 'pm-chip__dot';
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'pm-chip__name';
+            nameSpan.textContent = labelText;
+            // Title attribute as fallback for ellipsized text
+            button.title = labelText;
+
+            button.appendChild(dot);
+            button.appendChild(nameSpan);
+
+            const iconInput = document.createElement('input');
+            iconInput.type = 'text';
+            iconInput.id = chip.iconName;
+            iconInput.className = 'pm-link-icon-input';
+            iconInput.maxLength = 10;
+            iconInput.title = iconTitle;
+            iconInput.setAttribute('aria-label', `${labelText} icon`);
+
+            row.appendChild(button);
+            row.appendChild(iconInput);
+            grid.appendChild(row);
+        });
+
+        section.appendChild(grid);
+        container.appendChild(section);
+    });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Reminders UI
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -841,19 +977,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const versionEl = document.getElementById('pm-version');
     if (versionEl) versionEl.textContent = 'v' + chrome.runtime.getManifest().version;
 
-    // ── Mass Interact chips: render synchronously here so the chip DOM
-    //    exists by the time restore_options' chrome.storage callback fires
-    //    (loadCheckBox finds chips by id and applies the saved is-on state).
+    // ── Chip-based tabs (Mass Interact, Enhanced Links): render synchronously
+    //    here so the chip DOM exists by the time restore_options' callback
+    //    fires (loadCheckBox finds chips by id and applies saved is-on state).
     renderMassInteractChips();
     setupMassInteractKbdHint();
+    renderEnhancedLinksChips();
 
-    // Chip click + per-group "All / None" buttons
-    document.getElementById('mass-interact-chip-groups')?.addEventListener('click', function (e) {
+    // Chip click + per-group "All / None" buttons (document-level so it
+    // covers chips from any tab — currently Mass Interact and Enhanced Links).
+    document.addEventListener('click', function (e) {
         const chip = e.target.closest('.pm-chip');
-        if (chip) {
+        if (chip && chip.dataset.chipId) {
             chip.classList.toggle('is-on');
             // Bubbling change event triggers markDirty + recomputeTabCounts.
             chip.dispatchEvent(new Event('change', { bubbles: true }));
+            // Cheap no-op outside Mass Interact (querySelectors return nothing).
             updateMassInteractGroupCounts();
             return;
         }
