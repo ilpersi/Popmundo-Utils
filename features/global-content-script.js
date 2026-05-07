@@ -1,5 +1,15 @@
 'use strict';
 
+// ── Persist the active Popmundo skin so the options page can mirror it ──
+// The options page (chrome-extension://) can't inspect game pages directly,
+// so each game-page load writes the detected skin ('light' | 'dark') to
+// chrome.storage.local. The options page reads it on startup as the default
+// theme when the user hasn't explicitly chosen one (pm_theme unset in sync).
+try {
+    const detectedSkin = (Utils.getPopupTheme().DATA_THEME === 'dark') ? 'dark' : 'light';
+    chrome.storage.local.set({ pm_detected_game_skin: detectedSkin });
+} catch (_) { /* ignore — page may not have a skin link (login page, etc.) */ }
+
 const globalOptions = {
     'searchable_tables': true,
     'fast_character_switch': true,

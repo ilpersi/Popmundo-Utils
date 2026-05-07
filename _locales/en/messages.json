@@ -467,6 +467,18 @@
         "message": "No interaction matches your search.",
         "description": "Empty state shown when the chip search filter has no matches"
     },
+    "optGlobalSearchPlaceholder": {
+        "message": "Search options…",
+        "description": "Placeholder for the global search input in the options-page topbar"
+    },
+    "optGlobalSearchNoResults": {
+        "message": "No options match your search.",
+        "description": "Empty state shown when the global cross-tab search has no matches"
+    },
+    "optGlobalSearchClear": {
+        "message": "Clear search",
+        "description": "Tooltip / aria-label on the clear (×) button of the global search input"
+    },
     "optMiExcludedChars": {
         "message": "Excluded Characters",
         "description": "Label for the excluded characters list in Mass Interact"

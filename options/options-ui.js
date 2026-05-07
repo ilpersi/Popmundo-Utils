@@ -212,8 +212,18 @@ function applyTheme(theme) {
 }
 
 function initTheme() {
-    chrome.storage.sync.get({ pm_theme: 'light' }, ({ pm_theme }) => {
-        applyTheme(pm_theme);
+    // Prefer the user's explicit choice from chrome.storage.sync. If they
+    // haven't picked one (pm_theme unset), follow the most recently detected
+    // Popmundo skin written by features/global-content-script.js. Final
+    // fall-back is 'light' (Popmundo's default skin).
+    chrome.storage.sync.get('pm_theme', ({ pm_theme }) => {
+        if (pm_theme === 'light' || pm_theme === 'dark') {
+            applyTheme(pm_theme);
+            return;
+        }
+        chrome.storage.local.get('pm_detected_game_skin', ({ pm_detected_game_skin }) => {
+            applyTheme(pm_detected_game_skin || 'light');
+        });
     });
 }
 
@@ -361,6 +371,8 @@ function renderMassInteractChips() {
         section.className = 'pm-chip-section';
         section.dataset.groupKey = group.key;
 
+        const groupTitle = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+
         // Header row: "GROUP TITLE  X / Y  ─── [All] [None]"
         const head = document.createElement('div');
         head.className = 'pm-chip-section__head';
@@ -370,7 +382,7 @@ function renderMassInteractChips() {
 
         const title = document.createElement('span');
         title.className = 'pm-chip-section__title';
-        title.textContent = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+        title.textContent = groupTitle;
         labelDiv.appendChild(title);
 
         const count = document.createElement('span');
@@ -410,7 +422,9 @@ function renderMassInteractChips() {
             button.dataset.chipId = chip.name;
             button.dataset.groupKey = group.key;
             const labelText = chrome.i18n.getMessage(chip.i18n) || chip.fallback;
-            button.dataset.search = labelText.toLowerCase();
+            // Group title is included so a search like "physical" surfaces
+            // every chip in that group, not just chips whose name contains it.
+            button.dataset.search = (labelText + ' ' + groupTitle).toLowerCase();
 
             const dot = document.createElement('span');
             dot.className = 'pm-chip__dot';
@@ -446,46 +460,14 @@ function updateMassInteractGroupCounts() {
     });
 }
 
-function setupMassInteractKbdHint() {
-    const kbd = document.getElementById('mass-interact-search-kbd');
-    if (!kbd) return;
-    // Prefer the modern userAgentData API (Chrome/Edge); fall back to the
-    // deprecated navigator.platform (Firefox still relies on it). Both work
-    // inside the extension page since chrome-extension:// is a secure context.
-    const uaPlatform = navigator.userAgentData?.platform;
-    const platform = uaPlatform || navigator.platform || '';
-    const isMac = /mac|iphone|ipad|ipod/i.test(platform);
-    kbd.textContent = isMac ? '⌘K' : 'Ctrl+K';
-}
-
-function applyMassInteractSearch(query) {
-    const container = document.getElementById('mass-interact-chip-groups');
-    const empty = document.getElementById('mass-interact-empty');
-    if (!container) return;
-
-    const q = (query || '').trim().toLowerCase();
-    let visibleCount = 0;
-
-    container.querySelectorAll('.pm-chip').forEach(chip => {
-        const matches = !q || chip.dataset.search.includes(q);
-        chip.classList.toggle('pm-chip--hidden', !matches);
-        if (matches) visibleCount++;
-    });
-
-    container.querySelectorAll('.pm-chip-section').forEach(section => {
-        const anyVisible = section.querySelector('.pm-chip:not(.pm-chip--hidden)');
-        section.style.display = anyVisible ? '' : 'none';
-    });
-
-    empty?.classList.toggle('d-none', visibleCount > 0);
-}
-
 // "All / None" buttons act on chips currently visible in the group, so a
 // search-then-bulk-select ("kiss" → All) only enables the matching subset.
 function applyChipGroupAction(groupKey, action) {
     const grid = document.querySelector(`[data-group-grid="${groupKey}"]`);
     if (!grid) return;
-    const chips = grid.querySelectorAll('.pm-chip:not(.pm-chip--hidden)');
+    // .pm-search-hidden is set by the global cross-tab search when a chip
+    // doesn't match the current query — exclude those from bulk action.
+    const chips = grid.querySelectorAll('.pm-chip:not(.pm-search-hidden)');
     if (chips.length === 0) return;
 
     const target = action === 'all';
@@ -502,6 +484,126 @@ function applyChipGroupAction(groupKey, action) {
         grid.dispatchEvent(new Event('change', { bubbles: true }));
         updateMassInteractGroupCounts();
     }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Global cross-tab search (Phase 4)
+//
+// Filters chips, form-check rows, and form-label rows across every tab.
+// While a query is active, body.pm-searching is set; matching tab sections
+// are forced visible (overriding d-none from the tab-switching mechanism)
+// and non-matching items are hidden via .pm-search-hidden. Clearing the
+// query restores the pre-search tab state (saved as data-pre-search-d-none
+// on each tab section the first time we enter search mode).
+// ─────────────────────────────────────────────────────────────────────────────
+
+function setupGlobalSearchKbdHint() {
+    const kbd = document.getElementById('global-search-kbd');
+    if (!kbd) return;
+    // Prefer the modern userAgentData API (Chrome/Edge); fall back to the
+    // deprecated navigator.platform (Firefox still relies on it). Both work
+    // inside the extension page since chrome-extension:// is a secure context.
+    const uaPlatform = navigator.userAgentData?.platform;
+    const platform = uaPlatform || navigator.platform || '';
+    const isMac = /mac|iphone|ipad|ipod/i.test(platform);
+    kbd.textContent = isMac ? '⌘K' : 'Ctrl+K';
+}
+
+function applyGlobalSearch(query, opts) {
+    const restoreTabState = !(opts && opts.restoreTabState === false);
+    const q = (query || '').trim().toLowerCase();
+    const isSearching = q.length > 0;
+
+    if (!isSearching) {
+        if (document.body.classList.contains('pm-searching')) {
+            document.body.classList.remove('pm-searching');
+            if (restoreTabState) {
+                document.querySelectorAll('.tab-content-section').forEach(s => {
+                    if (s.dataset.preSearchDNone === 'true') {
+                        s.classList.add('d-none');
+                    } else {
+                        s.classList.remove('d-none');
+                    }
+                });
+            }
+            document.querySelectorAll('.tab-content-section').forEach(s => {
+                delete s.dataset.preSearchDNone;
+            });
+        }
+        document.querySelectorAll('.pm-search-hidden').forEach(el => el.classList.remove('pm-search-hidden'));
+        document.getElementById('global-search-empty')?.classList.add('d-none');
+        return;
+    }
+
+    // First-time entry into search mode — snapshot current d-none state so we
+    // can restore the active tab when the user clears the query.
+    if (!document.body.classList.contains('pm-searching')) {
+        document.querySelectorAll('.tab-content-section').forEach(s => {
+            s.dataset.preSearchDNone = s.classList.contains('d-none') ? 'true' : 'false';
+        });
+        document.body.classList.add('pm-searching');
+    }
+
+    let totalMatches = 0;
+
+    document.querySelectorAll('.tab-content-section').forEach(section => {
+        let sectionMatches = 0;
+
+        // Match chips by their searchable label text. Enhanced Links chips
+        // live inside .pm-link-chip-row (chip + icon-input), so hide the
+        // whole row when a chip doesn't match — otherwise the icon input
+        // would orphan-float without its chip.
+        section.querySelectorAll('.pm-chip[data-chip-id]').forEach(chip => {
+            const text = chip.dataset.search || (chip.querySelector('.pm-chip__name')?.textContent || '');
+            const matches = text.toLowerCase().includes(q);
+            chip.classList.toggle('pm-search-hidden', !matches);
+            const row = chip.closest('.pm-link-chip-row');
+            if (row) row.classList.toggle('pm-search-hidden', !matches);
+            if (matches) sectionMatches++;
+        });
+
+        // Match form-check rows (Bootstrap switches/checkboxes) by their label
+        section.querySelectorAll('.form-check').forEach(fc => {
+            if (fc.closest('#reminderModal')) return;
+            const label = fc.querySelector('.form-check-label');
+            if (!label) return;
+            const matches = label.textContent.toLowerCase().includes(q);
+            const target = fc.closest('[class*="col-"]') || fc;
+            target.classList.toggle('pm-search-hidden', !matches);
+            if (matches) sectionMatches++;
+        });
+
+        // Match form-label rows (number/text/select inputs) by their label
+        section.querySelectorAll('.form-label:not(.form-check-label)').forEach(label => {
+            if (label.closest('#reminderModal')) return;
+            const matches = label.textContent.toLowerCase().includes(q);
+            const target = label.closest('[class*="col-"]') || label.parentElement;
+            if (!target) return;
+            target.classList.toggle('pm-search-hidden', !matches);
+            if (matches) sectionMatches++;
+        });
+
+        // Hide chip-section headers (group title + All/None) when no chip matches
+        section.querySelectorAll('.pm-chip-section').forEach(chipSec => {
+            const anyVisible = !!chipSec.querySelector('.pm-chip:not(.pm-search-hidden)');
+            chipSec.classList.toggle('pm-search-hidden', !anyVisible);
+        });
+
+        // Hide whole cards whose body has nothing visible
+        section.querySelectorAll('.card').forEach(card => {
+            const visibleContent = card.querySelector(
+                '.pm-chip:not(.pm-search-hidden), [class*="col-"]:not(.pm-search-hidden)'
+            );
+            card.classList.toggle('pm-search-hidden', !visibleContent);
+        });
+
+        // Section visibility: directly toggle d-none so `.tab-content-section.d-none`
+        // sections become visible when matched.
+        section.classList.toggle('d-none', sectionMatches === 0);
+        totalMatches += sectionMatches;
+    });
+
+    document.getElementById('global-search-empty')?.classList.toggle('d-none', totalMatches > 0);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -577,6 +679,8 @@ function renderEnhancedLinksChips() {
         section.className = 'pm-chip-section';
         section.dataset.groupKey = group.key;
 
+        const groupTitle = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+
         // Header (no per-group count or All/None — groups are too small to need them)
         const head = document.createElement('div');
         head.className = 'pm-chip-section__head';
@@ -586,7 +690,7 @@ function renderEnhancedLinksChips() {
 
         const title = document.createElement('span');
         title.className = 'pm-chip-section__title';
-        title.textContent = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+        title.textContent = groupTitle;
         labelDiv.appendChild(title);
 
         const rule = document.createElement('div');
@@ -610,6 +714,9 @@ function renderEnhancedLinksChips() {
             button.className = 'pm-chip';
             button.dataset.chipId = chip.name;
             const labelText = chrome.i18n.getMessage(chip.i18n) || chip.fallback;
+            // Group title in dataset.search so e.g. typing "city" surfaces
+            // every chip in the City group, not only chips whose name contains it.
+            button.dataset.search = (labelText + ' ' + groupTitle).toLowerCase();
 
             const dot = document.createElement('span');
             dot.className = 'pm-chip__dot';
@@ -981,7 +1088,6 @@ document.addEventListener('DOMContentLoaded', function () {
     //    here so the chip DOM exists by the time restore_options' callback
     //    fires (loadCheckBox finds chips by id and applies saved is-on state).
     renderMassInteractChips();
-    setupMassInteractKbdHint();
     renderEnhancedLinksChips();
 
     // Chip click + per-group "All / None" buttons (document-level so it
@@ -1003,23 +1109,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Chip search filter
-    document.getElementById('mass-interact-search')?.addEventListener('input', function (e) {
-        applyMassInteractSearch(e.target.value);
+    // ── Global cross-tab search ──
+    setupGlobalSearchKbdHint();
+    const globalSearch = document.getElementById('global-search');
+    const globalSearchClear = document.getElementById('global-search-clear');
+
+    globalSearch?.addEventListener('input', function (e) {
+        applyGlobalSearch(e.target.value);
     });
 
-    // ⌘K / Ctrl+K to focus the chip search whenever the Mass Interact
-    // tab is the visible one. Doesn't shadow the shortcut on other tabs.
+    globalSearchClear?.addEventListener('click', function () {
+        if (!globalSearch) return;
+        globalSearch.value = '';
+        applyGlobalSearch('');
+        globalSearch.focus();
+    });
+
+    // Esc clears the search (or blurs the input if already empty).
+    globalSearch?.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (globalSearch.value) {
+            e.preventDefault();
+            globalSearch.value = '';
+            applyGlobalSearch('');
+        } else {
+            globalSearch.blur();
+        }
+    });
+
+    // ⌘K / Ctrl+K focuses the global search from any tab. Skip when the
+    // reminder modal is open so we don't fight its focus trap.
     document.addEventListener('keydown', function (e) {
         if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'k') return;
-        const massTab = document.getElementById('tab-mass-interact');
-        if (!massTab || massTab.classList.contains('d-none')) return;
+        if (!globalSearch) return;
+        if (document.querySelector('.modal.show')) return;
         e.preventDefault();
-        const search = document.getElementById('mass-interact-search');
-        if (search) {
-            search.focus();
-            search.select();
-        }
+        globalSearch.focus();
+        globalSearch.select();
     });
 
     // Mark dirty on any form-element change outside the reminder modal.
@@ -1069,6 +1195,15 @@ document.addEventListener('DOMContentLoaded', function () {
         link.addEventListener('click', function (e) {
             e.preventDefault();
             const targetId = this.dataset.tab;
+
+            // Clicking a tab in search mode exits search and goes to that
+            // tab. Skip the tab-state restore inside applyGlobalSearch since
+            // we set the active tab explicitly right after.
+            const gs = document.getElementById('global-search');
+            if (gs && gs.value) {
+                gs.value = '';
+                applyGlobalSearch('', { restoreTabState: false });
+            }
 
             sections.forEach(s => s.classList.add('d-none'));
             document.getElementById(targetId).classList.remove('d-none');

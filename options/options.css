@@ -219,16 +219,114 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   TOPBAR — currently just the theme toggle, search lives here in Phase 4
+   TOPBAR — global search + theme toggle
    ────────────────────────────────────────────────────────────────────────── */
 
 .pm-topbar {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     gap: 8px;
     margin-bottom: 18px;
 }
+
+/* Global search input. Filters across all tabs in the options page.
+   ⌘K / Ctrl+K focuses it from any tab; Esc clears + blurs. */
+.pm-search {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+}
+
+.pm-search__icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--pm-ink-mute);
+    pointer-events: none;
+    width: 14px;
+    height: 14px;
+}
+
+.pm-search__input {
+    width: 100%;
+    /* Right padding leaves room for the kbd hint AND the clear button. */
+    padding: 6px 64px 6px 30px;
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border-strong);
+    border-radius: 7px;
+    color: var(--pm-ink);
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+:root[data-theme="dark"] .pm-search__input {
+    background: var(--pm-surface-2);
+}
+
+.pm-search__input::placeholder { color: var(--pm-ink-faint); }
+
+.pm-search__input:focus {
+    border-color: var(--pm-accent);
+    box-shadow: 0 0 0 2px var(--pm-accent-soft);
+}
+
+.pm-search__input:focus ~ .pm-search__icon { color: var(--pm-accent-deep); }
+
+/* Cancel the native ❌ button that some browsers show on type=search. */
+.pm-search__input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+.pm-search__kbd {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--pm-ink-mute);
+    background: var(--pm-bg-content);
+    border: 1px solid var(--pm-border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+}
+
+:root[data-theme="dark"] .pm-search__kbd {
+    background: var(--pm-surface);
+}
+
+/* When the search has content, swap the kbd hint for a clear (×) button. */
+body.pm-searching .pm-search__kbd { opacity: 0; }
+
+.pm-search__clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--pm-ink-mute);
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 120ms ease, color 120ms ease;
+}
+
+.pm-search__clear:hover {
+    background: var(--pm-surface-3);
+    color: var(--pm-ink);
+}
+
+body.pm-searching .pm-search__clear { display: inline-flex; }
 
 .pm-iconbtn {
     display: inline-flex;
@@ -794,69 +892,6 @@ body {
    Search filter + per-group "All / None" actions live above each chip grid.
    ────────────────────────────────────────────────────────────────────────── */
 
-.pm-chip-search {
-    position: relative;
-    margin-bottom: 14px;
-    max-width: 380px;
-}
-
-.pm-chip-search__icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--pm-ink-mute);
-    pointer-events: none;
-    width: 14px;
-    height: 14px;
-}
-
-.pm-chip-search__input {
-    width: 100%;
-    padding: 6px 60px 6px 30px;
-    background: var(--pm-surface);
-    border: 1px solid var(--pm-border-strong);
-    border-radius: 7px;
-    color: var(--pm-ink);
-    font-family: inherit;
-    font-size: 12px;
-    outline: none;
-    transition: border-color 140ms ease, box-shadow 140ms ease;
-}
-
-:root[data-theme="dark"] .pm-chip-search__input {
-    background: var(--pm-surface-2);
-}
-
-.pm-chip-search__input::placeholder { color: var(--pm-ink-faint); }
-
-.pm-chip-search__input:focus {
-    border-color: var(--pm-accent);
-    box-shadow: 0 0 0 2px var(--pm-accent-soft);
-}
-
-.pm-chip-search__input:focus ~ .pm-chip-search__icon { color: var(--pm-accent-deep); }
-
-.pm-chip-search__kbd {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: bold;
-    color: var(--pm-ink-mute);
-    background: var(--pm-bg-content);
-    border: 1px solid var(--pm-border);
-    border-radius: 4px;
-    padding: 1px 6px;
-    pointer-events: none;
-}
-
-:root[data-theme="dark"] .pm-chip-search__kbd {
-    background: var(--pm-surface);
-}
-
 .pm-chip-section + .pm-chip-section { margin-top: 16px; }
 
 .pm-chip-section__head {
@@ -993,14 +1028,26 @@ body {
     font-weight: normal;
 }
 
-.pm-chip--hidden { display: none; }
+/* ──────────────────────────────────────────────────────────────────────────
+   GLOBAL SEARCH MODE (Phase 4)
+   When body has .pm-searching, items marked .pm-search-hidden are hidden
+   and tab sections marked .d-none stay hidden — but the global-search
+   filter overrides d-none by directly toggling it on matching sections.
+   ────────────────────────────────────────────────────────────────────────── */
 
-.pm-chip-empty {
-    padding: 24px 0;
+body.pm-searching .pm-search-hidden { display: none !important; }
+
+/* The page-level "no results" empty state */
+.pm-search-empty {
+    padding: 32px 16px;
     text-align: center;
     color: var(--pm-ink-mute);
     font-style: italic;
-    font-size: 12px;
+    font-size: 13px;
+    background: var(--pm-surface);
+    border: 1px dashed var(--pm-border-strong);
+    border-radius: 7px;
+    margin-bottom: 14px;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
