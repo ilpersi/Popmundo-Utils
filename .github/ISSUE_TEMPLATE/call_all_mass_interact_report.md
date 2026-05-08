@@ -1,15 +1,15 @@
 ---
 name: Call All Friends / Mass Interact Issue
-about: Create a report that is specific to the call all friends or mass interact features
-title: ''
-labels: ''
+about: Report a problem with the Call All Friends or Mass Interact features
+title: '[CAF/MI] '
+labels: bug
 assignees: ''
 
 ---
 
-# Troubleshooting: Mass Interact / Call All Friends stops working
+This bug has been hard to reproduce on our side, so we need a bit of detail to track it down. **The single most useful thing is the screenshot from step 4** — please don't skip it even if the rest is too technical. Fill in what you can; leave anything you don't know blank.
 
-Thanks for helping diagnose this. We've had several reports but nobody has been able to capture the diagnostic data we need yet. **The single most useful thing is the screenshot from step 4 below** — please don't skip it even if the rest is too technical.
+> **Before you start:** make sure you're on the latest version of Popmundo Utils (check `chrome://extensions/` and click "Update" at the top, then verify the version on the card).
 
 ---
 
@@ -18,7 +18,7 @@ Thanks for helping diagnose this. We've had several reports but nobody has been 
 - [ ] **Mass Interact** — the button on a "Characters Present" page
 - [ ] **Call All Friends** — the box on your *own* character's "Relations" page
 
-For each, tick the closest match:
+Tick the closest match to what you see:
 
 - [ ] The whole feature box / button is **not even visible** on the page
 - [ ] The button appears but **clicking it does nothing**
@@ -39,7 +39,7 @@ For each, tick the closest match:
 | **Only fully uninstalling and reinstalling** brings it back | [ ] |
 | Even reinstalling does not fix it | [ ] |
 
-## 3. Profile / sync info (important — we have a theory it matters)
+## 3. Profile / sync info
 
 - Are you signed into **Chrome Sync** with a Google account? (Yes / No)
 - Do you use **multiple Chrome profiles** with the same Google account? (Yes / No)
@@ -63,35 +63,35 @@ This is the extension's own log and it almost certainly contains the cause.
 paste here
 ```
 
-## 5. Quick diagnostic commands (in the same service-worker console)
+## 5. Quick diagnostic snapshot
 
-In the **service-worker DevTools** (the window you opened in step 4), click on the **Console** tab. Then copy each command, paste it, press Enter, and copy the line that appears below it.
+Stay in the **same console window** you opened in step 4. Copy the entire block below, paste it into the console, press Enter, then copy whatever it prints into the code block under it.
 
-**A. Storage size (checks if your sync data is too big for Chrome)**
+> ⚠️ **Heads up:** The first time you paste code into the DevTools console, Chrome blocks it as a security measure and asks you to **type `allow pasting`** (without quotes) and press Enter. Do that once, then paste the command again — it will work normally from then on.
+
 ```js
-chrome.storage.sync.getBytesInUse(null).then(b => console.log('SYNC_BYTES', b, 'of 102400'))
+Promise.all([
+  chrome.storage.sync.getBytesInUse(null),
+  chrome.storage.sync.get(['mass_interact_exclude_id', 'call_exclude_id']),
+  chrome.storage.session.get('current_char_details'),
+  chrome.storage.local.get(['install_type'])
+]).then(([bytes, sync, session, local]) => console.log(JSON.stringify({
+  sync_bytes_used: bytes,
+  sync_bytes_max: 102400,
+  mass_interact_exclude_bytes: JSON.stringify(sync.mass_interact_exclude_id || {}).length,
+  call_exclude_bytes: JSON.stringify(sync.call_exclude_id || {}).length,
+  session_char: session,
+  local: local
+}, null, 2)));
 ```
-Result: `___`
 
-**B. Per-character exclude lists (checks for one specific cause)**
-```js
-chrome.storage.sync.get(['mass_interact_exclude_id','call_exclude_id']).then(r => console.log('EXCLUDE_SIZES', JSON.stringify(r.mass_interact_exclude_id||{}).length, JSON.stringify(r.call_exclude_id||{}).length))
+Paste the result here:
+
 ```
-Result: `___`
-
-**C. Does the extension know which character you are?**
-```js
-chrome.storage.session.get('current_char_details').then(r => console.log('SESSION_CHAR', JSON.stringify(r)))
+paste output here
 ```
-Result: `___`
 
-**D. Local install state**
-```js
-chrome.storage.local.get(['install_type']).then(r => console.log('LOCAL', JSON.stringify(r)))
-```
-Result: `___`
-
-> If you tried this *while the bug was happening* but had to reload the extension before getting here, please re-trigger the bug and run the commands again — the values change after a reload.
+> If you had to reload the extension before getting to this step, please re-trigger the bug and run the snapshot again — some values reset on reload.
 
 ## 6. Page console (only if you have time after the above)
 
@@ -106,7 +106,7 @@ Result: `___`
 
 | | |
 |---|---|
-| Browser + version (menu → Help → About Chrome) | |
+| Browser + version (menu → Help → About) | |
 | Operating system | |
 | Popmundo Utils version (from `chrome://extensions/`) | |
 | Approximate date the issue started | |
