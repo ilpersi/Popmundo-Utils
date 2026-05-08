@@ -142,7 +142,20 @@ EOF
     echo "Refresh token:"
     echo "  $refresh_token"
     echo ""
-    echo "Add it to ${CREDENTIALS_FILE} as \"refresh_token\" or set CWS_REFRESH_TOKEN."
+
+    if [[ -f "$CREDENTIALS_FILE" ]]; then
+        local tmp_file
+        tmp_file=$(mktemp)
+        if jq --arg t "$refresh_token" '.refresh_token = $t' "$CREDENTIALS_FILE" > "$tmp_file"; then
+            mv "$tmp_file" "$CREDENTIALS_FILE"
+            echo "Updated ${CREDENTIALS_FILE} with the new refresh_token."
+        else
+            rm -f "$tmp_file"
+            echo "Failed to update ${CREDENTIALS_FILE}; copy the token above manually."
+        fi
+    else
+        echo "Add it to ${CREDENTIALS_FILE} as \"refresh_token\" or set CWS_REFRESH_TOKEN."
+    fi
 }
 
 # ---------------------------------------------------------------------------

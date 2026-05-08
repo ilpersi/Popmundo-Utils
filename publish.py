@@ -242,7 +242,21 @@ def run_get_token(root: Path) -> None:
     creds = flow.run_local_server(port=0)
 
     print(f"\nRefresh token:\n  {creds.refresh_token}\n")
-    print(f"Add it to {CREDENTIALS_FILE} as \"refresh_token\" or set CWS_REFRESH_TOKEN.")
+
+    if cred_path.exists():
+        try:
+            with open(cred_path, encoding="utf-8") as f:
+                file_config = json.load(f)
+            file_config["refresh_token"] = creds.refresh_token
+            with open(cred_path, "w", encoding="utf-8") as f:
+                json.dump(file_config, f, indent=4)
+                f.write("\n")
+            print(f"Updated {CREDENTIALS_FILE} with the new refresh_token.")
+        except (OSError, json.JSONDecodeError) as e:
+            print(f"Failed to update {CREDENTIALS_FILE}: {e}")
+            print(f"Copy the token above into {CREDENTIALS_FILE} manually.")
+    else:
+        print(f"Add it to {CREDENTIALS_FILE} as \"refresh_token\" or set CWS_REFRESH_TOKEN.")
 
 # ---------------------------------------------------------------------------
 # Entry point

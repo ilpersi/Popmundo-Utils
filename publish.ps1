@@ -113,7 +113,24 @@ function Get-Token {
     Write-Host "Refresh token:"
     Write-Host "  $($response.refresh_token)"
     Write-Host ""
-    Write-Host "Add it to $CredentialsFile as `"refresh_token`" or set CWS_REFRESH_TOKEN."
+
+    if (Test-Path $CredentialsFile) {
+        try {
+            $existing = Get-Content $CredentialsFile -Raw | ConvertFrom-Json
+            if ($existing.PSObject.Properties.Name -contains "refresh_token") {
+                $existing.refresh_token = $response.refresh_token
+            } else {
+                $existing | Add-Member -MemberType NoteProperty -Name "refresh_token" -Value $response.refresh_token
+            }
+            ($existing | ConvertTo-Json -Depth 10) | Set-Content -Path $CredentialsFile -Encoding UTF8
+            Write-Host "Updated $CredentialsFile with the new refresh_token."
+        } catch {
+            Write-Host "Failed to update ${CredentialsFile}: $_"
+            Write-Host "Copy the token above into $CredentialsFile manually."
+        }
+    } else {
+        Write-Host "Add it to $CredentialsFile as `"refresh_token`" or set CWS_REFRESH_TOKEN."
+    }
 }
 
 # ---------------------------------------------------------------------------
