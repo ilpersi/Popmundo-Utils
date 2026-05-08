@@ -6,5 +6,9 @@
 # Force Include README file
 !README.md
 
+# Template issues force inclusion
+!.github/ISSUE_TEMPLATE/bug_report.md
+!.github/ISSUE_TEMPLATE/call_all_mass_interact_report.md
+
 # Chrome Web Store publish credentials
 .cws_credentials.json
