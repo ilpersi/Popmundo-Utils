@@ -177,8 +177,8 @@ async function onSubmitClick(submitBtn) {
         const INTERACT_A_SELECTOR = 'td.right > a[href*="/World/Popmundo.aspx/Interact/"]';
         // Selector to get the character a element from the present character list
         const CHAR_A_SELECTOR = 'td:nth-child(2) > a';
-        // XPATH used to check i the interact select box is present
-        const INTERACT_SELECT_XPATH = '//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option';
+        // CSS Selector used to check if the interact select box is present
+        const INTERACT_SELECT_SELECTOR = 'select#ctl00_cphTopColumn_ctl00_ddlInteractionTypes > option';
         // Regex to extract the character id from the href of a elems
         const CHAR_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
         const fetcher = new TimedFetch();
@@ -186,8 +186,8 @@ async function onSubmitClick(submitBtn) {
         // We'll use this to save the list of current friends
         let currentFriendsIDs = [];
         if (savedOptions.mass_interact_ignore_acquaintance) {
-            // XPATH for the Relations link in the Character Page
-            const RELATIONS_A_XPATH = "//a[contains(@href, '/World/Popmundo.aspx/Character/Relations/')]";
+            // CSS Selector for the Relations link in the Character Page
+            const RELATIONS_A_SELECTOR = 'a[href*="/World/Popmundo.aspx/Character/Relations/"]';
 
             // Status update
             if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusCheckingRelations');
@@ -200,17 +200,17 @@ async function onSubmitClick(submitBtn) {
             let parser = new DOMParser();
             let doc = parser.parseFromString(charHTML, "text/html");
 
-            let relationAXpathHelp = new XPathHelper(RELATIONS_A_XPATH, doc);
-            let relationANode = relationAXpathHelp.getFirstOrderedNode(doc);
-            let relationURL = Utils.getServerLink(relationANode.singleNodeValue.getAttribute('href'));
+            let relationAHelp = new CssSelectorHelper(RELATIONS_A_SELECTOR, doc);
+            let relationANode = relationAHelp.getSingle();
+            let relationURL = Utils.getServerLink(relationANode.getAttribute('href'));
 
             // We assume relations are one page only
             let isNextPage = false;
 
             // CSS Selector used to search friend id in the relationship page
             const RELATIONS_SELECTOR = 'td > a[href*="/World/Popmundo.aspx/Character/"]';
-            // XPATH to check if there is another relations page
-            const RELATIONS_NEXT_XPATH = "//a[contains(@href, 'btnGoNext')]";
+            // CSS Selector to check if there is another relations page
+            const RELATIONS_NEXT_SELECTOR = 'a[href*="btnGoNext"]';
 
             // Regex to extract the character friend id from the href of a elems
             const RELATIONS_ID_RE = /\/World\/Popmundo.aspx\/Character\/(\d+)/g
@@ -266,12 +266,12 @@ async function onSubmitClick(submitBtn) {
                 }
 
                 // We search for next page link
-                let relationsNextXPathHelp = new XPathHelper(RELATIONS_NEXT_XPATH, doc);
-                let relationsNextNode = relationsNextXPathHelp.getFirstOrderedNode(doc);
+                let relationsNextHelp = new CssSelectorHelper(RELATIONS_NEXT_SELECTOR, doc);
+                let relationsNextNode = relationsNextHelp.getSingle();
 
                 // Next page element is found
-                if (relationsNextNode.singleNodeValue) {
-                    let nextPageHref = relationsNextNode.singleNodeValue.getAttribute('href');
+                if (relationsNextNode) {
+                    let nextPageHref = relationsNextNode.getAttribute('href');
 
                     // href matches the expected regex
                     let goNextMatch = RELATIONS_NEXT_RE.exec(nextPageHref);
@@ -404,12 +404,12 @@ async function onSubmitClick(submitBtn) {
                 // Parse the text
                 let doc = parser.parseFromString(html, "text/html");
 
-                // This XPATH makes sure that the Interact Select is is there
-                let interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
-                let interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
+                // This CSS Selector makes sure that the Interact Select is there
+                let interactSelectHelper = new CssSelectorHelper(INTERACT_SELECT_SELECTOR, doc);
+                let interactOptions = interactSelectHelper.getAll();
 
                 // If interactions are available for this char, we are going to use them so we increment the counter of total characters we interacted with
-                if (interactOptionsNodeSnapshot.snapshotLength > 0)
+                if (interactOptions.length > 0)
                     totalCharactersCnt += 1;
 
                 // Random interaction is an empty array by default, if interactions are available, it is randomly filled
@@ -418,12 +418,12 @@ async function onSubmitClick(submitBtn) {
                 // The interaction counter for the current character, mainly used to give feedback on the form page.
                 let interactionCnt = 1;
 
-                while (interactOptionsNodeSnapshot.snapshotLength > 0) {
+                while (interactOptions.length > 0) {
                     let availableInteractions = [];
 
                     // We loop and we push possible values in availableInteractions
-                    for (let i = 0; i < interactOptionsNodeSnapshot.snapshotLength; i++) {
-                        let interactionOption = interactOptionsNodeSnapshot.snapshotItem(i);
+                    for (let i = 0; i < interactOptions.length; i++) {
+                        let interactionOption = interactOptions[i];
                         let value = parseInt(interactionOption.getAttribute('value'));
                         let dataGroup = interactionOption.hasAttribute('data-group') ? String(interactionOption.getAttribute('data-group')) : '';
 
@@ -468,9 +468,9 @@ async function onSubmitClick(submitBtn) {
                     // We update the parser content so to make sure the while does not go in infinite loop
                     parser = new DOMParser();
                     doc = parser.parseFromString(html, "text/html");
-                    // As we are updating the parser content, we also need to update the XpathHelper
-                    interactSelectXpathHelper = new XPathHelper(INTERACT_SELECT_XPATH, doc);
-                    interactOptionsNodeSnapshot = interactSelectXpathHelper.getOrderedSnapshot(doc);
+                    // As we are updating the parser content, we also need to update the CssSelectorHelper
+                    interactSelectHelper = new CssSelectorHelper(INTERACT_SELECT_SELECTOR, doc);
+                    interactOptions = interactSelectHelper.getAll();
 
                     // We increase the counters
                     interactionCnt++;
@@ -502,14 +502,19 @@ async function onSubmitClick(submitBtn) {
 /**
  * This function will inject the required HTML elements to make the "Mass Interact" functionality available in the character present page
  *
+ * @return {Promise<boolean>} true when the panel was injected, false when the anchor was missing or an error occurred
  */
 async function injectMassInteractHTML() {
-    const FIND_FRIENDS_XPATH = '//div[@id="ctl00_cphLeftColumn_ctl00_divFilters"]';
+    const FIND_FRIENDS_SELECTOR = 'div#ctl00_cphLeftColumn_ctl00_divFilters';
 
-    let findFriendsXPathHelp = new XPathHelper(FIND_FRIENDS_XPATH);
-    let findFriendsNode = findFriendsXPathHelp.getFirstOrderedNode(document);
+    try {
+        let findFriendsHelp = new CssSelectorHelper(FIND_FRIENDS_SELECTOR);
+        let findFriendsNode = findFriendsHelp.getSingle();
 
-    if (findFriendsNode.singleNodeValue) {
+        if (!findFriendsNode) {
+            new Notifications().notifyNormal(null, chrome.i18n.getMessage('miInjectMissing'));
+            return false;
+        }
 
         let MassInteractDiv = document.createElement('div');
         MassInteractDiv.setAttribute('class', 'box');
@@ -547,7 +552,12 @@ async function injectMassInteractHTML() {
 
         MassInteractDiv.appendChild(MassInteractP2);
 
-        findFriendsNode.singleNodeValue.parentNode.insertBefore(MassInteractDiv, findFriendsNode.singleNodeValue.nextSibling);
+        findFriendsNode.parentNode.insertBefore(MassInteractDiv, findFriendsNode.nextSibling);
+        return true;
+    } catch (error) {
+        console.error('Mass Interact inject error:', error);
+        new Notifications().notifyError(null, chrome.i18n.getMessage('miInjectError', [String(error.message || error)]));
+        return false;
     }
 }
 
@@ -659,5 +669,8 @@ async function injectMassInteractExcludeButtons() {
     });
 }
 
-injectMassInteractHTML();
-injectMassInteractExcludeButtons();
+chrome.storage.sync.get({ mass_interact_enable: true }, async ({ mass_interact_enable }) => {
+    if (!mass_interact_enable) return;
+    const injected = await injectMassInteractHTML();
+    if (injected) injectMassInteractExcludeButtons();
+});

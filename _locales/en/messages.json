@@ -123,6 +123,14 @@
         "message": "Select the telephone interactions to use. The logic will randomly select between the checked ones and those available for each friend.",
         "description": "Call All Friends section description"
     },
+    "optCafGroupGeneral": {
+        "message": "General",
+        "description": "Category label for general Call All Friends options"
+    },
+    "optCafEnable": {
+        "message": "Enable Call All Friends",
+        "description": "Label for the enable Call All Friends toggle"
+    },
     "optCafGroupInteractions": {
         "message": "Interaction Types",
         "description": "Category label for call interaction type checkboxes"
@@ -446,6 +454,14 @@
     },
     "optMiGoogleGoogle": {
         "message": "Google-Google"
+    },
+    "optMiGroupGeneral": {
+        "message": "General",
+        "description": "Category label for general Mass Interact options"
+    },
+    "optMiEnable": {
+        "message": "Enable Mass Interact",
+        "description": "Label for the enable Mass Interact toggle"
     },
     "optMiGroupSettings": {
         "message": "Settings",
@@ -843,6 +859,20 @@
         "message": "An error occurred. Check the browser console for details.",
         "description": "Generic error shown in the Call All Friends panel when an unexpected error occurs"
     },
+    "cafInjectError": {
+        "message": "Call All Friends failed to inject UI: $DETAIL$",
+        "description": "Notification shown when injecting the Call All Friends button throws an exception",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "TypeError: ..."
+            }
+        }
+    },
+    "cafInjectMissing": {
+        "message": "Call All Friends: could not find the page anchor; the action button is unavailable.",
+        "description": "Notification shown when the CSS anchor for injecting the Call All Friends button is missing"
+    },
     "cafStatusCalling": {
         "message": "Calling $CALLABLE$ friends out of $TOTAL$...",
         "description": "Status at the start of the calling phase",
@@ -1040,6 +1070,20 @@
     "miError": {
         "message": "An error occurred. Check the browser console for details.",
         "description": "Generic error shown in the Mass Interact panel when an unexpected error occurs"
+    },
+    "miInjectError": {
+        "message": "Mass Interact failed to inject UI: $DETAIL$",
+        "description": "Notification shown when injecting the Mass Interact button throws an exception",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "TypeError: ..."
+            }
+        }
+    },
+    "miInjectMissing": {
+        "message": "Mass Interact: could not find the page anchor; the action button is unavailable.",
+        "description": "Notification shown when the CSS anchor for injecting the Mass Interact button is missing"
     },
     "ggfTitle": {
         "message": "Collect Autographs",

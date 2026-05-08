@@ -121,23 +121,23 @@ async function onSubmitClick(submitBtn) {
                 // Parse the text
                 let doc = parser.parseFromString(html, "text/html");
 
-                // This XPATH makes sure that the Wazzup call option is there
-                let wazzupXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option[@value="24"]', doc);
-                let wazzupNode = wazzupXpathHelper.getOrderedSnapshot(doc);
-                Logger.debug(wazzupXpathHelper.prettyPrint());
+                // This CSS Selector makes sure that the Wazzup call option is there
+                let wazzupHelper = new CssSelectorHelper('select#ctl00_cphTopColumn_ctl00_ddlInteractionTypes > option[value="24"]', doc);
+                let wazzupNodes = wazzupHelper.getAll();
+                Logger.debug(wazzupHelper.prettyPrint());
 
                 // Random interaction is 0 by default, if interactions are available a random value is generated
                 let randomInteraction = 0;
-                if (wazzupNode.snapshotLength > 0) {
+                if (wazzupNodes.length > 0) {
                     let availableInteractions = [];
-                    // This is the XPATH for the option values in the interaction select element
-                    let interactionsXpathHelper = new XPathHelper('//select[@id="ctl00_cphTopColumn_ctl00_ddlInteractionTypes"]/option', doc)
-                    let interactionNodes = interactionsXpathHelper.getUnorderedNodeSnapshot(doc);
-                    Logger.debug(interactionsXpathHelper.prettyPrint());
+                    // This is the CSS Selector for the option values in the interaction select element
+                    let interactionsHelper = new CssSelectorHelper('select#ctl00_cphTopColumn_ctl00_ddlInteractionTypes > option', doc);
+                    let interactionNodes = interactionsHelper.getAll();
+                    Logger.debug(interactionsHelper.prettyPrint());
 
                     // We loop and we push possible values in availableInteractions
-                    for (let i = 0; i < interactionNodes.snapshotLength; i++) {
-                        let interactionOption = interactionNodes.snapshotItem(i);
+                    for (let i = 0; i < interactionNodes.length; i++) {
+                        let interactionOption = interactionNodes[i];
                         let value = parseInt(interactionOption.getAttribute('value'));
                         availableInteractions.push(value);
                     }
@@ -173,7 +173,7 @@ async function onSubmitClick(submitBtn) {
                 friendsDetails.push({
                     'id': friendDict.id,
                     'name': friendDict.name,
-                    'canCall': (wazzupNode.snapshotLength > 0) && (randomInteraction !== 0),
+                    'canCall': (wazzupNodes.length > 0) && (randomInteraction !== 0),
                     'formData': formDataNew,
                     'interactUrl': interactUrl,
                 });
@@ -230,17 +230,21 @@ async function onSubmitClick(submitBtn) {
 /**
  * This function will inject the required HTML elements to make the "Call all" functionality available in the relations page
  *
+ * @return {Promise<boolean>} true when the panel was injected, false when the anchor was missing or an error occurred
  */
 async function injectCallAllHTML() {
-    const END_RELATION_XPATH = '//div[@id="ctl00_cphLeftColumn_ctl00_pnlEndMultiple"]';
+    const END_RELATION_SELECTOR = 'div#ctl00_cphLeftColumn_ctl00_pnlEndMultiple';
 
-    let endRelationsXPathHelp = new XPathHelper(END_RELATION_XPATH);
-    let endRelationsNode = endRelationsXPathHelp.getFirstOrderedNode(document);
+    try {
+        let endRelationsHelp = new CssSelectorHelper(END_RELATION_SELECTOR);
+        let endRelationsNode = endRelationsHelp.getSingle();
 
-    Logger.debug(endRelationsXPathHelp.prettyPrint());
+        Logger.debug(endRelationsHelp.prettyPrint());
 
-    if (endRelationsNode.singleNodeValue) {
-        // console.log("End relations div");
+        if (!endRelationsNode) {
+            new Notifications().notifyNormal(null, chrome.i18n.getMessage('cafInjectMissing'));
+            return false;
+        }
 
         let callAllDiv = document.createElement('div');
         callAllDiv.setAttribute('class', 'box');
@@ -278,7 +282,12 @@ async function injectCallAllHTML() {
 
         callAllDiv.appendChild(callAllP2);
 
-        endRelationsNode.singleNodeValue.parentNode.insertBefore(callAllDiv, endRelationsNode.singleNodeValue.nextSibling);
+        endRelationsNode.parentNode.insertBefore(callAllDiv, endRelationsNode.nextSibling);
+        return true;
+    } catch (error) {
+        console.error('Call All Friends inject error:', error);
+        new Notifications().notifyError(null, chrome.i18n.getMessage('cafInjectError', [String(error.message || error)]));
+        return false;
     }
 }
 
@@ -385,6 +394,9 @@ async function injectCallAllExcludeButtons() {
 
 const myCharID = Utils.getMyID();
 if (myCharID > 0 && window.location.href.includes(String(myCharID))) {
-    injectCallAllHTML();
-    injectCallAllExcludeButtons();
+    chrome.storage.sync.get({ call_all_friends_enable: true }, async ({ call_all_friends_enable }) => {
+        if (!call_all_friends_enable) return;
+        const injected = await injectCallAllHTML();
+        if (injected) injectCallAllExcludeButtons();
+    });
 }

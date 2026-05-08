@@ -64,6 +64,7 @@ const optionDetails = [
     { 'name': 'tb_hour_range', 'default': 2, 'save_cb': saveInteger, 'load_cb': loadInteger },
 
     // call all options
+    { 'name': 'call_all_friends_enable', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_all_wazzup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_all_prank', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'call_all_sms_pic', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
@@ -72,6 +73,7 @@ const optionDetails = [
     { 'name': 'call_exclude_id', 'default': {}, 'save_cb': saveExcludeList, 'load_cb': loadExcludeList },
 
     // mass interact options
+    { 'name': 'mass_interact_enable', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_greet', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_smile', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'mass_interact_wink', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
