@@ -1,24 +1,3 @@
-/**
- * Gets the current character details (id and name) from session storage.
- * Uses the message-passing pattern since this is a content script.
- *
- * @returns {Promise<{id: number, name: string}>}
- */
-function getMyCharDetails() {
-    return new Promise((resolve) => {
-        chrome.runtime.sendMessage({
-            'type': 'storage.session',
-            'payload': 'get',
-            'param': ['current_char_details'],
-        })
-            .then((items) => {
-                const details = items['current_char_details'];
-                resolve((details && details.id) ? details : { id: 0, name: '' });
-            })
-            .catch(() => resolve({ id: 0, name: '' }));
-    });
-}
-
 async function onSubmitClick(submitBtn) {
     const statusPElem = document.getElementById('mass-interact-status-p');
     if (submitBtn) submitBtn.disabled = true;
@@ -148,7 +127,7 @@ async function onSubmitClick(submitBtn) {
         };
 
         // Check that the current character ID is available
-        const myCharDetails = await getMyCharDetails();
+        const myCharDetails = await Utils.getMyCharDetails();
         const myCharID = myCharDetails.id;
         if (myCharID == 0) {
             new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));
@@ -582,7 +561,7 @@ async function injectMassInteractExcludeButtons() {
     const tickCircleIcon = '✅';
 
     // Check that the current character ID is available before showing icons
-    const myCharDetails = await getMyCharDetails();
+    const myCharDetails = await Utils.getMyCharDetails();
     const myCharID = myCharDetails.id;
     if (myCharID == 0) {
         new Notifications().notifyError(null, chrome.i18n.getMessage('charIdZeroError'));

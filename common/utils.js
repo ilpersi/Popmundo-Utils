@@ -57,6 +57,51 @@ class Utils {
     }
 
     /**
+     * Get the name of your own character by scraping the character header.
+     * Only present on certain pages (e.g. character profile / characters present);
+     * returns an empty string elsewhere.
+     *
+     * @static
+     * @return {string} The name of your character if found, otherwise ''
+     * @memberof Utils
+     */
+    static getMyName() {
+        const nameNode = new CssSelectorHelper("#ppm-content > div.box.ofauto.charPresBox > h2").getSingle();
+        return nameNode ? nameNode.textContent : '';
+    }
+
+    /**
+     * Resolve the current character's {id, name} with a resilient fallback chain:
+     *   1. session storage via background SW (canonical, populated by global-content-script)
+     *   2. DOM scrape via Utils.getMyID() + Utils.getMyName()
+     *
+     * Returns {id: 0, name: ''} only if both layers fail. Used by features that need
+     * the current character ID even after the MV3 service worker has been reaped and
+     * cleared session storage (issue #15).
+     *
+     * @static
+     * @return {Promise<{id: number, name: string}>}
+     * @memberof Utils
+     */
+    static async getMyCharDetails() {
+        try {
+            const items = await chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'get',
+                'param': ['current_char_details'],
+            });
+            const details = items && items['current_char_details'];
+            if (details && details.id) return details;
+        } catch (_) {
+            // sendMessage rejected (SW reaped, port closed, etc.) — fall through to DOM scrape.
+        }
+
+        const id = Utils.getMyID();
+        if (id) return { id, name: Utils.getMyName() };
+        return { id: 0, name: '' };
+    }
+
+    /**
      * Get theme properties to coorectly dispay pop-ups in pages.
      *
      * @static

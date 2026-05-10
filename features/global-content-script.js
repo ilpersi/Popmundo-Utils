@@ -346,11 +346,7 @@ async function updateCurrentCharacter(charactersDB) {
         let myCharID = Utils.getMyID();
         if (myCharID != 0) {
             myCharDetails.id = myCharID;
-
-            let nameNode = new CssSelectorHelper("#ppm-content > div.box.ofauto.charPresBox > h2").getSingle();
-            if (nameNode) {
-                myCharDetails.name = nameNode.textContent;
-            }
+            myCharDetails.name = Utils.getMyName();
 
             if (myCharDetails.name !== '') {
                 // Let's update current character details in session storage
