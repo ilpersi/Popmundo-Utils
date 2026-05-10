@@ -102,6 +102,283 @@ class Utils {
     }
 
     /**
+     * Returns the input as a plain (non-array, non-null) object, otherwise {}.
+     * Defensive normalizer for the per-character exclude-list maps stored in sync.
+     *
+     * @static
+     * @memberof Utils
+     */
+    static normalizeExcludeMap(raw) {
+        return (typeof raw === 'object' && raw !== null && !Array.isArray(raw)) ? raw : {};
+    }
+
+    /**
+     * Extracts the numeric character ID from an exclude-list entry, accepting both
+     * the legacy `{id, name}` object shape and the v2 plain-id shape.
+     * Returns null if the entry can't be parsed.
+     *
+     * @static
+     * @memberof Utils
+     */
+    static excludeEntryId(entry) {
+        const raw = (typeof entry === 'object' && entry !== null) ? entry.id : entry;
+        const id = Number(raw);
+        return (Number.isFinite(id) && id > 0) ? id : null;
+    }
+
+    /**
+     * Number of buckets used to shard the synced character-name cache. Sized so the
+     * theoretical worst case (10 of your chars × 100 entries × 2 features = 2000
+     * unique excluded characters × ~25 bytes each ≈ 50 KB) stays well under the 8 KB
+     * per-item sync quota in every bucket. 8 keeps each bucket ≤ ~6.25 KB at worst.
+     *
+     * @readonly
+     * @static
+     * @memberof Utils
+     */
+    static EXCLUDE_NAME_BUCKETS = 8;
+
+    /**
+     * @private
+     * Memoized promise so concurrent callers within a single content-script context
+     * share one migration run instead of racing.
+     */
+    static _excludeMigrationPromise = null;
+
+    /**
+     * Returns the array of numeric IDs excluded by the given player character for
+     * the named feature, reading from the per-character sharded sync key
+     * `<featureKey>_<myCharID>`. Falls back to the legacy single-key map if the
+     * shard hasn't been written yet (i.e. before migration completes).
+     *
+     * @static
+     * @memberof Utils
+     */
+    static async getExcludedIds(featureKey, myCharID) {
+        await Utils.ensureExcludeListsMigrated();
+        const shardKey = `${featureKey}_${myCharID}`;
+        const data = await chrome.storage.sync.get({ [shardKey]: null, [featureKey]: null });
+
+        if (Array.isArray(data[shardKey])) {
+            return data[shardKey].map(e => Utils.excludeEntryId(e)).filter(id => id !== null);
+        }
+        // Legacy fallback (pre-migration data)
+        if (data[featureKey] && typeof data[featureKey] === 'object' && !Array.isArray(data[featureKey])) {
+            const list = data[featureKey][String(myCharID)];
+            if (Array.isArray(list)) {
+                return list.map(e => Utils.excludeEntryId(e)).filter(id => id !== null);
+            }
+        }
+        return [];
+    }
+
+    /**
+     * Idempotently records a {id → name} mapping in the bucketed name cache
+     * (`synced_char_names_<bucket>` keys). No-op if the name is already up to date.
+     *
+     * @static
+     * @memberof Utils
+     */
+    static async cacheCharName(charID, charName) {
+        if (!charID || !charName) return;
+        const id = Number(charID);
+        if (!Number.isFinite(id) || id <= 0) return;
+        const bucketKey = `synced_char_names_${id % Utils.EXCLUDE_NAME_BUCKETS}`;
+        const key = String(id);
+        const stored = await chrome.storage.sync.get({ [bucketKey]: {} });
+        const bucket = (typeof stored[bucketKey] === 'object' && stored[bucketKey] !== null && !Array.isArray(stored[bucketKey])) ? stored[bucketKey] : {};
+        if (bucket[key] === charName) return;
+        bucket[key] = String(charName);
+        await chrome.storage.sync.set({ [bucketKey]: bucket });
+    }
+
+    /**
+     * Loads and returns the merged synced_char_names map across all buckets.
+     * Single round-trip (one storage.get with all bucket keys).
+     *
+     * @return {Promise<Object<string, string>>}
+     * @static
+     * @memberof Utils
+     */
+    static async loadSyncedCharNames() {
+        const defaults = {};
+        for (let i = 0; i < Utils.EXCLUDE_NAME_BUCKETS; i++) defaults[`synced_char_names_${i}`] = {};
+        const stored = await chrome.storage.sync.get(defaults);
+        const merged = {};
+        for (let i = 0; i < Utils.EXCLUDE_NAME_BUCKETS; i++) {
+            const bucket = stored[`synced_char_names_${i}`];
+            if (typeof bucket === 'object' && bucket !== null && !Array.isArray(bucket)) {
+                Object.assign(merged, bucket);
+            }
+        }
+        return merged;
+    }
+
+    /**
+     * Toggles the given character's presence in the named feature's per-char
+     * exclusion shard. Updates the bucketed name cache when adding. Falls back to
+     * the legacy single-key map for the read if the shard doesn't exist yet, so
+     * pre-migration data isn't dropped on a toggle. Returns true if now excluded.
+     *
+     * @param {string} featureKey 'mass_interact_exclude_id' or 'call_exclude_id'
+     * @param {string} myCharKey  Active player character ID as a string
+     * @param {number} charID     Numeric ID of the character to toggle
+     * @param {string} charName   Display name (used only when adding)
+     * @return {Promise<boolean>}
+     * @static
+     * @memberof Utils
+     */
+    static async toggleExclusion(featureKey, myCharKey, charID, charName) {
+        await Utils.ensureExcludeListsMigrated();
+        const shardKey = `${featureKey}_${myCharKey}`;
+        const data = await chrome.storage.sync.get({ [shardKey]: null, [featureKey]: null });
+
+        let ids;
+        if (Array.isArray(data[shardKey])) {
+            ids = data[shardKey].map(e => Utils.excludeEntryId(e)).filter(id => id !== null);
+        } else if (data[featureKey] && typeof data[featureKey] === 'object' && !Array.isArray(data[featureKey])) {
+            const list = data[featureKey][myCharKey];
+            ids = Array.isArray(list) ? list.map(e => Utils.excludeEntryId(e)).filter(id => id !== null) : [];
+        } else {
+            ids = [];
+        }
+
+        const idx = ids.indexOf(charID);
+        const nowExcluded = idx === -1;
+        if (nowExcluded) ids.push(charID);
+        else ids.splice(idx, 1);
+
+        await chrome.storage.sync.set({ [shardKey]: ids });
+        if (nowExcluded) await Utils.cacheCharName(charID, charName);
+        return nowExcluded;
+    }
+
+    /**
+     * Resolves a character ID to a display name with a graceful fallback chain:
+     *   1. synced_char_names (merged buckets, populated by Utils.cacheCharName)
+     *   2. all_characters_details["id-name"] (local, populated by global-content-script)
+     *   3. legacyName carried inside the entry, if any
+     *   4. "#<id>" placeholder
+     *
+     * Pure helper — pass in pre-loaded lookup tables so callers can resolve many IDs
+     * without hammering storage.
+     *
+     * @static
+     * @memberof Utils
+     */
+    static resolveCharName(charID, syncedNames, idNameMap, legacyName) {
+        const key = String(charID);
+        if (syncedNames && syncedNames[key]) return syncedNames[key];
+        if (idNameMap && idNameMap[key]) return idNameMap[key];
+        if (legacyName) return legacyName;
+        return `#${key}`;
+    }
+
+    /**
+     * Idempotent guard so any read/write entry point can `await Utils.ensureExcludeListsMigrated()`
+     * before touching exclusion data. Memoized within a content-script context so concurrent
+     * callers share one in-flight migration.
+     *
+     * @static
+     * @memberof Utils
+     */
+    static ensureExcludeListsMigrated() {
+        if (!Utils._excludeMigrationPromise) {
+            Utils._excludeMigrationPromise = Utils.migrateExcludeListsSharded();
+        }
+        return Utils._excludeMigrationPromise;
+    }
+
+    /**
+     * One-shot migration of legacy single-key exclusion lists
+     *   `mass_interact_exclude_id = {charKey: [{id,name},…]}` (original shape)
+     *   `call_exclude_id          = {charKey: [{id,name},…]}`
+     *   `synced_char_names        = {id: name, …}` (only present in unpublished v2 dev builds)
+     * into per-character sharded keys plus a bucketed name cache:
+     *   `mass_interact_exclude_id_<charKey> = [id, …]`
+     *   `call_exclude_id_<charKey>          = [id, …]`
+     *   `synced_char_names_0…7              = {id: name, …}`
+     *
+     * Gated by `exclude_format_sharded_migrated` so it runs at most once per account.
+     * Cleans up the legacy keys (and the unpublished v2 single-key cache + flag) after
+     * a successful write.
+     *
+     * @static
+     * @memberof Utils
+     */
+    static async migrateExcludeListsSharded() {
+        const FLAG = 'exclude_format_sharded_migrated';
+        const data = await chrome.storage.sync.get({
+            [FLAG]: false,
+            mass_interact_exclude_id: null,
+            call_exclude_id: null,
+            synced_char_names: null,
+        });
+        if (data[FLAG]) return;
+
+        const writeBack = {};
+        const removeKeys = [];
+
+        // Bucketed accumulator for any names lifted out of legacy entries or the v2 cache.
+        const namesPerBucket = new Array(Utils.EXCLUDE_NAME_BUCKETS).fill(null).map(() => ({}));
+
+        const processFeature = (featureKey) => {
+            const map = Utils.normalizeExcludeMap(data[featureKey]);
+            for (const [charKey, list] of Object.entries(map)) {
+                if (!Array.isArray(list)) continue;
+                const ids = [];
+                for (const entry of list) {
+                    const id = Utils.excludeEntryId(entry);
+                    if (id === null) continue;
+                    ids.push(id);
+                    if (typeof entry === 'object' && entry !== null && entry.name) {
+                        const bucket = id % Utils.EXCLUDE_NAME_BUCKETS;
+                        const k = String(id);
+                        if (!namesPerBucket[bucket][k]) namesPerBucket[bucket][k] = String(entry.name);
+                    }
+                }
+                if (ids.length > 0) writeBack[`${featureKey}_${charKey}`] = ids;
+            }
+            if (data[featureKey] !== null) removeKeys.push(featureKey);
+        };
+
+        processFeature('mass_interact_exclude_id');
+        processFeature('call_exclude_id');
+
+        // Fold the unpublished v2 single-key name cache (if present in dev profiles) into buckets.
+        if (data.synced_char_names && typeof data.synced_char_names === 'object' && !Array.isArray(data.synced_char_names)) {
+            for (const [k, name] of Object.entries(data.synced_char_names)) {
+                const id = Number(k);
+                if (!Number.isFinite(id) || id <= 0 || !name) continue;
+                const bucket = id % Utils.EXCLUDE_NAME_BUCKETS;
+                if (!namesPerBucket[bucket][String(id)]) namesPerBucket[bucket][String(id)] = String(name);
+            }
+            removeKeys.push('synced_char_names');
+        }
+
+        // Merge into existing bucket keys (don't clobber names already cached).
+        const bucketDefaults = {};
+        for (let i = 0; i < Utils.EXCLUDE_NAME_BUCKETS; i++) bucketDefaults[`synced_char_names_${i}`] = {};
+        const existingBuckets = await chrome.storage.sync.get(bucketDefaults);
+        for (let i = 0; i < Utils.EXCLUDE_NAME_BUCKETS; i++) {
+            const bucketKey = `synced_char_names_${i}`;
+            const existing = (typeof existingBuckets[bucketKey] === 'object' && existingBuckets[bucketKey] !== null && !Array.isArray(existingBuckets[bucketKey]))
+                ? existingBuckets[bucketKey]
+                : {};
+            const merged = { ...existing, ...namesPerBucket[i] };
+            if (Object.keys(merged).length > 0) writeBack[bucketKey] = merged;
+        }
+
+        // Sweep the unpublished v2 flag if it lingers from a dev profile.
+        removeKeys.push('exclude_format_v2_migrated');
+
+        writeBack[FLAG] = true;
+
+        await chrome.storage.sync.set(writeBack);
+        if (removeKeys.length > 0) await chrome.storage.sync.remove(removeKeys);
+    }
+
+    /**
      * Get theme properties to coorectly dispay pop-ups in pages.
      *
      * @static

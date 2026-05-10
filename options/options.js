@@ -145,25 +145,115 @@ const optionDetails = [
     { 'name': 'log_level', 'default': 3, 'save_cb': saveInteger, 'load_cb': loadInteger },
 ]
 
-function saveExcludeList(optionName, defaultValue) {
+/**
+ * Persists the per-character exclusion shards for the named feature directly to
+ * sync storage. Returns undefined so save_options skips writing optionName as a
+ * single key (the legacy shape) — storage is sharded per-char now.
+ */
+async function saveExcludeList(optionName, defaultValue) {
     const hidden = document.getElementById(optionName);
-    if (!hidden) return defaultValue;
+    if (!hidden) return undefined;
+    let parsed;
     try {
-        return JSON.parse(hidden.value || '{}');
+        parsed = JSON.parse(hidden.value || '{}');
     } catch (_) {
-        return defaultValue;
+        return undefined;
     }
+
+    const map = Utils.normalizeExcludeMap(parsed);
+    const writeBack = {};
+    const removeKeys = [];
+    const namesPerBucket = new Array(Utils.EXCLUDE_NAME_BUCKETS).fill(null).map(() => ({}));
+
+    // Snapshot existing shards so we can drop any that aren't represented in the
+    // saved map — that's how Remove All (which empties the hidden input) reaches us.
+    const all = await chrome.storage.sync.get(null);
+    const prefix = `${optionName}_`;
+    const existingShardKeys = Object.keys(all).filter(k => k.startsWith(prefix));
+    const seenShardKeys = new Set();
+
+    for (const [charKey, list] of Object.entries(map)) {
+        const shardKey = `${optionName}_${charKey}`;
+        seenShardKeys.add(shardKey);
+        if (!Array.isArray(list) || list.length === 0) {
+            removeKeys.push(shardKey);
+            continue;
+        }
+        const ids = [];
+        for (const entry of list) {
+            const id = Utils.excludeEntryId(entry);
+            if (id === null) continue;
+            ids.push(id);
+            if (typeof entry === 'object' && entry !== null && entry.name) {
+                const bucket = id % Utils.EXCLUDE_NAME_BUCKETS;
+                namesPerBucket[bucket][String(id)] = String(entry.name);
+            }
+        }
+        if (ids.length === 0) removeKeys.push(shardKey);
+        else writeBack[shardKey] = ids;
+    }
+
+    // Drop any existing shard the saved map didn't account for (Remove All path).
+    for (const shardKey of existingShardKeys) {
+        if (!seenShardKeys.has(shardKey)) removeKeys.push(shardKey);
+    }
+
+    // Merge new names with whatever's already in each bucket. `all` already has
+    // every sync key from the snapshot above, so reuse it instead of a second get.
+    for (let i = 0; i < Utils.EXCLUDE_NAME_BUCKETS; i++) {
+        const bucketKey = `synced_char_names_${i}`;
+        const existing = (typeof all[bucketKey] === 'object' && all[bucketKey] !== null && !Array.isArray(all[bucketKey]))
+            ? all[bucketKey]
+            : {};
+        const merged = { ...existing, ...namesPerBucket[i] };
+        if (Object.keys(merged).length > Object.keys(existing).length) {
+            writeBack[bucketKey] = merged;
+        }
+    }
+
+    if (Object.keys(writeBack).length > 0) await chrome.storage.sync.set(writeBack);
+    if (removeKeys.length > 0) await chrome.storage.sync.remove(removeKeys);
+
+    return undefined; // tells save_options to skip writing optionName itself
 }
 
-function loadExcludeList(optionName, optionValue) {
-    // New format: { "charId": [{id, name}, ...] }
-    const map = (typeof optionValue === 'object' && !Array.isArray(optionValue) && optionValue !== null)
-        ? optionValue
-        : {};
+/**
+ * Reads the per-character exclusion shards for the named feature, resolves names
+ * via the bucketed sync cache + local DB, and populates the renderer's expected
+ * `{charKey: [{id, name}, ...]}` shape into the hidden input.
+ */
+async function loadExcludeList(optionName, optionValue) {
+    await Utils.ensureExcludeListsMigrated();
+
+    // Find every per-char shard for this feature in a single sync.get(null).
+    // The options page is not a hot path, so the full read is acceptable.
+    const all = await chrome.storage.sync.get(null);
+    const prefix = `${optionName}_`;
+    const rawMap = {};
+    for (const [key, value] of Object.entries(all)) {
+        if (!key.startsWith(prefix)) continue;
+        if (Array.isArray(value)) rawMap[key.slice(prefix.length)] = value;
+    }
+
+    // Resolve names once for all entries.
+    const syncedNames = await Utils.loadSyncedCharNames();
+    const local = await chrome.storage.local.get({ all_characters_details: { 'id-name': {} } });
+    const idNameMap = (local.all_characters_details && local.all_characters_details['id-name']) || {};
+
+    const expanded = {};
+    for (const [charKey, list] of Object.entries(rawMap)) {
+        expanded[charKey] = list
+            .map((entry) => {
+                const id = Utils.excludeEntryId(entry);
+                if (id === null) return null;
+                return { id, name: Utils.resolveCharName(id, syncedNames, idNameMap, null) };
+            })
+            .filter((e) => e !== null);
+    }
+
     const hidden = document.getElementById(optionName);
-    if (hidden) hidden.value = JSON.stringify(map);
-    // Populate the character selector and render the list for the current character
-    initCharSelect(optionName + '_char_select', optionName, map);
+    if (hidden) hidden.value = JSON.stringify(expanded);
+    initCharSelect(optionName + '_char_select', optionName, expanded);
 }
 
 function saveCSVString(optionName, defaultVaule) {
@@ -312,15 +402,19 @@ function loadReminderPassthrough(optionName, optionValue) {
 }
 
 // Saves options to chrome.storage
-function save_options() {
+async function save_options() {
     let optionsToSave = {};
 
-    optionDetails.forEach(option => {
+    for (const option of optionDetails) {
         if (option.hasOwnProperty('save_cb')) {
-            let optionValue = option.save_cb(option.name, option.default);
-            optionsToSave[option.name] = optionValue;
+            // save_cb may be async (e.g. saveExcludeList writes its own sharded keys
+            // and returns undefined to opt out of the orchestrator's set call).
+            const optionValue = await option.save_cb(option.name, option.default);
+            if (optionValue !== undefined) {
+                optionsToSave[option.name] = optionValue;
+            }
         }
-    });
+    }
 
     chrome.storage.sync.set(optionsToSave, function () {
         // Legacy #status span (still required so feature scripts that look it

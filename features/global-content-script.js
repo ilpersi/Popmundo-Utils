@@ -389,6 +389,11 @@ chrome.storage.sync.get(globalOptions, async (items) => {
     handleIconLink(items);
     fastCharSwitch(items.fast_character_switch);
 
+    // One-shot conversion of legacy single-key exclusion lists to per-character
+    // sharded keys + bucketed synced_char_names cache. No-op once the sync flag
+    // is set. Memoized inside Utils so this is cheap on repeat calls.
+    Utils.ensureExcludeListsMigrated().catch((e) => Logger.debug('migrateExcludeListsSharded failed: ' + e));
+
     // all_characters_details lives in local storage (not sync) to avoid the 8192 byte
     // per-item quota limit imposed by chrome.storage.sync.
     const localDefaults = { all_characters_details: { "id-name": {}, "name-id": {}, "uuid-name": {}, "name-uuid": {} } };
