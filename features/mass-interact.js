@@ -84,6 +84,7 @@ async function onSubmitClick(submitBtn) {
             'mass_interact_change_diapers': false,
             'mass_interact_pick_up': false,
             'mass_interact_kiss_on_forehead': false,
+            'mass_interact_hide_notifications': true,
         };
 
         let optionsMap = {
@@ -486,6 +487,11 @@ async function onSubmitClick(submitBtn) {
             await chrome.storage.sync.set({ global_mass_interact_count: storage.global_mass_interact_count + totalInteractionsCnt });
 
             if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusFinalInteracted', [String(totalInteractionsCnt), String(totalCharactersCnt)]);
+
+            // Drain the server-side notification queue so the next page load is clean.
+            if (savedOptions.mass_interact_hide_notifications) {
+                await new Notifications().getPageNotifications(fetcher);
+            }
         } else {
             if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miStatusNoInteraction');
         }

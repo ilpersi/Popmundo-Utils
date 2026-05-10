@@ -14,6 +14,7 @@ async function onSubmitClick(submitBtn) {
             'call_all_sms_txt': false, // 61
             'call_all_gossip': false,  // 121
             'call_exclude_id': {},
+            'call_all_hide_notifications': true,
         }
 
         const optionsMap = {
@@ -210,11 +211,14 @@ async function onSubmitClick(submitBtn) {
 
             if (statusPElem) statusPElem.textContent = chrome.i18n.getMessage('cafStatusSuccess', [String(succesCalls), String(callableFriends.length)]);
 
-            // We reload the page so we get all the notifications prited out in the green banners.
             if (succesCalls > 0) {
                 let storage = await chrome.storage.sync.get({ global_call_all_friends_count: 0 });
                 await chrome.storage.sync.set({ global_call_all_friends_count: storage.global_call_all_friends_count + succesCalls });
-                location.reload();
+
+                // Drain the server-side notification queue so the next page load is clean.
+                if (savedOptions.call_all_hide_notifications) {
+                    await new Notifications().getPageNotifications(fetcher);
+                }
             }
         }
 
