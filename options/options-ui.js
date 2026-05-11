@@ -589,12 +589,17 @@ function applyGlobalSearch(query, opts) {
             chipSec.classList.toggle('pm-search-hidden', !anyVisible);
         });
 
-        // Hide whole cards whose body has nothing visible
+        // Hide whole cards whose body has nothing visible. A card-header title
+        // match also keeps the card visible — needed for cards like Diagnostics
+        // whose body has no form-check / form-label / chip the search can match.
         section.querySelectorAll('.card').forEach(card => {
+            const header = card.querySelector('.card-header h2, .card-header h3, .card-header h5');
+            const headerMatches = !!header && header.textContent.toLowerCase().includes(q);
             const visibleContent = card.querySelector(
                 '.pm-chip:not(.pm-search-hidden), [class*="col-"]:not(.pm-search-hidden)'
             );
-            card.classList.toggle('pm-search-hidden', !visibleContent);
+            if (headerMatches && !visibleContent) sectionMatches++;
+            card.classList.toggle('pm-search-hidden', !visibleContent && !headerMatches);
         });
 
         // Section visibility: directly toggle d-none so `.tab-content-section.d-none`
