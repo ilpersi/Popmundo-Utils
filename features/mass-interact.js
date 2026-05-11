@@ -471,7 +471,7 @@ async function onSubmitClick(submitBtn) {
         }
 
     } catch (error) {
-        console.error('Mass interact error:', error);
+        Logger.error('Mass interact error:', error);
         if (statusPElem) statusPElem.innerHTML = chrome.i18n.getMessage('miError');
         new Notifications().notifyError(null, String(error));
     } finally {
@@ -535,7 +535,7 @@ async function injectMassInteractHTML() {
         findFriendsNode.parentNode.insertBefore(MassInteractDiv, findFriendsNode.nextSibling);
         return true;
     } catch (error) {
-        console.error('Mass Interact inject error:', error);
+        Logger.error('Mass Interact inject error:', error);
         new Notifications().notifyError(null, chrome.i18n.getMessage('miInjectError', [String(error.message || error)]));
         return false;
     }
@@ -624,7 +624,7 @@ async function injectMassInteractExcludeButtons() {
             icon.textContent = nowExcluded ? prohibitionIcon : tickCircleIcon;
             icon.title = chrome.i18n.getMessage(nowExcluded ? 'miInclude' : 'miExclude');
         } catch (error) {
-            console.error('Failed to update exclusion list:', error);
+            Logger.error('Failed to update exclusion list:', error);
             new Notifications().notifyError(null, String(error));
         }
     });

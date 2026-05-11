@@ -174,7 +174,7 @@ async function onSubmitClick(submitBtn) {
                     'interactUrl': interactUrl,
                 });
             } catch (error) {
-                console.error(`Failed to check ${friendDict.name}:`, error);
+                Logger.error(`Failed to check ${friendDict.name}:`, error);
             }
         }
 
@@ -200,7 +200,7 @@ async function onSubmitClick(submitBtn) {
                     }, false);
                     succesCalls += 1;
                 } catch (error) {
-                    console.error(`Failed to call ${friendDetails.name}:`, error);
+                    Logger.error(`Failed to call ${friendDetails.name}:`, error);
                 }
             }
 
@@ -218,7 +218,7 @@ async function onSubmitClick(submitBtn) {
         }
 
     } catch (error) {
-        console.error('Call all friends error:', error);
+        Logger.error('Call all friends error:', error);
         if (statusPElem) statusPElem.textContent = chrome.i18n.getMessage('cafError');
         new Notifications().notifyError(null, String(error));
     } finally {
@@ -284,7 +284,7 @@ async function injectCallAllHTML() {
         endRelationsNode.parentNode.insertBefore(callAllDiv, endRelationsNode.nextSibling);
         return true;
     } catch (error) {
-        console.error('Call All Friends inject error:', error);
+        Logger.error('Call All Friends inject error:', error);
         new Notifications().notifyError(null, chrome.i18n.getMessage('cafInjectError', [String(error.message || error)]));
         return false;
     }
@@ -365,7 +365,7 @@ async function injectCallAllExcludeButtons() {
             icon.textContent = nowExcluded ? prohibitionIcon : tickCircleIcon;
             icon.title = chrome.i18n.getMessage(nowExcluded ? 'cafInclude' : 'cafExclude');
         } catch (error) {
-            console.error('Failed to update exclusion list:', error);
+            Logger.error('Failed to update exclusion list:', error);
             new Notifications().notifyError(null, String(error));
         }
     });

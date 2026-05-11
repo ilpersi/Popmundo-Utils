@@ -265,6 +265,7 @@ class Logger {
      */
     static warn(...args) {
         if (Logger.#level <= Logger.WARN) console.warn('[PM]', ...args);
+        Logger.#persistToBuffer('warn', args);
     }
 
     /**
@@ -274,5 +275,78 @@ class Logger {
      */
     static error(...args) {
         if (Logger.#level <= Logger.ERROR) console.error('[PM]', ...args);
+        Logger.#persistToBuffer('error', args);
+    }
+
+    // ── Persistent diagnostic ring buffer ──────────────────────────────────
+    // Every warn() and error() call appends an entry to a FIFO buffer in
+    // chrome.storage.local (key `pm_diag_log`, max 200 entries). The options
+    // page surfaces this via the "Copy diagnostics" button, replacing the
+    // service-worker console screenshot dance with a single paste.
+
+    static #DIAG_KEY = 'pm_diag_log';
+    static #DIAG_MAX = 200;
+    // Per-tab serialization so concurrent error bursts don't lose entries.
+    static #diagWriteQueue = Promise.resolve();
+
+    /**
+     * Appends a single entry to the persisted diagnostic ring buffer. Serialized
+     * via a per-tab promise chain so back-to-back logs don't race their reads.
+     * Silently swallows storage errors — diagnostic logging must never break the
+     * caller.
+     *
+     * @static
+     * @private
+     */
+    static #persistToBuffer(level, args) {
+        const entry = {
+            ts: new Date().toISOString(),
+            level,
+            url: (typeof window !== 'undefined' && window.location) ? window.location.href : '',
+            msg: args.map(a => {
+                if (a instanceof Error) return a.stack || a.toString();
+                if (typeof a === 'object' && a !== null) {
+                    try { return JSON.stringify(a); } catch (_) { return String(a); }
+                }
+                return String(a);
+            }).join(' '),
+        };
+        Logger.#diagWriteQueue = Logger.#diagWriteQueue.then(async () => {
+            try {
+                const stored = await chrome.storage.local.get({ [Logger.#DIAG_KEY]: [] });
+                const buf = Array.isArray(stored[Logger.#DIAG_KEY]) ? stored[Logger.#DIAG_KEY] : [];
+                buf.push(entry);
+                while (buf.length > Logger.#DIAG_MAX) buf.shift();
+                await chrome.storage.local.set({ [Logger.#DIAG_KEY]: buf });
+            } catch (_) {
+                // Diagnostics must never throw into the caller.
+            }
+        });
+    }
+
+    /**
+     * Returns the persisted diagnostic buffer (oldest entry first). Empty array
+     * if no entries have ever been written or storage is unavailable.
+     *
+     * @static
+     * @return {Promise<Array<{ts: string, level: string, msg: string, url: string}>>}
+     */
+    static async getDiagnosticBuffer() {
+        try {
+            const stored = await chrome.storage.local.get({ [Logger.#DIAG_KEY]: [] });
+            return Array.isArray(stored[Logger.#DIAG_KEY]) ? stored[Logger.#DIAG_KEY] : [];
+        } catch (_) {
+            return [];
+        }
+    }
+
+    /**
+     * Empties the persisted diagnostic buffer.
+     *
+     * @static
+     * @return {Promise<void>}
+     */
+    static async clearDiagnosticBuffer() {
+        await chrome.storage.local.set({ [Logger.#DIAG_KEY]: [] });
     }
 }

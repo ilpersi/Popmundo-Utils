@@ -1245,6 +1245,49 @@ document.addEventListener('DOMContentLoaded', function () {
         markDirty();
     });
 
+    // ── Diagnostics (Copy + Clear) ──
+    const diagStatus = document.getElementById('diagnostics-status');
+    const setDiagStatus = (key, fallback, isError = false) => {
+        if (!diagStatus) return;
+        diagStatus.textContent = chrome.i18n.getMessage(key) || fallback;
+        diagStatus.classList.toggle('text-danger', isError);
+        diagStatus.classList.toggle('text-success', !isError);
+        clearTimeout(setDiagStatus._timer);
+        setDiagStatus._timer = setTimeout(() => {
+            diagStatus.textContent = '';
+            diagStatus.classList.remove('text-danger', 'text-success');
+        }, 4000);
+    };
+
+    document.getElementById('copy-diagnostics-btn')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        try {
+            const diag = await Utils.collectDiagnostics();
+            await navigator.clipboard.writeText(JSON.stringify(diag, null, 2));
+            setDiagStatus('optDiagCopied', 'Copied to clipboard.');
+        } catch (err) {
+            Logger.error('Diagnostics copy failed:', err);
+            setDiagStatus('optDiagCopyFailed', 'Copy failed — see console.', true);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    document.getElementById('clear-diagnostics-log-btn')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        try {
+            await Logger.clearDiagnosticBuffer();
+            setDiagStatus('optDiagCleared', 'Diagnostic log cleared.');
+        } catch (err) {
+            Logger.error('Diagnostics clear failed:', err);
+            setDiagStatus('optDiagClearFailed', 'Clear failed — see console.', true);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
     // ── Show Developer tab in development builds or when ?debug=true is in the URL ──
     const debugParam = new URLSearchParams(window.location.search).get('debug') === 'true';
     chrome.storage.local.get('install_type', ({ install_type }) => {

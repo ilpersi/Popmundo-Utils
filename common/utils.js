@@ -290,6 +290,73 @@ class Utils {
     }
 
     /**
+     * Builds a single JSON-serializable snapshot useful for bug reports:
+     *   - extension version + collection timestamp + current URL + userAgent
+     *   - sync storage usage (total + per-key sizes) and the 102 KB cap
+     *   - local storage usage and the 5 MB cap
+     *   - current character {id, name} (via the resilient resolver)
+     *   - exclusion-shard counts (number of mass-interact / call-all-friends shards, name buckets)
+     *   - the persisted diagnostic ring buffer (last ~200 warn/error entries)
+     *
+     * Designed to be one paste in a GitHub issue — replaces the "open the
+     * service-worker console, run these four commands, screenshot the result"
+     * dance from the troubleshooting template (issue #15).
+     *
+     * @static
+     * @return {Promise<Object>}
+     * @memberof Utils
+     */
+    static async collectDiagnostics() {
+        const out = {
+            ts: new Date().toISOString(),
+            version: 'unknown',
+            url: (typeof window !== 'undefined' && window.location) ? window.location.href : '',
+            userAgent: (typeof navigator !== 'undefined') ? navigator.userAgent : '',
+            storage: {},
+            charInfo: null,
+            exclusionStats: {},
+            log: [],
+            collectionErrors: [],
+        };
+
+        try { out.version = chrome.runtime.getManifest().version; }
+        catch (e) { out.collectionErrors.push(`manifest: ${e && e.message || e}`); }
+
+        try {
+            const syncBytes = await chrome.storage.sync.getBytesInUse(null);
+            const syncAll = await chrome.storage.sync.get(null);
+            const perKey = {};
+            for (const [k, v] of Object.entries(syncAll)) {
+                try { perKey[k] = JSON.stringify(v).length; } catch (_) { perKey[k] = -1; }
+            }
+            out.storage.sync = { bytesUsed: syncBytes, bytesCap: 102400, perItemCap: 8192, perKey };
+        } catch (e) { out.collectionErrors.push(`sync: ${e && e.message || e}`); }
+
+        try {
+            const localBytes = await chrome.storage.local.getBytesInUse(null);
+            out.storage.local = { bytesUsed: localBytes, bytesCap: 5242880 };
+        } catch (e) { out.collectionErrors.push(`local: ${e && e.message || e}`); }
+
+        try { out.charInfo = await Utils.getMyCharDetails(); }
+        catch (e) { out.collectionErrors.push(`char: ${e && e.message || e}`); }
+
+        try {
+            const keys = (out.storage.sync && out.storage.sync.perKey) ? Object.keys(out.storage.sync.perKey) : [];
+            out.exclusionStats = {
+                mass_interact_shards: keys.filter(k => k.startsWith('mass_interact_exclude_id_')).length,
+                call_exclude_shards: keys.filter(k => k.startsWith('call_exclude_id_')).length,
+                name_buckets: keys.filter(k => k.startsWith('synced_char_names_')).length,
+                migration_done: !!(out.storage.sync && out.storage.sync.perKey && out.storage.sync.perKey.exclude_format_sharded_migrated !== undefined),
+            };
+        } catch (e) { out.collectionErrors.push(`exclusion-stats: ${e && e.message || e}`); }
+
+        try { out.log = await Logger.getDiagnosticBuffer(); }
+        catch (e) { out.collectionErrors.push(`log: ${e && e.message || e}`); }
+
+        return out;
+    }
+
+    /**
      * One-shot migration of legacy single-key exclusion lists
      *   `mass_interact_exclude_id = {charKey: [{id,name},…]}` (original shape)
      *   `call_exclude_id          = {charKey: [{id,name},…]}`

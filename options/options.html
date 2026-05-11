@@ -531,6 +531,25 @@
 
                         </div>
                     </div>
+
+                    <!-- ── Diagnostics ── -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" data-i18n="optDiagTitle">Diagnostics</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3" data-i18n="optDiagDescription">When reporting a bug, click "Copy diagnostics" and paste the result into your GitHub issue. It contains the most recent extension errors plus storage and character info — no passwords or personal data.</p>
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="btn btn-primary btn-sm" id="copy-diagnostics-btn" data-no-dirty>
+                                    <span data-i18n="optDiagCopyBtn">Copy diagnostics</span>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="clear-diagnostics-log-btn" data-no-dirty>
+                                    <span data-i18n="optDiagClearBtn">Clear log</span>
+                                </button>
+                                <span class="text-muted small ms-3" id="diagnostics-status" aria-live="polite"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ── Popup Options ── -->
@@ -816,6 +835,7 @@
         </div>
     </div>
 
+    <script src="../common/logger.js"></script>
     <script src="../common/utils.js"></script>
     <script src="options.js"></script>
     <script src="../libs/popper.min.js"></script>

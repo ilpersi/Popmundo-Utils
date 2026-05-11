@@ -631,6 +631,38 @@
         "message": "From 1 to 27",
         "description": "Score scale select option: 1-27"
     },
+    "optDiagTitle": {
+        "message": "Diagnostics",
+        "description": "Title for the diagnostics card on the Misc tab"
+    },
+    "optDiagDescription": {
+        "message": "When reporting a bug, click \"Copy diagnostics\" and paste the result into your GitHub issue. It contains the most recent extension errors plus storage and character info — no passwords or personal data.",
+        "description": "Explainer text for the diagnostics card"
+    },
+    "optDiagCopyBtn": {
+        "message": "Copy diagnostics",
+        "description": "Button that copies the JSON diagnostic blob to the clipboard"
+    },
+    "optDiagClearBtn": {
+        "message": "Clear log",
+        "description": "Button that empties the persisted diagnostic ring buffer"
+    },
+    "optDiagCopied": {
+        "message": "Copied to clipboard.",
+        "description": "Confirmation shown after diagnostics are copied"
+    },
+    "optDiagCopyFailed": {
+        "message": "Copy failed — see the page console for details.",
+        "description": "Error message shown when the diagnostics copy operation fails"
+    },
+    "optDiagCleared": {
+        "message": "Diagnostic log cleared.",
+        "description": "Confirmation shown after the diagnostic log is cleared"
+    },
+    "optDiagClearFailed": {
+        "message": "Clear failed — see the page console for details.",
+        "description": "Error message shown when clearing the diagnostic log fails"
+    },
     "optMiscGroupGottaGoFast": {
         "message": "Gotta Go Fast",
         "description": "Category label for the Gotta Go Fast autograph collection feature"
