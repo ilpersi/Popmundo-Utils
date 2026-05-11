@@ -7,9 +7,9 @@ assignees: ''
 
 ---
 
-This bug has been hard to reproduce on our side, so we need a bit of detail to track it down. **The single most useful thing is the screenshot from step 4** — please don't skip it even if the rest is too technical. Fill in what you can; leave anything you don't know blank.
+This bug has been hard to reproduce on our side, so we need a bit of detail to track it down. **The single most useful thing is the diagnostic blob in step 4** — please don't skip it. Fill in what you can; leave anything you don't know blank.
 
-> **Before you start:** make sure you're on the latest version of Popmundo Utils (check `chrome://extensions/` and click "Update" at the top, then verify the version on the card).
+> **Before you start:** make sure you're on the latest version of Popmundo Utils.
 
 ---
 
@@ -18,7 +18,7 @@ This bug has been hard to reproduce on our side, so we need a bit of detail to t
 - [ ] **Mass Interact** — the button on a "Characters Present" page
 - [ ] **Call All Friends** — the box on your *own* character's "Relations" page
 
-Tick the closest match to what you see:
+Tick (just type a 'x' character inside the square brackets) the closest match to what you see:
 
 - [ ] The whole feature box / button is **not even visible** on the page
 - [ ] The button appears but **clicking it does nothing**
@@ -27,17 +27,17 @@ Tick the closest match to what you see:
 
 ## 2. When does it break and what brings it back?
 
-| Trigger | Tick if it applies |
-|---|---|
-| It breaks after I **shut down / restart my computer** | [ ] |
-| It breaks after I **close and reopen Chrome** | [ ] |
-| It breaks after **leaving the browser open for a long time** (hours) | [ ] |
-| It seems to break **at random** | [ ] |
-| **Reloading the Popmundo page** (F5) brings it back | [ ] |
-| **Clicking the reload icon on the extension card** at `chrome://extensions/` brings it back | [ ] |
-| **Disabling and re-enabling Popmundo Utils** brings it back | [ ] |
-| **Only fully uninstalling and reinstalling** brings it back | [ ] |
-| Even reinstalling does not fix it | [ ] |
+Tick if it applies:
+
+- [ ] It breaks after I **shut down / restart my computer**
+- [ ] It breaks after I **close and reopen Chrome**
+- [ ] It breaks after **leaving the browser open for a long time** (hours)
+- [ ] It seems to break **at random**
+- [ ] **Reloading the Popmundo page** (F5) brings it back
+- [ ] **Clicking the reload icon on the extension card** at `chrome://extensions/` brings it back
+- [ ] **Disabling and re-enabling Popmundo Utils** brings it back
+- [ ] **Only fully uninstalling and reinstalling** brings it back
+- [ ] Even reinstalling does not fix it
 
 ## 3. Profile / sync info
 
@@ -47,70 +47,47 @@ Tick the closest match to what you see:
 - Have you ever installed **Tampermonkey, Greasemonkey, Violentmonkey** or any **Popmundo userscript** (e.g. from greasyfork.org)? (Yes / No / Not sure)
 - If yes, are any of those still installed/enabled now? Please list them:
 
-## 4. Service-worker console *(the screenshot we really need)*
+## 4. Copy diagnostics *(the most important step)*
 
-This is the extension's own log and it almost certainly contains the cause.
+The extension has a button that gathers everything we need into one block of text — no DevTools required.
 
-1. Reproduce the bug first — make sure the feature is broken right now.
-2. Open `chrome://extensions/`.
-3. Top-right corner: turn on **Developer mode**.
-4. On the **Popmundo Utils** card, click the blue link **"service worker"**.
-5. A new DevTools window opens. Click the **Console** tab.
-6. **Take a full screenshot of that window** and attach it here.
-7. If there are red lines, please also copy-paste them as text:
+1. **Reproduce the bug first** so the most recent errors are captured in the log.
+2. Right-click the **Popmundo Utils** icon in the Chrome toolbar → **Options**.
+   (Or go to `chrome://extensions/`, find Popmundo Utils, and click **Details → Extension options**.)
+3. Click the **Misc** tab in the left sidebar.
+4. Scroll down to the **Diagnostics** card.
+5. Click **Copy diagnostics**. You should see "Copied to clipboard."
+6. Paste the result into the code block below:
 
 ```
 paste here
 ```
 
-## 5. Quick diagnostic snapshot
+> **What's in it?** Recent extension errors and warnings, sync/local storage usage, your current character's id and name, extension version, and the URL you were on. No passwords or personal data.
 
-Stay in the **same console window** you opened in step 4. Copy the entire block below, paste it into the console, press Enter, then copy whatever it prints into the code block under it.
+## 5. Screenshots *(if anything looked unusual on the Popmundo page)*
 
-> ⚠️ **Heads up:** The first time you paste code into the DevTools console, Chrome blocks it as a security measure and asks you to **type `allow pasting`** (without quotes) and press Enter. Do that once, then paste the command again — it will work normally from then on.
+If the bug shows up visually on a Popmundo page (red banners, missing button, weird layout), please attach a screenshot of the whole browser window — make sure the URL bar is visible.
 
-```js
-Promise.all([
-  chrome.storage.sync.getBytesInUse(null),
-  chrome.storage.sync.get(['mass_interact_exclude_id', 'call_exclude_id']),
-  chrome.storage.session.get('current_char_details'),
-  chrome.storage.local.get(['install_type'])
-]).then(([bytes, sync, session, local]) => console.log(JSON.stringify({
-  sync_bytes_used: bytes,
-  sync_bytes_max: 102400,
-  mass_interact_exclude_bytes: JSON.stringify(sync.mass_interact_exclude_id || {}).length,
-  call_exclude_bytes: JSON.stringify(sync.call_exclude_id || {}).length,
-  session_char: session,
-  local: local
-}, null, 2)));
-```
+## 6. Page console *(optional — only if step 4 didn't work)*
 
-Paste the result here:
-
-```
-paste output here
-```
-
-> If you had to reload the extension before getting to this step, please re-trigger the bug and run the snapshot again — some values reset on reload.
-
-## 6. Page console (only if you have time after the above)
+If the Copy diagnostics button didn't work or the resulting blob looks empty:
 
 1. Go to the Popmundo page where the feature is broken.
 2. Press **F12** → click the **Console** tab.
 3. Click the 🚫 icon to clear it.
 4. Press **F5** to reload the page.
 5. Click the broken button if there is one.
-6. Screenshot the whole window (so the URL is visible) and attach it.
+6. Screenshot the whole window (so the URL is visible) and attach it here.
 
 ## 7. System info
 
-| | |
-|---|---|
-| Browser + version (menu → Help → About) | |
-| Operating system | |
-| Popmundo Utils version (from `chrome://extensions/`) | |
-| Approximate date the issue started | |
-| Last extension version that worked correctly (if known) | |
+- Browser + version (menu → Help → About):
+- Operating system:
+- Approximate date the issue started:
+- Last extension version that worked correctly (if known):
+
+*(The Popmundo Utils version is already included in the diagnostic blob — no need to repeat.)*
 
 ## 8. Other extensions
 
