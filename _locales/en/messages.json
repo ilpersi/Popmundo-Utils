@@ -1654,9 +1654,9 @@
         "description": "Log message shown when auto-resuming after a keep-alive reload"
     },
 
-    "optMiscGroupSkillExport": {
-        "message": "Skill Export",
-        "description": "Group heading for the skill export toggle in Misc Options"
+    "optMiscGroupPopmundoBible": {
+        "message": "Popmundo Bible Integration",
+        "description": "Group heading for the Popmundo Bible export toggles (skills, attributes) in Misc Options"
     },
     "optMiscSkillExportEnable": {
         "message": "Export skills to JSON (Popmundo Bible)",
@@ -1701,6 +1701,41 @@
                 "example": "Rock, Reggae"
             }
         }
+    },
+
+    "optMiscAttributeExportEnable": {
+        "message": "Export attributes to JSON (Popmundo Bible)",
+        "description": "Checkbox label to enable the attribute page JSON export button"
+    },
+    "attributeExportButton": {
+        "message": "Export attributes (JSON)",
+        "description": "Label of the button injected on the Character Attributes page to export attributes as JSON"
+    },
+    "attributeExportSuccess": {
+        "message": "Exported $COUNT$ attributes for $NAME$.",
+        "description": "Success notification after an attribute JSON file has been downloaded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "8"
+            },
+            "name": {
+                "content": "$2",
+                "example": "Homer Garnett"
+            }
+        }
+    },
+    "attributeExportCharError": {
+        "message": "Could not read character info from this page.",
+        "description": "Error notification when the character id/name cannot be read from the attributes page"
+    },
+    "attributeExportInvalidCount": {
+        "message": "Could not identify the game or the number of attributes found on this page is unexpected.",
+        "description": "Error notification when the game flavor (Popmundo / The Great Heist) cannot be identified or the attribute count on the page doesn't match the expected one"
+    },
+    "attributeExportInvalidScore": {
+        "message": "Found an attribute with an unexpected score value on this page.",
+        "description": "Error notification when an attribute score cannot be parsed or is outside the valid 1-27 range"
     },
 
     "optUnsavedWarning": {

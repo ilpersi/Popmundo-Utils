@@ -51,6 +51,7 @@ const optionDetails = [
     { 'name': 'autograph_keep_alive_interval', 'default': 5, 'save_cb': saveInteger, 'load_cb': loadInteger },
     { 'name': 'mass_item_sender', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'skill_export_enable', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'attribute_export_enable', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 
     // pop up options
     { 'name': 'character_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
