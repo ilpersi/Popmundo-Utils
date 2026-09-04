@@ -1654,6 +1654,55 @@
         "description": "Log message shown when auto-resuming after a keep-alive reload"
     },
 
+    "optMiscGroupSkillExport": {
+        "message": "Skill Export",
+        "description": "Group heading for the skill export toggle in Misc Options"
+    },
+    "optMiscSkillExportEnable": {
+        "message": "Export skills to JSON (Popmundo Bible)",
+        "description": "Checkbox label to enable the skill page JSON export button"
+    },
+    "skillExportButton": {
+        "message": "Export skills (JSON)",
+        "description": "Label of the button injected on the Character Skills page to export skills as JSON"
+    },
+    "skillExportSuccess": {
+        "message": "Exported $COUNT$ skills for $NAME$.",
+        "description": "Success notification after a skill JSON file has been downloaded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "14"
+            },
+            "name": {
+                "content": "$2",
+                "example": "Andrew Kovač"
+            }
+        }
+    },
+    "skillExportNoSkills": {
+        "message": "No skills found to export.",
+        "description": "Error notification when the skills table has no readable skill rows"
+    },
+    "skillExportError": {
+        "message": "Could not read character info from this page.",
+        "description": "Error notification when the character id/name cannot be read from the skills page"
+    },
+    "skillExportPartial": {
+        "message": "Skipped $COUNT$ skill(s) with an unreadable value: $NAMES$.",
+        "description": "Warning notification listing skills whose star value could not be parsed",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "names": {
+                "content": "$2",
+                "example": "Rock, Reggae"
+            }
+        }
+    },
+
     "optUnsavedWarning": {
         "message": "You have unsaved changes.",
         "description": "Warning shown near the Save button when the options form has been modified but not yet saved"

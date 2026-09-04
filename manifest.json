@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "3.0.1",
+    "version": "3.0.2",
     "default_locale": "en",
     "name": "__MSG_extName__",
     "description": "__MSG_extDescription__",
@@ -90,6 +90,15 @@
             ],
             "js": [
                 "features/skill-popup-script.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Skills/*"
+            ],
+            "js": [
+                "common/notifications.js",
+                "features/skill-export.js"
             ]
         },
         {
