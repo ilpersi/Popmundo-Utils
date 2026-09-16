@@ -13,6 +13,7 @@
  *   {
  *     "character_name": "Andrew Kovač",
  *     "character_id": 3598202,
+ *     "character_picture": "https://i.ibb.co/rKdhPFcv/Sofia.png",
  *     "skills": [ { "name": "Rock", "id": 35, "value": 1.5 } ]
  *   }
  */
@@ -27,9 +28,9 @@
     const notifications = new Notifications();
 
     /**
-     * Reads the current character's {id, name} from the presentation box.
+     * Reads the current character's {id, name, pictureUrl} from the presentation box.
      *
-     * @return {{id: number, name: string}} id is 0 when it cannot be parsed.
+     * @return {{id: number, name: string, pictureUrl: string}} id is 0 when it cannot be parsed.
      */
     function getCharacterDetails() {
         const idNode = new CssSelectorHelper(CHAR_ID_SELECTOR).getSingle();
@@ -37,8 +38,9 @@
 
         const id = idNode ? parseInt(idNode.textContent.trim(), 10) : 0;
         const name = nameNode ? nameNode.textContent.trim() : '';
+        const pictureUrl = Utils.getCharacterPictureURL();
 
-        return { id: Number.isFinite(id) ? id : 0, name };
+        return { id: Number.isFinite(id) ? id : 0, name, pictureUrl };
     }
 
     /**
@@ -180,7 +182,7 @@
      * Builds the payload, downloads it and notifies the user.
      */
     function exportSkills() {
-        const { id, name } = getCharacterDetails();
+        const { id, name, pictureUrl } = getCharacterDetails();
         if (!id) {
             notifications.notifyError(null, chrome.i18n.getMessage('skillExportError'));
             return;
@@ -195,6 +197,7 @@
         const payload = {
             character_name: name,
             character_id: id,
+            character_picture: pictureUrl,
             skills: skills,
         };
 

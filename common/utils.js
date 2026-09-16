@@ -71,6 +71,25 @@ class Utils {
     }
 
     /**
+     * Extracts the character picture URL from the avatar div's inline
+     * `background: url(...)` style in the character presentation box.
+     *
+     * @static
+     * @param {Document|Element} [contextNode=document]
+     * @return {string} The picture URL, or '' when it cannot be found/parsed.
+     * @memberof Utils
+     */
+    static getCharacterPictureURL(contextNode = document) {
+        const AVATAR_SELECTOR = '#ppm-content > div.box.ofauto.charPresBox > div.avatar.pointer.idTrigger';
+        const avatarNode = new CssSelectorHelper(AVATAR_SELECTOR).getSingle(contextNode);
+        if (!avatarNode) return '';
+
+        const style = avatarNode.getAttribute('style') || '';
+        const match = /url\(\s*['"]?([^'")]+)['"]?\s*\)/.exec(style);
+        return match ? match[1] : '';
+    }
+
+    /**
      * Resolve the current character's {id, name} with a resilient fallback chain:
      *   1. session storage via background SW (canonical, populated by global-content-script)
      *   2. DOM scrape via Utils.getMyID() + Utils.getMyName()
