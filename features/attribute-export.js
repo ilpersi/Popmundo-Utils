@@ -14,6 +14,7 @@
  *     "character_name": "Homer Garnett",
  *     "character_id": 572434,
  *     "character_picture": "https://i.ibb.co/rKdhPFcv/Sofia.png",
+ *     "game": "ppm",
  *     "attributes": [
  *       { "name": "Charm", "local_name": "Charm", "score": 21, "score_label": "perfect" }
  *     ]
@@ -34,9 +35,9 @@
     const notifications = new Notifications();
 
     /**
-     * Reads the current character's {id, name, pictureUrl} from the presentation box.
+     * Reads the current character's {id, name, pictureUrl, game} from the presentation box.
      *
-     * @return {{id: number, name: string, pictureUrl: string}} id is 0 when it cannot be parsed.
+     * @return {{id: number, name: string, pictureUrl: string, game: string}} id is 0 when it cannot be parsed.
      */
     function getCharacterDetails() {
         const idNode = new CssSelectorHelper(CHAR_ID_SELECTOR).getSingle();
@@ -45,8 +46,9 @@
         const id = idNode ? parseInt(idNode.textContent.trim(), 10) : 0;
         const name = nameNode ? nameNode.textContent.trim() : '';
         const pictureUrl = Utils.getCharacterPictureURL();
+        const game = Utils.getGameCode();
 
-        return { id: Number.isFinite(id) ? id : 0, name, pictureUrl };
+        return { id: Number.isFinite(id) ? id : 0, name, pictureUrl, game };
     }
 
     /**
@@ -144,7 +146,7 @@
      * Builds the payload, downloads it and notifies the user.
      */
     function exportAttributes() {
-        const { id, name, pictureUrl } = getCharacterDetails();
+        const { id, name, pictureUrl, game } = getCharacterDetails();
         if (!id) {
             notifications.notifyError(null, chrome.i18n.getMessage('attributeExportCharError'));
             return;
@@ -168,6 +170,7 @@
             character_name: name,
             character_id: id,
             character_picture: pictureUrl,
+            game: game,
             attributes: attributes,
         };
 

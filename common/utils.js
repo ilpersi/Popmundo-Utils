@@ -778,6 +778,17 @@ class Utils {
         let ghImg = new CssSelectorHelper('img[src*="Crime"]').getSingle();
         return ghImg != null;
     }
+
+    /**
+     * Get a short code identifying the game flavor currently being played.
+     *
+     * @static
+     * @return {string} "tgh" for The Great Heist, "ppm" for Popmundo
+     * @memberof Utils
+     */
+    static getGameCode() {
+        return Utils.isGreatHeist() ? 'tgh' : 'ppm';
+    }
 }
 
 /**
