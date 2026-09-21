@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Pack and publish the Popmundo Utils Chrome extension to the Chrome Web Store.
 
+Uses the Chrome Web Store API v2 (the v1.1 API is retired 2026-10-15).
+Publish visibility (public vs. trusted testers) is no longer settable via
+the API - it must be configured once in the Developer Dashboard under
+Publisher > Distribution settings; `publish` always uses whatever is set
+there.
+
 Dependencies:
     pip install google-auth google-auth-oauthlib requests
 
@@ -11,6 +17,7 @@ Credentials setup (one-time):
 
 Credentials (env vars or .cws_credentials.json):
     CWS_EXTENSION_ID   — the extension's Chrome Web Store ID
+    CWS_PUBLISHER_ID   — publisher ID, from Developer Dashboard > Publisher > Settings
     CWS_CLIENT_ID      — OAuth 2.0 client ID (from Google Cloud Console)
     CWS_CLIENT_SECRET  — OAuth 2.0 client secret
     CWS_REFRESH_TOKEN  — long-lived refresh token obtained via --get-token
@@ -18,6 +25,7 @@ Credentials (env vars or .cws_credentials.json):
 .cws_credentials.json format:
     {
         "extension_id": "...",
+        "publisher_id": "...",
         "client_id": "...",
         "client_secret": "...",
         "refresh_token": "..."
@@ -73,9 +81,13 @@ EXCLUDE_EXTENSIONS = {
 # ---------------------------------------------------------------------------
 
 CWS_SCOPE = "https://www.googleapis.com/auth/chromewebstore"
-CWS_UPLOAD_URL = "https://www.googleapis.com/upload/chromewebstore/v1.1/items/{item_id}"
-CWS_PUBLISH_URL = "https://www.googleapis.com/chromewebstore/v1.1/items/{item_id}/publish"
+CWS_API_BASE = "https://chromewebstore.googleapis.com/v2"
+CWS_UPLOAD_BASE = "https://chromewebstore.googleapis.com/upload/v2"
 CREDENTIALS_FILE = ".cws_credentials.json"
+
+
+def item_resource(config: dict) -> str:
+    return f"publishers/{config['publisher_id']}/items/{config['extension_id']}"
 
 # ---------------------------------------------------------------------------
 # Packing
@@ -124,7 +136,7 @@ def pack(root: Path) -> Path:
 
 def load_credentials(root: Path) -> dict:
     """Load CWS credentials from environment variables or .cws_credentials.json."""
-    keys = ("extension_id", "client_id", "client_secret", "refresh_token")
+    keys = ("extension_id", "publisher_id", "client_id", "client_secret", "refresh_token")
     env_prefix = "CWS_"
 
     config = {k: os.environ.get(f"{env_prefix}{k.upper()}") for k in keys}
@@ -141,7 +153,7 @@ def load_credentials(root: Path) -> dict:
     missing = [k for k in keys if not config.get(k)]
     if missing:
         print(f"Missing credentials: {', '.join(missing)}")
-        print(f"Set CWS_EXTENSION_ID / CWS_CLIENT_ID / CWS_CLIENT_SECRET / CWS_REFRESH_TOKEN")
+        print(f"Set CWS_EXTENSION_ID / CWS_PUBLISHER_ID / CWS_CLIENT_ID / CWS_CLIENT_SECRET / CWS_REFRESH_TOKEN")
         print(f"or create {CREDENTIALS_FILE}.  Run --get-token to obtain a refresh token.")
         sys.exit(1)
 
@@ -165,42 +177,68 @@ def get_access_token(config: dict) -> str:
 # ---------------------------------------------------------------------------
 
 def upload(zip_path: Path, config: dict, access_token: str) -> None:
-    url = CWS_UPLOAD_URL.format(item_id=config["extension_id"])
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "x-goog-api-version": "2",
-    }
+    url = f"{CWS_UPLOAD_BASE}/{item_resource(config)}:upload"
+    headers = {"Authorization": f"Bearer {access_token}"}
     with open(zip_path, "rb") as f:
-        resp = requests.put(url, headers=headers, data=f)
+        resp = requests.post(url, headers=headers, data=f)
 
     data = resp.json()
     state = data.get("uploadState", "")
 
-    if resp.status_code != 200 or state == "FAILURE":
-        errors = data.get("itemError", data)
-        print(f"Upload failed (HTTP {resp.status_code}): {errors}")
+    if resp.status_code != 200 or state == "FAILED":
+        print(f"Upload failed (HTTP {resp.status_code}): {data}")
         sys.exit(1)
 
     print(f"Uploaded:  {zip_path.name}  (state: {state})")
 
 
-def publish(config: dict, access_token: str, target: str) -> None:
-    url = CWS_PUBLISH_URL.format(item_id=config["extension_id"])
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "x-goog-api-version": "2",
-        "Content-Length": "0",
-    }
-    resp = requests.post(url, headers=headers, params={"publishTarget": target})
+def publish(config: dict, access_token: str) -> None:
+    url = f"{CWS_API_BASE}/{item_resource(config)}:publish"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    resp = requests.post(url, headers=headers)
     data = resp.json()
-    status = data.get("status", [])
 
-    if "OK" in status:
-        print(f"Published: target={target}")
-    else:
-        print(f"Publish response: {data}")
-        if resp.status_code not in (200, 201):
-            sys.exit(1)
+    if resp.status_code not in (200, 201):
+        print(f"Publish failed (HTTP {resp.status_code}): {data}")
+        sys.exit(1)
+
+    state = data.get("state", "unknown")
+    warnings = data.get("warningInfo", {}).get("warnings")
+    extra = f" warnings={warnings}" if warnings else ""
+    print(f"Published: state={state}{extra}")
+
+
+def get_status(config: dict, access_token: str) -> None:
+    url = f"{CWS_API_BASE}/{item_resource(config)}:fetchStatus"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    resp = requests.get(url, headers=headers)
+    data = resp.json()
+
+    if resp.status_code != 200:
+        print(f"Status: request failed (HTTP {resp.status_code}): {data}")
+        return
+
+    print(
+        f"Status: lastAsyncUploadState={data.get('lastAsyncUploadState', 'unknown')} "
+        f"takenDown={data.get('takenDown', False)} warned={data.get('warned', False)}"
+    )
+
+    for label, key in (("published", "publishedItemRevisionStatus"), ("submitted", "submittedItemRevisionStatus")):
+        revision = data.get(key)
+        if not revision:
+            print(f"Status ({label}): none")
+            continue
+
+        state = revision.get("state", "unknown")
+        channels = revision.get("distributionChannels", [])
+        if channels:
+            channel_info = ", ".join(
+                f"crxVersion={c.get('crxVersion', '')} deployPercentage={c.get('deployPercentage', '')}"
+                for c in channels
+            )
+        else:
+            channel_info = "no distribution channels"
+        print(f"Status ({label}): state={state} {channel_info}")
 
 # ---------------------------------------------------------------------------
 # One-time token helper
@@ -279,9 +317,9 @@ def main() -> None:
         "--get-token", action="store_true",
         help="Run the OAuth flow to obtain a refresh token (one-time setup).",
     )
-    parser.add_argument(
-        "--target", choices=["default", "trustedTesters"], default="default",
-        help="Publish target: 'default' (public) or 'trustedTesters'. Default: default.",
+    mode.add_argument(
+        "--get-status", action="store_true",
+        help="Check the Chrome Web Store draft/published item status and exit.",
     )
     args = parser.parse_args()
 
@@ -289,6 +327,13 @@ def main() -> None:
 
     if args.get_token:
         run_get_token(root)
+        return
+
+    if args.get_status:
+        config = load_credentials(root)
+        print("Authenticating...")
+        access_token = get_access_token(config)
+        get_status(config, access_token)
         return
 
     if args.publish_only:
@@ -310,7 +355,7 @@ def main() -> None:
     upload(zip_path, config, access_token)
 
     print(f"Publishing...")
-    publish(config, access_token, args.target)
+    publish(config, access_token)
 
 
 if __name__ == "__main__":

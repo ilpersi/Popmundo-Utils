@@ -5,17 +5,24 @@
 #   macOS:  brew install jq
 #   Linux:  apt install jq / dnf install jq
 #
+# Uses the Chrome Web Store API v2 (the v1.1 API is retired 2026-10-15).
+# Publish visibility (public vs. trusted testers) is no longer settable via
+# the API - it must be configured once in the Developer Dashboard under
+# Publisher > Distribution settings; publish always uses whatever is set
+# there.
+#
 # Credentials (env vars or .cws_credentials.json):
 #   CWS_EXTENSION_ID   — Chrome Web Store extension ID
+#   CWS_PUBLISHER_ID   — publisher ID, from Developer Dashboard > Publisher > Settings
 #   CWS_CLIENT_ID      — OAuth 2.0 client ID
 #   CWS_CLIENT_SECRET  — OAuth 2.0 client secret
 #   CWS_REFRESH_TOKEN  — long-lived refresh token
 #
 # Usage:
-#   ./publish.sh                        pack + upload + publish (public)
-#   ./publish.sh --target trustedTesters
+#   ./publish.sh                        pack + upload + publish
 #   ./publish.sh --pack-only
 #   ./publish.sh --publish-only file.zip
+#   ./publish.sh --get-status
 
 set -euo pipefail
 
@@ -24,8 +31,8 @@ cd "$SCRIPT_DIR"
 
 CREDENTIALS_FILE=".cws_credentials.json"
 CWS_TOKEN_URL="https://oauth2.googleapis.com/token"
-CWS_UPLOAD_URL="https://www.googleapis.com/upload/chromewebstore/v1.1/items"
-CWS_PUBLISH_URL="https://www.googleapis.com/chromewebstore/v1.1/items"
+CWS_API_BASE="https://chromewebstore.googleapis.com/v2"
+CWS_UPLOAD_BASE="https://chromewebstore.googleapis.com/upload/v2"
 
 # ---------------------------------------------------------------------------
 # Argument parsing
@@ -33,15 +40,15 @@ CWS_PUBLISH_URL="https://www.googleapis.com/chromewebstore/v1.1/items"
 
 PACK_ONLY=false
 PUBLISH_ONLY=""
-TARGET="default"
 GET_TOKEN=false
+GET_STATUS=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --pack-only)    PACK_ONLY=true; shift ;;
         --publish-only) PUBLISH_ONLY="$2"; shift 2 ;;
-        --target)       TARGET="$2"; shift 2 ;;
         --get-token)    GET_TOKEN=true; shift ;;
+        --get-status)   GET_STATUS=true; shift ;;
         *) echo "Unknown option: $1"; exit 1 ;;
     esac
 done
@@ -201,6 +208,9 @@ load_credentials() {
     if [[ -z "${CWS_EXTENSION_ID:-}" && -f "$CREDENTIALS_FILE" ]]; then
         CWS_EXTENSION_ID=$(jq -r '.extension_id // empty' "$CREDENTIALS_FILE")
     fi
+    if [[ -z "${CWS_PUBLISHER_ID:-}" && -f "$CREDENTIALS_FILE" ]]; then
+        CWS_PUBLISHER_ID=$(jq -r '.publisher_id // empty' "$CREDENTIALS_FILE")
+    fi
     if [[ -z "${CWS_CLIENT_ID:-}" && -f "$CREDENTIALS_FILE" ]]; then
         CWS_CLIENT_ID=$(jq -r '.client_id // empty' "$CREDENTIALS_FILE")
     fi
@@ -213,6 +223,7 @@ load_credentials() {
 
     local missing=()
     [[ -z "${CWS_EXTENSION_ID:-}"  ]] && missing+=(CWS_EXTENSION_ID)
+    [[ -z "${CWS_PUBLISHER_ID:-}"  ]] && missing+=(CWS_PUBLISHER_ID)
     [[ -z "${CWS_CLIENT_ID:-}"     ]] && missing+=(CWS_CLIENT_ID)
     [[ -z "${CWS_CLIENT_SECRET:-}" ]] && missing+=(CWS_CLIENT_SECRET)
     [[ -z "${CWS_REFRESH_TOKEN:-}" ]] && missing+=(CWS_REFRESH_TOKEN)
@@ -222,6 +233,8 @@ load_credentials() {
         echo "Set env vars or create ${CREDENTIALS_FILE}."
         exit 1
     fi
+
+    ITEM_RESOURCE="publishers/${CWS_PUBLISHER_ID}/items/${CWS_EXTENSION_ID}"
 }
 
 # ---------------------------------------------------------------------------
@@ -255,19 +268,18 @@ upload() {
     local zip_path="$1"
     local access_token="$2"
 
-    local response
-    response=$(curl -s -X PUT \
-        "${CWS_UPLOAD_URL}/${CWS_EXTENSION_ID}" \
+    local response http_code body state
+    response=$(curl -s -w '\n%{http_code}' -X POST \
+        "${CWS_UPLOAD_BASE}/${ITEM_RESOURCE}:upload" \
         -H "Authorization: Bearer ${access_token}" \
-        -H "x-goog-api-version: 2" \
-        -H "Content-Type: application/zip" \
         --data-binary "@${zip_path}")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
 
-    local state
-    state=$(echo "$response" | jq -r '.uploadState // empty')
+    state=$(echo "$body" | jq -r '.uploadState // empty')
 
-    if [[ "$state" == "FAILURE" ]]; then
-        echo "Upload failed: $(echo "$response" | jq -r '.itemError // .')"
+    if [[ "$http_code" != "200" || "$state" == "FAILED" ]]; then
+        echo "Upload failed (HTTP ${http_code}): ${body}"
         exit 1
     fi
 
@@ -281,22 +293,71 @@ upload() {
 publish() {
     local access_token="$1"
 
-    local response
-    response=$(curl -s -X POST \
-        "${CWS_PUBLISH_URL}/${CWS_EXTENSION_ID}/publish?publishTarget=${TARGET}" \
-        -H "Authorization: Bearer ${access_token}" \
-        -H "x-goog-api-version: 2" \
-        -H "Content-Length: 0")
+    local response http_code body state warnings extra
+    response=$(curl -s -w '\n%{http_code}' -X POST \
+        "${CWS_API_BASE}/${ITEM_RESOURCE}:publish" \
+        -H "Authorization: Bearer ${access_token}")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
 
-    local status
-    status=$(echo "$response" | jq -r '.status[]? // empty' | tr '\n' ' ')
-
-    if echo "$status" | grep -q "OK"; then
-        echo "Published: target=${TARGET}"
-    else
-        echo "Publish response: $response"
+    if [[ "$http_code" != "200" && "$http_code" != "201" ]]; then
+        echo "Publish failed (HTTP ${http_code}): ${body}"
         exit 1
     fi
+
+    state=$(echo "$body" | jq -r '.state // "unknown"')
+    warnings=$(echo "$body" | jq -c '.warningInfo.warnings // empty')
+
+    extra=""
+    [[ -n "$warnings" ]] && extra=" warnings=${warnings}"
+
+    echo "Published: state=${state}${extra}"
+}
+
+# ---------------------------------------------------------------------------
+# Status
+# ---------------------------------------------------------------------------
+
+get_status() {
+    local access_token="$1"
+
+    local response http_code body
+    response=$(curl -s -w '\n%{http_code}' -X GET \
+        "${CWS_API_BASE}/${ITEM_RESOURCE}:fetchStatus" \
+        -H "Authorization: Bearer ${access_token}")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
+
+    if [[ "$http_code" != "200" ]]; then
+        echo "Status: request failed (HTTP ${http_code}): ${body}"
+        return
+    fi
+
+    echo "Status: lastAsyncUploadState=$(echo "$body" | jq -r '.lastAsyncUploadState // "unknown"')" \
+         "takenDown=$(echo "$body" | jq -r '.takenDown // false')" \
+         "warned=$(echo "$body" | jq -r '.warned // false')"
+
+    local entry label key revision state channel_info
+    for entry in "published:publishedItemRevisionStatus" "submitted:submittedItemRevisionStatus"; do
+        label="${entry%%:*}"
+        key="${entry#*:}"
+
+        revision=$(echo "$body" | jq -c --arg k "$key" '.[$k] // empty')
+        if [[ -z "$revision" || "$revision" == "null" ]]; then
+            echo "Status (${label}): none"
+            continue
+        fi
+
+        state=$(echo "$revision" | jq -r '.state // "unknown"')
+        channel_info=$(echo "$revision" | jq -r '
+            (.distributionChannels // [])
+            | if length == 0 then "no distribution channels"
+              else map("crxVersion=" + (.crxVersion // "") + " deployPercentage=" + ((.deployPercentage // 0) | tostring)) | join(", ")
+              end
+        ')
+
+        echo "Status (${label}): state=${state} ${channel_info}"
+    done
 }
 
 # ---------------------------------------------------------------------------
@@ -305,6 +366,14 @@ publish() {
 
 if [[ "$GET_TOKEN" == true ]]; then
     get_token
+    exit 0
+fi
+
+if [[ "$GET_STATUS" == true ]]; then
+    load_credentials
+    echo "Authenticating..."
+    ACCESS_TOKEN=$(get_access_token)
+    get_status "$ACCESS_TOKEN"
     exit 0
 fi
 

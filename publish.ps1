@@ -1,23 +1,29 @@
 # Pack and publish the Popmundo Utils Chrome extension to the Chrome Web Store.
 #
+# Uses the Chrome Web Store API v2 (the v1.1 API is retired 2026-10-15).
+# Publish visibility (public vs. trusted testers) is no longer settable via
+# the API - it must be configured once in the Developer Dashboard under
+# Publisher > Distribution settings; Invoke-Publish always uses whatever is
+# set there.
+#
 # Credentials (env vars or .cws_credentials.json):
 #   CWS_EXTENSION_ID   — Chrome Web Store extension ID
+#   CWS_PUBLISHER_ID   — publisher ID, from Developer Dashboard > Publisher > Settings
 #   CWS_CLIENT_ID      — OAuth 2.0 client ID
 #   CWS_CLIENT_SECRET  — OAuth 2.0 client secret
 #   CWS_REFRESH_TOKEN  — long-lived refresh token
 #
 # Usage:
-#   .\publish.ps1                          pack + upload + publish (public)
-#   .\publish.ps1 -Target trustedTesters
+#   .\publish.ps1                          pack + upload + publish
 #   .\publish.ps1 -PackOnly
 #   .\publish.ps1 -PublishOnly file.zip
+#   .\publish.ps1 -GetStatus
 
 param(
     [switch]$PackOnly,
     [string]$PublishOnly = "",
-    [ValidateSet("default", "trustedTesters")]
-    [string]$Target = "default",
-    [switch]$GetToken
+    [switch]$GetToken,
+    [switch]$GetStatus
 )
 
 $ErrorActionPreference = "Stop"
@@ -27,8 +33,8 @@ Set-Location $ScriptDir
 
 $CredentialsFile = ".cws_credentials.json"
 $CWSTokenUrl     = "https://oauth2.googleapis.com/token"
-$CWSUploadUrl    = "https://www.googleapis.com/upload/chromewebstore/v1.1/items"
-$CWSPublishUrl   = "https://www.googleapis.com/chromewebstore/v1.1/items"
+$CWSApiBase      = "https://chromewebstore.googleapis.com/v2"
+$CWSUploadBase   = "https://chromewebstore.googleapis.com/upload/v2"
 
 # ---------------------------------------------------------------------------
 # Get refresh token (one-time OAuth flow)
@@ -203,6 +209,7 @@ function Invoke-Pack {
 function Get-Credentials {
     $creds = @{
         ExtensionId   = $env:CWS_EXTENSION_ID
+        PublisherId   = $env:CWS_PUBLISHER_ID
         ClientId      = $env:CWS_CLIENT_ID
         ClientSecret  = $env:CWS_CLIENT_SECRET
         RefreshToken  = $env:CWS_REFRESH_TOKEN
@@ -211,6 +218,7 @@ function Get-Credentials {
     if (Test-Path $CredentialsFile) {
         $file = Get-Content $CredentialsFile -Raw | ConvertFrom-Json
         if (-not $creds.ExtensionId)  { $creds.ExtensionId  = $file.extension_id  }
+        if (-not $creds.PublisherId)  { $creds.PublisherId  = $file.publisher_id  }
         if (-not $creds.ClientId)     { $creds.ClientId     = $file.client_id     }
         if (-not $creds.ClientSecret) { $creds.ClientSecret = $file.client_secret }
         if (-not $creds.RefreshToken) { $creds.RefreshToken = $file.refresh_token }
@@ -221,6 +229,8 @@ function Get-Credentials {
         Write-Error "Missing credentials: $($missing -join ', '). Set env vars or create $CredentialsFile."
         exit 1
     }
+
+    $creds.ItemResource = "publishers/$($creds.PublisherId)/items/$($creds.ExtensionId)"
 
     return $creds
 }
@@ -255,14 +265,12 @@ function Invoke-Upload($ZipPath, $AccessToken, $creds) {
 
     $client = [System.Net.Http.HttpClient]::new()
     $client.DefaultRequestHeaders.Add("Authorization", "Bearer $AccessToken")
-    $client.DefaultRequestHeaders.Add("x-goog-api-version", "2")
 
     $content = [System.Net.Http.ByteArrayContent]::new([System.IO.File]::ReadAllBytes($ZipPath))
-    $content.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::new("application/zip")
 
-    $uri          = "$CWSUploadUrl/$($creds.ExtensionId)"
-    Write-Host "  PUT $uri"
-    $responseMsg  = $client.PutAsync($uri, $content).Result
+    $uri          = "$CWSUploadBase/$($creds.ItemResource):upload"
+    Write-Host "  POST $uri"
+    $responseMsg  = $client.PostAsync($uri, $content).Result
     $responseBody = $responseMsg.Content.ReadAsStringAsync().Result
     $client.Dispose()
 
@@ -272,8 +280,8 @@ function Invoke-Upload($ZipPath, $AccessToken, $creds) {
         exit 1
     }
 
-    if ($response.uploadState -eq "FAILURE") {
-        Write-Error "Upload failed: $($response.itemError | ConvertTo-Json)"
+    if (-not $responseMsg.IsSuccessStatusCode -or $response.uploadState -eq "FAILED") {
+        Write-Error "Upload failed (HTTP $([int]$responseMsg.StatusCode)): $responseBody"
         exit 1
     }
 
@@ -286,21 +294,70 @@ function Invoke-Upload($ZipPath, $AccessToken, $creds) {
 
 function Invoke-Publish($AccessToken, $creds) {
     $headers = @{
-        "Authorization"      = "Bearer $AccessToken"
-        "x-goog-api-version" = "2"
-        "Content-Length"     = "0"
+        "Authorization" = "Bearer $AccessToken"
     }
 
-    $response = Invoke-RestMethod -Method Post `
-        -Uri "$CWSPublishUrl/$($creds.ExtensionId)/publish?publishTarget=$Target" `
-        -Headers $headers `
-        -Body ""
-
-    if ($response.status -contains "OK") {
-        Write-Host "Published: target=$Target"
-    } else {
-        Write-Host "Publish response: $($response | ConvertTo-Json)"
+    try {
+        $response = Invoke-RestMethod -Method Post `
+            -Uri "$CWSApiBase/$($creds.ItemResource):publish" `
+            -Headers $headers
+    } catch {
+        $Detail = if ($_.ErrorDetails.Message) { $_.ErrorDetails.Message } else { $_.Exception.Message }
+        Write-Error "Publish failed: $Detail"
         exit 1
+    }
+
+    $Extra = ""
+    if ($response.warningInfo.warnings) {
+        $Extra = " warnings=$($response.warningInfo.warnings | ConvertTo-Json -Compress)"
+    }
+
+    Write-Host "Published: state=$($response.state)$Extra"
+}
+
+# ---------------------------------------------------------------------------
+# Status
+# ---------------------------------------------------------------------------
+
+function Format-DistributionChannels($Revision) {
+    if (-not $Revision.distributionChannels -or $Revision.distributionChannels.Count -eq 0) {
+        return "no distribution channels"
+    }
+    $Parts = $Revision.distributionChannels | ForEach-Object {
+        "crxVersion=$($_.crxVersion) deployPercentage=$($_.deployPercentage)"
+    }
+    return ($Parts -join ", ")
+}
+
+function Get-Status($AccessToken, $creds) {
+    $headers = @{
+        "Authorization" = "Bearer $AccessToken"
+    }
+
+    try {
+        $response = Invoke-RestMethod -Method Get `
+            -Uri "$CWSApiBase/$($creds.ItemResource):fetchStatus" `
+            -Headers $headers
+    } catch {
+        $Detail = if ($_.ErrorDetails.Message) { $_.ErrorDetails.Message } else { $_.Exception.Message }
+        Write-Host "Status: request failed - $Detail"
+        return
+    }
+
+    Write-Host "Status: lastAsyncUploadState=$($response.lastAsyncUploadState) takenDown=$($response.takenDown) warned=$($response.warned)"
+
+    if ($response.publishedItemRevisionStatus) {
+        $Published = $response.publishedItemRevisionStatus
+        Write-Host "Status (published): state=$($Published.state) $(Format-DistributionChannels $Published)"
+    } else {
+        Write-Host "Status (published): none"
+    }
+
+    if ($response.submittedItemRevisionStatus) {
+        $Submitted = $response.submittedItemRevisionStatus
+        Write-Host "Status (submitted): state=$($Submitted.state) $(Format-DistributionChannels $Submitted)"
+    } else {
+        Write-Host "Status (submitted): none"
     }
 }
 
@@ -310,6 +367,14 @@ function Invoke-Publish($AccessToken, $creds) {
 
 if ($GetToken) {
     Get-Token
+    exit 0
+}
+
+if ($GetStatus) {
+    $Creds = Get-Credentials
+    Write-Host "Authenticating..."
+    $AccessToken = Get-AccessToken $Creds
+    Get-Status $AccessToken $Creds
     exit 0
 }
 
