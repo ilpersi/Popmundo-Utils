@@ -1977,5 +1977,91 @@
     "achievementTrackerLocked": {
         "message": "Not obtainable: you already earned the counterpart achievement.",
         "description": "Note/tooltip on a missing achievement that is mutually exclusive with one already owned"
+    },
+    "optMiscGroupShopping": {
+        "message": "Shopping",
+        "description": "Category label in Misc Options for shopping related features"
+    },
+    "optMiscItemCategorySearcherEnable": {
+        "message": "Show item category searcher in Shopping Assistant",
+        "description": "Checkbox label to enable the item category searcher box on the Shopping Assistant page"
+    },
+    "itemCategorySearcherTitle": {
+        "message": "Item Category Searcher",
+        "description": "Title of the item category searcher box on the Shopping Assistant page"
+    },
+    "itemCategorySearcherInfo": {
+        "message": "Search among $ITEMS$ items across $CATEGORIES$ categories to find where an item is sold.",
+        "description": "Introductory line of the item category searcher box",
+        "placeholders": {
+            "items": {
+                "content": "$1",
+                "example": "1,155"
+            },
+            "categories": {
+                "content": "$2",
+                "example": "49"
+            }
+        }
+    },
+    "itemCategorySearcherLanguageFallback": {
+        "message": "Item names are not available in your game language: English names are used.",
+        "description": "Shown in the item category searcher box when the game language has no item data"
+    },
+    "itemCategorySearcherSearchLabel": {
+        "message": "Item name:",
+        "description": "Label of the search field in the item category searcher box"
+    },
+    "itemCategorySearcherRegexLabel": {
+        "message": "Regular expression",
+        "description": "Label of the checkbox that makes the item category searcher treat the search text as a regular expression"
+    },
+    "itemCategorySearcherMaxLabel": {
+        "message": "Max results:",
+        "description": "Label of the field setting how many results the item category searcher displays"
+    },
+    "itemCategorySearcherMinChars": {
+        "message": "Type at least $COUNT$ characters...",
+        "description": "Shown in the item category searcher box when the search text is too short",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "itemCategorySearcherNoMatches": {
+        "message": "No items match your search.",
+        "description": "Shown in the item category searcher box when nothing matches"
+    },
+    "itemCategorySearcherInvalidRegex": {
+        "message": "Invalid regular expression.",
+        "description": "Shown in the item category searcher box when the regular expression cannot be parsed"
+    },
+    "itemCategorySearcherMatches": {
+        "message": "Showing $SHOWN$ of $TOTAL$ matching items.",
+        "description": "Result summary in the item category searcher box",
+        "placeholders": {
+            "shown": {
+                "content": "$1",
+                "example": "25"
+            },
+            "total": {
+                "content": "$2",
+                "example": "42"
+            }
+        }
+    },
+    "itemCategorySearcherSelectHint": {
+        "message": "Click an item to select it in the shop search below.",
+        "description": "Hint above the item category searcher results table"
+    },
+    "itemCategorySearcherColItem": {
+        "message": "Item",
+        "description": "Column header for the item name in the item category searcher results"
+    },
+    "itemCategorySearcherColCategory": {
+        "message": "Category",
+        "description": "Column header for the shop category in the item category searcher results"
     }
 }

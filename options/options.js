@@ -53,6 +53,7 @@ const optionDetails = [
     { 'name': 'skill_export_enable', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'attribute_export_enable', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
     { 'name': 'achievement_tracker_enable', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+    { 'name': 'item_category_searcher_enable', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 
     // pop up options
     { 'name': 'character_popup', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
