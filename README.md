@@ -65,6 +65,51 @@ Any data table in the game gains a live search box. Type to filter rows instantl
 
 ---
 
+### Searchable Dropdowns
+
+*Off by default; turn it on in Options.* Long dropdown menus throughout the game become type-to-filter inputs, so you can find an entry by typing part of its name instead of scrolling. The game's own dropdowns still work behind the scenes, so form submissions and cascading selections keep working.
+
+---
+
+### Missing Achievements
+
+*Off by default; turn it on in Options.* On the Character Achievements page, a collapsible box lists every achievement your character does not have yet.
+
+- Filter the list by category (Popmundo, The Great Heist, generic, passive). The extension remembers your filter choices.
+- Achievements you can no longer get, because you already own a mutually exclusive one, are shown struck through.
+- The box uses the game's own styling, so it matches your current skin.
+
+*Credits: based on the "Popmundo Missing Achievement Tracker" user script by Ashly Fangorn.*
+
+---
+
+### Item Category Searcher
+
+*Off by default; turn it on in Options.* On the Shopping Assistant page, type an item name to find which shop category it belongs to.
+
+- Click a result to select its category and item type in the game's shop search automatically.
+- The page then scrolls back to the shop search box, ready to search.
+
+*Credits: based on the "Popmundo Item Category Searcher" user script by Appriapos.*
+
+---
+
+### Popmundo Bible Export
+
+*Off by default; turn it on in Options.* Adds export buttons that download your character's data as a JSON file you can import into [popmundo-bible.net](https://popmundo-bible.net).
+
+- **Skills**: an "Export skills (JSON)" button on the Character Skills page.
+- **Attributes**: an "Export attributes (JSON)" button on the Character Attributes page.
+- Works for both Popmundo and The Great Heist characters.
+
+---
+
+### Open Houses
+
+When you view a city page, an **Open Houses** menu appears in the sidebar. It links to the known public houses in that city, so you can jump straight to one.
+
+---
+
 ### Fast Character Switch
 
 Selecting a different character from the dropdown automatically switches without requiring a click on the "Switch character" button.
@@ -79,6 +124,7 @@ Automates collecting autographs from characters across the game.
 - Respects the 6-minute per-book cooldown.
 - Colour-coded log keeps a record of every collection attempt.
 - You can configure which book item to use and how many log rows to keep.
+- Optional keep-alive reloads the page at a set interval (5 minutes minimum), so the game doesn't log you out during long collection runs.
 
 ---
 
