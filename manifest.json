@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "version": "3.0.6",
+    "version": "3.1.0",
     "default_locale": "en",
     "name": "__MSG_extName__",
     "description": "__MSG_extDescription__",
@@ -108,6 +108,16 @@
             "js": [
                 "common/notifications.js",
                 "features/attribute-export.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Achievements",
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/Achievements/*"
+            ],
+            "js": [
+                "features/achievement-tracker-data.js",
+                "features/achievement-tracker.js"
             ]
         },
         {

@@ -1909,5 +1909,73 @@
     "optRemWeekday7": {
         "message": "Sunday",
         "description": "Weekday name for ISO day 7"
+        },
+    "optMiscGroupAchievements": {
+        "message": "Achievements",
+        "description": "Category label in Misc Options for achievement related features"
+    },
+    "optMiscAchievementTrackerEnable": {
+        "message": "Show missing achievements",
+        "description": "Checkbox label to enable the missing achievements box on the Character Achievements page"
+    },
+    "achievementTrackerTitle": {
+        "message": "Missing achievements ($COUNT$)",
+        "description": "Title of the collapsible missing achievements box",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "338"
+            }
+        }
+    },
+    "achievementTrackerSummary": {
+        "message": "Showing $SHOWN$ of $TOTAL$ missing achievements.",
+        "description": "Summary line in the missing achievements box, reflecting the active category filters",
+        "placeholders": {
+            "shown": {
+                "content": "$1",
+                "example": "250"
+            },
+            "total": {
+                "content": "$2",
+                "example": "338"
+            }
+        }
+    },
+    "achievementTrackerNoneMissing": {
+        "message": "No missing achievements: congratulations!",
+        "description": "Shown in the missing achievements box when the character owns every known achievement"
+    },
+    "achievementTrackerShow": {
+        "message": "Show:",
+        "description": "Label preceding the category filter checkboxes in the missing achievements box"
+    },
+    "achievementTrackerColName": {
+        "message": "Achievement",
+        "description": "Column header for the achievement name in the missing achievements table"
+    },
+    "achievementTrackerColPoints": {
+        "message": "Pts.",
+        "description": "Column header for achievement points in the missing achievements table"
+    },
+    "achievementTrackerCategoryPPM": {
+        "message": "Popmundo",
+        "description": "Filter label for achievements specific to Popmundo"
+    },
+    "achievementTrackerCategoryTGH": {
+        "message": "The Great Heist",
+        "description": "Filter label for achievements specific to The Great Heist"
+    },
+    "achievementTrackerCategoryGENERIC": {
+        "message": "Generic",
+        "description": "Filter label for achievements available in every game"
+    },
+    "achievementTrackerCategoryPASSIVE": {
+        "message": "Passive",
+        "description": "Filter label for passive/event achievements (seasonal events, anniversaries, etc.)"
+    },
+    "achievementTrackerLocked": {
+        "message": "Not obtainable: you already earned the counterpart achievement.",
+        "description": "Note/tooltip on a missing achievement that is mutually exclusive with one already owned"
     }
 }
