@@ -121,6 +121,98 @@ class Utils {
     }
 
     /**
+     * @private
+     * Memoized in-flight promise so concurrent callers of getGameLanguage() share one fetch.
+     */
+    static _gameLanguagePromise = null;
+
+    /**
+     * Extracts the game language from the language settings page.
+     * Pure parser: works on the live document as well as on a DOMParser-built one.
+     *
+     * @static
+     * @param {Document|Element} [contextNode=document]
+     * @return {{id: number, name: string}|null} The selected language, or null when not found.
+     * @memberof Utils
+     */
+    static parseGameLanguage(contextNode = document) {
+        const LANGUAGE_SELECT = 'select[id$="ddlLanguage"]';
+        const select = new CssSelectorHelper(LANGUAGE_SELECT).getSingle(contextNode);
+        if (!select) return null;
+
+        // A document built by DOMParser has no live selection state, so we fall back to the selected attribute.
+        const option = new CssSelectorHelper('option:checked').getSingle(select)
+            || new CssSelectorHelper('option[selected]').getSingle(select);
+        if (!option) return null;
+
+        const id = parseInt(option.value);
+        const name = option.textContent.trim();
+        return (Number.isFinite(id) && name) ? { id, name } : null;
+    }
+
+    /**
+     * Stores the game language in session storage (via the background service worker).
+     *
+     * @static
+     * @param {{id: number, name: string}} language
+     * @memberof Utils
+     */
+    static async setGameLanguage(language) {
+        await chrome.runtime.sendMessage({
+            'type': 'storage.session',
+            'payload': 'set',
+            'param': { 'game_language': language },
+        });
+    }
+
+    /**
+     * Get the language set by the user in the game. The value is retrieved lazily: it is read from the
+     * session cache and, only when missing, fetched from the language settings page and cached.
+     * The cache is also refreshed when the user visits that page (see features/language-settings.js).
+     *
+     * @static
+     * @return {Promise<{id: number, name: string}|null>} The language id and its (localized) name, or null on failure.
+     * @memberof Utils
+     */
+    static getGameLanguage() {
+        if (!Utils._gameLanguagePromise) {
+            Utils._gameLanguagePromise = Utils.#loadGameLanguage().finally(() => {
+                Utils._gameLanguagePromise = null;
+            });
+        }
+        return Utils._gameLanguagePromise;
+    }
+
+    static async #loadGameLanguage() {
+        try {
+            const items = await chrome.runtime.sendMessage({
+                'type': 'storage.session',
+                'payload': 'get',
+                'param': ['game_language'],
+            });
+            const cached = items && items['game_language'];
+            if (cached && cached.id && cached.name) return cached;
+        } catch (_) {
+            // Service worker unavailable: fall through to fetching the page.
+        }
+
+        try {
+            const url = Utils.getServerLink('/User/Popmundo.aspx/User/LanguageSettings');
+            // The session storage is our cache, so we skip the in-memory one of TimedFetch.
+            const html = await new TimedFetch().fetch(url, {}, false);
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const language = Utils.parseGameLanguage(doc);
+            if (!language) throw new Error('Language combo not found in the settings page');
+
+            await Utils.setGameLanguage(language);
+            return language;
+        } catch (e) {
+            Logger.warn('Unable to retrieve the game language', e);
+            return null;
+        }
+    }
+
+    /**
      * Returns the input as a plain (non-array, non-null) object, otherwise {}.
      * Defensive normalizer for the per-character exclude-list maps stored in sync.
      *

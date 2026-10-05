@@ -43,6 +43,14 @@
         },
         {
             "matches": [
+                "https://*.popmundo.com/User/Popmundo.aspx/User/LanguageSettings*"
+            ],
+            "js": [
+                "features/language-settings.js"
+            ]
+        },
+        {
+            "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/City*"
             ],
             "js": [
