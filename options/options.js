@@ -147,6 +147,7 @@ const optionDetails = [
 
     // developer options (only shown in development builds)
     { 'name': 'log_level', 'default': 3, 'save_cb': saveInteger, 'load_cb': loadInteger },
+    { 'name': 'item_category_db_builder', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
 ]
 
 /**

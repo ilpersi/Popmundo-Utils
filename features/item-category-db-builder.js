@@ -604,10 +604,14 @@
     chrome.storage.local.get({ install_type: '' }, function (items) {
         if (items.install_type !== 'development') return;
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', injectBuilder);
-        } else {
-            injectBuilder();
-        }
+        chrome.storage.sync.get({ item_category_db_builder: false }, function (options) {
+            if (!options.item_category_db_builder) return;
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', injectBuilder);
+            } else {
+                injectBuilder();
+            }
+        });
     });
 })();
