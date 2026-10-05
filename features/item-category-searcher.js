@@ -15,7 +15,9 @@
  * The feature is disabled by default and enabled from Misc Options
  * (`item_category_searcher_enable` in chrome.storage.sync).
  *
- * Data comes from features/item-category-searcher-data.js (ITEM_CATEGORY_SEARCHER_DB).
+ * Data comes from features/item-category-searcher-data.js (ITEM_CATEGORY_SEARCHER_DB),
+ * keyed by game language id. The language is read with Utils.getGameLanguage(); when
+ * there is no data for it, the language is guessed from the live category names.
  */
 (function () {
     'use strict';
@@ -29,6 +31,8 @@
     const DEFAULT_MAX_RESULTS = 25;
     const MAX_RESULTS_LIMIT = 100;
     const SEARCH_DEBOUNCE_MS = 200;
+    // Game language id (US English) used when no language can be determined
+    const DEFAULT_LANGUAGE_ID = '2';
 
     /**
      * Creates an element with optional text content.
@@ -83,19 +87,35 @@
 
     /**
      * Picks the DB language whose category names best match the live category select.
+     * Only used as a fallback when the game language has no data (or cannot be retrieved).
      *
      * @param {HTMLSelectElement} categorySelect
      * @return {{lang: string, matched: boolean}}
      */
     function detectLanguage(categorySelect) {
         const liveNames = new Set(Array.from(categorySelect.options).map(o => o.text.trim().toLowerCase()));
-        let best = { lang: 'en', score: 0 };
+        let best = { lang: DEFAULT_LANGUAGE_ID, score: 0 };
         Object.entries(ITEM_CATEGORY_SEARCHER_DB).forEach(([lang, data]) => {
             const score = Object.values(data.categories)
                 .filter(category => liveNames.has(category.n.toLowerCase())).length;
             if (score > best.score) best = { lang, score };
         });
         return { lang: best.lang, matched: best.score > 0 };
+    }
+
+    /**
+     * Resolves the DB language to use: the user's game language when we have data for it,
+     * otherwise a guess based on the live category names.
+     *
+     * @param {HTMLSelectElement} categorySelect
+     * @return {Promise<{lang: string, matched: boolean}>}
+     */
+    async function resolveDbLanguage(categorySelect) {
+        const gameLanguage = await Utils.getGameLanguage();
+        if (gameLanguage && ITEM_CATEGORY_SEARCHER_DB[gameLanguage.id]) {
+            return { lang: String(gameLanguage.id), matched: true };
+        }
+        return detectLanguage(categorySelect);
     }
 
     /**
@@ -183,10 +203,10 @@
      * Builds the searcher box and wires its behaviour.
      *
      * @param {HTMLSelectElement} categorySelect
+     * @param {{lang: string, matched: boolean}} language The resolved DB language
      * @return {HTMLElement}
      */
-    function buildBox(categorySelect) {
-        const { lang, matched } = detectLanguage(categorySelect);
+    function buildBox(categorySelect, { lang, matched }) {
         const categories = ITEM_CATEGORY_SEARCHER_DB[lang].categories;
         const items = buildItemList(categories, categorySelect);
 
@@ -345,7 +365,7 @@
     /**
      * Injects the searcher box right before the game's shop search box.
      */
-    function injectSearcher() {
+    async function injectSearcher() {
         if (new CssSelectorHelper(`#${BOX_ID}`).getSingle()) return;
 
         const categorySelect = new CssSelectorHelper(CATEGORY_SELECT_SELECTOR).getSingle();
@@ -354,7 +374,11 @@
         const searchBox = getContainingBox(categorySelect);
         if (!searchBox) return;
 
-        searchBox.parentNode.insertBefore(buildBox(categorySelect), searchBox);
+        const language = await resolveDbLanguage(categorySelect);
+        // The box may have been injected by a concurrent call while we were waiting
+        if (new CssSelectorHelper(`#${BOX_ID}`).getSingle()) return;
+
+        searchBox.parentNode.insertBefore(buildBox(categorySelect, language), searchBox);
         resumePending(categorySelect);
     }
 

@@ -139,6 +139,14 @@
         },
         {
             "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Character/ShoppingAssistant*"
+            ],
+            "js": [
+                "features/item-category-db-builder.js"
+            ]
+        },
+        {
+            "matches": [
                 "https://*.popmundo.com/World/Popmundo.aspx/Character*",
                 "https://*.popmundo.com/World/Popmundo.aspx/Artist*"
             ],

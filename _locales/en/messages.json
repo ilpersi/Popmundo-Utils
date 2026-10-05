@@ -2063,5 +2063,179 @@
     "itemCategorySearcherColCategory": {
         "message": "Category",
         "description": "Column header for the shop category in the item category searcher results"
+    },
+    "itemCategoryDbBuilderTitle": {
+        "message": "Item Category Database Builder (developer)",
+        "description": "Title of the developer-only box that builds the item category searcher database"
+    },
+    "itemCategoryDbBuilderInfo": {
+        "message": "Reads every shop category in the current game language and prints the database entry in the debug log, ready to be pasted in item-category-searcher-data.js.",
+        "description": "Introductory line of the developer-only item category database builder box"
+    },
+    "itemCategoryDbBuilderButton": {
+        "message": "Build database",
+        "description": "Button of the developer-only item category database builder box"
+    },
+    "itemCategoryDbBuilderProgress": {
+        "message": "Reading category $CATEGORY$ ($CURRENT$/$TOTAL$)...",
+        "description": "Progress shown while the item category database builder reads the shop categories",
+        "placeholders": {
+            "category": {
+                "content": "$1",
+                "example": "Animals"
+            },
+            "current": {
+                "content": "$2",
+                "example": "12"
+            },
+            "total": {
+                "content": "$3",
+                "example": "49"
+            }
+        }
+    },
+    "itemCategoryDbBuilderDone": {
+        "message": "Done: $ITEMS$ items in $CATEGORIES$ categories for $LANGUAGE$ (id $ID$). The database entry is in the debug log and in the console.",
+        "description": "Shown when the item category database builder has finished",
+        "placeholders": {
+            "items": {
+                "content": "$1",
+                "example": "1155"
+            },
+            "categories": {
+                "content": "$2",
+                "example": "49"
+            },
+            "language": {
+                "content": "$3",
+                "example": "US English"
+            },
+            "id": {
+                "content": "$4",
+                "example": "2"
+            }
+        }
+    },
+    "itemCategoryDbBuilderFailed": {
+        "message": "Warning: $COUNT$ categories could not be read and are missing from the output: $NAMES$",
+        "description": "Shown when some categories failed while the item category database builder was running",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "names": {
+                "content": "$2",
+                "example": "Animals, Weapons"
+            }
+        }
+    },
+    "itemCategoryDbBuilderNoLanguage": {
+        "message": "Unable to determine the game language.",
+        "description": "Error shown by the item category database builder when the game language cannot be retrieved"
+    },
+    "itemCategoryDbBuilderAllTitle": {
+        "message": "All languages",
+        "description": "Title of the section of the developer-only item category database builder that handles several languages"
+    },
+    "itemCategoryDbBuilderAllInfo": {
+        "message": "For each selected language the language of your account is switched, and it is restored at the end. This affects every open Popmundo tab until the run finishes. Languages marked with * are inactive.",
+        "description": "Explanation shown above the language checklist of the item category database builder"
+    },
+    "itemCategoryDbBuilderBuildAll": {
+        "message": "Build selected languages",
+        "description": "Button that builds the item category database for the selected languages"
+    },
+    "itemCategoryDbBuilderDownload": {
+        "message": "Download database file",
+        "description": "Button that downloads the generated item category database as a JavaScript file"
+    },
+    "itemCategoryDbBuilderRestore": {
+        "message": "Restore language",
+        "description": "Button that restores the game language after an interrupted item category database build"
+    },
+    "itemCategoryDbBuilderRestoreInfo": {
+        "message": "A previous run was interrupted before your game language was restored.",
+        "description": "Warning shown by the item category database builder after an interrupted multi-language run"
+    },
+    "itemCategoryDbBuilderLoadingLanguages": {
+        "message": "Loading languages...",
+        "description": "Shown while the item category database builder reads the available game languages"
+    },
+    "itemCategoryDbBuilderNoneSelected": {
+        "message": "Select at least one language.",
+        "description": "Shown when the item category database builder is started without any selected language"
+    },
+    "itemCategoryDbBuilderLanguageProgress": {
+        "message": "Language $LANGUAGE$ ($CURRENT$/$TOTAL$): $DETAIL$",
+        "description": "Progress shown while the item category database builder reads several languages",
+        "placeholders": {
+            "language": {
+                "content": "$1",
+                "example": "Italian"
+            },
+            "current": {
+                "content": "$2",
+                "example": "3"
+            },
+            "total": {
+                "content": "$3",
+                "example": "19"
+            },
+            "detail": {
+                "content": "$4",
+                "example": "Reading category Animals (12/49)..."
+            }
+        }
+    },
+    "itemCategoryDbBuilderAllDone": {
+        "message": "Done: $COUNT$ languages are ready to download (ids: $IDS$). The language of your account has been restored.",
+        "description": "Shown when the item category database builder has finished reading several languages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "19"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "2, 19"
+            }
+        }
+    },
+    "itemCategoryDbBuilderLanguagesFailed": {
+        "message": "Languages that could not be read completely and were left out: $NAMES$",
+        "description": "Shown when some languages failed while the item category database builder was running",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "itemCategoryDbBuilderSkipKnown": {
+        "message": "Skip already known languages",
+        "description": "Checkbox of the item category database builder: languages already present in the database are not read again"
+    },
+    "itemCategoryDbBuilderMerge": {
+        "message": "Merge data",
+        "description": "Checkbox of the item category database builder: the downloaded file includes the existing database, overridden by the newly read languages"
+    },
+    "itemCategoryDbBuilderAllKnown": {
+        "message": "All the selected languages are already in the database: nothing to read.",
+        "description": "Shown when the item category database builder skips every selected language because they are already known"
+    },
+    "itemCategoryDbBuilderLanguagesSkipped": {
+        "message": "Skipped (already known): $NAMES$.",
+        "description": "Shown when the item category database builder skipped some languages because they are already known",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "US English, Turkish"
+            }
+        }
+    },
+    "itemCategoryDbBuilderRestoreFailed": {
+        "message": "Unable to restore your original game language: use the Restore language button or set it in the language settings.",
+        "description": "Error shown when the item category database builder cannot restore the game language"
     }
 }
