@@ -7,6 +7,9 @@ the API - it must be configured once in the Developer Dashboard under
 Publisher > Distribution settings; `publish` always uses whatever is set
 there.
 
+Pass --skip-review to send skipReview=true with the publish request. Without
+it the request has no body (default behaviour).
+
 Dependencies:
     pip install google-auth google-auth-oauthlib requests
 
@@ -192,15 +195,50 @@ def upload(zip_path: Path, config: dict, access_token: str) -> None:
     print(f"Uploaded:  {zip_path.name}  (state: {state})")
 
 
-def publish(config: dict, access_token: str) -> None:
+def _report_publish_error(resp: requests.Response, skip_review: bool) -> None:
+    """Print a readable publish error (Google error envelope or raw body)."""
+    try:
+        error = resp.json().get("error")
+    except ValueError:
+        error = None
+
+    if not isinstance(error, dict):
+        print(f"Publish failed (HTTP {resp.status_code}): {resp.text}")
+        return
+
+    status = error.get("status", "")
+    tag = f" [{status}]" if status else ""
+    print(f"Publish failed (HTTP {resp.status_code}){tag}: {error.get('message', resp.text)}")
+
+    for detail in error.get("details", []):
+        if not isinstance(detail, dict):
+            continue
+        for violation in detail.get("fieldViolations", []):
+            print(f"  - {violation.get('field', '')}: {violation.get('description', '')}")
+        if detail.get("reason"):
+            print(f"  - reason: {detail['reason']}")
+
+    if skip_review and (
+        status in ("INVALID_ARGUMENT", "FAILED_PRECONDITION")
+        or resp.status_code in (400, 412)
+    ):
+        print("skipReview was requested but could not be honored; "
+              "re-run without --skip-review to submit for normal review.")
+
+
+def publish(config: dict, access_token: str, skip_review: bool = False) -> None:
     url = f"{CWS_API_BASE}/{item_resource(config)}:publish"
     headers = {"Authorization": f"Bearer {access_token}"}
-    resp = requests.post(url, headers=headers)
-    data = resp.json()
+    if skip_review:
+        resp = requests.post(url, headers=headers, json={"skipReview": True})
+    else:
+        resp = requests.post(url, headers=headers)
 
     if resp.status_code not in (200, 201):
-        print(f"Publish failed (HTTP {resp.status_code}): {data}")
+        _report_publish_error(resp, skip_review)
         sys.exit(1)
+
+    data = resp.json()
 
     state = data.get("state", "unknown")
     warnings = data.get("warningInfo", {}).get("warnings")
@@ -321,6 +359,11 @@ def main() -> None:
         "--get-status", action="store_true",
         help="Check the Chrome Web Store draft/published item status and exit.",
     )
+    parser.add_argument(
+        "--skip-review", action="store_true",
+        help="Ask the Chrome Web Store to skip review when publishing (skipReview=true). "
+             "The store may still reject the request.",
+    )
     args = parser.parse_args()
 
     root = Path(__file__).parent.resolve()
@@ -354,8 +397,8 @@ def main() -> None:
     print(f"Uploading...")
     upload(zip_path, config, access_token)
 
-    print(f"Publishing...")
-    publish(config, access_token)
+    print("Publishing (skipReview=true)..." if args.skip_review else "Publishing...")
+    publish(config, access_token, skip_review=args.skip_review)
 
 
 if __name__ == "__main__":

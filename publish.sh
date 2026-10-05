@@ -23,6 +23,7 @@
 #   ./publish.sh --pack-only
 #   ./publish.sh --publish-only file.zip
 #   ./publish.sh --get-status
+#   ./publish.sh --skip-review          publish with skipReview=true
 
 set -euo pipefail
 
@@ -42,6 +43,7 @@ PACK_ONLY=false
 PUBLISH_ONLY=""
 GET_TOKEN=false
 GET_STATUS=false
+SKIP_REVIEW=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -49,6 +51,7 @@ while [[ $# -gt 0 ]]; do
         --publish-only) PUBLISH_ONLY="$2"; shift 2 ;;
         --get-token)    GET_TOKEN=true; shift ;;
         --get-status)   GET_STATUS=true; shift ;;
+        --skip-review)  SKIP_REVIEW=true; shift ;;
         *) echo "Unknown option: $1"; exit 1 ;;
     esac
 done
@@ -290,18 +293,49 @@ upload() {
 # Publish
 # ---------------------------------------------------------------------------
 
+report_publish_error() {
+    local http_code="$1"
+    local body="$2"
+
+    local err_status
+    if ! echo "$body" | jq -e '.error | type == "object"' >/dev/null 2>&1; then
+        echo "Publish failed (HTTP ${http_code}): ${body}"
+        return
+    fi
+
+    err_status=$(echo "$body" | jq -r '.error.status // empty')
+    echo "Publish failed (HTTP ${http_code})${err_status:+ [${err_status}]}: $(echo "$body" | jq -r '.error.message // empty')"
+    echo "$body" | jq -r '
+        (.error.details // [])[]
+        | ((.fieldViolations // [])[] | "  - " + (.field // "") + ": " + (.description // "")),
+          (if .reason then "  - reason: " + .reason else empty end)
+    ' 2>/dev/null || true
+
+    if [[ "$SKIP_REVIEW" == true ]] && \
+       [[ "$err_status" == "INVALID_ARGUMENT" || "$err_status" == "FAILED_PRECONDITION" \
+          || "$http_code" == "400" || "$http_code" == "412" ]]; then
+        echo "skipReview was requested but could not be honored; re-run without --skip-review to submit for normal review."
+    fi
+}
+
 publish() {
     local access_token="$1"
 
     local response http_code body state warnings extra
+    local extra_args=()
+    if [[ "$SKIP_REVIEW" == true ]]; then
+        extra_args=(-H "Content-Type: application/json" -d '{"skipReview":true}')
+    fi
+
     response=$(curl -s -w '\n%{http_code}' -X POST \
         "${CWS_API_BASE}/${ITEM_RESOURCE}:publish" \
-        -H "Authorization: Bearer ${access_token}")
+        -H "Authorization: Bearer ${access_token}" \
+        ${extra_args[@]+"${extra_args[@]}"})
     http_code=$(echo "$response" | tail -n1)
     body=$(echo "$response" | sed '$d')
 
     if [[ "$http_code" != "200" && "$http_code" != "201" ]]; then
-        echo "Publish failed (HTTP ${http_code}): ${body}"
+        report_publish_error "$http_code" "$body"
         exit 1
     fi
 
@@ -399,5 +433,9 @@ ACCESS_TOKEN=$(get_access_token)
 echo "Uploading..."
 upload "$ZIP_PATH" "$ACCESS_TOKEN"
 
-echo "Publishing..."
+if [[ "$SKIP_REVIEW" == true ]]; then
+    echo "Publishing (skipReview=true)..."
+else
+    echo "Publishing..."
+fi
 publish "$ACCESS_TOKEN"

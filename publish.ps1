@@ -18,12 +18,14 @@
 #   .\publish.ps1 -PackOnly
 #   .\publish.ps1 -PublishOnly file.zip
 #   .\publish.ps1 -GetStatus
+#   .\publish.ps1 -SkipReview              publish with skipReview=true
 
 param(
     [switch]$PackOnly,
     [string]$PublishOnly = "",
     [switch]$GetToken,
-    [switch]$GetStatus
+    [switch]$GetStatus,
+    [switch]$SkipReview
 )
 
 $ErrorActionPreference = "Stop"
@@ -297,13 +299,46 @@ function Invoke-Publish($AccessToken, $creds) {
         "Authorization" = "Bearer $AccessToken"
     }
 
+    $request = @{
+        Method  = "Post"
+        Uri     = "$CWSApiBase/$($creds.ItemResource):publish"
+        Headers = $headers
+    }
+    if ($SkipReview) {
+        $request.ContentType = "application/json"
+        $request.Body        = '{"skipReview":true}'
+    }
+
     try {
-        $response = Invoke-RestMethod -Method Post `
-            -Uri "$CWSApiBase/$($creds.ItemResource):publish" `
-            -Headers $headers
+        $response = Invoke-RestMethod @request
     } catch {
-        $Detail = if ($_.ErrorDetails.Message) { $_.ErrorDetails.Message } else { $_.Exception.Message }
-        Write-Error "Publish failed: $Detail"
+        $Raw        = if ($_.ErrorDetails.Message) { $_.ErrorDetails.Message } else { $_.Exception.Message }
+        $HttpStatus = if ($_.Exception.Response) { [int]$_.Exception.Response.StatusCode } else { 0 }
+        $Lines      = @()
+        $ErrStatus  = ""
+
+        try {
+            $err = ($Raw | ConvertFrom-Json).error
+            if ($err) {
+                $ErrStatus = "$($err.status)"
+                $Tag = if ($ErrStatus) { " [$ErrStatus]" } else { "" }
+                $Lines += "Publish failed (HTTP $HttpStatus)${Tag}: $($err.message)"
+                foreach ($d in @($err.details)) {
+                    foreach ($v in @($d.fieldViolations)) {
+                        if ($v) { $Lines += "  - $($v.field): $($v.description)" }
+                    }
+                    if ($d.reason) { $Lines += "  - reason: $($d.reason)" }
+                }
+            }
+        } catch { }
+
+        if (-not $Lines) { $Lines += "Publish failed (HTTP $HttpStatus): $Raw" }
+
+        if ($SkipReview -and ($ErrStatus -in @("INVALID_ARGUMENT", "FAILED_PRECONDITION") -or $HttpStatus -in @(400, 412))) {
+            $Lines += "skipReview was requested but could not be honored; re-run without -SkipReview to submit for normal review."
+        }
+
+        Write-Error ($Lines -join [Environment]::NewLine)
         exit 1
     }
 
@@ -398,5 +433,5 @@ $AccessToken = Get-AccessToken $Creds
 Write-Host "Uploading..."
 Invoke-Upload $ZipPath $AccessToken $Creds
 
-Write-Host "Publishing..."
+Write-Host $(if ($SkipReview) { "Publishing (skipReview=true)..." } else { "Publishing..." })
 Invoke-Publish $AccessToken $Creds
