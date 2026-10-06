@@ -2453,5 +2453,23 @@
     "achievementDbBuilderGameUnknown": {
         "message": "Warning: the game of this character could not be detected, so no category was set from the Other Achievements table.",
         "description": "Shown when the achievement database builder cannot tell if the character plays Popmundo or The Great Heist and leaves the categories unchanged"
+    },
+    "achievementDbBuilderPointsChanged": {
+        "message": "Points changed for $COUNT$ achievements to the ones of the page, check them: $CHANGES$",
+        "description": "Shown when the achievement database builder replaced the known points of some achievements with the ones shown by the game",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "changes": {
+                "content": "$2",
+                "example": "142: 10 -> 20, 431: 10 -> 20"
+            }
+        }
+    },
+    "achievementDbBuilderPointsGuard": {
+        "message": "Warning: the points of the page differ from the known ones for most achievements, so the page was probably misread. No points were changed.",
+        "description": "Shown when the achievement database builder does not trust the points read from the page and leaves the known points unchanged"
     }
 }

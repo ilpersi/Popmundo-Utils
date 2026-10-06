@@ -20,7 +20,9 @@
  * one (the game of the character comes from its character page, see Utils.parseCharacterGame()).
  * They set (or fix) the category in ACHIEVEMENT_TRACKER_INFO,
  * unless they contradict most of the known data, which means the game was detected wrong. Other
- * ids that are not in ACHIEVEMENT_TRACKER_INFO yet are added as GENERIC and reported.
+ * ids that are not in ACHIEVEMENT_TRACKER_INFO yet are added as GENERIC and reported. The points
+ * of the known achievements are updated from the page, unless they differ for most of them, which
+ * means that the page was misread.
  *
  * The language switching helpers are shared with the item category builder (DbBuilderHelper).
  */
@@ -45,6 +47,8 @@
     const DEFAULT_CATEGORY = 'GENERIC';
     // US English: its names are used as the comment of the exclusion pairs
     const ENGLISH_LANGUAGE_ID = 2;
+    // The points guard only judges the page when at least this many known achievements were read
+    const POINTS_GUARD_MIN_SAMPLE = 10;
     const INFO_PER_LINE = 6;
     const NAMES_PER_LINE = 2;
     const DATA_FILE_HEADER = [
@@ -136,7 +140,7 @@
      * @param {Document} doc The parsed achievements page
      * @param {string} rowSelector
      * @param {string|null} category The category the rows are known to have, or null
-     * @return {Array<{id: number, name: string, points: number, category: string|null}>}
+     * @return {Array<{id: number, name: string, points: number|null, category: string|null}>} Points are null when the cell cannot be read
      */
     function readRows(doc, rowSelector, category) {
         const achievements = [];
@@ -150,8 +154,9 @@
             const name = row.cells[1].textContent.trim();
             if (!name) return;
 
+            // An unreadable value is null, so that it can never replace a known one
             const points = parseInt(row.cells[2].textContent, 10);
-            achievements.push({ id: Number(match[1]), name, points: Number.isFinite(points) ? points : 0, category });
+            achievements.push({ id: Number(match[1]), name, points: Number.isFinite(points) ? points : null, category });
         });
         return achievements;
     }
@@ -220,34 +225,41 @@
      * the pages. The category of the "Other Achievements" ones is applied (new ids are added with it,
      * known ids get it if they have another one), unless it contradicts most of the known data, which
      * means the game of the character was detected wrong: then no category is changed. The other new
-     * ids get the placeholder category. Known points are never changed.
+     * ids get the placeholder category. The points of the known achievements are replaced by the ones
+     * of the page, unless they differ for most of them (at least POINTS_GUARD_MIN_SAMPLE were read),
+     * which means that the page was misread: then no points are changed. Points that could not be read
+     * (null) never replace a known value, and are 0 for a new id.
      *
-     * @param {Array<{achievements: Array<{id: number, points: number, category: string|null}>}>} scraped The read languages
-     * @return {{info: Map<number, [string, number]>, added: number[], changed: Array<{id: number, from: string, to: string}>, placeholders: number[], pointsMismatches: Array<{id: number, known: number, page: number}>, guarded: boolean}}
+     * @param {Array<{achievements: Array<{id: number, points: number|null, category: string|null}>}>} scraped The read languages
+     * @return {{info: Map<number, [string, number]>, added: number[], changed: Array<{id: number, from: string, to: string}>, placeholders: number[], pointsChanged: Array<{id: number, from: number, to: number}>, guarded: boolean, pointsGuarded: boolean}}
      */
     function buildInfo(scraped) {
         const info = getKnownInfo();
         const added = [];
         const changed = [];
         const placeholders = [];
-        const pointsMismatches = [];
+        const pointsChanged = [];
 
         const achievements = new Map();
         scraped.forEach(language => language.achievements.forEach(item => achievements.set(item.id, item)));
-        const hinted = Array.from(achievements.values()).filter(item => item.category);
+        const all = Array.from(achievements.values());
 
-        const known = hinted.filter(item => info.has(item.id));
+        const known = all.filter(item => item.category && info.has(item.id));
         const contradicting = known.filter(item => info.get(item.id)[0] !== item.category);
         const guarded = contradicting.length * 2 > known.length;
 
-        Array.from(achievements.values()).sort((a, b) => a.id - b.id).forEach(({ id, points, category }) => {
+        const withPoints = all.filter(item => item.points !== null && info.has(item.id));
+        const differing = withPoints.filter(item => info.get(item.id)[1] !== item.points);
+        const pointsGuarded = withPoints.length >= POINTS_GUARD_MIN_SAMPLE && differing.length * 2 > withPoints.length;
+
+        all.sort((a, b) => a.id - b.id).forEach(({ id, points, category }) => {
             const current = info.get(id);
             if (!current) {
                 if (category && !guarded) {
-                    info.set(id, [category, points]);
+                    info.set(id, [category, points ?? 0]);
                     added.push(id);
                 } else {
-                    info.set(id, [DEFAULT_CATEGORY, points]);
+                    info.set(id, [DEFAULT_CATEGORY, points ?? 0]);
                     placeholders.push(id);
                 }
                 return;
@@ -257,10 +269,13 @@
                 changed.push({ id, from: current[0], to: category });
                 current[0] = category;
             }
-            if (current[1] !== points) pointsMismatches.push({ id, known: current[1], page: points });
+            if (points !== null && !pointsGuarded && current[1] !== points) {
+                pointsChanged.push({ id, from: current[1], to: points });
+                current[1] = points;
+            }
         });
 
-        return { info, added, changed, placeholders, pointsMismatches, guarded };
+        return { info, added, changed, placeholders, pointsChanged, guarded, pointsGuarded };
     }
 
     // ── Formatting ─────────────────────────────────────────────────────────
@@ -382,7 +397,7 @@
      * newly read ones are added to them, overriding the same ids; otherwise only the newly read
      * languages are written.
      *
-     * @param {Array<{id: number, name: string, achievements: Array<{id: number, name: string, points: number, category: string|null}>}>} scraped
+     * @param {Array<{id: number, name: string, achievements: Array<{id: number, name: string, points: number|null, category: string|null}>}>} scraped
      * @param {boolean} merge Whether to include the existing names
      * @param {Map<number, string>} languageNames Language names by id, used for the comments of existing languages
      * @return {string}
@@ -423,15 +438,15 @@
 
     /**
      * Logs what the language independent data gets from the read achievements and returns the text to
-     * add to the status line: the categories that were changed, the achievements that could not be
-     * classified (added as GENERIC) and the guard warning.
+     * add to the status line: the categories and points that were changed, the achievements that could
+     * not be classified (added as GENERIC) and the guard warnings.
      *
      * @param {Array<{achievements: Array}>} scraped The read languages
      * @param {string|null} otherCategory The category of the Other Achievements table, null when the game was not detected
      * @return {string} The text, or '' when there is nothing to report
      */
     function reportInfo(scraped, otherCategory) {
-        const { info, added, changed, placeholders, pointsMismatches, guarded } = buildInfo(scraped);
+        const { info, added, changed, placeholders, pointsChanged, guarded, pointsGuarded } = buildInfo(scraped);
         const messages = [];
 
         if (!otherCategory) {
@@ -439,20 +454,22 @@
             messages.push(chrome.i18n.getMessage('achievementDbBuilderGameUnknown'));
         }
 
-        pointsMismatches.forEach(({ id, known, page }) => {
-            Logger.warn(`Achievement Database Builder: points of achievement ${id} differ (known ${known}, page ${page}): the known value is kept`);
-        });
-
-        if (added.length || changed.length) {
-            const rows = [...added, ...changed.map(item => item.id)]
+        if (added.length || changed.length || pointsChanged.length) {
+            const ids = new Set([...added, ...changed.map(item => item.id), ...pointsChanged.map(item => item.id)]);
+            const rows = Array.from(ids)
                 .sort((a, b) => a - b)
                 .map(id => `${id}: ${JSON.stringify(info.get(id))}`);
-            Logger.debug(`Achievement tracker info rows set from the Other Achievements table:\n${rows.join('\n')}`);
+            Logger.debug(`Achievement tracker info rows set from the pages:\n${rows.join('\n')}`);
         }
         if (changed.length) {
             const list = changed.map(({ id, from, to }) => `${id}: ${from} -> ${to}`).join(', ');
             Logger.warn(`Achievement Database Builder: categories changed: ${list}`);
             messages.push(chrome.i18n.getMessage('achievementDbBuilderCategoriesChanged', [String(changed.length), list]));
+        }
+        if (pointsChanged.length) {
+            const list = pointsChanged.map(({ id, from, to }) => `${id}: ${from} -> ${to}`).join(', ');
+            Logger.warn(`Achievement Database Builder: points changed: ${list}`);
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderPointsChanged', [String(pointsChanged.length), list]));
         }
         if (placeholders.length) {
             Logger.warn(`Achievement Database Builder: achievements not in the tracker data yet: ${placeholders.join(', ')}`);
@@ -461,6 +478,10 @@
         if (guarded) {
             Logger.warn('Achievement Database Builder: the Other Achievements table contradicts most of the known categories, no category was changed');
             messages.push(chrome.i18n.getMessage('achievementDbBuilderCategoryGuard'));
+        }
+        if (pointsGuarded) {
+            Logger.warn('Achievement Database Builder: the points of the page differ from the known ones for most achievements, no points were changed');
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderPointsGuard'));
         }
         return messages.join(' ');
     }

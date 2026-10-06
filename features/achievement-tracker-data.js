@@ -42,7 +42,7 @@ const ACHIEVEMENT_TRACKER_INFO = {
     124: ["PPM", 50], 125: ["PPM", 40], 126: ["PPM", 30], 127: ["PPM", 100], 128: ["GENERIC", 30], 129: ["GENERIC", 20],
     130: ["PASSIVE", 0], 131: ["PASSIVE", 10], 132: ["PASSIVE", 10], 133: ["PASSIVE", 10], 134: ["PASSIVE", 0], 135: ["PASSIVE", 0],
     136: ["PASSIVE", 0], 137: ["PPM", 30], 138: ["GENERIC", 20], 139: ["PASSIVE", 10], 140: ["GENERIC", 20], 141: ["PPM", 10],
-    142: ["PPM", 10], 143: ["PPM", 20], 144: ["PPM", 20], 145: ["PPM", 30], 146: ["PPM", 30], 147: ["GENERIC", 35],
+    142: ["PPM", 20], 143: ["PPM", 30], 144: ["PPM", 10], 145: ["PPM", 20], 146: ["PPM", 30], 147: ["GENERIC", 35],
     148: ["GENERIC", 40], 149: ["GENERIC", 45], 150: ["GENERIC", 50], 151: ["GENERIC", 55], 152: ["GENERIC", 60], 153: ["PPM", 10],
     154: ["PPM", 20], 155: ["PPM", 50], 156: ["PPM", 30], 157: ["PPM", 40], 158: ["PPM", 50], 159: ["PPM", 30],
     160: ["PPM", 30], 161: ["PPM", 20], 162: ["PPM", 50], 163: ["PPM", 100], 164: ["PPM", 100], 166: ["PPM", 100],
@@ -90,7 +90,7 @@ const ACHIEVEMENT_TRACKER_INFO = {
     413: ["GENERIC", 10], 414: ["GENERIC", 10], 415: ["GENERIC", 10], 416: ["GENERIC", 10], 417: ["GENERIC", 10], 418: ["GENERIC", 10],
     419: ["GENERIC", 10], 420: ["GENERIC", 20], 421: ["PASSIVE", 10], 422: ["GENERIC", 10], 423: ["GENERIC", 10], 424: ["GENERIC", 10],
     425: ["GENERIC", 10], 426: ["GENERIC", 10], 427: ["GENERIC", 10], 428: ["GENERIC", 10], 429: ["GENERIC", 10], 430: ["GENERIC", 10],
-    431: ["GENERIC", 10], 432: ["GENERIC", 10], 433: ["GENERIC", 10], 434: ["GENERIC", 10], 435: ["GENERIC", 10], 436: ["PASSIVE", 10],
+    431: ["GENERIC", 20], 432: ["GENERIC", 10], 433: ["GENERIC", 10], 434: ["GENERIC", 10], 435: ["GENERIC", 10], 436: ["PASSIVE", 10],
     437: ["PASSIVE", 10], 438: ["GENERIC", 10], 439: ["PASSIVE", 10], 440: ["PASSIVE", 10], 441: ["PASSIVE", 10], 443: ["PASSIVE", 10],
     444: ["GENERIC", 10]
 };
