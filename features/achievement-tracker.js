@@ -17,7 +17,7 @@
  * stored in `achievement_tracker_hidden_categories`.
  *
  * Data comes from features/achievement-tracker-data.js
- * (ACHIEVEMENT_TRACKER_DB, ACHIEVEMENT_TRACKER_EXCLUSIONS).
+ * (ACHIEVEMENT_TRACKER_INFO, ACHIEVEMENT_TRACKER_DB, ACHIEVEMENT_TRACKER_EXCLUSIONS).
  */
 (function () {
     'use strict';
@@ -29,6 +29,23 @@
     const ACHIEVEMENT_CLASS_RE = /\bAchievement_(\d+)\b/;
 
     const CATEGORIES = ['PPM', 'TGH', 'GENERIC', 'PASSIVE'];
+
+    // US English: the only language with achievement names for now, and the fallback for the others.
+    const FALLBACK_LANGUAGE_ID = 2;
+
+    /**
+     * Joins the language independent data and the names of the given language by achievement id.
+     * Ids without a name in that language fall back to the English one.
+     *
+     * @param {number} languageId Game language id.
+     * @return {Array<[number, string, string, number]>} Rows of [id, name, category, points].
+     */
+    function getAchievements(languageId) {
+        const names = ACHIEVEMENT_TRACKER_DB[languageId] || {};
+        const fallbackNames = ACHIEVEMENT_TRACKER_DB[FALLBACK_LANGUAGE_ID];
+        return Object.entries(ACHIEVEMENT_TRACKER_INFO).map(([id, [category, points]]) =>
+            [Number(id), names[id] ?? fallbackNames[id], category, points]);
+    }
 
     /**
      * Reads the ids of the achievements displayed on the page.
@@ -203,7 +220,7 @@
         if (!anchor) return;
 
         const owned = getOwnedIds();
-        const missing = ACHIEVEMENT_TRACKER_DB.filter(item => !owned.has(item[0]));
+        const missing = getAchievements(FALLBACK_LANGUAGE_ID).filter(item => !owned.has(item[0]));
         const box = buildBox(missing, owned, new Set(hiddenCategories));
 
         anchor.parentNode.insertBefore(box, anchor);
