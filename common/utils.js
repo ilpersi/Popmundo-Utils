@@ -860,10 +860,12 @@ class Utils {
     }
 
     /**
-     * Return true if the current character is playing the Great Heist
+     * Return true if the logged-in character is playing the Great Heist. This is read from the theme of
+     * the current page, so it describes the game of your own account and not the one of a character
+     * that you are viewing: for that, use parseCharacterGame().
      *
      * @static
-     * @return {Boolean} 
+     * @return {Boolean}
      * @memberof Utils
      */
     static isGreatHeist() {
@@ -872,7 +874,8 @@ class Utils {
     }
 
     /**
-     * Get a short code identifying the game flavor currently being played.
+     * Get a short code identifying the game flavor currently being played by the logged-in character
+     * (see isGreatHeist()).
      *
      * @static
      * @return {string} "tgh" for The Great Heist, "ppm" for Popmundo
@@ -880,6 +883,34 @@ class Utils {
      */
     static getGameCode() {
         return Utils.isGreatHeist() ? 'tgh' : 'ppm';
+    }
+
+    /**
+     * Get the game played by the character of a character page, whoever is logged in. Pure parser: works
+     * on the live document as well as on a DOMParser-built one.
+     *
+     * The main signal is the menu of the page, which is language independent: Popmundo characters have
+     * a Songs link, Great Heist ones have a Rap Sheet link. When that is not conclusive the "Game" row
+     * of the main info is used: its label is translated, but its value ("Popmundo" / "The Great Heist")
+     * is the same in every game language.
+     *
+     * @static
+     * @param {Document|Element} [contextNode=document] The parsed character page
+     * @return {string|null} "tgh" for The Great Heist, "ppm" for Popmundo, null when it cannot be told
+     * @memberof Utils
+     */
+    static parseCharacterGame(contextNode = document) {
+        const hasSongs = new CssSelectorHelper('a[href*="/Character/Songs/"]').getSingle(contextNode) !== null;
+        const hasRapSheet = new CssSelectorHelper('a[href*="/Character/RapSheet/"]').getSingle(contextNode) !== null;
+        if (hasSongs !== hasRapSheet) return hasRapSheet ? 'tgh' : 'ppm';
+
+        // The first row of the main info is "<strong>Game:</strong> <value>"
+        const gameCell = new CssSelectorHelper('.charMainInfo tr td').getSingle(contextNode);
+        if (!gameCell) return null;
+        const label = new CssSelectorHelper('strong').getSingle(gameCell);
+        const value = gameCell.textContent.replace(label ? label.textContent : '', '').trim();
+        if (!value) return null;
+        return /popmundo/i.test(value) ? 'ppm' : 'tgh';
     }
 }
 

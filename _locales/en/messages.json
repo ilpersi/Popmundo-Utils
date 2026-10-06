@@ -2263,14 +2263,30 @@
         "description": "Button of the developer-only achievement database builder box"
     },
     "achievementDbBuilderProgress": {
-        "message": "Reading the achievements of character $ID$...",
-        "description": "Progress shown while the achievement database builder reads the achievements page",
+        "message": "Reading the achievements of character $ID$ ($GAME$)...",
+        "description": "Progress shown while the achievement database builder reads the achievements page, with the game of the character",
         "placeholders": {
             "id": {
                 "content": "$1",
                 "example": "3436235"
+            },
+            "game": {
+                "content": "$2",
+                "example": "Popmundo"
             }
         }
+    },
+    "achievementDbBuilderGamePpm": {
+        "message": "Popmundo",
+        "description": "Name of the Popmundo game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameTgh": {
+        "message": "The Great Heist",
+        "description": "Name of the Great Heist game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameNone": {
+        "message": "game not detected",
+        "description": "Shown by the achievement database builder instead of the game name when the game of the character cannot be detected"
     },
     "achievementDbBuilderDone": {
         "message": "Done: $COUNT$ achievements for $LANGUAGE$ (id $ID$). The database entry is in the debug log and in the console.",
@@ -2362,7 +2378,7 @@
             },
             "detail": {
                 "content": "$4",
-                "example": "Reading the achievements of character 3436235..."
+                "example": "Reading the achievements of character 3436235 (Popmundo)..."
             }
         }
     },
@@ -2433,5 +2449,9 @@
     "achievementDbBuilderCategoryGuard": {
         "message": "Warning: the Other Achievements table contradicts the known category of most of its achievements, so the game of this character was probably detected wrong. No category was changed.",
         "description": "Shown when the achievement database builder does not trust the game detected for the character and leaves the categories unchanged"
+    },
+    "achievementDbBuilderGameUnknown": {
+        "message": "Warning: the game of this character could not be detected, so no category was set from the Other Achievements table.",
+        "description": "Shown when the achievement database builder cannot tell if the character plays Popmundo or The Great Heist and leaves the categories unchanged"
     }
 }

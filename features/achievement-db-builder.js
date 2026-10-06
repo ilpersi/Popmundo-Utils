@@ -17,7 +17,8 @@
  *
  * The page has no category, but its "Other Achievements" table lists the achievements earned in
  * the other game, which are exclusive to it: TGH for a Popmundo character, PPM for a Great Heist
- * one (see Utils.isGreatHeist()). They set (or fix) the category in ACHIEVEMENT_TRACKER_INFO,
+ * one (the game of the character comes from its character page, see Utils.parseCharacterGame()).
+ * They set (or fix) the category in ACHIEVEMENT_TRACKER_INFO,
  * unless they contradict most of the known data, which means the game was detected wrong. Other
  * ids that are not in ACHIEVEMENT_TRACKER_INFO yet are added as GENERIC and reported.
  *
@@ -36,6 +37,7 @@
     const CHARACTER_ID_RE = /\/Achievements\/(\d+)/;
     const BOX_ID = 'pm-achievement-db-builder';
     const ACHIEVEMENTS_PATH = '/World/Popmundo.aspx/Character/Achievements';
+    const CHARACTER_PATH = '/World/Popmundo.aspx/Character';
     const ORIGINAL_LANGUAGE_KEY = DbBuilderHelper.ORIGINAL_LANGUAGE_KEY;
     const LANGUAGE_SETTINGS_PATH = DbBuilderHelper.LANGUAGE_SETTINGS_PATH;
     const DOWNLOAD_FILE_NAME = 'achievement-tracker-data.generated.js';
@@ -85,14 +87,47 @@
     }
 
     /**
-     * Gets the category of the achievements shown in the "Other Achievements" table: they belong to
-     * the game the character does not play. Asked to the live page, because Utils.isGreatHeist()
-     * reads the current document: every page read in a run is about the same character.
+     * Reads the game played by a character from its character page (not from the logged-in account,
+     * which is what Utils.isGreatHeist() describes). It does not change with the game language, so it
+     * is asked once per run.
      *
-     * @return {string} 'TGH' for a Popmundo character, 'PPM' for a Great Heist one
+     * @param {number} characterId
+     * @return {Promise<string|null>} 'ppm' for Popmundo, 'tgh' for The Great Heist, null when it cannot be told
      */
-    function getOtherGameCategory() {
-        return Utils.isGreatHeist() ? 'PPM' : 'TGH';
+    async function detectCharacterGame(characterId) {
+        let game = null;
+        try {
+            game = Utils.parseCharacterGame(await fetchDocument(`${CHARACTER_PATH}/${characterId}`));
+        } catch (error) {
+            Logger.warn(`Achievement Database Builder: unable to read the game of character ${characterId}`, error);
+        }
+        Logger.debug(`Achievement Database Builder: the game of character ${characterId} is ${game || 'unknown'}`);
+        return game;
+    }
+
+    /**
+     * Gets the category of the achievements shown in the "Other Achievements" table: they belong to the
+     * game the character does not play.
+     *
+     * @param {string|null} game The game of the character, as returned by detectCharacterGame()
+     * @return {string|null} 'TGH' for a Popmundo character, 'PPM' for a Great Heist one, null when the game is unknown
+     */
+    function getOtherGameCategory(game) {
+        if (game === 'ppm') return 'TGH';
+        if (game === 'tgh') return 'PPM';
+        return null;
+    }
+
+    /**
+     * Gets the name of a game to show in the progress messages.
+     *
+     * @param {string|null} game The game of the character, as returned by detectCharacterGame()
+     * @return {string}
+     */
+    function describeGame(game) {
+        if (game === 'ppm') return chrome.i18n.getMessage('achievementDbBuilderGamePpm');
+        if (game === 'tgh') return chrome.i18n.getMessage('achievementDbBuilderGameTgh');
+        return chrome.i18n.getMessage('achievementDbBuilderGameNone');
     }
 
     /**
@@ -140,14 +175,14 @@
      * Reads the achievements of a character in the current game language.
      *
      * @param {number} characterId
-     * @param {string} otherCategory The category of the "Other Achievements" table
+     * @param {string|null} game The game of the character, as returned by detectCharacterGame()
      * @param {function(string): void} onProgress Called with the progress message
      * @return {Promise<Array<{id: number, name: string, points: number, category: string|null}>>}
      * @throws {Error} When no achievement is found on the page
      */
-    async function crawlLanguage(characterId, otherCategory, onProgress) {
-        onProgress(chrome.i18n.getMessage('achievementDbBuilderProgress', [String(characterId)]));
-        const achievements = readAchievements(await fetchDocument(`${ACHIEVEMENTS_PATH}/${characterId}`), otherCategory);
+    async function crawlLanguage(characterId, game, onProgress) {
+        onProgress(chrome.i18n.getMessage('achievementDbBuilderProgress', [String(characterId), describeGame(game)]));
+        const achievements = readAchievements(await fetchDocument(`${ACHIEVEMENTS_PATH}/${characterId}`), getOtherGameCategory(game));
         if (!achievements.length) throw new Error(chrome.i18n.getMessage('achievementDbBuilderNoRows'));
         return achievements;
     }
@@ -392,11 +427,17 @@
      * classified (added as GENERIC) and the guard warning.
      *
      * @param {Array<{achievements: Array}>} scraped The read languages
+     * @param {string|null} otherCategory The category of the Other Achievements table, null when the game was not detected
      * @return {string} The text, or '' when there is nothing to report
      */
-    function reportInfo(scraped) {
+    function reportInfo(scraped, otherCategory) {
         const { info, added, changed, placeholders, pointsMismatches, guarded } = buildInfo(scraped);
         const messages = [];
+
+        if (!otherCategory) {
+            Logger.warn('Achievement Database Builder: the game of the character could not be detected, no category was set from the Other Achievements table');
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderGameUnknown'));
+        }
 
         pointsMismatches.forEach(({ id, known, page }) => {
             Logger.warn(`Achievement Database Builder: points of achievement ${id} differ (known ${known}, page ${page}): the known value is kept`);
@@ -437,13 +478,14 @@
             return;
         }
 
-        const achievements = await crawlLanguage(characterId, getOtherGameCategory(), message => { status.textContent = message; });
+        const game = await detectCharacterGame(characterId);
+        const achievements = await crawlLanguage(characterId, game, message => { status.textContent = message; });
         const names = new Map(achievements.map(({ id, name }) => [id, name]));
         Logger.debug(`Achievement database for ${language.name} (id ${language.id}):\n${formatNamesEntry(language, names)}`);
 
         status.textContent = chrome.i18n.getMessage('achievementDbBuilderDone',
             [String(achievements.length), language.name, String(language.id)]);
-        const infoReport = reportInfo([{ achievements }]);
+        const infoReport = reportInfo([{ achievements }], getOtherGameCategory(game));
         if (infoReport) status.textContent += ' ' + infoReport;
     }
 
@@ -475,12 +517,13 @@
         }
 
         const characterId = getCharacterId();
-        const otherCategory = getOtherGameCategory();
         const original = await Utils.getGameLanguage();
         if (!original) {
             status.textContent = chrome.i18n.getMessage('achievementDbBuilderNoLanguage');
             return;
         }
+
+        const game = await detectCharacterGame(characterId);
 
         downloadButton.style.display = 'none';
         const results = [];
@@ -496,7 +539,7 @@
                 try {
                     status.textContent = prefix('...');
                     await switchLanguage(language.id);
-                    const achievements = await crawlLanguage(characterId, otherCategory, message => { status.textContent = prefix(message); });
+                    const achievements = await crawlLanguage(characterId, game, message => { status.textContent = prefix(message); });
                     Logger.debug(`Achievement database for ${language.name} (id ${language.id}):\n${formatNamesEntry(language, new Map(achievements.map(({ id, name }) => [id, name])))}`);
                     results.push({ id: language.id, name: language.name, achievements });
                 } catch (error) {
@@ -529,7 +572,7 @@
             status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderLanguagesFailed',
                 [failedLanguages.join(', ')]);
         }
-        const infoReport = reportInfo(results);
+        const infoReport = reportInfo(results, getOtherGameCategory(game));
         if (infoReport) status.textContent += ' ' + infoReport;
     }
 
