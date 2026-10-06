@@ -30,7 +30,7 @@
 
     const CATEGORIES = ['PPM', 'TGH', 'GENERIC', 'PASSIVE'];
 
-    // US English: the only language with achievement names for now, and the fallback for the others.
+    // US English: used when the user language cannot be determined, and for the names missing in it.
     const FALLBACK_LANGUAGE_ID = 2;
 
     /**
@@ -208,19 +208,27 @@
     }
 
     /**
-     * Injects the tracker box right before the owned achievements table.
+     * Injects the tracker box right before the owned achievements table, with the
+     * achievement names in the user's game language.
      *
      * @param {string[]} hiddenCategories
+     * @return {Promise<void>}
      */
-    function injectTracker(hiddenCategories) {
+    async function injectTracker(hiddenCategories) {
         if (new CssSelectorHelper(`#${BOX_ID}`).getSingle()) return;
 
         const anchor = new CssSelectorHelper(TABLE_WRAPPER_SELECTOR).getSingle()
             || new CssSelectorHelper(TABLE_SELECTOR).getSingle();
         if (!anchor) return;
 
+        const language = await Utils.getGameLanguage();
+
+        // The box may have been injected while we were waiting for the language
+        if (new CssSelectorHelper(`#${BOX_ID}`).getSingle()) return;
+
         const owned = getOwnedIds();
-        const missing = getAchievements(FALLBACK_LANGUAGE_ID).filter(item => !owned.has(item[0]));
+        const missing = getAchievements(language ? language.id : FALLBACK_LANGUAGE_ID)
+            .filter(item => !owned.has(item[0]));
         const box = buildBox(missing, owned, new Set(hiddenCategories));
 
         anchor.parentNode.insertBefore(box, anchor);
@@ -232,7 +240,8 @@
     }, function (items) {
         if (!items.achievement_tracker_enable) return;
 
-        const run = () => injectTracker(items.achievement_tracker_hidden_categories);
+        const run = () => injectTracker(items.achievement_tracker_hidden_categories)
+            .catch(e => Logger.warn('Unable to inject the achievement tracker', e));
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', run);
         } else {
