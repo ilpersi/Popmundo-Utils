@@ -775,6 +775,10 @@
         "message": "Enable Item Category Database Builder",
         "description": "Label for the checkbox that shows the Item Category Database Builder box in the shop page"
     },
+    "optDevAchievementDbBuilder": {
+        "message": "Enable Achievement Database Builder",
+        "description": "Label for the checkbox that shows the Achievement Database Builder box in the character achievements page"
+    },
     "optDevLogLevel": {
         "message": "Log Level",
         "description": "Label for the log level select in the developer section"
@@ -2245,5 +2249,189 @@
     "itemCategoryDbBuilderRestoreFailed": {
         "message": "Unable to restore your original game language: use the Restore language button or set it in the language settings.",
         "description": "Error shown when the item category database builder cannot restore the game language"
+    },
+    "achievementDbBuilderTitle": {
+        "message": "Achievement Database Builder (developer)",
+        "description": "Title of the developer-only box that builds the achievement tracker database"
+    },
+    "achievementDbBuilderInfo": {
+        "message": "Reads the achievements shown on this page in the current game language and prints the database entry in the debug log, ready to be pasted in achievement-tracker-data.js.",
+        "description": "Introductory line of the developer-only achievement database builder box"
+    },
+    "achievementDbBuilderButton": {
+        "message": "Build database",
+        "description": "Button of the developer-only achievement database builder box"
+    },
+    "achievementDbBuilderProgress": {
+        "message": "Reading the achievements of character $ID$...",
+        "description": "Progress shown while the achievement database builder reads the achievements page",
+        "placeholders": {
+            "id": {
+                "content": "$1",
+                "example": "3436235"
+            }
+        }
+    },
+    "achievementDbBuilderDone": {
+        "message": "Done: $COUNT$ achievements for $LANGUAGE$ (id $ID$). The database entry is in the debug log and in the console.",
+        "description": "Shown when the achievement database builder has finished",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "313"
+            },
+            "language": {
+                "content": "$2",
+                "example": "US English"
+            },
+            "id": {
+                "content": "$3",
+                "example": "2"
+            }
+        }
+    },
+    "achievementDbBuilderNewIds": {
+        "message": "Warning: $COUNT$ achievements are not in the tracker data yet and were added as GENERIC, check their category: $IDS$",
+        "description": "Shown when the achievement database builder found achievements that are missing from the language independent data",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "445, 446"
+            }
+        }
+    },
+    "achievementDbBuilderNoRows": {
+        "message": "No achievements found on the page.",
+        "description": "Error shown by the achievement database builder when the achievements table is empty or missing"
+    },
+    "achievementDbBuilderNoLanguage": {
+        "message": "Unable to determine the game language.",
+        "description": "Error shown by the achievement database builder when the game language cannot be retrieved"
+    },
+    "achievementDbBuilderAllTitle": {
+        "message": "All languages",
+        "description": "Title of the section of the developer-only achievement database builder that handles several languages"
+    },
+    "achievementDbBuilderAllInfo": {
+        "message": "For each selected language the language of your account is switched, and it is restored at the end. This affects every open Popmundo tab until the run finishes. Languages marked with * are inactive. Only the achievements owned by this character can be read.",
+        "description": "Explanation shown above the language checklist of the achievement database builder"
+    },
+    "achievementDbBuilderBuildAll": {
+        "message": "Build selected languages",
+        "description": "Button that builds the achievement database for the selected languages"
+    },
+    "achievementDbBuilderDownload": {
+        "message": "Download database file",
+        "description": "Button that downloads the generated achievement database as a JavaScript file"
+    },
+    "achievementDbBuilderRestore": {
+        "message": "Restore language",
+        "description": "Button that restores the game language after an interrupted achievement database build"
+    },
+    "achievementDbBuilderRestoreInfo": {
+        "message": "A previous run was interrupted before your game language was restored.",
+        "description": "Warning shown by the achievement database builder after an interrupted multi-language run"
+    },
+    "achievementDbBuilderLoadingLanguages": {
+        "message": "Loading languages...",
+        "description": "Shown while the achievement database builder reads the available game languages"
+    },
+    "achievementDbBuilderNoneSelected": {
+        "message": "Select at least one language.",
+        "description": "Shown when the achievement database builder is started without any selected language"
+    },
+    "achievementDbBuilderLanguageProgress": {
+        "message": "Language $LANGUAGE$ ($CURRENT$/$TOTAL$): $DETAIL$",
+        "description": "Progress shown while the achievement database builder reads several languages",
+        "placeholders": {
+            "language": {
+                "content": "$1",
+                "example": "Italian"
+            },
+            "current": {
+                "content": "$2",
+                "example": "3"
+            },
+            "total": {
+                "content": "$3",
+                "example": "19"
+            },
+            "detail": {
+                "content": "$4",
+                "example": "Reading the achievements of character 3436235..."
+            }
+        }
+    },
+    "achievementDbBuilderAllDone": {
+        "message": "Done: $COUNT$ languages are ready to download (ids: $IDS$). The language of your account has been restored.",
+        "description": "Shown when the achievement database builder has finished reading several languages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "19"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "2, 19"
+            }
+        }
+    },
+    "achievementDbBuilderLanguagesFailed": {
+        "message": "Languages that could not be read and were left out: $NAMES$",
+        "description": "Shown when some languages failed while the achievement database builder was running",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "achievementDbBuilderSkipKnown": {
+        "message": "Skip already known languages",
+        "description": "Checkbox of the achievement database builder: languages already present in the database are not read again"
+    },
+    "achievementDbBuilderMerge": {
+        "message": "Merge data",
+        "description": "Checkbox of the achievement database builder: the downloaded file includes the existing database, completed by the newly read names"
+    },
+    "achievementDbBuilderAllKnown": {
+        "message": "All the selected languages are already in the database: nothing to read.",
+        "description": "Shown when the achievement database builder skips every selected language because they are already known"
+    },
+    "achievementDbBuilderLanguagesSkipped": {
+        "message": "Skipped (already known): $NAMES$.",
+        "description": "Shown when the achievement database builder skipped some languages because they are already known",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "US English, Turkish"
+            }
+        }
+    },
+    "achievementDbBuilderRestoreFailed": {
+        "message": "Unable to restore your original game language: use the Restore language button or set it in the language settings.",
+        "description": "Error shown when the achievement database builder cannot restore the game language"
+    },
+    "achievementDbBuilderCategoriesChanged": {
+        "message": "Category changed for $COUNT$ achievements because they are in the Other Achievements table, check them: $CHANGES$",
+        "description": "Shown when the achievement database builder changed the category of known achievements, according to the Other Achievements table",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "changes": {
+                "content": "$2",
+                "example": "33: GENERIC -> TGH, 73: PPM -> TGH"
+            }
+        }
+    },
+    "achievementDbBuilderCategoryGuard": {
+        "message": "Warning: the Other Achievements table contradicts the known category of most of its achievements, so the game of this character was probably detected wrong. No category was changed.",
+        "description": "Shown when the achievement database builder does not trust the game detected for the character and leaves the categories unchanged"
     }
 }

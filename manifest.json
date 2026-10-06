@@ -124,8 +124,10 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/Achievements/*"
             ],
             "js": [
+                "common/db-builder-helper.js",
                 "features/achievement-tracker-data.js",
-                "features/achievement-tracker.js"
+                "features/achievement-tracker.js",
+                "features/achievement-db-builder.js"
             ]
         },
         {
@@ -142,6 +144,7 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/ShoppingAssistant*"
             ],
             "js": [
+                "common/db-builder-helper.js",
                 "features/item-category-db-builder.js"
             ]
         },

@@ -17,13 +17,9 @@
 
     const CATEGORY_SELECT_SELECTOR = 'select[id$="_ddlShopItemCategories"]';
     const ITEM_TYPE_OPTIONS_SELECTOR = 'select[id$="_ddlShopItemTypes"] option';
-    const LANGUAGE_SELECT_SELECTOR = 'select[id$="ddlLanguage"]';
-    const LANGUAGE_SAVE_BUTTON_SELECTOR = 'input[id$="btnSetLocale"]';
     const BOX_ID = 'pm-item-category-db-builder';
     const SHOPPING_ASSISTANT_PATH = '/World/Popmundo.aspx/Character/ShoppingAssistant';
-    const LANGUAGE_SETTINGS_PATH = '/User/Popmundo.aspx/User/LanguageSettings';
-    // chrome.storage.local key holding the language to restore if a multi-language run is interrupted
-    const ORIGINAL_LANGUAGE_KEY = 'ics_db_builder_original_language';
+    const ORIGINAL_LANGUAGE_KEY = DbBuilderHelper.ORIGINAL_LANGUAGE_KEY;
     const DOWNLOAD_FILE_NAME = 'item-category-searcher-data.generated.js';
     const DATA_FILE_HEADER = [
         '/**',
@@ -44,18 +40,10 @@
         '// eslint-disable-next-line no-unused-vars',
     ];
 
-    /**
-     * Creates an element with optional text content.
-     *
-     * @param {string} tag
-     * @param {string} [text]
-     * @return {HTMLElement}
-     */
-    function el(tag, text) {
-        const node = document.createElement(tag);
-        if (text !== undefined) node.textContent = text;
-        return node;
-    }
+    const { el, createButton, fetchDocument, readLanguages, switchLanguage, restoreLanguage, downloadTextFile } = DbBuilderHelper;
+    const runExclusive = (buttons, status, action) =>
+        DbBuilderHelper.runExclusive(buttons, status, action, 'Item Category Database Builder');
+    const LANGUAGE_SETTINGS_PATH = DbBuilderHelper.LANGUAGE_SETTINGS_PATH;
 
     /**
      * Finds the innermost div.box containing the given node.
@@ -66,85 +54,6 @@
     function getContainingBox(node) {
         const boxes = Array.from(new CssSelectorHelper('div.box').getAll()).filter(box => box.contains(node));
         return boxes.length ? boxes[boxes.length - 1] : null;
-    }
-
-    /**
-     * Fetches a game page (never from cache) and parses it.
-     *
-     * @param {string} path Page path on the current server
-     * @param {Object} [options] fetch options
-     * @return {Promise<Document>}
-     */
-    async function fetchDocument(path, options = {}) {
-        const html = await new TimedFetch().fetch(Utils.getServerLink(path), options, false);
-        return new DOMParser().parseFromString(html, 'text/html');
-    }
-
-    // ── Language switching ─────────────────────────────────────────────────
-
-    /**
-     * Reads the languages offered by the language settings page.
-     *
-     * @param {Document} doc The parsed language settings page
-     * @return {{languages: Array<{id: number, name: string, active: boolean}>, currentId: number|null}}
-     */
-    function readLanguages(doc) {
-        const select = new CssSelectorHelper(LANGUAGE_SELECT_SELECTOR).getSingle(doc);
-        if (!select) return { languages: [], currentId: null };
-
-        const languages = Array.from(new CssSelectorHelper('option').getAll(select)).map(option => ({
-            id: parseInt(option.value),
-            // "(Inactive)" is how the English game marks languages that are not maintained anymore
-            name: option.text.replace(/\s*\(Inactive\)\s*$/i, '').trim(),
-            active: !/\(Inactive\)/i.test(option.text),
-        }));
-        const selected = new CssSelectorHelper('option:checked').getSingle(select)
-            || new CssSelectorHelper('option[selected]').getSingle(select);
-        return { languages, currentId: selected ? parseInt(selected.value) : null };
-    }
-
-    /**
-     * Switches the language of the account using the form of the language settings page.
-     * Does nothing when the language is already the requested one. The result is verified
-     * by reading the settings page again.
-     *
-     * @param {number} languageId
-     * @return {Promise<{id: number, name: string}>} The language set after the switch, with its localized name
-     * @throws {Error} When the language could not be set
-     */
-    async function switchLanguage(languageId) {
-        const doc = await fetchDocument(LANGUAGE_SETTINGS_PATH);
-        const select = new CssSelectorHelper(LANGUAGE_SELECT_SELECTOR).getSingle(doc);
-        const saveButton = new CssSelectorHelper(LANGUAGE_SAVE_BUTTON_SELECTOR).getSingle(doc);
-        const form = select && select.closest('form');
-        if (!form || !saveButton) throw new Error('Language settings form not found');
-
-        if (readLanguages(doc).currentId !== languageId) {
-            const body = new URLSearchParams(new FormData(form));
-            body.set(select.name, String(languageId));
-            body.set(saveButton.name, saveButton.value);
-            await new TimedFetch().fetch(Utils.getServerLink(LANGUAGE_SETTINGS_PATH), { method: 'POST', body }, false);
-        }
-
-        const verifyDoc = await fetchDocument(LANGUAGE_SETTINGS_PATH);
-        const verifySelect = new CssSelectorHelper(LANGUAGE_SELECT_SELECTOR).getSingle(verifyDoc);
-        const selected = verifySelect && (new CssSelectorHelper('option:checked').getSingle(verifySelect)
-            || new CssSelectorHelper('option[selected]').getSingle(verifySelect));
-        if (!selected || parseInt(selected.value) !== languageId) {
-            throw new Error(`Unable to switch the game language to ${languageId}`);
-        }
-        return { id: languageId, name: selected.text.trim() };
-    }
-
-    /**
-     * Restores the language saved before a multi-language run, and refreshes the language cache.
-     *
-     * @param {number} languageId
-     */
-    async function restoreLanguage(languageId) {
-        const language = await switchLanguage(languageId);
-        await Utils.setGameLanguage(language);
-        await chrome.storage.local.remove(ORIGINAL_LANGUAGE_KEY);
     }
 
     // ── Reading the shop data ──────────────────────────────────────────────
@@ -287,57 +196,7 @@
         return formatDatabaseFile(Array.from(entriesById, ([id, entry]) => ({ id, entry })));
     }
 
-    /**
-     * Saves a text as a file through a temporary download link.
-     *
-     * @param {string} fileName
-     * @param {string} content
-     */
-    function downloadTextFile(fileName, content) {
-        const url = URL.createObjectURL(new Blob([content], { type: 'text/javascript;charset=utf-8' }));
-        const link = el('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
     // ── UI ─────────────────────────────────────────────────────────────────
-
-    /**
-     * Creates a button.
-     *
-     * @param {string} label
-     * @return {HTMLInputElement}
-     */
-    function createButton(label) {
-        const button = el('input');
-        button.type = 'button';
-        button.className = 'round';
-        button.value = label;
-        return button;
-    }
-
-    /**
-     * Runs an async action with the buttons disabled and the failures shown in the status line.
-     *
-     * @param {HTMLInputElement[]} buttons
-     * @param {HTMLElement} status
-     * @param {function(): Promise<void>} action
-     */
-    async function runExclusive(buttons, status, action) {
-        buttons.forEach(button => { button.disabled = true; });
-        try {
-            await action();
-        } catch (error) {
-            Logger.error('Item Category Database Builder failed', error);
-            status.textContent = String(error && error.message || error);
-        } finally {
-            buttons.forEach(button => { button.disabled = false; });
-        }
-    }
 
     /**
      * Builds the entry for the current game language and prints it in the debug log.
