@@ -43,6 +43,55 @@ class CssSelectorHelper {
     }
 
     /**
+     * Finds the closest ancestor (or the node itself) matching the CSS selector
+     * @param {Element|null} startNode The element where the upward traversal starts
+     * @return {Element|null} The matching element or null if there is no match or startNode is null
+     */
+    getClosest(startNode) {
+        this.#results = startNode ? startNode.closest(this.#selector) : null;
+        return this.#results;
+    }
+
+    /**
+     * Checks if at least one node matches the CSS selector
+     * @param {Document|Element} [contextNodeOverride] An optional node to use instead of the constructor's context node
+     * @return {boolean}
+     */
+    exists(contextNodeOverride) {
+        return this.getSingle(contextNodeOverride) !== null;
+    }
+
+    /**
+     * Finds all nodes matching the CSS selector and returns them as a real Array
+     * @param {Document|Element} [contextNodeOverride] An optional node to use instead of the constructor's context node
+     * @return {Element[]}
+     */
+    getAllArray(contextNodeOverride) {
+        return Array.from(this.getAll(contextNodeOverride));
+    }
+
+    /**
+     * Reads an attribute from the first node matching the CSS selector
+     * @param {string} name The attribute name
+     * @param {Document|Element} [contextNodeOverride] An optional node to use instead of the constructor's context node
+     * @return {string|null} The attribute value, or null if there is no match or the attribute is missing
+     */
+    getAttribute(name, contextNodeOverride) {
+        const node = this.getSingle(contextNodeOverride);
+        return node ? node.getAttribute(name) : null;
+    }
+
+    /**
+     * Reads the trimmed text content of the first node matching the CSS selector
+     * @param {Document|Element} [contextNodeOverride] An optional node to use instead of the constructor's context node
+     * @return {string|null} The trimmed text, or null if there is no match
+     */
+    getText(contextNodeOverride) {
+        const node = this.getSingle(contextNodeOverride);
+        return node ? node.textContent.trim() : null;
+    }
+
+    /**
      * Formats a single DOM node as a compact human-readable string.
      * Element nodes are rendered as <tag#id.class> "text…".
      * Text nodes are rendered as #text "content…".
