@@ -1,0 +1,2644 @@
+{
+    "extName": {
+        "message": "Popmundo Utils",
+        "description": "Extension name"
+    },
+    "extDescription": {
+        "message": "Popmundo için çeşitli yardımcı araçlar",
+        "description": "Extension description shown in the browser extension list"
+    },
+    "optPageTitle": {
+        "message": "Popmundo Utils Seçenekleri",
+        "description": "Title of the options page tab"
+    },
+    "optSaveButton": {
+        "message": "Kaydet",
+        "description": "Options page save button label"
+    },
+    "optSaved": {
+        "message": "Seçenekler kaydedildi.",
+        "description": "Status message shown after saving options"
+    },
+    "optBrandTag": {
+        "message": "Ayarlar",
+        "description": "Tag shown under the Popmundo Utils brand name in the options sidebar"
+    },
+    "optThemeToggleLight": {
+        "message": "Koyu temaya geç",
+        "description": "Tooltip on the theme toggle button while the page is in light mode"
+    },
+    "optThemeToggleDark": {
+        "message": "Açık temaya geç",
+        "description": "Tooltip on the theme toggle button while the page is in dark mode"
+    },
+    "navGottaGoFast": {
+        "message": "İmza Toplayıcı",
+        "description": "Sidebar navigation label for the Autograph Collector section"
+    },
+    "navCallAllFriends": {
+        "message": "Tüm Arkadaşları Ara",
+        "description": "Sidebar navigation label for the Call All Friends section"
+    },
+    "navEnhancedLinks": {
+        "message": "Gelişmiş Bağlantılar",
+        "description": "Sidebar navigation label for the Enhanced Links section"
+    },
+    "navMassInteract": {
+        "message": "Toplu Etkileşim",
+        "description": "Sidebar navigation label for the Mass Interact section"
+    },
+    "navMiscOptions": {
+        "message": "Çeşitli Seçenekler",
+        "description": "Sidebar navigation label for the Misc Options section"
+    },
+    "navPopupOptions": {
+        "message": "Açılır Pencere Seçenekleri",
+        "description": "Sidebar navigation label for the Popup Options section"
+    },
+    "navTourBusHelper": {
+        "message": "Tur Otobüsü Yardımcısı",
+        "description": "Sidebar navigation label for the Tour Bus Helper section"
+    },
+    "optGGFDescription": {
+        "message": "İmza Toplayıcı özelliğinin seçenekleri.",
+        "description": "Autograph Collector section description"
+    },
+    "optGGFGroupDisplay": {
+        "message": "Genel",
+        "description": "Autograph Collector general section"
+    },
+    "optGGFCollectAutograph": {
+        "message": "İmza toplamayı etkinleştir",
+        "description": "Label for the enable/disable toggle of the Gotta Go Fast feature"
+    },
+    "optGGFCollectAutographScroll": {
+        "message": "Görünümü günlüğün son satırına kaydır.",
+        "description": "Label for the autograph book scroll to last line option"
+    },
+    "optGGFAutographBookName": {
+        "message": "İmza defteri eşya adı",
+        "description": "Label for the autograph book item name field"
+    },
+    "optGGFAutographBookNameTooltip": {
+        "message": "İmza defterinin oyundaki eşya adı (kendi dilinizde).",
+        "description": "Tooltip for the autograph book item name field"
+    },
+    "optGGFAutographBookNamePlaceholder": {
+        "message": "ör. İmza Defteri",
+        "description": "Placeholder for the autograph book item name field"
+    },
+    "optGGFAutographLogMaxRows": {
+        "message": "Günlük En Fazla Satır",
+        "description": "Log Max Rows label"
+    },
+    "optGGFAutographLogMaxRowsTooltip": {
+        "message": "Günlükte tutulacak en fazla satır sayısı. Sınırsız satır için sıfır girin.",
+        "description": "Tooltip for Autograph collector max rows"
+    },
+    "optGGFGroupKeepAlive": {
+        "message": "Oturumu Açık Tut",
+        "description": "Keep-alive options group title in Autograph Collector settings"
+    },
+    "optGGFKeepAlive": {
+        "message": "Oturumu açık tutmak için sayfayı yeniden yüklemeyi etkinleştir",
+        "description": "Label for the keep-alive toggle in Autograph Collector settings"
+    },
+    "optGGFKeepAliveTooltip": {
+        "message": "Uzun toplama işlemleri sırasında oyunun oturumunuzu kapatmasını önlemek için sayfayı düzenli aralıklarla yeniden yükler.",
+        "description": "Tooltip for the keep-alive toggle"
+    },
+    "optGGFKeepAliveInterval": {
+        "message": "Yeniden yükleme aralığı (dakika)",
+        "description": "Label for the keep-alive interval field"
+    },
+    "optGGFKeepAliveIntervalTooltip": {
+        "message": "Oturumu açık tutmak için sayfanın ne sıklıkla yeniden yükleneceği. En az 5 dakika.",
+        "description": "Tooltip for the keep-alive interval field"
+    },
+    "optCafTitle": {
+        "message": "Tüm Arkadaşları Ara",
+        "description": "Call All Friends section card title"
+    },
+    "optCafDescription": {
+        "message": "Kullanılacak telefon etkileşimlerini seçin. Sistem, işaretli olanlar ile her arkadaş için mevcut olanlar arasından rastgele seçim yapar.",
+        "description": "Call All Friends section description"
+    },
+    "optCafGroupGeneral": {
+        "message": "Genel",
+        "description": "Category label for general Call All Friends options"
+    },
+    "optCafEnable": {
+        "message": "Tüm Arkadaşları Ara'yı etkinleştir",
+        "description": "Label for the enable Call All Friends toggle"
+    },
+    "optCafHideNotifications": {
+        "message": "Aramalardan sonra oyun içi bildirimleri gizle",
+        "description": "Label for the toggle that silently dismisses queued in-game notification banners after a Call All Friends run"
+    },
+    "optCafHideNotificationsTooltip": {
+        "message": "Etkinleştirildiğinde (varsayılan), aramaların oluşturduğu oyun içi bildirim şeritleri (ilişki değişiklikleri, dedikodular vb.) sayfa temiz kalsın diye sessizce kapatılır. Devre dışı bırakıldığında, bu şeritler bir sonraki gezinmenizde sayfanın üstünde görünür.",
+        "description": "Tooltip for the hide in-game notifications toggle in Call All Friends"
+    },
+    "optCafGroupInteractions": {
+        "message": "Etkileşim Türleri",
+        "description": "Category label for call interaction type checkboxes"
+    },
+    "optCafWazzup": {
+        "message": "\"Naber?\" araması",
+        "description": "Label for the Wazzup call option"
+    },
+    "optCafPrank": {
+        "message": "Şaka araması",
+        "description": "Label for the Prank call option"
+    },
+    "optCafSmsPic": {
+        "message": "Komik fotoğraflı SMS",
+        "description": "Label for the SMS Funny Pic option"
+    },
+    "optCafSmsTxt": {
+        "message": "Samimi metinli SMS",
+        "description": "Label for the SMS Friendly Text option"
+    },
+    "optCafGossip": {
+        "message": "Telefonda dedikodu",
+        "description": "Label for the Gossip on phone option"
+    },
+    "optCafGroupExclusions": {
+        "message": "Hariç Tutulanlar",
+        "description": "Category label for call exclusion settings"
+    },
+    "optCafExcludedChars": {
+        "message": "Hariç Tutulan Karakterler",
+        "description": "Label for the excluded characters list in Call All Friends"
+    },
+    "optCafExcludedCharsTooltip": {
+        "message": "Buraya eklenen karakterler aramalar sırasında atlanır. Onları oyundaki Hariç Tut düğmesiyle ekleyin.",
+        "description": "Tooltip for the excluded characters list in Call All Friends"
+    },
+    "optExcludeListEmpty": {
+        "message": "Hariç tutulan karakter yok.",
+        "description": "Empty state text for excluded characters lists"
+    },
+    "optExcludeListRemove": {
+        "message": "Kaldır",
+        "description": "Button text to remove a character from an exclusion list"
+    },
+    "optExcludeListRemoveAll": {
+        "message": "Tümünü Kaldır",
+        "description": "Button text to clear an entire exclusion list"
+    },
+    "optElTitle": {
+        "message": "Gelişmiş Bağlantılar",
+        "description": "Enhanced Links section card title"
+    },
+    "optElDescription": {
+        "message": "Daha hızlı gezinme ve etkileşim için oyun öğelerinin yanına hızlı eylem bağlantıları ekler.",
+        "description": "Enhanced Links section description"
+    },
+    "optElGroupGeneral": {
+        "message": "Genel",
+        "description": "Category label for general enhanced links options"
+    },
+    "optElFontSize": {
+        "message": "Simge Yazı Boyutu",
+        "description": "Label for the enhanced links font size option"
+    },
+    "optElGroupBand": {
+        "message": "Grup",
+        "description": "Category label for band-related enhanced links"
+    },
+    "optElPopularity": {
+        "message": "Popülerlik bağlantısı",
+        "description": "Label for the band Popularity link option"
+    },
+    "optElUpcomingShows": {
+        "message": "Yaklaşan Konserler bağlantısı",
+        "description": "Label for the band Upcoming Shows link option"
+    },
+    "optElGroupCharacter": {
+        "message": "Karakter",
+        "description": "Category label for character-related enhanced links"
+    },
+    "optElSendMessage": {
+        "message": "Mesaj Gönder bağlantısı",
+        "description": "Label for the character Send Message link option"
+    },
+    "optElCall": {
+        "message": "Ara bağlantısı",
+        "description": "Label for the character Call link option"
+    },
+    "optElOfferItem": {
+        "message": "Eşya Teklif Et bağlantısı",
+        "description": "Label for the character Offer an Item link option"
+    },
+    "optElGroupCity": {
+        "message": "Şehir",
+        "description": "Category label for city-related enhanced links"
+    },
+    "optElBookFlight": {
+        "message": "Normal Uçuş Rezervasyonu bağlantısı",
+        "description": "Label for the city Book Regular Flight link option"
+    },
+    "optElCharterJet": {
+        "message": "VIP Jet Kirala bağlantısı",
+        "description": "Label for the city Charter VIP Jet link option"
+    },
+    "optElOtherVehicles": {
+        "message": "Diğer Araçlar bağlantısı",
+        "description": "Label for the city Other Vehicles link option"
+    },
+    "optElFindLocales": {
+        "message": "Mekan Bul bağlantısı",
+        "description": "Label for the city Find Locales link option"
+    },
+    "optElGroupLocale": {
+        "message": "Mekan",
+        "description": "Category label for locale-related enhanced links"
+    },
+    "optElCharactersPresent": {
+        "message": "Mevcut Karakterler bağlantısı",
+        "description": "Label for the locale Characters Present link option"
+    },
+    "optElMoveToLocale": {
+        "message": "Mekana Git bağlantısı",
+        "description": "Label for the locale Move to Locale link option"
+    },
+    "optElReconnaissance": {
+        "message": "Keşif bağlantısı",
+        "description": "Label for the locale Reconnaissance link option"
+    },
+    "optElGroupCrew": {
+        "message": "Ekip",
+        "description": "Category label for crew-related enhanced links"
+    },
+    "optElTopHeists": {
+        "message": "En İyi Soygunlar bağlantısı",
+        "description": "Label for the crew Top Heists link option"
+    },
+    "optElIconTitle": {
+        "message": "Özel simge karakteri",
+        "description": "Tooltip for the icon character text input next to each enhanced link toggle"
+    },
+    "optElResetIcons": {
+        "message": "Simgeleri Varsayılana Sıfırla",
+        "description": "Button to reset all enhanced link icon characters to their default values"
+    },
+    "optMiTitle": {
+        "message": "Toplu Etkileşim",
+        "description": "Mass Interact section card title"
+    },
+    "optMiDescription": {
+        "message": "Kullanılacak etkileşimleri seçin. Sistem, işaretli olanlar ile bulunan karakterler için mevcut olanlar arasından rastgele seçim yapar.",
+        "description": "Mass Interact section description"
+    },
+    "optMiGroupVerbal": {
+        "message": "Sözlü ve Sosyal",
+        "description": "Category label for verbal and social interactions"
+    },
+    "optMiGreet": {
+        "message": "Selamla"
+    },
+    "optMiSmile": {
+        "message": "Gülümse"
+    },
+    "optMiWink": {
+        "message": "Göz Kırp"
+    },
+    "optMiInsult": {
+        "message": "Hakaret Et"
+    },
+    "optMiTalkTo": {
+        "message": "Konuş"
+    },
+    "optMiTease": {
+        "message": "Dalga Geç"
+    },
+    "optMiShareOpinions": {
+        "message": "Fikir Paylaş"
+    },
+    "optMiGossip": {
+        "message": "Dedikodu Yap"
+    },
+    "optMiProfoundDiscussion": {
+        "message": "Derin Sohbet"
+    },
+    "optMiComfort": {
+        "message": "Teselli Et"
+    },
+    "optMiFraternize": {
+        "message": "Kaynaş"
+    },
+    "optMiOfferAdvice": {
+        "message": "Tavsiye Ver"
+    },
+    "optMiCompliment": {
+        "message": "İltifat Et"
+    },
+    "optMiPraise": {
+        "message": "Öv"
+    },
+    "optMiTellNaughtyJoke": {
+        "message": "Müstehcen Fıkra Anlat"
+    },
+    "optMiTellJoke": {
+        "message": "Fıkra Anlat"
+    },
+    "optMiShareSecrets": {
+        "message": "Sır Paylaş"
+    },
+    "optMiHangOut": {
+        "message": "Takıl"
+    },
+    "optMiHexySexy": {
+        "message": "Selam Seksi..."
+    },
+    "optMiGroupPhysical": {
+        "message": "Fiziksel",
+        "description": "Category label for physical interactions"
+    },
+    "optMiShakeHands": {
+        "message": "El Sıkış"
+    },
+    "optMiRubElbows": {
+        "message": "Dirsek Tokuştur"
+    },
+    "optMiHug": {
+        "message": "Sarıl"
+    },
+    "optMiTickle": {
+        "message": "Gıdıkla"
+    },
+    "optMiPatOnBack": {
+        "message": "Sırtını Sıvazla"
+    },
+    "optMiBraidHair": {
+        "message": "Saç Ör"
+    },
+    "optMiBuyADrink": {
+        "message": "İçki İsmarla"
+    },
+    "optMiStrollHandInHand": {
+        "message": "El Ele Gez"
+    },
+    "optMiFlexBiceps": {
+        "message": "Pazı Göster"
+    },
+    "optMiCaress": {
+        "message": "Okşa"
+    },
+    "optMiAskForADance": {
+        "message": "Dansa Davet Et"
+    },
+    "optMiHighFive": {
+        "message": "Çak"
+    },
+    "optMiArmWrestle": {
+        "message": "Bilek Güreşi Yap"
+    },
+    "optMiKissCheeks": {
+        "message": "Yanaklarından Öp"
+    },
+    "optMiEmbrace": {
+        "message": "Kucakla"
+    },
+    "optMiPlayWith": {
+        "message": "Oyna"
+    },
+    "optMiPickUp": {
+        "message": "Kucağına Al"
+    },
+    "optMiChangeDiapers": {
+        "message": "Bez Değiştir"
+    },
+    "optMiKissOnForehead": {
+        "message": "Alnından Öp"
+    },
+    "optMiGiveMassage": {
+        "message": "Masaj Yap"
+    },
+    "optMiGroupRomantic": {
+        "message": "Romantik",
+        "description": "Category label for romantic interactions"
+    },
+    "optMiKiss": {
+        "message": "Öp"
+    },
+    "optMiKissPassionately": {
+        "message": "Tutkuyla Öp"
+    },
+    "optMiMakeLove": {
+        "message": "Sevişmek"
+    },
+    "optMiFiveMinuteQuickie": {
+        "message": "5 Dakikalık Çabuk İş"
+    },
+    "optMiTantricSex": {
+        "message": "Tantrik Seks"
+    },
+    "optMiEnjoyKobeSutra": {
+        "message": "Kobe Sutra'nın Keyfini Çıkar"
+    },
+    "optMiGroupSpecial": {
+        "message": "Özel",
+        "description": "Category label for special interactions"
+    },
+    "optMiBless": {
+        "message": "Kutsa"
+    },
+    "optMiDoFunnyMagic": {
+        "message": "Komik Sihir Yap"
+    },
+    "optMiSeekApprenticeship": {
+        "message": "Çıraklık Ara"
+    },
+    "optMiSingTo": {
+        "message": "Şarkı Söyle"
+    },
+    "optMiSerenade": {
+        "message": "Serenat Yap"
+    },
+    "optMiGuide": {
+        "message": "Yol Göster"
+    },
+    "optMiGoogleGoogle": {
+        "message": "Agu-Gugu"
+    },
+    "optMiGroupGeneral": {
+        "message": "Genel",
+        "description": "Category label for general Mass Interact options"
+    },
+    "optMiEnable": {
+        "message": "Toplu Etkileşim'i etkinleştir",
+        "description": "Label for the enable Mass Interact toggle"
+    },
+    "optMiHideNotifications": {
+        "message": "Etkileşimlerden sonra oyun içi bildirimleri gizle",
+        "description": "Label for the toggle that silently dismisses queued in-game notification banners after a Mass Interact run"
+    },
+    "optMiHideNotificationsTooltip": {
+        "message": "Etkinleştirildiğinde (varsayılan), etkileşimlerin oluşturduğu oyun içi bildirim şeritleri (ilişki değişiklikleri, XP kazanımları vb.) sayfa temiz kalsın diye sessizce kapatılır. Devre dışı bırakıldığında, bu şeritler bir sonraki gezinmenizde sayfanın üstünde görünür.",
+        "description": "Tooltip for the hide in-game notifications toggle in Mass Interact"
+    },
+    "optMiGroupSettings": {
+        "message": "Ayarlar",
+        "description": "Category label for mass interact settings"
+    },
+    "optMiSearchPlaceholder": {
+        "message": "Etkileşimleri filtrele…",
+        "description": "Placeholder for the chip search input on the Mass Interact tab"
+    },
+    "optMiSelectAll": {
+        "message": "Tümü",
+        "description": "Per-group bulk-enable button on the Mass Interact tab"
+    },
+    "optMiSelectNone": {
+        "message": "Hiçbiri",
+        "description": "Per-group bulk-disable button on the Mass Interact tab"
+    },
+    "optMiNoResults": {
+        "message": "Aramanızla eşleşen etkileşim yok.",
+        "description": "Empty state shown when the chip search filter has no matches"
+    },
+    "optGlobalSearchPlaceholder": {
+        "message": "Seçeneklerde ara…",
+        "description": "Placeholder for the global search input in the options-page topbar"
+    },
+    "optGlobalSearchNoResults": {
+        "message": "Aramanızla eşleşen seçenek yok.",
+        "description": "Empty state shown when the global cross-tab search has no matches"
+    },
+    "optGlobalSearchClear": {
+        "message": "Aramayı temizle",
+        "description": "Tooltip / aria-label on the clear (×) button of the global search input"
+    },
+    "optMiExcludedChars": {
+        "message": "Hariç Tutulan Karakterler",
+        "description": "Label for the excluded characters list in Mass Interact"
+    },
+    "optMiExcludedCharsTooltip": {
+        "message": "Buraya eklenen karakterler toplu etkileşim sırasında atlanır. Onları oyundaki Hariç Tut düğmesiyle ekleyin.",
+        "description": "Tooltip for the excluded characters list in Mass Interact"
+    },
+    "miExclude": {
+        "message": "Toplu Etkileşim'den hariç tut",
+        "description": "Tooltip on the prohibition icon next to a character not yet excluded from Mass Interact"
+    },
+    "miInclude": {
+        "message": "Toplu Etkileşim'e dahil et",
+        "description": "Tooltip on the tick-circle icon next to a character currently excluded from Mass Interact"
+    },
+    "cafExclude": {
+        "message": "Tüm Arkadaşları Ara'dan hariç tut",
+        "description": "Tooltip on the prohibition icon next to a character not yet excluded from Call All Friends"
+    },
+    "cafInclude": {
+        "message": "Tüm Arkadaşları Ara'ya dahil et",
+        "description": "Tooltip on the tick-circle icon next to a character currently excluded from Call All Friends"
+    },
+    "charIdZeroError": {
+        "message": "Karakter belirlenemedi. Lütfen önce karakter sayfanıza gidin.",
+        "description": "Error shown when the current character ID cannot be determined"
+    },
+    "optSelectCharLabel": {
+        "message": "Karakter",
+        "description": "Label for the character selector combo box in the options page exclusion list"
+    },
+    "optSelectCharPlaceholder": {
+        "message": "-- Bir karakter seçin --",
+        "description": "Placeholder option in the character selector combo box"
+    },
+    "optNoCharacterSelected": {
+        "message": "Hariç tutulanları görmek veya yönetmek için yukarıdan bir karakter seçin.",
+        "description": "Message shown when no character is selected in the options exclusion list"
+    },
+    "optMiMaxChars": {
+        "message": "En fazla karakter (1–100)",
+        "description": "Label for the maximum characters input in mass interact"
+    },
+    "optMiMaxCharsTooltip": {
+        "message": "Her çalıştırmada etkileşime girilecek karakter sayısını sınırlar.",
+        "description": "Tooltip for max characters field in mass interact"
+    },
+    "optMiIgnoreAcquaintance": {
+        "message": "Yeni tanıdıkları yok say",
+        "description": "Label for the ignore new acquaintances toggle in mass interact"
+    },
+    "optMiscTitle": {
+        "message": "Çeşitli Seçenekler",
+        "description": "Misc Options section card title"
+    },
+    "optMiscDescription": {
+        "message": "Eklentinin genel davranışını etkileyen genel amaçlı ayarlar.",
+        "description": "Misc Options section description"
+    },
+    "optMiscGroupDisplay": {
+        "message": "Görünüm",
+        "description": "Category label for display-related misc options"
+    },
+    "optMiscProgressBarPercent": {
+        "message": "İlerleme çubuğu yüzdeleri",
+        "description": "Label for the progress bar percentages option"
+    },
+    "optMiscStripPercentTxt": {
+        "message": "İlerleme yüzdesindeki metni kaldır",
+        "description": "Label for the strip text from progress percentage option"
+    },
+    "optMiscScoreHighlight": {
+        "message": "Puan vurgulama",
+        "description": "Label for the score highlight option"
+    },
+    "optMiscSearchableTables": {
+        "message": "Aranabilir tablolar",
+        "description": "Label for the searchable tables option"
+    },
+    "optMiscSearchableSelects": {
+        "message": "Aranabilir seçim listeleri",
+        "description": "Label for the searchable selects option"
+    },
+    "searchableSelectsPlaceholder": {
+        "message": "Filtrele...",
+        "description": "Placeholder text for the filter input injected above enhanced select elements"
+    },
+    "optMiscMessageHelper": {
+        "message": "Mesaj yardımcısı",
+        "description": "Label for the message helper option"
+    },
+    "optMiscGroupNavigation": {
+        "message": "Gezinme",
+        "description": "Category label for navigation-related misc options"
+    },
+    "optMiscAutoSwitchChar": {
+        "message": "Karakteri otomatik değiştir",
+        "description": "Label for the auto-switch character option"
+    },
+    "optMiscRedirectToLogin": {
+        "message": "Standart girişe yönlendir",
+        "description": "Label for the redirect to standard login option"
+    },
+    "optMiscGroupScoring": {
+        "message": "Puanlama",
+        "description": "Category label for scoring-related misc options"
+    },
+    "optMiscScoreScale": {
+        "message": "Puan Ölçeği",
+        "description": "Label for the score scale select"
+    },
+    "optMiscScoreScale0_26": {
+        "message": "0'dan 26'ya",
+        "description": "Score scale select option: 0-26"
+    },
+    "optMiscScoreScale1_27": {
+        "message": "1'den 27'ye",
+        "description": "Score scale select option: 1-27"
+    },
+    "optDiagTitle": {
+        "message": "Tanılama",
+        "description": "Title for the diagnostics card on the Misc tab"
+    },
+    "optDiagDescription": {
+        "message": "Bir hata bildirirken \"Tanılamayı kopyala\"ya tıklayın ve sonucu GitHub sorununuza yapıştırın. Sonuç, eklentinin en son hatalarını ve depolama ile karakter bilgilerini içerir — parola veya kişisel veri içermez.",
+        "description": "Explainer text for the diagnostics card"
+    },
+    "optDiagCopyBtn": {
+        "message": "Tanılamayı kopyala",
+        "description": "Button that copies the JSON diagnostic blob to the clipboard"
+    },
+    "optDiagClearBtn": {
+        "message": "Günlüğü temizle",
+        "description": "Button that empties the persisted diagnostic ring buffer"
+    },
+    "optDiagCopied": {
+        "message": "Panoya kopyalandı.",
+        "description": "Confirmation shown after diagnostics are copied"
+    },
+    "optDiagCopyFailed": {
+        "message": "Kopyalama başarısız oldu — ayrıntılar için sayfa konsoluna bakın.",
+        "description": "Error message shown when the diagnostics copy operation fails"
+    },
+    "optDiagCleared": {
+        "message": "Tanılama günlüğü temizlendi.",
+        "description": "Confirmation shown after the diagnostic log is cleared"
+    },
+    "optDiagClearFailed": {
+        "message": "Temizleme başarısız oldu — ayrıntılar için sayfa konsoluna bakın.",
+        "description": "Error message shown when clearing the diagnostic log fails"
+    },
+    "optMiscGroupGottaGoFast": {
+        "message": "Gotta Go Fast",
+        "description": "Category label for the Gotta Go Fast autograph collection feature"
+    },
+    "optMiscGroupMassItemSender": {
+        "message": "Toplu Eşya Gönderici",
+        "description": "Category label for the mass item sender feature"
+    },
+    "optMiscMassItemSenderEnabled": {
+        "message": "Toplu eşya göndericiyi etkinleştir",
+        "description": "Label for the enable/disable toggle of the mass item sender feature"
+    },
+    "optPopupTitle": {
+        "message": "Açılır Pencere Seçenekleri",
+        "description": "Popup Options section card title"
+    },
+    "optPopupDescription": {
+        "message": "Belirli oyun öğelerinin üzerine gelince açılan pencereleri etkinleştirin veya devre dışı bırakın. Açılır pencereler, sayfadan ayrılmadan öğe ayrıntılarını getirir ve satır içinde gösterir.",
+        "description": "Popup Options section description"
+    },
+    "optPopupGroupEnabled": {
+        "message": "Etkin Açılır Pencereler",
+        "description": "Category label for the popup toggle switches"
+    },
+    "optPopupCharacter": {
+        "message": "Karakter açılır penceresi",
+        "description": "Label for the character popup option"
+    },
+    "optPopupSong": {
+        "message": "Şarkılar açılır penceresi",
+        "description": "Label for the song popup option"
+    },
+    "optPopupSkills": {
+        "message": "Yetenekler açılır penceresi",
+        "description": "Label for the skills popup option"
+    },
+    "optPopupClub": {
+        "message": "Kulüp açılır penceresi",
+        "description": "Label for the club popup option"
+    },
+    "optPopupShowDetails": {
+        "message": "Konser ayrıntıları açılır penceresi",
+        "description": "Label for the show details popup option"
+    },
+    "optTbTitle": {
+        "message": "Tur Otobüsü Rezervasyon Yardımcısı",
+        "description": "Tour Bus Helper section card title"
+    },
+    "optTbDescription": {
+        "message": "Tur otobüsü rezervasyon asistanını yönetin. Bu özellik yalnızca VIP hesaplar için çalışır.",
+        "description": "Tour Bus Helper section description"
+    },
+    "optTbGroupGeneral": {
+        "message": "Genel",
+        "description": "Category label for general tour bus options"
+    },
+    "optTbEnable": {
+        "message": "Tur Otobüsü Yardımcısı'nı etkinleştir",
+        "description": "Label for the enable tour bus helper toggle"
+    },
+    "optTbGroupBookingRules": {
+        "message": "Rezervasyon Kuralları",
+        "description": "Category label for tour bus booking rule settings"
+    },
+    "optTbBookAfter": {
+        "message": "Tur rotasını şundan sonra rezerve et",
+        "description": "Label for the book-after select in tour bus helper"
+    },
+    "optTbBookAfterTooltip": {
+        "message": "Hangi geçmiş olayın bir sonraki rezervasyonu tetikleyeceğini belirler.",
+        "description": "Tooltip for the book-after select"
+    },
+    "optTbPreviousEvent": {
+        "message": "Önceki Etkinlik",
+        "description": "Tour bus book-after option: previous event"
+    },
+    "optTbPreviousShow": {
+        "message": "Önceki Konser",
+        "description": "Tour bus book-after option: previous show"
+    },
+    "optTbHourRange": {
+        "message": "Kaç saat sonra rezerve edilsin (1–5)",
+        "description": "Label for the hour range input in tour bus helper"
+    },
+    "optTbHourRangeTooltip": {
+        "message": "Rota rezerve edilmeden önce tetikleyici olaydan sonra geçmesi gereken saat sayısı.",
+        "description": "Tooltip for the hour range input"
+    },
+    "navDeveloper": {
+        "message": "Geliştirici",
+        "description": "Sidebar navigation label for the Developer section (shown in development builds or with ?debug=true)"
+    },
+    "optDevTitle": {
+        "message": "Geliştirici",
+        "description": "Developer section card title"
+    },
+    "optDevDescription": {
+        "message": "Yalnızca geliştirme sürümlerinde kullanılabilen ayarlar.",
+        "description": "Developer section description"
+    },
+    "optDevGroupLogging": {
+        "message": "Günlük Kaydı",
+        "description": "Category label for developer logging options"
+    },
+    "optDevGroupTools": {
+        "message": "Araçlar",
+        "description": "Category label for developer tools options"
+    },
+    "optDevItemCategoryDbBuilder": {
+        "message": "Eşya Kategorisi Veritabanı Oluşturucu'yu etkinleştir",
+        "description": "Label for the checkbox that shows the Item Category Database Builder box in the shop page"
+    },
+    "optDevAchievementDbBuilder": {
+        "message": "Başarım Veritabanı Oluşturucu'yu etkinleştir",
+        "description": "Label for the checkbox that shows the Achievement Database Builder box in the character achievements page"
+    },
+    "optDevLogLevel": {
+        "message": "Günlük Düzeyi",
+        "description": "Label for the log level select in the developer section"
+    },
+    "optDevLogLevelDebug": {
+        "message": "Hata Ayıklama",
+        "description": "Log level option: debug (most verbose)"
+    },
+    "optDevLogLevelInfo": {
+        "message": "Bilgi",
+        "description": "Log level option: info"
+    },
+    "optDevLogLevelWarn": {
+        "message": "Uyarı",
+        "description": "Log level option: warn"
+    },
+    "optDevLogLevelError": {
+        "message": "Hata",
+        "description": "Log level option: error (least verbose, default for production)"
+    },
+    "menuTitle": {
+        "message": "Popmundo Utils",
+        "description": "In-game sidebar menu title"
+    },
+    "menuDeveloper": {
+        "message": "Geliştirici",
+        "description": "In-game sidebar menu item for developer tools"
+    },
+    "menuOptions": {
+        "message": "Seçenekler",
+        "description": "In-game sidebar menu item that opens the options page"
+    },
+    "menuReportIssue": {
+        "message": "Sorun Bildir",
+        "description": "In-game sidebar menu item that opens the GitHub issue tracker"
+    },
+    "linkUpcomingShows": {
+        "message": "Yaklaşan Konserler",
+        "description": "Title attribute on the Upcoming Shows icon link"
+    },
+    "linkPopularity": {
+        "message": "Popülerlik",
+        "description": "Title attribute on the Popularity icon link"
+    },
+    "linkTopHeists": {
+        "message": "En İyi Soygunlar",
+        "description": "Title attribute on the Top Heists icon link"
+    },
+    "linkSendMessage": {
+        "message": "Mesaj Gönder",
+        "description": "Title attribute on the Send Message icon link"
+    },
+    "linkOfferItem": {
+        "message": "Eşya Teklif Et",
+        "description": "Title attribute on the Offer an Item icon link"
+    },
+    "linkCall": {
+        "message": "Ara",
+        "description": "Title attribute on the Call icon link"
+    },
+    "linkOtherVehicles": {
+        "message": "Diğer Araçlar",
+        "description": "Title attribute on the Other Vehicles icon link"
+    },
+    "linkFindLocales": {
+        "message": "Mekan Bul",
+        "description": "Title attribute on the Find Locales icon link"
+    },
+    "linkCharterJet": {
+        "message": "VIP Jet Kirala",
+        "description": "Title attribute on the Charter VIP Jet icon link"
+    },
+    "linkBookFlight": {
+        "message": "Normal Uçuş Rezervasyonu",
+        "description": "Title attribute on the Book Regular Flight icon link"
+    },
+    "linkReconnaissance": {
+        "message": "Keşif",
+        "description": "Title attribute on the Reconnaissance icon link"
+    },
+    "linkMoveToLocale": {
+        "message": "Mekana Git",
+        "description": "Title attribute on the Move To Locale icon link"
+    },
+    "linkCharactersPresent": {
+        "message": "Mevcut Karakterler",
+        "description": "Title attribute on the Characters Present icon link"
+    },
+    "cafH2": {
+        "message": "Tüm kişilerinizi arayın",
+        "description": "Heading for the Call All Friends in-game panel"
+    },
+    "cafDescription": {
+        "message": "Telefonu olan tüm arkadaşlarınızı arayın.",
+        "description": "Description text in the Call All Friends in-game panel"
+    },
+    "cafButton": {
+        "message": "Tüm ilişkileri ara",
+        "description": "Submit button label for the Call All Friends feature"
+    },
+    "cafStatusIgnored": {
+        "message": "$COUNT$ arkadaş yok sayıldı. ",
+        "description": "Status prefix when some friends are excluded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "cafStatusChecking": {
+        "message": "Arkadaş kontrol ediliyor: $INDEX$/$TOTAL$ ($NAME$).",
+        "description": "Status while checking each friend for call availability",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "20"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
+        }
+    },
+    "cafStatusNoFriends": {
+        "message": "Aranacak arkadaş yok.",
+        "description": "Status when no callable friends are found"
+    },
+    "cafStatusNoInteractions": {
+        "message": "Hiçbir arama türü seçilmedi. Lütfen eklenti ayarlarında en az bir arama seçeneğini etkinleştirin.",
+        "description": "Status when no interaction types are selected in the extension options"
+    },
+    "cafError": {
+        "message": "Bir hata oluştu. Ayrıntılar için tarayıcı konsoluna bakın.",
+        "description": "Generic error shown in the Call All Friends panel when an unexpected error occurs"
+    },
+    "cafInjectError": {
+        "message": "Tüm Arkadaşları Ara arayüzü eklenemedi: $DETAIL$",
+        "description": "Notification shown when injecting the Call All Friends button throws an exception",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "TypeError: ..."
+            }
+        }
+    },
+    "cafInjectMissing": {
+        "message": "Tüm Arkadaşları Ara: sayfadaki bağlantı noktası bulunamadı; eylem düğmesi kullanılamıyor.",
+        "description": "Notification shown when the CSS anchor for injecting the Call All Friends button is missing"
+    },
+    "cafStatusCalling": {
+        "message": "$TOTAL$ arkadaştan $CALLABLE$ tanesi aranıyor...",
+        "description": "Status at the start of the calling phase",
+        "placeholders": {
+            "callable": {
+                "content": "$1",
+                "example": "15"
+            },
+            "total": {
+                "content": "$2",
+                "example": "20"
+            }
+        }
+    },
+    "cafStatusCallingOne": {
+        "message": "Arkadaş aranıyor: $INDEX$/$TOTAL$ ($NAME$)...",
+        "description": "Status while calling each friend",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "15"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
+        }
+    },
+    "cafStatusSuccess": {
+        "message": "$TOTAL$ arkadaştan $COUNT$ tanesi başarıyla arandı.",
+        "description": "Final status after all calls are complete",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "14"
+            },
+            "total": {
+                "content": "$2",
+                "example": "15"
+            }
+        }
+    },
+    "miH2": {
+        "message": "Mevcut karakterlerle Toplu Etkileşim",
+        "description": "Heading for the Mass Interact in-game panel"
+    },
+    "miDescription": {
+        "message": "Bu mekanda bulunan karakterlerle etkileşimde bulunun.",
+        "description": "Description text in the Mass Interact in-game panel"
+    },
+    "miButton": {
+        "message": "Toplu Etkileşim",
+        "description": "Submit button label for the Mass Interact feature"
+    },
+    "miStatusCheckingRelations": {
+        "message": "Yeni tanıdıkları yok say etkin, ilişkiler adresi kontrol ediliyor...",
+        "description": "Status when loading the relations page to filter acquaintances"
+    },
+    "miStatusAnalyzingRelations": {
+        "message": "Mevcut tanıdıkları almak için $PAGE$. ilişkiler sayfası inceleniyor...",
+        "description": "Status while parsing each page of the relations list",
+        "placeholders": {
+            "page": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "miStatusSkippingAcquaintance": {
+        "message": "Yeni tanıdıklara izin verilmediği için $NAME$ atlanıyor...",
+        "description": "Status when a character is skipped because they are a new acquaintance",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "miStatusSkippingExcluded": {
+        "message": "Kimliği yok sayma listesinde olduğu için $NAME$ atlanıyor...",
+        "description": "Status when a character is skipped because their ID is in the exclusion list",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "miStatusTotalSkipped": {
+        "message": "Toplam $TOTAL$ mevcut karakter yok sayıldı.",
+        "description": "Summary of skipped characters",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "5"
+            }
+        }
+    },
+    "miStatusNewAcqSkip": {
+        "message": " $COUNT$ yeni tanıdık.",
+        "description": "Appended to the skipped summary for new acquaintances",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "miStatusIgnoreSkip": {
+        "message": " $COUNT$ yok sayılan karakter.",
+        "description": "Appended to the skipped summary for explicitly ignored characters",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "miStatusTotalInteractions": {
+        "message": "Gerçekleştirilen toplam etkileşim: $TOTAL$.",
+        "description": "Running count of interactions performed",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "42"
+            }
+        }
+    },
+    "miStatusCheckingChar": {
+        "message": "Karakter kontrol ediliyor: $INDEX$/$TOTAL$ ($NAME$).",
+        "description": "Status while checking interaction options for each character",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "3"
+            },
+            "total": {
+                "content": "$2",
+                "example": "10"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
+        }
+    },
+    "miStatusInteracting": {
+        "message": "Arkadaşla etkileşime giriliyor: $INDEX$/$TOTAL$ ($NAME$). Etkileşim no. $INTERACTION$...",
+        "description": "Status while performing each interaction",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "3"
+            },
+            "total": {
+                "content": "$2",
+                "example": "10"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            },
+            "interaction": {
+                "content": "$4",
+                "example": "2"
+            }
+        }
+    },
+    "miStatusFinalInteracted": {
+        "message": "$CHARS$ karakterle toplam $INTERACTIONS$ etkileşim gerçekleştirildi!",
+        "description": "Final summary shown after all mass interactions complete",
+        "placeholders": {
+            "interactions": {
+                "content": "$1",
+                "example": "30"
+            },
+            "chars": {
+                "content": "$2",
+                "example": "10"
+            }
+        }
+    },
+    "miStatusNoInteraction": {
+        "message": "Hiçbir etkileşim gerçekleştirilmedi.",
+        "description": "Status when mass interact finds no interactions to perform"
+    },
+    "miStatusNoInteractions": {
+        "message": "Hiçbir etkileşim türü seçilmedi. Lütfen eklenti ayarlarında en az bir etkileşim seçeneğini etkinleştirin.",
+        "description": "Status when no interaction types are selected in the extension options"
+    },
+    "miError": {
+        "message": "Bir hata oluştu. Ayrıntılar için tarayıcı konsoluna bakın.",
+        "description": "Generic error shown in the Mass Interact panel when an unexpected error occurs"
+    },
+    "miInjectError": {
+        "message": "Toplu Etkileşim arayüzü eklenemedi: $DETAIL$",
+        "description": "Notification shown when injecting the Mass Interact button throws an exception",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "TypeError: ..."
+            }
+        }
+    },
+    "miInjectMissing": {
+        "message": "Toplu Etkileşim: sayfadaki bağlantı noktası bulunamadı; eylem düğmesi kullanılamıyor.",
+        "description": "Notification shown when the CSS anchor for injecting the Mass Interact button is missing"
+    },
+    "ggfTitle": {
+        "message": "İmza Topla",
+        "description": "Heading for the Gotta Go Fast autograph collection panel"
+    },
+    "ggfDescription": {
+        "message": "Betik, envanterinizdeki tüm defterleri kullanarak şehirde bulunan pop yıldızlarından imza toplayacak!",
+        "description": "Description paragraph for the autograph collection panel"
+    },
+    "ggfDisableHint": {
+        "message": "Bu paneli gizlemek için <a href=\"#\" id=\"ggf-options-hint-link\"><strong>Seçenekler sayfasındaki</strong></a> <strong>Çeşitli Seçenekler</strong> bölümünde <strong>İmza toplamayı etkinleştir</strong> seçeneğini devre dışı bırakın.",
+        "description": "Hint shown in the panel telling the user how to disable the feature via Misc Options"
+    },
+    "ggfHowToUse": {
+        "message": "Nasıl kullanılır?",
+        "description": "Instructions heading for the autograph collection panel"
+    },
+    "ggfStep1": {
+        "message": "<a href=\"#\" id=\"autograph-open-options-link\"><strong>Seçenekler sayfasındaki</strong></a> <strong>Çeşitli Seçenekler</strong> bölümünde <strong>İmza defteri eşya adını</strong> (kendi dilinizde) ayarlayın. Bu, envanterinizde görünen eşya adıyla aynı olmalıdır.",
+        "description": "Step 1 instruction for autograph collection. Contains HTML. The link id must not be changed."
+    },
+    "ggfStep2": {
+        "message": "Envanterinizde imza defterleri olduğundan emin olun. Karakteriniz bir şehirde olmalı (seyahatte olmamalı) ve meşgul durumda olmamalıdır (ör. kayıt, prova, randevu vb.).",
+        "description": "Step 2 instruction for autograph collection"
+    },
+    "ggfStep3": {
+        "message": "Başlamak için <strong>Başlat</strong>'a tıklayın. Betik şehirdeki ünlüleri bulacak ve sihir başlayacak.",
+        "description": "Step 3 instruction for autograph collection. Contains HTML."
+    },
+    "ggfStep4": {
+        "message": "<strong>Engellenen karakterler</strong>, eşya kullanımını kabul etmeyen karakterlerdir. Tekrar tekrar denenmesinler diye yalnızca geçerli oturum için saklanırlar. Onları listeden kaldırıp betiğin aynı oturumda tekrar denemesine izin vermek için <strong>Engellenen karakterleri temizle</strong>'yi kullanın.",
+        "description": "Step 4 instruction for autograph collection. Contains HTML."
+    },
+    "ggfClearBlockedChars": {
+        "message": "Engellenen karakterleri temizle",
+        "description": "Button label to clear the blocked characters list"
+    },
+    "ggfClearBlockedCharsTitle": {
+        "message": "Eşya kullanımını kabul etmeyen karakterleri oturum depolamasından temizler",
+        "description": "Title tooltip on the clear blocked chars button"
+    },
+    "ggfStart": {
+        "message": "Başlat",
+        "description": "Button label to start autograph collection"
+    },
+    "ggfLogColTime": {
+        "message": "Zaman",
+        "description": "Log table column header: time"
+    },
+    "ggfLogColType": {
+        "message": "Tür",
+        "description": "Log table column header: type"
+    },
+    "ggfLogColMessage": {
+        "message": "Mesaj",
+        "description": "Log table column header: message"
+    },
+    "ggfBooksFound": {
+        "message": "Bulunan imza defteri sayısı: $COUNT$",
+        "description": "Log message when autograph books are detected in inventory",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "ggfNoBooksFound": {
+        "message": "İmza defteri bulunamadı. İmza defteri eşya adının Seçenekler sayfasında ayarlandığını kontrol edin.",
+        "description": "Warning log when no autograph books are found in inventory"
+    },
+    "ggfNoBooks": {
+        "message": "Defter yok",
+        "description": "Disabled state label for the start button when no books exist"
+    },
+    "ggfCollecting": {
+        "message": "İmzalar toplanıyor...",
+        "description": "Button label while autograph collection is running"
+    },
+    "ggfWaiting": {
+        "message": "Bekleniyor: $MINUTES$ dakika $SECONDS$ saniye kaldı...",
+        "description": "Countdown timer message shown during cooldown",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "5"
+            },
+            "seconds": {
+                "content": "$2",
+                "example": "30"
+            }
+        }
+    },
+    "ggfContinuing": {
+        "message": "İmza toplamaya devam ediliyor...",
+        "description": "Message shown when the cooldown timer finishes"
+    },
+    "ggfMovingToLocation": {
+        "message": "<b>$NAME$</b> adlı kişinin bulunduğu mekana gidiliyor",
+        "description": "Log entry when navigating to a character's location. Contains HTML.",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfMaybeLeft": {
+        "message": "Belki $NAME$ artık şehirde değildir ya da bir şey oldu!",
+        "description": "Warning log when a character's location cannot be found",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfErrorNavigating": {
+        "message": "$NAME$ adlı kişiye giderken hata: $ERROR$",
+        "description": "Error log when navigation to a character fails",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "error": {
+                "content": "$2",
+                "example": "Network error"
+            }
+        }
+    },
+    "ggfNotAvailable": {
+        "message": "Görünüşe göre <b>$NAME$</b> artık müsait değil veya eşya kullanımına izin vermiyor.",
+        "description": "Log when a character's interact page has no item-use dropdown. Contains HTML.",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfStoringChar": {
+        "message": "$NAME$ ($ID$) adlı karakter tekrar denenmesin diye depolamaya kaydediliyor.",
+        "description": "Warning log when a character is added to the blocked list",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "id": {
+                "content": "$2",
+                "example": "12345"
+            }
+        }
+    },
+    "ggfWaitingCooldown": {
+        "message": "Defterin bekleme süresi bekleniyor (kalan: $MINUTES$ dk)...",
+        "description": "Log when all books are on cooldown",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "4"
+            }
+        }
+    },
+    "ggfCollectingFrom": {
+        "message": "<b>$NAME$</b> adlı kişiden defter kimliği $BOOKID$ ile imza toplanıyor",
+        "description": "Log when using a book on a character. Contains HTML.",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "bookid": {
+                "content": "$2",
+                "example": "98765"
+            }
+        }
+    },
+    "ggfErrorCollecting": {
+        "message": "$NAME$ adlı kişiden imza toplanırken hata: $ERROR$",
+        "description": "Error log when autograph collection fails for a character",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "error": {
+                "content": "$2",
+                "example": "Network error"
+            }
+        }
+    },
+    "ggfAutographCollected": {
+        "message": "$NAME$ adlı kişiden imza toplandı",
+        "description": "Success log when an autograph is successfully collected",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfAutographCompleted": {
+        "message": "$NAME$ için imza işlemi tamamlandı",
+        "description": "Info log when the autograph use completed without explicit success/error status",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfNoEligible": {
+        "message": "Uygun kimse bulunamadı. 60 sn sonra tekrar denenecek.",
+        "description": "Warning log when the city has no eligible characters left to collect from"
+    },
+    "ggfCooldownWait": {
+        "message": "Bir sonraki kullanımdan önce $MINUTES$ dk bekleme süresi…",
+        "description": "Log when waiting for book cooldown between characters",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "6"
+            }
+        }
+    },
+    "ggfScriptError": {
+        "message": "Betik çalışırken hata oluştu – konsola bakın.",
+        "description": "Generic error log for unexpected exceptions in the main loop"
+    },
+    "ggfStopped": {
+        "message": "İmza toplama durduruldu.",
+        "description": "Log when the user stops autograph collection"
+    },
+    "ggfBlockedCleared": {
+        "message": "Engellenen karakter listesi temizlendi (oturum depolaması).",
+        "description": "Log when the blocked characters list is cleared"
+    },
+    "ggfLogs": {
+        "message": "Günlükler",
+        "description": "Heading for the autograph collection log panel"
+    },
+    "remTodayIs": {
+        "message": "Bugün $YEAR$. yılın $DAY$. günü.",
+        "description": "Prefix for reminder notifications indicating the current in-game date",
+        "placeholders": {
+            "day": {
+                "content": "$1",
+                "example": "27"
+            },
+            "year": {
+                "content": "$2",
+                "example": "24"
+            }
+        }
+    },
+    "remDay28": {
+        "message": "Ölüler Günü!",
+        "description": "Reminder for in-game day 28"
+    },
+    "remDay40": {
+        "message": "Aziz Kobe Günü! Müzik türü yeteneklerinizi geliştirmek üzere maceralı bir göreve çıkmak için Johannesburg, Moskova, Singapur ve Tromsø'daki Göksel Güzellik Heykellerini inceleyin.",
+        "description": "Reminder for in-game day 40 (St Kobe's Day)"
+    },
+    "remDay48": {
+        "message": "Cadılar Bayramı Dehşetini kullanmayı unutmayın!",
+        "description": "Reminder for in-game day 48"
+    },
+    "remDay52": {
+        "message": "Noel!",
+        "description": "Reminder for in-game day 52"
+    },
+    "remDay54": {
+        "message": "Yıldız kalitenizi artırmak ve bir deneyim puanı kazanmak için Marvin Tişörtünüzü giymeyi unutmayın.",
+        "description": "Reminder for in-game day 54"
+    },
+    "remThursdayCards": {
+        "message": "Bugün Perşembe, ücretsiz kartlarınızı almayı unutmayın!",
+        "description": "Reminder shown on Thursdays for The Great Heist free card collection"
+    },
+    "remItemReady": {
+        "message": "$NAME$ eşyanız kullanıma hazır.",
+        "description": "Notification when an item timer has expired and the item is ready",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Autograph Book"
+            }
+        }
+    },
+    "remUseLink": {
+        "message": "Kullan",
+        "description": "Link text to use a ready item from the reminder notification"
+    },
+    "remDismissLink": {
+        "message": "Bildirimi Kapat",
+        "description": "Link text to dismiss a ready item notification"
+    },
+    "itTimerButtonSuffix": {
+        "message": " ve Zamanlayıcı",
+        "description": "Suffix appended to item use buttons to create the Use & Timer button"
+    },
+    "itMinRegex": {
+        "message": "(\\d{1,})\\s+dakika",
+        "description": "Regula expression to find minutes in timer notifications"
+    },
+    "itHourRegex": {
+        "message": "(\\d{1,})\\s+saat",
+        "description": "Regula expression to find hours in timer notifications"
+    },
+    "itDaysRegex": {
+        "message": "(\\d{1,})\\s+gün",
+        "description": "Regula expression to find days in timer notifications"
+    },
+    "itWeeksRegex": {
+        "message": "(\\d{1,})\\s+hafta",
+        "description": "Regula expression to find weeks in timer notifications"
+    },
+    "iltTimerExpired": {
+        "message": "Zamanlayıcı doldu: ",
+        "description": "Prefix added to the item date/time when its timer has expired"
+    },
+    "bshBookTransport": {
+        "message": "$DATE$ tarihinde saat $TIME$'de $FROM$ - $TO$ ulaşımını rezerve et",
+        "description": "Tooltip on the book-transport icon in the band schedule helper",
+        "placeholders": {
+            "from": {
+                "content": "$1",
+                "example": "London"
+            },
+            "to": {
+                "content": "$2",
+                "example": "Paris"
+            },
+            "date": {
+                "content": "$3",
+                "example": "Day 12"
+            },
+            "time": {
+                "content": "$4",
+                "example": "20:00"
+            }
+        }
+    },
+    "misPickItemsPlaceholder": {
+        "message": "Birden fazla eşya teklif etmek istiyorsanız buraya tıklayın ve listeden seçin.",
+        "description": "Closed multi-select dropdown summary on Offer Item when nothing is checked"
+    },
+    "misOneItemSelected": {
+        "message": "1 eşya seçildi",
+        "description": "Multi-select dropdown summary when exactly one item is checked"
+    },
+    "misNItemsSelected": {
+        "message": "$COUNT$ eşya seçildi",
+        "description": "Multi-select dropdown summary when two or more items are checked",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "misDdHeaderAria": {
+        "message": "Teklif etmek üzere birden fazla eşya seçmek için envanter eşyaları listesini aç",
+        "description": "Accessible name for the Offer Item multi-select dropdown toggle"
+    },
+    "misOfferNoneSelected": {
+        "message": "Birden fazla eşya teklif etmeden önce listeden en az bir eşya seçin.",
+        "description": "Validation when Offer multiple is clicked with no checkboxes selected"
+    },
+    "misOfferMultiSubmit": {
+        "message": "Birden fazla eşya teklif et",
+        "description": "Submit button when one or more items are checked in the multi-select on Offer Item page"
+    },
+    "misOfferFormMissing": {
+        "message": "Sayfadaki form bulunamadı; eşyalar teklif edilemiyor.",
+        "description": "Error when aspnetForm is missing during multi-offer on Offer Item page"
+    },
+    "misOfferGiveButtonMissing": {
+        "message": "Sayfada teklif düğmesi bulunamadı.",
+        "description": "Error when btnGive is missing in parsed or live DOM during multi-offer"
+    },
+    "misOfferFailed": {
+        "message": "Teklif başarısız oldu: $DETAIL$",
+        "description": "Multi-offer stopped after network error, missing form, or server notification error",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "Invalid view state"
+            }
+        }
+    },
+    "misOfferQueueDone": {
+        "message": "$COUNT$ teklif başarıyla gönderildi.",
+        "description": "Summary after all queued Offer Item POSTs completed without error",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "misDisableHint": {
+        "message": "Bu özelliği Seçenekler sayfasından devre dışı bırakabilirsiniz.",
+        "description": "Hint text to inform that the feature can be disabled in the Options page"
+    },
+    "misOfferSendingProgress": {
+        "message": "Gönderiliyor: $CURRENT$/$TOTAL$…",
+        "description": "Progress label next to the multi-select header while queued Offer Item POSTs run",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "3"
+            }
+        }
+    },
+    "misLoadingPendingOffers": {
+        "message": "Hangi eşyaların zaten teklif edildiği kontrol ediliyor…",
+        "description": "Dropdown header while fetching Character/ItemsOffered before building the item list"
+    },
+    "misItemAlreadyOffered": {
+        "message": "Bu eşyanın zaten etkin bir teklifi var ve burada seçilemez.",
+        "description": "Tooltip on a disabled row in the multi-select when the instance is listed on ItemsOffered"
+    },
+    "misItemOfferedHintHtml": {
+        "message": "Bu eşya daha önce birine teklif edildi. Bkz. $LINK$.",
+        "description": "Small hint below a disabled row in the mass-offer list; $LINK$ is replaced with an <a> tag to Character/ItemsOffered",
+        "placeholders": {
+            "link": {
+                "content": "$1",
+                "example": "<a>Items offered</a>"
+            }
+        }
+    },
+    "cafTotalCallsMsg": {
+        "message": "📞 Popmundo'nun can simidi! Bu araçla başarıyla <strong>$TOTAL$</strong> arama yaptınız. Santral görevlisi bitap düşmüş olmalı!",
+        "description": "Fun summary message for total calls made",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "10"
+            }
+        }
+    },
+    "miTotalInteractionsMsg": {
+        "message": "🎭 Sosyal kelebek! Bu araçla başarıyla <strong>$TOTAL$</strong> etkileşim gerçekleştirdiniz. Köprüler kurmaya devam!",
+        "description": "Fun summary message for total mass interactions",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "20"
+            }
+        }
+    },
+    "ggfTotalCollected0": {
+        "message": "Henüz imza yok. Sokağa çıkma zamanı! 🚶‍♂️",
+        "description": "Fun message when total collected autographs is 0"
+    },
+    "ggfTotalCollected10": {
+        "message": "$COUNT$ imzayla iyi bir başlangıç! 🌟",
+        "description": "Fun message when total collected autographs is < 10",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "5"
+            }
+        }
+    },
+    "ggfTotalCollected50": {
+        "message": "Vay be! $COUNT$ imza ve devam ediyor. 🤩",
+        "description": "Fun message when total collected autographs is < 50",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "20"
+            }
+        }
+    },
+    "ggfTotalCollected100": {
+        "message": "İnanılmaz! $COUNT$ imza. Gerçek bir hayransınız! 🎉",
+        "description": "Fun message when total collected autographs is < 100",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "75"
+            }
+        }
+    },
+    "ggfTotalCollected500": {
+        "message": "Vay canına! $COUNT$ imza. Hayranlarınız çok etkilenmiş olmalı! 🎸",
+        "description": "Fun message when total collected autographs is < 500",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "200"
+            }
+        }
+    },
+    "ggfTotalCollectedLegendary": {
+        "message": "Efsane statüsüne ulaşıldı: $COUNT$ imza! Hakkınızda bir film çekmeliler! 🎥",
+        "description": "Fun message when total collected autographs is >= 500",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "500"
+            }
+        }
+    },
+    "ggfKeepAliveReloading": {
+        "message": "Oturumu açık tutma: oturumu korumak için sayfa yeniden yükleniyor...",
+        "description": "Log message shown immediately before a keep-alive page reload"
+    },
+    "ggfKeepAliveResuming": {
+        "message": "Oturumu açık tutma: sayfa yeniden yüklendikten sonra imza toplamaya devam ediliyor.",
+        "description": "Log message shown when auto-resuming after a keep-alive reload"
+    },
+    "optMiscGroupPopmundoBible": {
+        "message": "Popmundo Bible Entegrasyonu",
+        "description": "Group heading for the Popmundo Bible export toggles (skills, attributes) in Misc Options"
+    },
+    "optMiscSkillExportEnable": {
+        "message": "Yetenekleri JSON olarak dışa aktar (Popmundo Bible)",
+        "description": "Checkbox label to enable the skill page JSON export button"
+    },
+    "skillExportButton": {
+        "message": "Yetenekleri dışa aktar (JSON)",
+        "description": "Label of the button injected on the Character Skills page to export skills as JSON"
+    },
+    "skillExportSuccess": {
+        "message": "$NAME$ için $COUNT$ yetenek dışa aktarıldı.",
+        "description": "Success notification after a skill JSON file has been downloaded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "14"
+            },
+            "name": {
+                "content": "$2",
+                "example": "Andrew Kovač"
+            }
+        }
+    },
+    "skillExportNoSkills": {
+        "message": "Dışa aktarılacak yetenek bulunamadı.",
+        "description": "Error notification when the skills table has no readable skill rows"
+    },
+    "skillExportError": {
+        "message": "Bu sayfadan karakter bilgileri okunamadı.",
+        "description": "Error notification when the character id/name cannot be read from the skills page"
+    },
+    "skillExportPartial": {
+        "message": "Değeri okunamayan $COUNT$ yetenek atlandı: $NAMES$.",
+        "description": "Warning notification listing skills whose star value could not be parsed",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "names": {
+                "content": "$2",
+                "example": "Rock, Reggae"
+            }
+        }
+    },
+    "optMiscAttributeExportEnable": {
+        "message": "Özellikleri JSON olarak dışa aktar (Popmundo Bible)",
+        "description": "Checkbox label to enable the attribute page JSON export button"
+    },
+    "attributeExportButton": {
+        "message": "Özellikleri dışa aktar (JSON)",
+        "description": "Label of the button injected on the Character Attributes page to export attributes as JSON"
+    },
+    "attributeExportSuccess": {
+        "message": "$NAME$ için $COUNT$ özellik dışa aktarıldı.",
+        "description": "Success notification after an attribute JSON file has been downloaded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "8"
+            },
+            "name": {
+                "content": "$2",
+                "example": "Homer Garnett"
+            }
+        }
+    },
+    "attributeExportCharError": {
+        "message": "Bu sayfadan karakter bilgileri okunamadı.",
+        "description": "Error notification when the character id/name cannot be read from the attributes page"
+    },
+    "attributeExportInvalidCount": {
+        "message": "Oyun belirlenemedi veya bu sayfada bulunan özellik sayısı beklenmedik.",
+        "description": "Error notification when the game flavor (Popmundo / The Great Heist) cannot be identified or the attribute count on the page doesn't match the expected one"
+    },
+    "attributeExportInvalidScore": {
+        "message": "Bu sayfada beklenmedik bir puan değerine sahip bir özellik bulundu.",
+        "description": "Error notification when an attribute score cannot be parsed or is outside the valid 1-27 range"
+    },
+    "optUnsavedWarning": {
+        "message": "Kaydedilmemiş değişiklikleriniz var.",
+        "description": "Warning shown near the Save button when the options form has been modified but not yet saved"
+    },
+    "navReminders": {
+        "message": "Hatırlatıcılar",
+        "description": "Sidebar nav label for the Reminders options section"
+    },
+    "optRemTitle": {
+        "message": "Hatırlatıcılar",
+        "description": "Card heading for the Reminders options section"
+    },
+    "optRemDescription": {
+        "message": "Özel hatırlatıcılarınızı yönetin ve eşya zamanlayıcı bildirimlerini denetleyin.",
+        "description": "Description paragraph at the top of the Reminders options section"
+    },
+    "optRemGroupTimers": {
+        "message": "Zamanlayıcı Bildirimleri",
+        "description": "Group heading for the timer-notifications toggle in Reminders options"
+    },
+    "optRemShowTimers": {
+        "message": "Eşya zamanlayıcı bildirimlerini göster",
+        "description": "Checkbox label to enable/disable item timer notifications"
+    },
+    "optRemGroupReminders": {
+        "message": "Özel Hatırlatıcılar",
+        "description": "Group heading for the custom reminders list in Reminders options"
+    },
+    "optRemAddButton": {
+        "message": "Hatırlatıcı Ekle",
+        "description": "Button label to open the add-reminder modal"
+    },
+    "optRemAddModalTitle": {
+        "message": "Hatırlatıcı Ekle",
+        "description": "Modal title when creating a new reminder"
+    },
+    "optRemEditModalTitle": {
+        "message": "Hatırlatıcıyı Düzenle",
+        "description": "Modal title when editing an existing reminder"
+    },
+    "optRemTypeLabel": {
+        "message": "Tetikleyici Türü",
+        "description": "Label for the trigger-type radio group in the reminder modal"
+    },
+    "optRemTypeYearday": {
+        "message": "Popmundo Yılının Günü (1–56)",
+        "description": "Radio option label for year-day trigger type"
+    },
+    "optRemTypeWeekday": {
+        "message": "Haftanın Günü",
+        "description": "Radio option label for weekday trigger type"
+    },
+    "optRemYeardayLabel": {
+        "message": "Popmundo Yıl Günü (1–56)",
+        "description": "Input label for the year-day number field in the reminder modal"
+    },
+    "optRemWeekdayLabel": {
+        "message": "Haftanın Günü",
+        "description": "Select label for the weekday picker in the reminder modal"
+    },
+    "optRemGameLabel": {
+        "message": "Oyun",
+        "description": "Label for the game-flag checkboxes in the reminder modal"
+    },
+    "optRemForPopmundo": {
+        "message": "Popmundo",
+        "description": "Checkbox label for the Popmundo game flag"
+    },
+    "optRemForGreatHeist": {
+        "message": "The Great Heist",
+        "description": "Checkbox label for The Great Heist game flag"
+    },
+    "optRemActiveLabel": {
+        "message": "Etkin",
+        "description": "Toggle label for enabling/disabling a reminder"
+    },
+    "optRemTextLabel": {
+        "message": "Hatırlatıcı Metni",
+        "description": "Label for the reminder text textarea in the modal"
+    },
+    "optRemTextPlaceholder": {
+        "message": "Hatırlatıcı metnini girin…",
+        "description": "Placeholder for the reminder text textarea"
+    },
+    "optRemDescriptionLabel": {
+        "message": "Açıklama (isteğe bağlı)",
+        "description": "Label for the optional description textarea in the reminder modal"
+    },
+    "optRemDescriptionPlaceholder": {
+        "message": "Kısa bir açıklama girin…",
+        "description": "Placeholder for the optional description textarea"
+    },
+    "optRemBBCodeHelp": {
+        "message": "Kullanılabilir etiketler: [year], [yearday], [localeid=NNN name=SSS], [itemdetailsid=NNN name=SSS]. Boşluk içeren adlar için tırnak kullanın, ör. name=\"Mekanım\".",
+        "description": "Help text explaining the BBCode tags available in reminder text"
+    },
+    "optRemSaveButton": {
+        "message": "Ekle",
+        "description": "Confirm button in the reminder modal when creating a new reminder"
+    },
+    "optRemUpdateButton": {
+        "message": "Güncelle",
+        "description": "Confirm button in the reminder modal when editing an existing reminder"
+    },
+    "optRemCancelButton": {
+        "message": "İptal",
+        "description": "Cancel button in the reminder modal"
+    },
+    "optRemEditButton": {
+        "message": "Düzenle",
+        "description": "Edit action button on a reminder card"
+    },
+    "optRemDeleteButton": {
+        "message": "Sil",
+        "description": "Delete action button on a reminder card"
+    },
+    "optRemNoReminders": {
+        "message": "Henüz hatırlatıcı yok. Oluşturmak için ‘Hatırlatıcı Ekle’ye tıklayın.",
+        "description": "Empty-state message shown when there are no custom reminders"
+    },
+    "optRemTypeRequired": {
+        "message": "Lütfen bir tetikleyici türü seçin.",
+        "description": "Validation error when no trigger type is selected in the reminder modal"
+    },
+    "optRemDayInvalid": {
+        "message": "Gün değeri 1 ile 56 arasında olmalıdır.",
+        "description": "Validation error when the year-day value is out of range"
+    },
+    "optRemGameRequired": {
+        "message": "Lütfen en az bir oyun seçin.",
+        "description": "Validation error when neither game flag is checked in the reminder modal"
+    },
+    "optRemTextRequired": {
+        "message": "Lütfen hatırlatıcı metnini girin.",
+        "description": "Validation error when the reminder text field is empty"
+    },
+    "optRemInactive": {
+        "message": "Etkin Değil",
+        "description": "Badge label shown on inactive reminder cards"
+    },
+    "optRemYeardayBadge": {
+        "message": "Yıl Günü",
+        "description": "Badge prefix for year-day reminder type on cards (followed by the day number)"
+    },
+    "optRemWeekday1": {
+        "message": "Pazartesi",
+        "description": "Weekday name for ISO day 1"
+    },
+    "optRemWeekday2": {
+        "message": "Salı",
+        "description": "Weekday name for ISO day 2"
+    },
+    "optRemWeekday3": {
+        "message": "Çarşamba",
+        "description": "Weekday name for ISO day 3"
+    },
+    "optRemWeekday4": {
+        "message": "Perşembe",
+        "description": "Weekday name for ISO day 4"
+    },
+    "optRemWeekday5": {
+        "message": "Cuma",
+        "description": "Weekday name for ISO day 5"
+    },
+    "optRemWeekday6": {
+        "message": "Cumartesi",
+        "description": "Weekday name for ISO day 6"
+    },
+    "optRemWeekday7": {
+        "message": "Pazar",
+        "description": "Weekday name for ISO day 7"
+    },
+    "optMiscGroupAchievements": {
+        "message": "Başarımlar",
+        "description": "Category label in Misc Options for achievement related features"
+    },
+    "optMiscAchievementTrackerEnable": {
+        "message": "Eksik başarımları göster",
+        "description": "Checkbox label to enable the missing achievements box on the Character Achievements page"
+    },
+    "achievementTrackerTitle": {
+        "message": "Eksik başarımlar ($COUNT$)",
+        "description": "Title of the collapsible missing achievements box",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "338"
+            }
+        }
+    },
+    "achievementTrackerSummary": {
+        "message": "$TOTAL$ eksik başarımdan $SHOWN$ tanesi gösteriliyor.",
+        "description": "Summary line in the missing achievements box, reflecting the active category filters",
+        "placeholders": {
+            "shown": {
+                "content": "$1",
+                "example": "250"
+            },
+            "total": {
+                "content": "$2",
+                "example": "338"
+            }
+        }
+    },
+    "achievementTrackerNoneMissing": {
+        "message": "Eksik başarım yok: tebrikler!",
+        "description": "Shown in the missing achievements box when the character owns every known achievement"
+    },
+    "achievementTrackerShow": {
+        "message": "Göster:",
+        "description": "Label preceding the category filter checkboxes in the missing achievements box"
+    },
+    "achievementTrackerColName": {
+        "message": "Başarım",
+        "description": "Column header for the achievement name in the missing achievements table"
+    },
+    "achievementTrackerColPoints": {
+        "message": "Puan",
+        "description": "Column header for achievement points in the missing achievements table"
+    },
+    "achievementTrackerCategoryPPM": {
+        "message": "Popmundo",
+        "description": "Filter label for achievements specific to Popmundo"
+    },
+    "achievementTrackerCategoryTGH": {
+        "message": "The Great Heist",
+        "description": "Filter label for achievements specific to The Great Heist"
+    },
+    "achievementTrackerCategoryGENERIC": {
+        "message": "Genel",
+        "description": "Filter label for achievements available in every game"
+    },
+    "achievementTrackerCategoryPASSIVE": {
+        "message": "Pasif",
+        "description": "Filter label for passive/event achievements (seasonal events, anniversaries, etc.)"
+    },
+    "achievementTrackerLocked": {
+        "message": "Kazanılamaz: karşılığı olan başarımı zaten kazandınız.",
+        "description": "Note/tooltip on a missing achievement that is mutually exclusive with one already owned"
+    },
+    "optMiscGroupShopping": {
+        "message": "Alışveriş",
+        "description": "Category label in Misc Options for shopping related features"
+    },
+    "optMiscItemCategorySearcherEnable": {
+        "message": "Alışveriş Asistanı'nda eşya kategorisi arayıcısını göster",
+        "description": "Checkbox label to enable the item category searcher box on the Shopping Assistant page"
+    },
+    "itemCategorySearcherTitle": {
+        "message": "Eşya Kategorisi Arayıcı",
+        "description": "Title of the item category searcher box on the Shopping Assistant page"
+    },
+    "itemCategorySearcherInfo": {
+        "message": "Bir eşyanın nerede satıldığını bulmak için $CATEGORIES$ kategorideki $ITEMS$ eşya arasında arama yapın.",
+        "description": "Introductory line of the item category searcher box",
+        "placeholders": {
+            "items": {
+                "content": "$1",
+                "example": "1,155"
+            },
+            "categories": {
+                "content": "$2",
+                "example": "49"
+            }
+        }
+    },
+    "itemCategorySearcherLanguageFallback": {
+        "message": "Eşya adları oyun dilinizde mevcut değil: İngilizce adlar kullanılıyor.",
+        "description": "Shown in the item category searcher box when the game language has no item data"
+    },
+    "itemCategorySearcherSearchLabel": {
+        "message": "Eşya adı:",
+        "description": "Label of the search field in the item category searcher box"
+    },
+    "itemCategorySearcherRegexLabel": {
+        "message": "Düzenli ifade",
+        "description": "Label of the checkbox that makes the item category searcher treat the search text as a regular expression"
+    },
+    "itemCategorySearcherMaxLabel": {
+        "message": "En fazla sonuç:",
+        "description": "Label of the field setting how many results the item category searcher displays"
+    },
+    "itemCategorySearcherMinChars": {
+        "message": "En az $COUNT$ karakter yazın...",
+        "description": "Shown in the item category searcher box when the search text is too short",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "itemCategorySearcherNoMatches": {
+        "message": "Aramanızla eşleşen eşya yok.",
+        "description": "Shown in the item category searcher box when nothing matches"
+    },
+    "itemCategorySearcherInvalidRegex": {
+        "message": "Geçersiz düzenli ifade.",
+        "description": "Shown in the item category searcher box when the regular expression cannot be parsed"
+    },
+    "itemCategorySearcherMatches": {
+        "message": "Eşleşen $TOTAL$ eşyadan $SHOWN$ tanesi gösteriliyor.",
+        "description": "Result summary in the item category searcher box",
+        "placeholders": {
+            "shown": {
+                "content": "$1",
+                "example": "25"
+            },
+            "total": {
+                "content": "$2",
+                "example": "42"
+            }
+        }
+    },
+    "itemCategorySearcherSelectHint": {
+        "message": "Aşağıdaki mağaza aramasında seçmek için bir eşyaya tıklayın.",
+        "description": "Hint above the item category searcher results table"
+    },
+    "itemCategorySearcherColItem": {
+        "message": "Eşya",
+        "description": "Column header for the item name in the item category searcher results"
+    },
+    "itemCategorySearcherColCategory": {
+        "message": "Kategori",
+        "description": "Column header for the shop category in the item category searcher results"
+    },
+    "itemCategoryDbBuilderTitle": {
+        "message": "Eşya Kategorisi Veritabanı Oluşturucu (geliştirici)",
+        "description": "Title of the developer-only box that builds the item category searcher database"
+    },
+    "itemCategoryDbBuilderInfo": {
+        "message": "Geçerli oyun dilindeki tüm mağaza kategorilerini okur ve veritabanı girdisini, item-category-searcher-data.js dosyasına yapıştırılmaya hazır halde hata ayıklama günlüğüne yazdırır.",
+        "description": "Introductory line of the developer-only item category database builder box"
+    },
+    "itemCategoryDbBuilderButton": {
+        "message": "Veritabanını oluştur",
+        "description": "Button of the developer-only item category database builder box"
+    },
+    "itemCategoryDbBuilderProgress": {
+        "message": "$CATEGORY$ kategorisi okunuyor ($CURRENT$/$TOTAL$)...",
+        "description": "Progress shown while the item category database builder reads the shop categories",
+        "placeholders": {
+            "category": {
+                "content": "$1",
+                "example": "Animals"
+            },
+            "current": {
+                "content": "$2",
+                "example": "12"
+            },
+            "total": {
+                "content": "$3",
+                "example": "49"
+            }
+        }
+    },
+    "itemCategoryDbBuilderDone": {
+        "message": "Tamamlandı: $LANGUAGE$ (kimlik $ID$) için $CATEGORIES$ kategoride $ITEMS$ eşya. Veritabanı girdisi hata ayıklama günlüğünde ve konsolda.",
+        "description": "Shown when the item category database builder has finished",
+        "placeholders": {
+            "items": {
+                "content": "$1",
+                "example": "1155"
+            },
+            "categories": {
+                "content": "$2",
+                "example": "49"
+            },
+            "language": {
+                "content": "$3",
+                "example": "US English"
+            },
+            "id": {
+                "content": "$4",
+                "example": "2"
+            }
+        }
+    },
+    "itemCategoryDbBuilderFailed": {
+        "message": "Uyarı: $COUNT$ kategori okunamadı ve çıktıda eksik: $NAMES$",
+        "description": "Shown when some categories failed while the item category database builder was running",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "names": {
+                "content": "$2",
+                "example": "Animals, Weapons"
+            }
+        }
+    },
+    "itemCategoryDbBuilderNoLanguage": {
+        "message": "Oyun dili belirlenemedi.",
+        "description": "Error shown by the item category database builder when the game language cannot be retrieved"
+    },
+    "itemCategoryDbBuilderAllTitle": {
+        "message": "Tüm diller",
+        "description": "Title of the section of the developer-only item category database builder that handles several languages"
+    },
+    "itemCategoryDbBuilderAllInfo": {
+        "message": "Seçilen her dil için hesabınızın dili değiştirilir ve sonunda geri yüklenir. Bu, işlem bitene kadar açık olan tüm Popmundo sekmelerini etkiler. * ile işaretli diller etkin değildir.",
+        "description": "Explanation shown above the language checklist of the item category database builder"
+    },
+    "itemCategoryDbBuilderBuildAll": {
+        "message": "Seçilen dilleri oluştur",
+        "description": "Button that builds the item category database for the selected languages"
+    },
+    "itemCategoryDbBuilderDownload": {
+        "message": "Veritabanı dosyasını indir",
+        "description": "Button that downloads the generated item category database as a JavaScript file"
+    },
+    "itemCategoryDbBuilderRestore": {
+        "message": "Dili geri yükle",
+        "description": "Button that restores the game language after an interrupted item category database build"
+    },
+    "itemCategoryDbBuilderRestoreInfo": {
+        "message": "Önceki bir çalıştırma, oyun diliniz geri yüklenmeden önce yarıda kesildi.",
+        "description": "Warning shown by the item category database builder after an interrupted multi-language run"
+    },
+    "itemCategoryDbBuilderLoadingLanguages": {
+        "message": "Diller yükleniyor...",
+        "description": "Shown while the item category database builder reads the available game languages"
+    },
+    "itemCategoryDbBuilderNoneSelected": {
+        "message": "En az bir dil seçin.",
+        "description": "Shown when the item category database builder is started without any selected language"
+    },
+    "itemCategoryDbBuilderLanguageProgress": {
+        "message": "$LANGUAGE$ dili ($CURRENT$/$TOTAL$): $DETAIL$",
+        "description": "Progress shown while the item category database builder reads several languages",
+        "placeholders": {
+            "language": {
+                "content": "$1",
+                "example": "Italian"
+            },
+            "current": {
+                "content": "$2",
+                "example": "3"
+            },
+            "total": {
+                "content": "$3",
+                "example": "19"
+            },
+            "detail": {
+                "content": "$4",
+                "example": "Reading category Animals (12/49)..."
+            }
+        }
+    },
+    "itemCategoryDbBuilderAllDone": {
+        "message": "Tamamlandı: $COUNT$ dil indirmeye hazır (kimlikler: $IDS$). Hesabınızın dili geri yüklendi.",
+        "description": "Shown when the item category database builder has finished reading several languages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "19"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "2, 19"
+            }
+        }
+    },
+    "itemCategoryDbBuilderLanguagesFailed": {
+        "message": "Tamamen okunamayan ve dışarıda bırakılan diller: $NAMES$",
+        "description": "Shown when some languages failed while the item category database builder was running",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "itemCategoryDbBuilderSkipKnown": {
+        "message": "Zaten bilinen dilleri atla",
+        "description": "Checkbox of the item category database builder: languages already present in the database are not read again"
+    },
+    "itemCategoryDbBuilderMerge": {
+        "message": "Verileri birleştir",
+        "description": "Checkbox of the item category database builder: the downloaded file includes the existing database, overridden by the newly read languages"
+    },
+    "itemCategoryDbBuilderAllKnown": {
+        "message": "Seçilen dillerin hepsi zaten veritabanında: okunacak bir şey yok.",
+        "description": "Shown when the item category database builder skips every selected language because they are already known"
+    },
+    "itemCategoryDbBuilderLanguagesSkipped": {
+        "message": "Atlananlar (zaten biliniyor): $NAMES$.",
+        "description": "Shown when the item category database builder skipped some languages because they are already known",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "US English, Turkish"
+            }
+        }
+    },
+    "itemCategoryDbBuilderRestoreFailed": {
+        "message": "Özgün oyun diliniz geri yüklenemedi: Dili geri yükle düğmesini kullanın veya dil ayarlarından kendiniz belirleyin.",
+        "description": "Error shown when the item category database builder cannot restore the game language"
+    },
+    "achievementDbBuilderTitle": {
+        "message": "Başarım Veritabanı Oluşturucu (geliştirici)",
+        "description": "Title of the developer-only box that builds the achievement tracker database"
+    },
+    "achievementDbBuilderInfo": {
+        "message": "Bu sayfada gösterilen başarımları geçerli oyun dilinde okur ve veritabanı girdisini, achievement-tracker-data.js dosyasına yapıştırılmaya hazır halde hata ayıklama günlüğüne yazdırır.",
+        "description": "Introductory line of the developer-only achievement database builder box"
+    },
+    "achievementDbBuilderButton": {
+        "message": "Veritabanını oluştur",
+        "description": "Button of the developer-only achievement database builder box"
+    },
+    "achievementDbBuilderDone": {
+        "message": "Tamamlandı: $LANGUAGE$ (kimlik $ID$) için $COUNT$ başarım. Veritabanı girdisi hata ayıklama günlüğünde ve konsolda.",
+        "description": "Shown when the achievement database builder has finished",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "313"
+            },
+            "language": {
+                "content": "$2",
+                "example": "US English"
+            },
+            "id": {
+                "content": "$3",
+                "example": "2"
+            }
+        }
+    },
+    "achievementDbBuilderNewIds": {
+        "message": "Uyarı: $COUNT$ başarım henüz izleyici verilerinde yok ve GENERIC olarak eklendi, kategorilerini kontrol edin: $IDS$",
+        "description": "Shown when the achievement database builder found achievements that are missing from the language independent data",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "445, 446"
+            }
+        }
+    },
+    "achievementDbBuilderNoRows": {
+        "message": "Sayfada başarım bulunamadı.",
+        "description": "Error shown by the achievement database builder when the achievements table is empty or missing"
+    },
+    "achievementDbBuilderNoLanguage": {
+        "message": "Oyun dili belirlenemedi.",
+        "description": "Error shown by the achievement database builder when the game language cannot be retrieved"
+    },
+    "achievementDbBuilderAllTitle": {
+        "message": "Tüm diller",
+        "description": "Title of the section of the developer-only achievement database builder that handles several languages"
+    },
+    "achievementDbBuilderAllInfo": {
+        "message": "Seçilen her dil için hesabınızın dili değiştirilir ve sonunda geri yüklenir. Bu, işlem bitene kadar açık olan tüm Popmundo sekmelerini etkiler. * ile işaretli diller etkin değildir. Yalnızca bu karakterin sahip olduğu başarımlar okunabilir.",
+        "description": "Explanation shown above the language checklist of the achievement database builder"
+    },
+    "achievementDbBuilderBuildAll": {
+        "message": "Seçilen dilleri oluştur",
+        "description": "Button that builds the achievement database for the selected languages"
+    },
+    "achievementDbBuilderDownload": {
+        "message": "Veritabanı dosyasını indir",
+        "description": "Button that downloads the generated achievement database as a JavaScript file"
+    },
+    "achievementDbBuilderRestore": {
+        "message": "Dili geri yükle",
+        "description": "Button that restores the game language after an interrupted achievement database build"
+    },
+    "achievementDbBuilderRestoreInfo": {
+        "message": "Önceki bir çalıştırma, oyun diliniz geri yüklenmeden önce yarıda kesildi.",
+        "description": "Warning shown by the achievement database builder after an interrupted multi-language run"
+    },
+    "achievementDbBuilderLoadingLanguages": {
+        "message": "Diller yükleniyor...",
+        "description": "Shown while the achievement database builder reads the available game languages"
+    },
+    "achievementDbBuilderNoneSelected": {
+        "message": "En az bir dil seçin.",
+        "description": "Shown when the achievement database builder is started without any selected language"
+    },
+    "achievementDbBuilderLanguageProgress": {
+        "message": "$LANGUAGE$ dili ($CURRENT$/$TOTAL$): $DETAIL$",
+        "description": "Progress shown while the achievement database builder reads several languages",
+        "placeholders": {
+            "language": {
+                "content": "$1",
+                "example": "Italian"
+            },
+            "current": {
+                "content": "$2",
+                "example": "3"
+            },
+            "total": {
+                "content": "$3",
+                "example": "19"
+            },
+            "detail": {
+                "content": "$4",
+                "example": "Character 3/78: Deion (id 3436235, Popmundo)..."
+            }
+        }
+    },
+    "achievementDbBuilderAllDone": {
+        "message": "Tamamlandı: $COUNT$ dil indirmeye hazır (kimlikler: $IDS$). Hesabınızın dili geri yüklendi.",
+        "description": "Shown when the achievement database builder has finished reading several languages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "19"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "2, 19"
+            }
+        }
+    },
+    "achievementDbBuilderLanguagesFailed": {
+        "message": "Okunamayan ve dışarıda bırakılan diller: $NAMES$",
+        "description": "Shown when some languages failed while the achievement database builder was running",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "achievementDbBuilderSkipKnown": {
+        "message": "Zaten bilinen dilleri atla",
+        "description": "Checkbox of the achievement database builder: languages already present in the database are not read again"
+    },
+    "achievementDbBuilderMerge": {
+        "message": "Verileri birleştir",
+        "description": "Checkbox of the achievement database builder: the downloaded file includes the existing database, completed by the newly read names"
+    },
+    "achievementDbBuilderAllKnown": {
+        "message": "Seçilen dillerin hepsi zaten veritabanında: okunacak bir şey yok.",
+        "description": "Shown when the achievement database builder skips every selected language because they are already known"
+    },
+    "achievementDbBuilderLanguagesSkipped": {
+        "message": "Atlananlar (zaten biliniyor): $NAMES$.",
+        "description": "Shown when the achievement database builder skipped some languages because they are already known",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "US English, Turkish"
+            }
+        }
+    },
+    "achievementDbBuilderRestoreFailed": {
+        "message": "Özgün oyun diliniz geri yüklenemedi: Dili geri yükle düğmesini kullanın veya dil ayarlarından kendiniz belirleyin.",
+        "description": "Error shown when the achievement database builder cannot restore the game language"
+    },
+    "achievementDbBuilderCategoriesChanged": {
+        "message": "$COUNT$ başarımın kategorisi, Diğer Başarımlar tablosunda oldukları için değiştirildi, kontrol edin: $CHANGES$",
+        "description": "Shown when the achievement database builder changed the category of known achievements, according to the Other Achievements table",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "changes": {
+                "content": "$2",
+                "example": "33: GENERIC -> TGH, 73: PPM -> TGH"
+            }
+        }
+    },
+    "achievementDbBuilderCategoryGuard": {
+        "message": "Uyarı: Diğer Başarımlar tablosu, başarımlarının çoğunun bilinen kategorisiyle çelişiyor; bu nedenle bu karakterin oyunu muhtemelen yanlış tespit edildi. Hiçbir kategori değiştirilmedi.",
+        "description": "Shown when the achievement database builder does not trust the game detected for the character and leaves the categories unchanged"
+    },
+    "achievementDbBuilderGameUnknown": {
+        "message": "Uyarı: $COUNT$ karakterin oyunu tespit edilemedi; bu yüzden Diğer Başarımları kategoriler için kullanılmadı.",
+        "description": "Shown when the achievement database builder cannot tell if some characters play Popmundo or The Great Heist and leaves the categories unchanged for them",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "achievementDbBuilderPointsChanged": {
+        "message": "$COUNT$ başarımın puanı sayfadakiyle değiştirildi, kontrol edin: $CHANGES$",
+        "description": "Shown when the achievement database builder replaced the known points of some achievements with the ones shown by the game",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "changes": {
+                "content": "$2",
+                "example": "142: 10 -> 20, 431: 10 -> 20"
+            }
+        }
+    },
+    "achievementDbBuilderPointsGuard": {
+        "message": "Uyarı: Sayfadaki puanlar, başarımların çoğu için bilinenlerden farklı; bu nedenle sayfa muhtemelen yanlış okundu. Hiçbir puan değiştirilmedi.",
+        "description": "Shown when the achievement database builder does not trust the points read from the page and leaves the known points unchanged"
+    },
+    "achievementDbBuilderBulk": {
+        "message": "Yalnızca bu karakter yerine En Çok Başarım Puanı sıralamasındaki karakterleri (tüm filtreleriyle) oku",
+        "description": "Checkbox of the achievement database builder: the achievements are read from all the characters of the chart, for every filter value, instead of only from the character of the page"
+    },
+    "achievementDbBuilderCharactersPerChart": {
+        "message": "Sıralama filtresi başına karakter:",
+        "description": "Label of the number of characters the achievement database builder takes from each filter value of the Most Achievement Points chart"
+    },
+    "achievementDbBuilderLoadingChart": {
+        "message": "En Çok Başarım Puanı sıralaması okunuyor (filtre $CURRENT$/$TOTAL$)...",
+        "description": "Progress shown while the achievement database builder reads the characters of the chart",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "2"
+            },
+            "total": {
+                "content": "$2",
+                "example": "3"
+            }
+        }
+    },
+    "achievementDbBuilderChartEmpty": {
+        "message": "En Çok Başarım Puanı sıralamasında karakter bulunamadı.",
+        "description": "Error shown by the achievement database builder when the chart gives no character"
+    },
+    "achievementDbBuilderDetectingGame": {
+        "message": "$CURRENT$/$TOTAL$ karakterin oyunu tespit ediliyor ($NAME$)...",
+        "description": "Progress shown while the achievement database builder detects the game of the characters",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "12"
+            },
+            "total": {
+                "content": "$2",
+                "example": "78"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Deion Cupcake Peanutbutter"
+            }
+        }
+    },
+    "achievementDbBuilderCharacterProgress": {
+        "message": "Karakter $CURRENT$/$TOTAL$: $NAME$ (kimlik $ID$, $GAME$)...",
+        "description": "Progress shown while the achievement database builder reads the achievements of each character",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "12"
+            },
+            "total": {
+                "content": "$2",
+                "example": "78"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Deion Cupcake Peanutbutter"
+            },
+            "id": {
+                "content": "$4",
+                "example": "3436235"
+            },
+            "game": {
+                "content": "$5",
+                "example": "Popmundo"
+            }
+        }
+    },
+    "achievementDbBuilderEstimate": {
+        "message": "$CHARACTERS$ karakter, $LANGUAGES$ dil: yaklaşık $REQUESTS$ istek, en az $MINUTES$ dakika.",
+        "description": "Estimate shown by the achievement database builder before reading the characters in the selected languages",
+        "placeholders": {
+            "characters": {
+                "content": "$1",
+                "example": "78"
+            },
+            "languages": {
+                "content": "$2",
+                "example": "19"
+            },
+            "requests": {
+                "content": "$3",
+                "example": "1620"
+            },
+            "minutes": {
+                "content": "$4",
+                "example": "21"
+            }
+        }
+    },
+    "achievementDbBuilderStop": {
+        "message": "Durdur",
+        "description": "Button that stops a run of the achievement database builder; what was read is kept and the game language is restored"
+    },
+    "achievementDbBuilderStopping": {
+        "message": "Durduruluyor...",
+        "description": "Shown when the achievement database builder was asked to stop and is finishing the request in progress"
+    },
+    "achievementDbBuilderStopped": {
+        "message": "Çalıştırma durduruldu: yalnızca şimdiye kadar okunanlar kullanılabilir.",
+        "description": "Shown when a run of the achievement database builder was stopped before the end"
+    },
+    "achievementDbBuilderLanguagesInterrupted": {
+        "message": "Tekrarlayan hatalar nedeniyle yarıda kesilen diller, adları eksik: $NAMES$.",
+        "description": "Shown when the achievement database builder gave up on some languages because several characters in a row could not be read",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "achievementDbBuilderCharactersFailed": {
+        "message": "$COUNT$ başarım sayfası okunamadı, hata ayıklama günlüğüne bakın.",
+        "description": "Shown when the achievement database builder could not read some achievements pages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "achievementDbBuilderUncovered": {
+        "message": "$COUNT$ bilinen başarım okunan hiçbir karakterde yok, bu yüzden bu çalıştırmada adları yok: $IDS$",
+        "description": "Shown by the achievement database builder after reading many characters: the known achievements that none of them owns",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "17"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "43, 44, 46"
+            }
+        }
+    },
+    "achievementDbBuilderCategoryConflicts": {
+        "message": "Karakterler aynı fikirde olmadığı için $COUNT$ başarımın kategorisi belirlenmedi: $LIST$",
+        "description": "Shown when the characters read by the achievement database builder suggest different categories for the same achievement",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "1"
+            },
+            "list": {
+                "content": "$2",
+                "example": "205: PPM / TGH"
+            }
+        }
+    },
+    "achievementDbBuilderPointsConflicts": {
+        "message": "Karakterler aynı fikirde olmadığı için $COUNT$ başarımın puanı değiştirilmedi: $LIST$",
+        "description": "Shown when the characters read by the achievement database builder show different points for the same achievement",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "1"
+            },
+            "list": {
+                "content": "$2",
+                "example": "142: 10 / 20"
+            }
+        }
+    },
+    "achievementDbBuilderContradictions": {
+        "message": "$COUNT$ kategori, karakterlerin başarımlarıyla çelişiyor (bir Great Heist karakterinin sahip olduğu yalnızca Popmundo'ya özgü bir başarım veya tersi), kontrol edin: $LIST$",
+        "description": "Shown when the achievement database builder finds an achievement whose category says it belongs to one game, but a character of the other game owns it",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "list": {
+                "content": "$2",
+                "example": "27: PPM, 28: PPM"
+            }
+        }
+    },
+    "achievementDbBuilderGamePpm": {
+        "message": "Popmundo",
+        "description": "Name of the Popmundo game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameTgh": {
+        "message": "The Great Heist",
+        "description": "Name of the Great Heist game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameNone": {
+        "message": "oyun tespit edilemedi",
+        "description": "Shown by the achievement database builder instead of the game name when the game of the character cannot be detected"
+    }
+}

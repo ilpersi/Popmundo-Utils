@@ -1,0 +1,2644 @@
+{
+    "extName": {
+        "message": "Popmundo Utils",
+        "description": "Extension name"
+    },
+    "extDescription": {
+        "message": "Utilitários diversos para o Popmundo",
+        "description": "Extension description shown in the browser extension list"
+    },
+    "optPageTitle": {
+        "message": "Opções do Popmundo Utils",
+        "description": "Title of the options page tab"
+    },
+    "optSaveButton": {
+        "message": "Salvar",
+        "description": "Options page save button label"
+    },
+    "optSaved": {
+        "message": "Opções salvas.",
+        "description": "Status message shown after saving options"
+    },
+    "optBrandTag": {
+        "message": "Configurações",
+        "description": "Tag shown under the Popmundo Utils brand name in the options sidebar"
+    },
+    "optThemeToggleLight": {
+        "message": "Mudar para o tema escuro",
+        "description": "Tooltip on the theme toggle button while the page is in light mode"
+    },
+    "optThemeToggleDark": {
+        "message": "Mudar para o tema claro",
+        "description": "Tooltip on the theme toggle button while the page is in dark mode"
+    },
+    "navGottaGoFast": {
+        "message": "Coletor de Autógrafos",
+        "description": "Sidebar navigation label for the Autograph Collector section"
+    },
+    "navCallAllFriends": {
+        "message": "Ligar para Todos os Amigos",
+        "description": "Sidebar navigation label for the Call All Friends section"
+    },
+    "navEnhancedLinks": {
+        "message": "Links Aprimorados",
+        "description": "Sidebar navigation label for the Enhanced Links section"
+    },
+    "navMassInteract": {
+        "message": "Interação em Massa",
+        "description": "Sidebar navigation label for the Mass Interact section"
+    },
+    "navMiscOptions": {
+        "message": "Opções Diversas",
+        "description": "Sidebar navigation label for the Misc Options section"
+    },
+    "navPopupOptions": {
+        "message": "Opções de Pop-up",
+        "description": "Sidebar navigation label for the Popup Options section"
+    },
+    "navTourBusHelper": {
+        "message": "Assistente do Ônibus de Turnê",
+        "description": "Sidebar navigation label for the Tour Bus Helper section"
+    },
+    "optGGFDescription": {
+        "message": "Opções do recurso Coletor de Autógrafos.",
+        "description": "Autograph Collector section description"
+    },
+    "optGGFGroupDisplay": {
+        "message": "Geral",
+        "description": "Autograph Collector general section"
+    },
+    "optGGFCollectAutograph": {
+        "message": "Ativar coleta de autógrafos",
+        "description": "Label for the enable/disable toggle of the Gotta Go Fast feature"
+    },
+    "optGGFCollectAutographScroll": {
+        "message": "Rolar a visualização até a última linha do registro.",
+        "description": "Label for the autograph book scroll to last line option"
+    },
+    "optGGFAutographBookName": {
+        "message": "Nome do item do livro de autógrafos",
+        "description": "Label for the autograph book item name field"
+    },
+    "optGGFAutographBookNameTooltip": {
+        "message": "O nome do item do livro de autógrafos no jogo, no seu idioma.",
+        "description": "Tooltip for the autograph book item name field"
+    },
+    "optGGFAutographBookNamePlaceholder": {
+        "message": "ex.: Livro de Autógrafos",
+        "description": "Placeholder for the autograph book item name field"
+    },
+    "optGGFAutographLogMaxRows": {
+        "message": "Máximo de linhas do registro",
+        "description": "Log Max Rows label"
+    },
+    "optGGFAutographLogMaxRowsTooltip": {
+        "message": "O número máximo de linhas mantidas no registro. Use zero para linhas ilimitadas.",
+        "description": "Tooltip for Autograph collector max rows"
+    },
+    "optGGFGroupKeepAlive": {
+        "message": "Manter Ativo",
+        "description": "Keep-alive options group title in Autograph Collector settings"
+    },
+    "optGGFKeepAlive": {
+        "message": "Ativar recarregamento da página para manter a sessão ativa",
+        "description": "Label for the keep-alive toggle in Autograph Collector settings"
+    },
+    "optGGFKeepAliveTooltip": {
+        "message": "Recarrega a página periodicamente para impedir que o jogo desconecte você durante coletas longas.",
+        "description": "Tooltip for the keep-alive toggle"
+    },
+    "optGGFKeepAliveInterval": {
+        "message": "Intervalo de recarregamento (minutos)",
+        "description": "Label for the keep-alive interval field"
+    },
+    "optGGFKeepAliveIntervalTooltip": {
+        "message": "Com que frequência a página é recarregada para manter a sessão ativa. Mínimo de 5 minutos.",
+        "description": "Tooltip for the keep-alive interval field"
+    },
+    "optCafTitle": {
+        "message": "Ligar para Todos os Amigos",
+        "description": "Call All Friends section card title"
+    },
+    "optCafDescription": {
+        "message": "Selecione as interações de telefone a serem usadas. A lógica escolherá aleatoriamente entre as marcadas e as disponíveis para cada amigo.",
+        "description": "Call All Friends section description"
+    },
+    "optCafGroupGeneral": {
+        "message": "Geral",
+        "description": "Category label for general Call All Friends options"
+    },
+    "optCafEnable": {
+        "message": "Ativar Ligar para Todos os Amigos",
+        "description": "Label for the enable Call All Friends toggle"
+    },
+    "optCafHideNotifications": {
+        "message": "Ocultar notificações do jogo após as ligações",
+        "description": "Label for the toggle that silently dismisses queued in-game notification banners after a Call All Friends run"
+    },
+    "optCafHideNotificationsTooltip": {
+        "message": "Quando ativado (padrão), os avisos de notificação do jogo gerados pelas ligações (mudanças de relacionamento, fofocas etc.) são dispensados silenciosamente para manter a página limpa. Quando desativado, esses avisos aparecerão no topo da página na sua próxima navegação.",
+        "description": "Tooltip for the hide in-game notifications toggle in Call All Friends"
+    },
+    "optCafGroupInteractions": {
+        "message": "Tipos de Interação",
+        "description": "Category label for call interaction type checkboxes"
+    },
+    "optCafWazzup": {
+        "message": "Ligar para papear",
+        "description": "Label for the Wazzup call option"
+    },
+    "optCafPrank": {
+        "message": "Trote por telefone",
+        "description": "Label for the Prank call option"
+    },
+    "optCafSmsPic": {
+        "message": "SMS com foto engraçada",
+        "description": "Label for the SMS Funny Pic option"
+    },
+    "optCafSmsTxt": {
+        "message": "SMS com texto amigável",
+        "description": "Label for the SMS Friendly Text option"
+    },
+    "optCafGossip": {
+        "message": "Fofoca por telefone",
+        "description": "Label for the Gossip on phone option"
+    },
+    "optCafGroupExclusions": {
+        "message": "Exclusões",
+        "description": "Category label for call exclusion settings"
+    },
+    "optCafExcludedChars": {
+        "message": "Personagens Excluídos",
+        "description": "Label for the excluded characters list in Call All Friends"
+    },
+    "optCafExcludedCharsTooltip": {
+        "message": "Os personagens adicionados aqui serão ignorados durante as ligações. Adicione-os usando o botão Excluir no jogo.",
+        "description": "Tooltip for the excluded characters list in Call All Friends"
+    },
+    "optExcludeListEmpty": {
+        "message": "Nenhum personagem excluído.",
+        "description": "Empty state text for excluded characters lists"
+    },
+    "optExcludeListRemove": {
+        "message": "Remover",
+        "description": "Button text to remove a character from an exclusion list"
+    },
+    "optExcludeListRemoveAll": {
+        "message": "Remover Todos",
+        "description": "Button text to clear an entire exclusion list"
+    },
+    "optElTitle": {
+        "message": "Links Aprimorados",
+        "description": "Enhanced Links section card title"
+    },
+    "optElDescription": {
+        "message": "Adiciona links de ação rápida ao lado de elementos do jogo para navegação e interações mais rápidas.",
+        "description": "Enhanced Links section description"
+    },
+    "optElGroupGeneral": {
+        "message": "Geral",
+        "description": "Category label for general enhanced links options"
+    },
+    "optElFontSize": {
+        "message": "Tamanho da Fonte dos Ícones",
+        "description": "Label for the enhanced links font size option"
+    },
+    "optElGroupBand": {
+        "message": "Banda",
+        "description": "Category label for band-related enhanced links"
+    },
+    "optElPopularity": {
+        "message": "Link de Popularidade",
+        "description": "Label for the band Popularity link option"
+    },
+    "optElUpcomingShows": {
+        "message": "Link de Próximos Shows",
+        "description": "Label for the band Upcoming Shows link option"
+    },
+    "optElGroupCharacter": {
+        "message": "Personagem",
+        "description": "Category label for character-related enhanced links"
+    },
+    "optElSendMessage": {
+        "message": "Link de Enviar Mensagem",
+        "description": "Label for the character Send Message link option"
+    },
+    "optElCall": {
+        "message": "Link de Ligar",
+        "description": "Label for the character Call link option"
+    },
+    "optElOfferItem": {
+        "message": "Link de Oferecer um Item",
+        "description": "Label for the character Offer an Item link option"
+    },
+    "optElGroupCity": {
+        "message": "Cidade",
+        "description": "Category label for city-related enhanced links"
+    },
+    "optElBookFlight": {
+        "message": "Link de Reservar Voo Comum",
+        "description": "Label for the city Book Regular Flight link option"
+    },
+    "optElCharterJet": {
+        "message": "Link de Fretar Jato VIP",
+        "description": "Label for the city Charter VIP Jet link option"
+    },
+    "optElOtherVehicles": {
+        "message": "Link de Outros Veículos",
+        "description": "Label for the city Other Vehicles link option"
+    },
+    "optElFindLocales": {
+        "message": "Link de Encontrar Locais",
+        "description": "Label for the city Find Locales link option"
+    },
+    "optElGroupLocale": {
+        "message": "Local",
+        "description": "Category label for locale-related enhanced links"
+    },
+    "optElCharactersPresent": {
+        "message": "Link de Personagens Presentes",
+        "description": "Label for the locale Characters Present link option"
+    },
+    "optElMoveToLocale": {
+        "message": "Link de Ir para o Local",
+        "description": "Label for the locale Move to Locale link option"
+    },
+    "optElReconnaissance": {
+        "message": "Link de Reconhecimento",
+        "description": "Label for the locale Reconnaissance link option"
+    },
+    "optElGroupCrew": {
+        "message": "Equipe",
+        "description": "Category label for crew-related enhanced links"
+    },
+    "optElTopHeists": {
+        "message": "Link de Melhores Assaltos",
+        "description": "Label for the crew Top Heists link option"
+    },
+    "optElIconTitle": {
+        "message": "Caractere de ícone personalizado",
+        "description": "Tooltip for the icon character text input next to each enhanced link toggle"
+    },
+    "optElResetIcons": {
+        "message": "Restaurar Ícones Padrão",
+        "description": "Button to reset all enhanced link icon characters to their default values"
+    },
+    "optMiTitle": {
+        "message": "Interação em Massa",
+        "description": "Mass Interact section card title"
+    },
+    "optMiDescription": {
+        "message": "Selecione as interações a serem usadas. A lógica escolherá aleatoriamente entre as marcadas e as disponíveis para os personagens encontrados.",
+        "description": "Mass Interact section description"
+    },
+    "optMiGroupVerbal": {
+        "message": "Verbal e Social",
+        "description": "Category label for verbal and social interactions"
+    },
+    "optMiGreet": {
+        "message": "Cumprimentar"
+    },
+    "optMiSmile": {
+        "message": "Sorrir"
+    },
+    "optMiWink": {
+        "message": "Piscar"
+    },
+    "optMiInsult": {
+        "message": "Insultar"
+    },
+    "optMiTalkTo": {
+        "message": "Conversar"
+    },
+    "optMiTease": {
+        "message": "Provocar"
+    },
+    "optMiShareOpinions": {
+        "message": "Compartilhar Opiniões"
+    },
+    "optMiGossip": {
+        "message": "Fofocar"
+    },
+    "optMiProfoundDiscussion": {
+        "message": "Discussão Profunda"
+    },
+    "optMiComfort": {
+        "message": "Consolar"
+    },
+    "optMiFraternize": {
+        "message": "Confraternizar"
+    },
+    "optMiOfferAdvice": {
+        "message": "Dar Conselhos"
+    },
+    "optMiCompliment": {
+        "message": "Elogiar"
+    },
+    "optMiPraise": {
+        "message": "Exaltar"
+    },
+    "optMiTellNaughtyJoke": {
+        "message": "Contar Piada Safada"
+    },
+    "optMiTellJoke": {
+        "message": "Contar Piada"
+    },
+    "optMiShareSecrets": {
+        "message": "Compartilhar Segredos"
+    },
+    "optMiHangOut": {
+        "message": "Passar o Tempo Juntos"
+    },
+    "optMiHexySexy": {
+        "message": "E aí, gostosa(o)..."
+    },
+    "optMiGroupPhysical": {
+        "message": "Físico",
+        "description": "Category label for physical interactions"
+    },
+    "optMiShakeHands": {
+        "message": "Aperto de Mão"
+    },
+    "optMiRubElbows": {
+        "message": "Esfregar os Cotovelos"
+    },
+    "optMiHug": {
+        "message": "Abraçar"
+    },
+    "optMiTickle": {
+        "message": "Fazer Cócegas"
+    },
+    "optMiPatOnBack": {
+        "message": "Dar Tapinha nas Costas"
+    },
+    "optMiBraidHair": {
+        "message": "Trançar o Cabelo"
+    },
+    "optMiBuyADrink": {
+        "message": "Pagar uma Bebida"
+    },
+    "optMiStrollHandInHand": {
+        "message": "Passear de Mãos Dadas"
+    },
+    "optMiFlexBiceps": {
+        "message": "Flexionar os Bíceps"
+    },
+    "optMiCaress": {
+        "message": "Acariciar"
+    },
+    "optMiAskForADance": {
+        "message": "Convidar para Dançar"
+    },
+    "optMiHighFive": {
+        "message": "Bater na Mão"
+    },
+    "optMiArmWrestle": {
+        "message": "Queda de Braço"
+    },
+    "optMiKissCheeks": {
+        "message": "Beijar nas Bochechas"
+    },
+    "optMiEmbrace": {
+        "message": "Abraçar Forte"
+    },
+    "optMiPlayWith": {
+        "message": "Brincar Com"
+    },
+    "optMiPickUp": {
+        "message": "Pegar no Colo"
+    },
+    "optMiChangeDiapers": {
+        "message": "Trocar Fraldas"
+    },
+    "optMiKissOnForehead": {
+        "message": "Beijar na Testa"
+    },
+    "optMiGiveMassage": {
+        "message": "Fazer Massagem"
+    },
+    "optMiGroupRomantic": {
+        "message": "Romântico",
+        "description": "Category label for romantic interactions"
+    },
+    "optMiKiss": {
+        "message": "Beijar"
+    },
+    "optMiKissPassionately": {
+        "message": "Beijar Apaixonadamente"
+    },
+    "optMiMakeLove": {
+        "message": "Fazer Amor"
+    },
+    "optMiFiveMinuteQuickie": {
+        "message": "Rapidinha de 5 Minutos"
+    },
+    "optMiTantricSex": {
+        "message": "Sexo Tântrico"
+    },
+    "optMiEnjoyKobeSutra": {
+        "message": "Aproveitar o Kobe Sutra"
+    },
+    "optMiGroupSpecial": {
+        "message": "Especial",
+        "description": "Category label for special interactions"
+    },
+    "optMiBless": {
+        "message": "Abençoar"
+    },
+    "optMiDoFunnyMagic": {
+        "message": "Fazer uma Mágica Divertida"
+    },
+    "optMiSeekApprenticeship": {
+        "message": "Buscar Aprendizado"
+    },
+    "optMiSingTo": {
+        "message": "Cantar Para"
+    },
+    "optMiSerenade": {
+        "message": "Fazer Serenata"
+    },
+    "optMiGuide": {
+        "message": "Guiar"
+    },
+    "optMiGoogleGoogle": {
+        "message": "Gugu-Dadá"
+    },
+    "optMiGroupGeneral": {
+        "message": "Geral",
+        "description": "Category label for general Mass Interact options"
+    },
+    "optMiEnable": {
+        "message": "Ativar Interação em Massa",
+        "description": "Label for the enable Mass Interact toggle"
+    },
+    "optMiHideNotifications": {
+        "message": "Ocultar notificações do jogo após as interações",
+        "description": "Label for the toggle that silently dismisses queued in-game notification banners after a Mass Interact run"
+    },
+    "optMiHideNotificationsTooltip": {
+        "message": "Quando ativado (padrão), os avisos de notificação do jogo gerados pelas interações (mudanças de relacionamento, ganhos de XP etc.) são dispensados silenciosamente para manter a página limpa. Quando desativado, esses avisos aparecerão no topo da página na sua próxima navegação.",
+        "description": "Tooltip for the hide in-game notifications toggle in Mass Interact"
+    },
+    "optMiGroupSettings": {
+        "message": "Configurações",
+        "description": "Category label for mass interact settings"
+    },
+    "optMiSearchPlaceholder": {
+        "message": "Filtrar interações…",
+        "description": "Placeholder for the chip search input on the Mass Interact tab"
+    },
+    "optMiSelectAll": {
+        "message": "Todas",
+        "description": "Per-group bulk-enable button on the Mass Interact tab"
+    },
+    "optMiSelectNone": {
+        "message": "Nenhuma",
+        "description": "Per-group bulk-disable button on the Mass Interact tab"
+    },
+    "optMiNoResults": {
+        "message": "Nenhuma interação corresponde à sua busca.",
+        "description": "Empty state shown when the chip search filter has no matches"
+    },
+    "optGlobalSearchPlaceholder": {
+        "message": "Buscar opções…",
+        "description": "Placeholder for the global search input in the options-page topbar"
+    },
+    "optGlobalSearchNoResults": {
+        "message": "Nenhuma opção corresponde à sua busca.",
+        "description": "Empty state shown when the global cross-tab search has no matches"
+    },
+    "optGlobalSearchClear": {
+        "message": "Limpar busca",
+        "description": "Tooltip / aria-label on the clear (×) button of the global search input"
+    },
+    "optMiExcludedChars": {
+        "message": "Personagens Excluídos",
+        "description": "Label for the excluded characters list in Mass Interact"
+    },
+    "optMiExcludedCharsTooltip": {
+        "message": "Os personagens adicionados aqui serão ignorados durante a interação em massa. Adicione-os usando o botão Excluir no jogo.",
+        "description": "Tooltip for the excluded characters list in Mass Interact"
+    },
+    "miExclude": {
+        "message": "Excluir da Interação em Massa",
+        "description": "Tooltip on the prohibition icon next to a character not yet excluded from Mass Interact"
+    },
+    "miInclude": {
+        "message": "Incluir na Interação em Massa",
+        "description": "Tooltip on the tick-circle icon next to a character currently excluded from Mass Interact"
+    },
+    "cafExclude": {
+        "message": "Excluir de Ligar para Todos os Amigos",
+        "description": "Tooltip on the prohibition icon next to a character not yet excluded from Call All Friends"
+    },
+    "cafInclude": {
+        "message": "Incluir em Ligar para Todos os Amigos",
+        "description": "Tooltip on the tick-circle icon next to a character currently excluded from Call All Friends"
+    },
+    "charIdZeroError": {
+        "message": "Personagem não identificado. Acesse primeiro a página do seu personagem.",
+        "description": "Error shown when the current character ID cannot be determined"
+    },
+    "optSelectCharLabel": {
+        "message": "Personagem",
+        "description": "Label for the character selector combo box in the options page exclusion list"
+    },
+    "optSelectCharPlaceholder": {
+        "message": "-- Selecione um personagem --",
+        "description": "Placeholder option in the character selector combo box"
+    },
+    "optNoCharacterSelected": {
+        "message": "Selecione um personagem acima para ver ou gerenciar as exclusões.",
+        "description": "Message shown when no character is selected in the options exclusion list"
+    },
+    "optMiMaxChars": {
+        "message": "Máximo de personagens (1–100)",
+        "description": "Label for the maximum characters input in mass interact"
+    },
+    "optMiMaxCharsTooltip": {
+        "message": "Limita o número de personagens com quem interagir por execução.",
+        "description": "Tooltip for max characters field in mass interact"
+    },
+    "optMiIgnoreAcquaintance": {
+        "message": "Ignorar novos conhecidos",
+        "description": "Label for the ignore new acquaintances toggle in mass interact"
+    },
+    "optMiscTitle": {
+        "message": "Opções Diversas",
+        "description": "Misc Options section card title"
+    },
+    "optMiscDescription": {
+        "message": "Configurações de uso geral que afetam o comportamento de toda a extensão.",
+        "description": "Misc Options section description"
+    },
+    "optMiscGroupDisplay": {
+        "message": "Exibição",
+        "description": "Category label for display-related misc options"
+    },
+    "optMiscProgressBarPercent": {
+        "message": "Porcentagens nas barras de progresso",
+        "description": "Label for the progress bar percentages option"
+    },
+    "optMiscStripPercentTxt": {
+        "message": "Remover texto da porcentagem de progresso",
+        "description": "Label for the strip text from progress percentage option"
+    },
+    "optMiscScoreHighlight": {
+        "message": "Destaque de pontuação",
+        "description": "Label for the score highlight option"
+    },
+    "optMiscSearchableTables": {
+        "message": "Tabelas pesquisáveis",
+        "description": "Label for the searchable tables option"
+    },
+    "optMiscSearchableSelects": {
+        "message": "Seletores pesquisáveis",
+        "description": "Label for the searchable selects option"
+    },
+    "searchableSelectsPlaceholder": {
+        "message": "Filtrar...",
+        "description": "Placeholder text for the filter input injected above enhanced select elements"
+    },
+    "optMiscMessageHelper": {
+        "message": "Assistente de mensagens",
+        "description": "Label for the message helper option"
+    },
+    "optMiscGroupNavigation": {
+        "message": "Navegação",
+        "description": "Category label for navigation-related misc options"
+    },
+    "optMiscAutoSwitchChar": {
+        "message": "Trocar de personagem automaticamente",
+        "description": "Label for the auto-switch character option"
+    },
+    "optMiscRedirectToLogin": {
+        "message": "Redirecionar para o login padrão",
+        "description": "Label for the redirect to standard login option"
+    },
+    "optMiscGroupScoring": {
+        "message": "Pontuação",
+        "description": "Category label for scoring-related misc options"
+    },
+    "optMiscScoreScale": {
+        "message": "Escala de Pontuação",
+        "description": "Label for the score scale select"
+    },
+    "optMiscScoreScale0_26": {
+        "message": "De 0 a 26",
+        "description": "Score scale select option: 0-26"
+    },
+    "optMiscScoreScale1_27": {
+        "message": "De 1 a 27",
+        "description": "Score scale select option: 1-27"
+    },
+    "optDiagTitle": {
+        "message": "Diagnóstico",
+        "description": "Title for the diagnostics card on the Misc tab"
+    },
+    "optDiagDescription": {
+        "message": "Ao relatar um bug, clique em \"Copiar diagnóstico\" e cole o resultado na sua issue do GitHub. Ele contém os erros mais recentes da extensão, além de informações de armazenamento e do personagem — sem senhas nem dados pessoais.",
+        "description": "Explainer text for the diagnostics card"
+    },
+    "optDiagCopyBtn": {
+        "message": "Copiar diagnóstico",
+        "description": "Button that copies the JSON diagnostic blob to the clipboard"
+    },
+    "optDiagClearBtn": {
+        "message": "Limpar registro",
+        "description": "Button that empties the persisted diagnostic ring buffer"
+    },
+    "optDiagCopied": {
+        "message": "Copiado para a área de transferência.",
+        "description": "Confirmation shown after diagnostics are copied"
+    },
+    "optDiagCopyFailed": {
+        "message": "Falha ao copiar — veja o console da página para mais detalhes.",
+        "description": "Error message shown when the diagnostics copy operation fails"
+    },
+    "optDiagCleared": {
+        "message": "Registro de diagnóstico limpo.",
+        "description": "Confirmation shown after the diagnostic log is cleared"
+    },
+    "optDiagClearFailed": {
+        "message": "Falha ao limpar — veja o console da página para mais detalhes.",
+        "description": "Error message shown when clearing the diagnostic log fails"
+    },
+    "optMiscGroupGottaGoFast": {
+        "message": "Gotta Go Fast",
+        "description": "Category label for the Gotta Go Fast autograph collection feature"
+    },
+    "optMiscGroupMassItemSender": {
+        "message": "Envio de Itens em Massa",
+        "description": "Category label for the mass item sender feature"
+    },
+    "optMiscMassItemSenderEnabled": {
+        "message": "Ativar envio de itens em massa",
+        "description": "Label for the enable/disable toggle of the mass item sender feature"
+    },
+    "optPopupTitle": {
+        "message": "Opções de Pop-up",
+        "description": "Popup Options section card title"
+    },
+    "optPopupDescription": {
+        "message": "Ative ou desative pop-ups ao passar o mouse sobre elementos específicos do jogo. Os pop-ups buscam e exibem os detalhes do elemento na própria página, sem precisar sair dela.",
+        "description": "Popup Options section description"
+    },
+    "optPopupGroupEnabled": {
+        "message": "Pop-ups Ativados",
+        "description": "Category label for the popup toggle switches"
+    },
+    "optPopupCharacter": {
+        "message": "Pop-up de personagem",
+        "description": "Label for the character popup option"
+    },
+    "optPopupSong": {
+        "message": "Pop-up de músicas",
+        "description": "Label for the song popup option"
+    },
+    "optPopupSkills": {
+        "message": "Pop-up de habilidades",
+        "description": "Label for the skills popup option"
+    },
+    "optPopupClub": {
+        "message": "Pop-up de clube",
+        "description": "Label for the club popup option"
+    },
+    "optPopupShowDetails": {
+        "message": "Pop-up de detalhes do show",
+        "description": "Label for the show details popup option"
+    },
+    "optTbTitle": {
+        "message": "Assistente de Reserva do Ônibus de Turnê",
+        "description": "Tour Bus Helper section card title"
+    },
+    "optTbDescription": {
+        "message": "Gerencie o assistente de reserva do ônibus de turnê. Este recurso só funciona para contas VIP.",
+        "description": "Tour Bus Helper section description"
+    },
+    "optTbGroupGeneral": {
+        "message": "Geral",
+        "description": "Category label for general tour bus options"
+    },
+    "optTbEnable": {
+        "message": "Ativar Assistente do Ônibus de Turnê",
+        "description": "Label for the enable tour bus helper toggle"
+    },
+    "optTbGroupBookingRules": {
+        "message": "Regras de Reserva",
+        "description": "Category label for tour bus booking rule settings"
+    },
+    "optTbBookAfter": {
+        "message": "Reservar rota de turnê após",
+        "description": "Label for the book-after select in tour bus helper"
+    },
+    "optTbBookAfterTooltip": {
+        "message": "Define qual evento passado dispara a próxima reserva.",
+        "description": "Tooltip for the book-after select"
+    },
+    "optTbPreviousEvent": {
+        "message": "Evento Anterior",
+        "description": "Tour bus book-after option: previous event"
+    },
+    "optTbPreviousShow": {
+        "message": "Show Anterior",
+        "description": "Tour bus book-after option: previous show"
+    },
+    "optTbHourRange": {
+        "message": "Reservar após quantas horas (1–5)",
+        "description": "Label for the hour range input in tour bus helper"
+    },
+    "optTbHourRangeTooltip": {
+        "message": "Número de horas após o evento gatilho antes de a rota ser reservada.",
+        "description": "Tooltip for the hour range input"
+    },
+    "navDeveloper": {
+        "message": "Desenvolvedor",
+        "description": "Sidebar navigation label for the Developer section (shown in development builds or with ?debug=true)"
+    },
+    "optDevTitle": {
+        "message": "Desenvolvedor",
+        "description": "Developer section card title"
+    },
+    "optDevDescription": {
+        "message": "Configurações disponíveis apenas em versões de desenvolvimento.",
+        "description": "Developer section description"
+    },
+    "optDevGroupLogging": {
+        "message": "Registro de Logs",
+        "description": "Category label for developer logging options"
+    },
+    "optDevGroupTools": {
+        "message": "Ferramentas",
+        "description": "Category label for developer tools options"
+    },
+    "optDevItemCategoryDbBuilder": {
+        "message": "Ativar o Construtor do Banco de Dados de Categorias de Itens",
+        "description": "Label for the checkbox that shows the Item Category Database Builder box in the shop page"
+    },
+    "optDevAchievementDbBuilder": {
+        "message": "Ativar o Construtor do Banco de Dados de Conquistas",
+        "description": "Label for the checkbox that shows the Achievement Database Builder box in the character achievements page"
+    },
+    "optDevLogLevel": {
+        "message": "Nível de Log",
+        "description": "Label for the log level select in the developer section"
+    },
+    "optDevLogLevelDebug": {
+        "message": "Depuração",
+        "description": "Log level option: debug (most verbose)"
+    },
+    "optDevLogLevelInfo": {
+        "message": "Informação",
+        "description": "Log level option: info"
+    },
+    "optDevLogLevelWarn": {
+        "message": "Aviso",
+        "description": "Log level option: warn"
+    },
+    "optDevLogLevelError": {
+        "message": "Erro",
+        "description": "Log level option: error (least verbose, default for production)"
+    },
+    "menuTitle": {
+        "message": "Popmundo Utils",
+        "description": "In-game sidebar menu title"
+    },
+    "menuDeveloper": {
+        "message": "Desenvolvedor",
+        "description": "In-game sidebar menu item for developer tools"
+    },
+    "menuOptions": {
+        "message": "Opções",
+        "description": "In-game sidebar menu item that opens the options page"
+    },
+    "menuReportIssue": {
+        "message": "Relatar um Problema",
+        "description": "In-game sidebar menu item that opens the GitHub issue tracker"
+    },
+    "linkUpcomingShows": {
+        "message": "Próximos Shows",
+        "description": "Title attribute on the Upcoming Shows icon link"
+    },
+    "linkPopularity": {
+        "message": "Popularidade",
+        "description": "Title attribute on the Popularity icon link"
+    },
+    "linkTopHeists": {
+        "message": "Melhores Assaltos",
+        "description": "Title attribute on the Top Heists icon link"
+    },
+    "linkSendMessage": {
+        "message": "Enviar Mensagem",
+        "description": "Title attribute on the Send Message icon link"
+    },
+    "linkOfferItem": {
+        "message": "Oferecer um Item",
+        "description": "Title attribute on the Offer an Item icon link"
+    },
+    "linkCall": {
+        "message": "Ligar",
+        "description": "Title attribute on the Call icon link"
+    },
+    "linkOtherVehicles": {
+        "message": "Outros Veículos",
+        "description": "Title attribute on the Other Vehicles icon link"
+    },
+    "linkFindLocales": {
+        "message": "Encontrar Locais",
+        "description": "Title attribute on the Find Locales icon link"
+    },
+    "linkCharterJet": {
+        "message": "Fretar Jato VIP",
+        "description": "Title attribute on the Charter VIP Jet icon link"
+    },
+    "linkBookFlight": {
+        "message": "Reservar Voo Comum",
+        "description": "Title attribute on the Book Regular Flight icon link"
+    },
+    "linkReconnaissance": {
+        "message": "Reconhecimento",
+        "description": "Title attribute on the Reconnaissance icon link"
+    },
+    "linkMoveToLocale": {
+        "message": "Ir para o Local",
+        "description": "Title attribute on the Move To Locale icon link"
+    },
+    "linkCharactersPresent": {
+        "message": "Personagens Presentes",
+        "description": "Title attribute on the Characters Present icon link"
+    },
+    "cafH2": {
+        "message": "Ligue para todos os seus contatos",
+        "description": "Heading for the Call All Friends in-game panel"
+    },
+    "cafDescription": {
+        "message": "Ligue para todos os seus amigos que têm telefone.",
+        "description": "Description text in the Call All Friends in-game panel"
+    },
+    "cafButton": {
+        "message": "Ligar para todos os relacionamentos",
+        "description": "Submit button label for the Call All Friends feature"
+    },
+    "cafStatusIgnored": {
+        "message": "$COUNT$ amigo(s) ignorado(s). ",
+        "description": "Status prefix when some friends are excluded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "cafStatusChecking": {
+        "message": "Verificando o amigo $INDEX$ de $TOTAL$ ($NAME$).",
+        "description": "Status while checking each friend for call availability",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "20"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
+        }
+    },
+    "cafStatusNoFriends": {
+        "message": "Nenhum amigo para ligar.",
+        "description": "Status when no callable friends are found"
+    },
+    "cafStatusNoInteractions": {
+        "message": "Nenhum tipo de ligação selecionado. Ative pelo menos uma opção de ligação nas configurações da extensão.",
+        "description": "Status when no interaction types are selected in the extension options"
+    },
+    "cafError": {
+        "message": "Ocorreu um erro. Verifique o console do navegador para mais detalhes.",
+        "description": "Generic error shown in the Call All Friends panel when an unexpected error occurs"
+    },
+    "cafInjectError": {
+        "message": "Ligar para Todos os Amigos não conseguiu inserir a interface: $DETAIL$",
+        "description": "Notification shown when injecting the Call All Friends button throws an exception",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "TypeError: ..."
+            }
+        }
+    },
+    "cafInjectMissing": {
+        "message": "Ligar para Todos os Amigos: não foi possível encontrar o ponto de ancoragem na página; o botão de ação não está disponível.",
+        "description": "Notification shown when the CSS anchor for injecting the Call All Friends button is missing"
+    },
+    "cafStatusCalling": {
+        "message": "Ligando para $CALLABLE$ amigos de $TOTAL$...",
+        "description": "Status at the start of the calling phase",
+        "placeholders": {
+            "callable": {
+                "content": "$1",
+                "example": "15"
+            },
+            "total": {
+                "content": "$2",
+                "example": "20"
+            }
+        }
+    },
+    "cafStatusCallingOne": {
+        "message": "Ligando para o amigo $INDEX$ de $TOTAL$ ($NAME$)...",
+        "description": "Status while calling each friend",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "15"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
+        }
+    },
+    "cafStatusSuccess": {
+        "message": "Ligações feitas com sucesso para $COUNT$ amigos de $TOTAL$.",
+        "description": "Final status after all calls are complete",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "14"
+            },
+            "total": {
+                "content": "$2",
+                "example": "15"
+            }
+        }
+    },
+    "miH2": {
+        "message": "Interação em Massa com os personagens presentes",
+        "description": "Heading for the Mass Interact in-game panel"
+    },
+    "miDescription": {
+        "message": "Realize interações com os personagens presentes neste local.",
+        "description": "Description text in the Mass Interact in-game panel"
+    },
+    "miButton": {
+        "message": "Interação em Massa",
+        "description": "Submit button label for the Mass Interact feature"
+    },
+    "miStatusCheckingRelations": {
+        "message": "A opção de ignorar novos conhecidos está ativada, verificando a URL de relacionamentos...",
+        "description": "Status when loading the relations page to filter acquaintances"
+    },
+    "miStatusAnalyzingRelations": {
+        "message": "Analisando a página de relacionamentos $PAGE$ para obter os conhecidos atuais...",
+        "description": "Status while parsing each page of the relations list",
+        "placeholders": {
+            "page": {
+                "content": "$1",
+                "example": "1"
+            }
+        }
+    },
+    "miStatusSkippingAcquaintance": {
+        "message": "Ignorando $NAME$, pois novos conhecidos não são permitidos...",
+        "description": "Status when a character is skipped because they are a new acquaintance",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "miStatusSkippingExcluded": {
+        "message": "Ignorando $NAME$, pois o ID está na lista de ignorados...",
+        "description": "Status when a character is skipped because their ID is in the exclusion list",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "miStatusTotalSkipped": {
+        "message": "Total de $TOTAL$ personagens presentes ignorados.",
+        "description": "Summary of skipped characters",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "5"
+            }
+        }
+    },
+    "miStatusNewAcqSkip": {
+        "message": " $COUNT$ novo(s) conhecido(s).",
+        "description": "Appended to the skipped summary for new acquaintances",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "miStatusIgnoreSkip": {
+        "message": " $COUNT$ personagem(ns) ignorado(s).",
+        "description": "Appended to the skipped summary for explicitly ignored characters",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "miStatusTotalInteractions": {
+        "message": "Total de interações realizadas: $TOTAL$.",
+        "description": "Running count of interactions performed",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "42"
+            }
+        }
+    },
+    "miStatusCheckingChar": {
+        "message": "Verificando o personagem $INDEX$ de $TOTAL$ ($NAME$).",
+        "description": "Status while checking interaction options for each character",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "3"
+            },
+            "total": {
+                "content": "$2",
+                "example": "10"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            }
+        }
+    },
+    "miStatusInteracting": {
+        "message": "Interagindo com o amigo $INDEX$ de $TOTAL$ ($NAME$). Interação nº $INTERACTION$...",
+        "description": "Status while performing each interaction",
+        "placeholders": {
+            "index": {
+                "content": "$1",
+                "example": "3"
+            },
+            "total": {
+                "content": "$2",
+                "example": "10"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Jane"
+            },
+            "interaction": {
+                "content": "$4",
+                "example": "2"
+            }
+        }
+    },
+    "miStatusFinalInteracted": {
+        "message": "Foram feitas $INTERACTIONS$ interações com $CHARS$ personagens!",
+        "description": "Final summary shown after all mass interactions complete",
+        "placeholders": {
+            "interactions": {
+                "content": "$1",
+                "example": "30"
+            },
+            "chars": {
+                "content": "$2",
+                "example": "10"
+            }
+        }
+    },
+    "miStatusNoInteraction": {
+        "message": "Nenhuma interação foi realizada.",
+        "description": "Status when mass interact finds no interactions to perform"
+    },
+    "miStatusNoInteractions": {
+        "message": "Nenhum tipo de interação selecionado. Ative pelo menos uma opção de interação nas configurações da extensão.",
+        "description": "Status when no interaction types are selected in the extension options"
+    },
+    "miError": {
+        "message": "Ocorreu um erro. Verifique o console do navegador para mais detalhes.",
+        "description": "Generic error shown in the Mass Interact panel when an unexpected error occurs"
+    },
+    "miInjectError": {
+        "message": "Interação em Massa não conseguiu inserir a interface: $DETAIL$",
+        "description": "Notification shown when injecting the Mass Interact button throws an exception",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "TypeError: ..."
+            }
+        }
+    },
+    "miInjectMissing": {
+        "message": "Interação em Massa: não foi possível encontrar o ponto de ancoragem na página; o botão de ação não está disponível.",
+        "description": "Notification shown when the CSS anchor for injecting the Mass Interact button is missing"
+    },
+    "ggfTitle": {
+        "message": "Coletar Autógrafos",
+        "description": "Heading for the Gotta Go Fast autograph collection panel"
+    },
+    "ggfDescription": {
+        "message": "O script usará todos os livros do seu inventário para coletar autógrafos das estrelas do pop presentes na cidade!",
+        "description": "Description paragraph for the autograph collection panel"
+    },
+    "ggfDisableHint": {
+        "message": "Para ocultar este painel, desative <strong>Ativar coleta de autógrafos</strong> na <a href=\"#\" id=\"ggf-options-hint-link\"><strong>página de Opções</strong></a>, na seção <strong>Opções Diversas</strong>.",
+        "description": "Hint shown in the panel telling the user how to disable the feature via Misc Options"
+    },
+    "ggfHowToUse": {
+        "message": "Como usar?",
+        "description": "Instructions heading for the autograph collection panel"
+    },
+    "ggfStep1": {
+        "message": "Configure o <strong>Nome do item do livro de autógrafos</strong> (no seu idioma) na <a href=\"#\" id=\"autograph-open-options-link\"><strong>página de Opções</strong></a>, na seção <strong>Opções Diversas</strong>. Ele deve corresponder ao nome do item como aparece no seu inventário.",
+        "description": "Step 1 instruction for autograph collection. Contains HTML. The link id must not be changed."
+    },
+    "ggfStep2": {
+        "message": "Verifique se você tem livros de autógrafos no inventário. Seu personagem deve estar em uma cidade (não viajando) e não pode estar ocupado (por exemplo, gravando, ensaiando, em um encontro etc.).",
+        "description": "Step 2 instruction for autograph collection"
+    },
+    "ggfStep3": {
+        "message": "Clique em <strong>Iniciar</strong> para começar. O script vai encontrar pessoas famosas na cidade, e a mágica acontece.",
+        "description": "Step 3 instruction for autograph collection. Contains HTML."
+    },
+    "ggfStep4": {
+        "message": "Os <strong>personagens bloqueados</strong> são aqueles que não aceitaram o uso de itens. Eles são guardados apenas durante a sessão atual para não serem tentados repetidamente. Use <strong>Limpar personagens bloqueados</strong> para removê-los da lista e permitir que o script tente novamente na mesma sessão.",
+        "description": "Step 4 instruction for autograph collection. Contains HTML."
+    },
+    "ggfClearBlockedChars": {
+        "message": "Limpar personagens bloqueados",
+        "description": "Button label to clear the blocked characters list"
+    },
+    "ggfClearBlockedCharsTitle": {
+        "message": "Limpa do armazenamento da sessão os personagens que não aceitam o uso de itens",
+        "description": "Title tooltip on the clear blocked chars button"
+    },
+    "ggfStart": {
+        "message": "Iniciar",
+        "description": "Button label to start autograph collection"
+    },
+    "ggfLogColTime": {
+        "message": "Hora",
+        "description": "Log table column header: time"
+    },
+    "ggfLogColType": {
+        "message": "Tipo",
+        "description": "Log table column header: type"
+    },
+    "ggfLogColMessage": {
+        "message": "Mensagem",
+        "description": "Log table column header: message"
+    },
+    "ggfBooksFound": {
+        "message": "Número de livros de autógrafos encontrados: $COUNT$",
+        "description": "Log message when autograph books are detected in inventory",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "ggfNoBooksFound": {
+        "message": "Nenhum livro de autógrafos encontrado. Verifique se o nome do item do livro de autógrafos está configurado na página de Opções.",
+        "description": "Warning log when no autograph books are found in inventory"
+    },
+    "ggfNoBooks": {
+        "message": "Sem livros",
+        "description": "Disabled state label for the start button when no books exist"
+    },
+    "ggfCollecting": {
+        "message": "Coletando autógrafos...",
+        "description": "Button label while autograph collection is running"
+    },
+    "ggfWaiting": {
+        "message": "Aguardando: faltam $MINUTES$ minutos e $SECONDS$ segundos...",
+        "description": "Countdown timer message shown during cooldown",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "5"
+            },
+            "seconds": {
+                "content": "$2",
+                "example": "30"
+            }
+        }
+    },
+    "ggfContinuing": {
+        "message": "Continuando a coleta de autógrafos...",
+        "description": "Message shown when the cooldown timer finishes"
+    },
+    "ggfMovingToLocation": {
+        "message": "Indo até o local de <b>$NAME$</b>",
+        "description": "Log entry when navigating to a character's location. Contains HTML.",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfMaybeLeft": {
+        "message": "Talvez $NAME$ não esteja mais na cidade, ou algo aconteceu!",
+        "description": "Warning log when a character's location cannot be found",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfErrorNavigating": {
+        "message": "Erro ao navegar até $NAME$: $ERROR$",
+        "description": "Error log when navigation to a character fails",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "error": {
+                "content": "$2",
+                "example": "Network error"
+            }
+        }
+    },
+    "ggfNotAvailable": {
+        "message": "Aparentemente <b>$NAME$</b> não está mais disponível ou não permite o uso de itens.",
+        "description": "Log when a character's interact page has no item-use dropdown. Contains HTML.",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfStoringChar": {
+        "message": "Guardando o personagem $NAME$ ($ID$) no armazenamento para não tentar novamente.",
+        "description": "Warning log when a character is added to the blocked list",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "id": {
+                "content": "$2",
+                "example": "12345"
+            }
+        }
+    },
+    "ggfWaitingCooldown": {
+        "message": "Aguardando o tempo de recarga do livro (faltam $MINUTES$ min)...",
+        "description": "Log when all books are on cooldown",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "4"
+            }
+        }
+    },
+    "ggfCollectingFrom": {
+        "message": "Coletando autógrafo de <b>$NAME$</b> usando o livro de ID: $BOOKID$",
+        "description": "Log when using a book on a character. Contains HTML.",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "bookid": {
+                "content": "$2",
+                "example": "98765"
+            }
+        }
+    },
+    "ggfErrorCollecting": {
+        "message": "Erro ao coletar autógrafo de $NAME$: $ERROR$",
+        "description": "Error log when autograph collection fails for a character",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            },
+            "error": {
+                "content": "$2",
+                "example": "Network error"
+            }
+        }
+    },
+    "ggfAutographCollected": {
+        "message": "Autógrafo coletado de $NAME$",
+        "description": "Success log when an autograph is successfully collected",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfAutographCompleted": {
+        "message": "Operação de autógrafo concluída para $NAME$",
+        "description": "Info log when the autograph use completed without explicit success/error status",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Jane"
+            }
+        }
+    },
+    "ggfNoEligible": {
+        "message": "Nenhuma pessoa elegível encontrada. Tentando novamente em 60 s.",
+        "description": "Warning log when the city has no eligible characters left to collect from"
+    },
+    "ggfCooldownWait": {
+        "message": "Tempo de recarga de $MINUTES$ min antes do próximo uso…",
+        "description": "Log when waiting for book cooldown between characters",
+        "placeholders": {
+            "minutes": {
+                "content": "$1",
+                "example": "6"
+            }
+        }
+    },
+    "ggfScriptError": {
+        "message": "Erro durante a execução do script – verifique o console.",
+        "description": "Generic error log for unexpected exceptions in the main loop"
+    },
+    "ggfStopped": {
+        "message": "Coleta de autógrafos interrompida.",
+        "description": "Log when the user stops autograph collection"
+    },
+    "ggfBlockedCleared": {
+        "message": "Lista de personagens bloqueados limpa (armazenamento da sessão).",
+        "description": "Log when the blocked characters list is cleared"
+    },
+    "ggfLogs": {
+        "message": "Registros",
+        "description": "Heading for the autograph collection log panel"
+    },
+    "remTodayIs": {
+        "message": "Hoje é o dia $DAY$ do ano $YEAR$.",
+        "description": "Prefix for reminder notifications indicating the current in-game date",
+        "placeholders": {
+            "day": {
+                "content": "$1",
+                "example": "27"
+            },
+            "year": {
+                "content": "$2",
+                "example": "24"
+            }
+        }
+    },
+    "remDay28": {
+        "message": "É o Dia dos Mortos!",
+        "description": "Reminder for in-game day 28"
+    },
+    "remDay40": {
+        "message": "É o Dia de São Kobe! Investigue as Estátuas da Beleza Celestial em Joanesburgo, Moscou, Singapura e Tromsø para embarcar em uma missão aventureira por melhores habilidades em gêneros musicais.",
+        "description": "Reminder for in-game day 40 (St Kobe's Day)"
+    },
+    "remDay48": {
+        "message": "Lembre-se de usar o seu Horror de Halloween!",
+        "description": "Reminder for in-game day 48"
+    },
+    "remDay52": {
+        "message": "É Natal!",
+        "description": "Reminder for in-game day 52"
+    },
+    "remDay54": {
+        "message": "Lembre-se de vestir a sua Camiseta do Marvin para aumentar a sua qualidade de estrela e ganhar um ponto de experiência.",
+        "description": "Reminder for in-game day 54"
+    },
+    "remThursdayCards": {
+        "message": "É quinta-feira, lembre-se de pegar as suas cartas grátis!",
+        "description": "Reminder shown on Thursdays for The Great Heist free card collection"
+    },
+    "remItemReady": {
+        "message": "O seu item $NAME$ está pronto para ser usado.",
+        "description": "Notification when an item timer has expired and the item is ready",
+        "placeholders": {
+            "name": {
+                "content": "$1",
+                "example": "Autograph Book"
+            }
+        }
+    },
+    "remUseLink": {
+        "message": "Usar",
+        "description": "Link text to use a ready item from the reminder notification"
+    },
+    "remDismissLink": {
+        "message": "Dispensar Notificação",
+        "description": "Link text to dismiss a ready item notification"
+    },
+    "itTimerButtonSuffix": {
+        "message": " e Cronômetro",
+        "description": "Suffix appended to item use buttons to create the Use & Timer button"
+    },
+    "itMinRegex": {
+        "message": "(\\d{1,})\\s+minutos?",
+        "description": "Regula expression to find minutes in timer notifications"
+    },
+    "itHourRegex": {
+        "message": "(\\d{1,})\\s+horas?",
+        "description": "Regula expression to find hours in timer notifications"
+    },
+    "itDaysRegex": {
+        "message": "(\\d{1,})\\s+dias?",
+        "description": "Regula expression to find days in timer notifications"
+    },
+    "itWeeksRegex": {
+        "message": "(\\d{1,})\\s+semanas?",
+        "description": "Regula expression to find weeks in timer notifications"
+    },
+    "iltTimerExpired": {
+        "message": "Cronômetro expirado: ",
+        "description": "Prefix added to the item date/time when its timer has expired"
+    },
+    "bshBookTransport": {
+        "message": "Reservar transporte de $FROM$ para $TO$ em $DATE$ às $TIME$",
+        "description": "Tooltip on the book-transport icon in the band schedule helper",
+        "placeholders": {
+            "from": {
+                "content": "$1",
+                "example": "London"
+            },
+            "to": {
+                "content": "$2",
+                "example": "Paris"
+            },
+            "date": {
+                "content": "$3",
+                "example": "Day 12"
+            },
+            "time": {
+                "content": "$4",
+                "example": "20:00"
+            }
+        }
+    },
+    "misPickItemsPlaceholder": {
+        "message": "Se quiser oferecer vários itens, clique aqui e selecione-os na lista.",
+        "description": "Closed multi-select dropdown summary on Offer Item when nothing is checked"
+    },
+    "misOneItemSelected": {
+        "message": "1 item selecionado",
+        "description": "Multi-select dropdown summary when exactly one item is checked"
+    },
+    "misNItemsSelected": {
+        "message": "$COUNT$ itens selecionados",
+        "description": "Multi-select dropdown summary when two or more items are checked",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "misDdHeaderAria": {
+        "message": "Abrir a lista de itens do inventário para selecionar vários para oferecer",
+        "description": "Accessible name for the Offer Item multi-select dropdown toggle"
+    },
+    "misOfferNoneSelected": {
+        "message": "Selecione pelo menos um item da lista antes de oferecer vários.",
+        "description": "Validation when Offer multiple is clicked with no checkboxes selected"
+    },
+    "misOfferMultiSubmit": {
+        "message": "Oferecer vários itens",
+        "description": "Submit button when one or more items are checked in the multi-select on Offer Item page"
+    },
+    "misOfferFormMissing": {
+        "message": "O formulário da página não foi encontrado; não é possível oferecer os itens.",
+        "description": "Error when aspnetForm is missing during multi-offer on Offer Item page"
+    },
+    "misOfferGiveButtonMissing": {
+        "message": "O botão de oferecer não foi encontrado na página.",
+        "description": "Error when btnGive is missing in parsed or live DOM during multi-offer"
+    },
+    "misOfferFailed": {
+        "message": "Falha ao oferecer: $DETAIL$",
+        "description": "Multi-offer stopped after network error, missing form, or server notification error",
+        "placeholders": {
+            "detail": {
+                "content": "$1",
+                "example": "Invalid view state"
+            }
+        }
+    },
+    "misOfferQueueDone": {
+        "message": "$COUNT$ ofertas enviadas com sucesso.",
+        "description": "Summary after all queued Offer Item POSTs completed without error",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "misDisableHint": {
+        "message": "Você pode desativar este recurso na página de Opções.",
+        "description": "Hint text to inform that the feature can be disabled in the Options page"
+    },
+    "misOfferSendingProgress": {
+        "message": "Enviando $CURRENT$ de $TOTAL$…",
+        "description": "Progress label next to the multi-select header while queued Offer Item POSTs run",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "1"
+            },
+            "total": {
+                "content": "$2",
+                "example": "3"
+            }
+        }
+    },
+    "misLoadingPendingOffers": {
+        "message": "Verificando quais itens já foram oferecidos…",
+        "description": "Dropdown header while fetching Character/ItemsOffered before building the item list"
+    },
+    "misItemAlreadyOffered": {
+        "message": "Este item já tem uma oferta ativa e não pode ser selecionado aqui.",
+        "description": "Tooltip on a disabled row in the multi-select when the instance is listed on ItemsOffered"
+    },
+    "misItemOfferedHintHtml": {
+        "message": "Este item já foi oferecido a alguém. Veja $LINK$.",
+        "description": "Small hint below a disabled row in the mass-offer list; $LINK$ is replaced with an <a> tag to Character/ItemsOffered",
+        "placeholders": {
+            "link": {
+                "content": "$1",
+                "example": "<a>Items offered</a>"
+            }
+        }
+    },
+    "cafTotalCallsMsg": {
+        "message": "📞 Salva-vidas do Popmundo! Você já fez <strong>$TOTAL$</strong> ligações com esta ferramenta. Sua operadora deve estar exausta!",
+        "description": "Fun summary message for total calls made",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "10"
+            }
+        }
+    },
+    "miTotalInteractionsMsg": {
+        "message": "🎭 Borboleta social! Você já realizou <strong>$TOTAL$</strong> interações com esta ferramenta. Continue construindo essas pontes!",
+        "description": "Fun summary message for total mass interactions",
+        "placeholders": {
+            "total": {
+                "content": "$1",
+                "example": "20"
+            }
+        }
+    },
+    "ggfTotalCollected0": {
+        "message": "Nenhum autógrafo ainda. Hora de cair na rua! 🚶‍♂️",
+        "description": "Fun message when total collected autographs is 0"
+    },
+    "ggfTotalCollected10": {
+        "message": "Bom começo, com $COUNT$ autógrafos! 🌟",
+        "description": "Fun message when total collected autographs is < 10",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "5"
+            }
+        }
+    },
+    "ggfTotalCollected50": {
+        "message": "Olha só você! $COUNT$ autógrafos e contando. 🤩",
+        "description": "Fun message when total collected autographs is < 50",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "20"
+            }
+        }
+    },
+    "ggfTotalCollected100": {
+        "message": "Incrível! $COUNT$ autógrafos. Você é um fã de verdade! 🎉",
+        "description": "Fun message when total collected autographs is < 100",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "75"
+            }
+        }
+    },
+    "ggfTotalCollected500": {
+        "message": "Uau! $COUNT$ autógrafos. Suas tietes devem estar impressionadas! 🎸",
+        "description": "Fun message when total collected autographs is < 500",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "200"
+            }
+        }
+    },
+    "ggfTotalCollectedLegendary": {
+        "message": "Status lendário alcançado: $COUNT$ autógrafos! Deveriam fazer um filme sobre você! 🎥",
+        "description": "Fun message when total collected autographs is >= 500",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "500"
+            }
+        }
+    },
+    "ggfKeepAliveReloading": {
+        "message": "Manter ativo: recarregando a página para manter a sessão...",
+        "description": "Log message shown immediately before a keep-alive page reload"
+    },
+    "ggfKeepAliveResuming": {
+        "message": "Manter ativo: retomando a coleta de autógrafos após o recarregamento da página.",
+        "description": "Log message shown when auto-resuming after a keep-alive reload"
+    },
+    "optMiscGroupPopmundoBible": {
+        "message": "Integração com a Bíblia do Popmundo",
+        "description": "Group heading for the Popmundo Bible export toggles (skills, attributes) in Misc Options"
+    },
+    "optMiscSkillExportEnable": {
+        "message": "Exportar habilidades para JSON (Bíblia do Popmundo)",
+        "description": "Checkbox label to enable the skill page JSON export button"
+    },
+    "skillExportButton": {
+        "message": "Exportar habilidades (JSON)",
+        "description": "Label of the button injected on the Character Skills page to export skills as JSON"
+    },
+    "skillExportSuccess": {
+        "message": "$COUNT$ habilidades exportadas de $NAME$.",
+        "description": "Success notification after a skill JSON file has been downloaded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "14"
+            },
+            "name": {
+                "content": "$2",
+                "example": "Andrew Kovač"
+            }
+        }
+    },
+    "skillExportNoSkills": {
+        "message": "Nenhuma habilidade encontrada para exportar.",
+        "description": "Error notification when the skills table has no readable skill rows"
+    },
+    "skillExportError": {
+        "message": "Não foi possível ler as informações do personagem nesta página.",
+        "description": "Error notification when the character id/name cannot be read from the skills page"
+    },
+    "skillExportPartial": {
+        "message": "$COUNT$ habilidade(s) ignorada(s) por ter um valor ilegível: $NAMES$.",
+        "description": "Warning notification listing skills whose star value could not be parsed",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "names": {
+                "content": "$2",
+                "example": "Rock, Reggae"
+            }
+        }
+    },
+    "optMiscAttributeExportEnable": {
+        "message": "Exportar atributos para JSON (Bíblia do Popmundo)",
+        "description": "Checkbox label to enable the attribute page JSON export button"
+    },
+    "attributeExportButton": {
+        "message": "Exportar atributos (JSON)",
+        "description": "Label of the button injected on the Character Attributes page to export attributes as JSON"
+    },
+    "attributeExportSuccess": {
+        "message": "$COUNT$ atributos exportados de $NAME$.",
+        "description": "Success notification after an attribute JSON file has been downloaded",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "8"
+            },
+            "name": {
+                "content": "$2",
+                "example": "Homer Garnett"
+            }
+        }
+    },
+    "attributeExportCharError": {
+        "message": "Não foi possível ler as informações do personagem nesta página.",
+        "description": "Error notification when the character id/name cannot be read from the attributes page"
+    },
+    "attributeExportInvalidCount": {
+        "message": "Não foi possível identificar o jogo ou o número de atributos encontrados nesta página é inesperado.",
+        "description": "Error notification when the game flavor (Popmundo / The Great Heist) cannot be identified or the attribute count on the page doesn't match the expected one"
+    },
+    "attributeExportInvalidScore": {
+        "message": "Foi encontrado um atributo com um valor de pontuação inesperado nesta página.",
+        "description": "Error notification when an attribute score cannot be parsed or is outside the valid 1-27 range"
+    },
+    "optUnsavedWarning": {
+        "message": "Você tem alterações não salvas.",
+        "description": "Warning shown near the Save button when the options form has been modified but not yet saved"
+    },
+    "navReminders": {
+        "message": "Lembretes",
+        "description": "Sidebar nav label for the Reminders options section"
+    },
+    "optRemTitle": {
+        "message": "Lembretes",
+        "description": "Card heading for the Reminders options section"
+    },
+    "optRemDescription": {
+        "message": "Gerencie seus lembretes personalizados e controle as notificações de cronômetro dos itens.",
+        "description": "Description paragraph at the top of the Reminders options section"
+    },
+    "optRemGroupTimers": {
+        "message": "Notificações de Cronômetro",
+        "description": "Group heading for the timer-notifications toggle in Reminders options"
+    },
+    "optRemShowTimers": {
+        "message": "Mostrar notificações de cronômetro dos itens",
+        "description": "Checkbox label to enable/disable item timer notifications"
+    },
+    "optRemGroupReminders": {
+        "message": "Lembretes Personalizados",
+        "description": "Group heading for the custom reminders list in Reminders options"
+    },
+    "optRemAddButton": {
+        "message": "Adicionar Lembrete",
+        "description": "Button label to open the add-reminder modal"
+    },
+    "optRemAddModalTitle": {
+        "message": "Adicionar Lembrete",
+        "description": "Modal title when creating a new reminder"
+    },
+    "optRemEditModalTitle": {
+        "message": "Editar Lembrete",
+        "description": "Modal title when editing an existing reminder"
+    },
+    "optRemTypeLabel": {
+        "message": "Tipo de Gatilho",
+        "description": "Label for the trigger-type radio group in the reminder modal"
+    },
+    "optRemTypeYearday": {
+        "message": "Dia do Ano do Popmundo (1–56)",
+        "description": "Radio option label for year-day trigger type"
+    },
+    "optRemTypeWeekday": {
+        "message": "Dia da Semana",
+        "description": "Radio option label for weekday trigger type"
+    },
+    "optRemYeardayLabel": {
+        "message": "Dia do Ano do Popmundo (1–56)",
+        "description": "Input label for the year-day number field in the reminder modal"
+    },
+    "optRemWeekdayLabel": {
+        "message": "Dia da Semana",
+        "description": "Select label for the weekday picker in the reminder modal"
+    },
+    "optRemGameLabel": {
+        "message": "Jogo",
+        "description": "Label for the game-flag checkboxes in the reminder modal"
+    },
+    "optRemForPopmundo": {
+        "message": "Popmundo",
+        "description": "Checkbox label for the Popmundo game flag"
+    },
+    "optRemForGreatHeist": {
+        "message": "The Great Heist",
+        "description": "Checkbox label for The Great Heist game flag"
+    },
+    "optRemActiveLabel": {
+        "message": "Ativo",
+        "description": "Toggle label for enabling/disabling a reminder"
+    },
+    "optRemTextLabel": {
+        "message": "Texto do Lembrete",
+        "description": "Label for the reminder text textarea in the modal"
+    },
+    "optRemTextPlaceholder": {
+        "message": "Digite o texto do lembrete…",
+        "description": "Placeholder for the reminder text textarea"
+    },
+    "optRemDescriptionLabel": {
+        "message": "Descrição (opcional)",
+        "description": "Label for the optional description textarea in the reminder modal"
+    },
+    "optRemDescriptionPlaceholder": {
+        "message": "Digite uma descrição curta…",
+        "description": "Placeholder for the optional description textarea"
+    },
+    "optRemBBCodeHelp": {
+        "message": "Tags disponíveis: [year], [yearday], [localeid=NNN name=SSS], [itemdetailsid=NNN name=SSS]. Use aspas para nomes com espaços, por exemplo name=\"Meu Local\".",
+        "description": "Help text explaining the BBCode tags available in reminder text"
+    },
+    "optRemSaveButton": {
+        "message": "Adicionar",
+        "description": "Confirm button in the reminder modal when creating a new reminder"
+    },
+    "optRemUpdateButton": {
+        "message": "Atualizar",
+        "description": "Confirm button in the reminder modal when editing an existing reminder"
+    },
+    "optRemCancelButton": {
+        "message": "Cancelar",
+        "description": "Cancel button in the reminder modal"
+    },
+    "optRemEditButton": {
+        "message": "Editar",
+        "description": "Edit action button on a reminder card"
+    },
+    "optRemDeleteButton": {
+        "message": "Excluir",
+        "description": "Delete action button on a reminder card"
+    },
+    "optRemNoReminders": {
+        "message": "Nenhum lembrete ainda. Clique em ‘Adicionar Lembrete’ para criar um.",
+        "description": "Empty-state message shown when there are no custom reminders"
+    },
+    "optRemTypeRequired": {
+        "message": "Selecione um tipo de gatilho.",
+        "description": "Validation error when no trigger type is selected in the reminder modal"
+    },
+    "optRemDayInvalid": {
+        "message": "O valor do dia deve estar entre 1 e 56.",
+        "description": "Validation error when the year-day value is out of range"
+    },
+    "optRemGameRequired": {
+        "message": "Selecione pelo menos um jogo.",
+        "description": "Validation error when neither game flag is checked in the reminder modal"
+    },
+    "optRemTextRequired": {
+        "message": "Digite o texto do lembrete.",
+        "description": "Validation error when the reminder text field is empty"
+    },
+    "optRemInactive": {
+        "message": "Inativo",
+        "description": "Badge label shown on inactive reminder cards"
+    },
+    "optRemYeardayBadge": {
+        "message": "Dia do Ano",
+        "description": "Badge prefix for year-day reminder type on cards (followed by the day number)"
+    },
+    "optRemWeekday1": {
+        "message": "Segunda-feira",
+        "description": "Weekday name for ISO day 1"
+    },
+    "optRemWeekday2": {
+        "message": "Terça-feira",
+        "description": "Weekday name for ISO day 2"
+    },
+    "optRemWeekday3": {
+        "message": "Quarta-feira",
+        "description": "Weekday name for ISO day 3"
+    },
+    "optRemWeekday4": {
+        "message": "Quinta-feira",
+        "description": "Weekday name for ISO day 4"
+    },
+    "optRemWeekday5": {
+        "message": "Sexta-feira",
+        "description": "Weekday name for ISO day 5"
+    },
+    "optRemWeekday6": {
+        "message": "Sábado",
+        "description": "Weekday name for ISO day 6"
+    },
+    "optRemWeekday7": {
+        "message": "Domingo",
+        "description": "Weekday name for ISO day 7"
+    },
+    "optMiscGroupAchievements": {
+        "message": "Conquistas",
+        "description": "Category label in Misc Options for achievement related features"
+    },
+    "optMiscAchievementTrackerEnable": {
+        "message": "Mostrar conquistas faltantes",
+        "description": "Checkbox label to enable the missing achievements box on the Character Achievements page"
+    },
+    "achievementTrackerTitle": {
+        "message": "Conquistas faltantes ($COUNT$)",
+        "description": "Title of the collapsible missing achievements box",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "338"
+            }
+        }
+    },
+    "achievementTrackerSummary": {
+        "message": "Mostrando $SHOWN$ de $TOTAL$ conquistas faltantes.",
+        "description": "Summary line in the missing achievements box, reflecting the active category filters",
+        "placeholders": {
+            "shown": {
+                "content": "$1",
+                "example": "250"
+            },
+            "total": {
+                "content": "$2",
+                "example": "338"
+            }
+        }
+    },
+    "achievementTrackerNoneMissing": {
+        "message": "Nenhuma conquista faltando: parabéns!",
+        "description": "Shown in the missing achievements box when the character owns every known achievement"
+    },
+    "achievementTrackerShow": {
+        "message": "Mostrar:",
+        "description": "Label preceding the category filter checkboxes in the missing achievements box"
+    },
+    "achievementTrackerColName": {
+        "message": "Conquista",
+        "description": "Column header for the achievement name in the missing achievements table"
+    },
+    "achievementTrackerColPoints": {
+        "message": "Pts.",
+        "description": "Column header for achievement points in the missing achievements table"
+    },
+    "achievementTrackerCategoryPPM": {
+        "message": "Popmundo",
+        "description": "Filter label for achievements specific to Popmundo"
+    },
+    "achievementTrackerCategoryTGH": {
+        "message": "The Great Heist",
+        "description": "Filter label for achievements specific to The Great Heist"
+    },
+    "achievementTrackerCategoryGENERIC": {
+        "message": "Genéricas",
+        "description": "Filter label for achievements available in every game"
+    },
+    "achievementTrackerCategoryPASSIVE": {
+        "message": "Passivas",
+        "description": "Filter label for passive/event achievements (seasonal events, anniversaries, etc.)"
+    },
+    "achievementTrackerLocked": {
+        "message": "Não pode ser obtida: você já conquistou a conquista correspondente.",
+        "description": "Note/tooltip on a missing achievement that is mutually exclusive with one already owned"
+    },
+    "optMiscGroupShopping": {
+        "message": "Compras",
+        "description": "Category label in Misc Options for shopping related features"
+    },
+    "optMiscItemCategorySearcherEnable": {
+        "message": "Mostrar o buscador de categorias de itens no Assistente de Compras",
+        "description": "Checkbox label to enable the item category searcher box on the Shopping Assistant page"
+    },
+    "itemCategorySearcherTitle": {
+        "message": "Buscador de Categorias de Itens",
+        "description": "Title of the item category searcher box on the Shopping Assistant page"
+    },
+    "itemCategorySearcherInfo": {
+        "message": "Busque entre $ITEMS$ itens em $CATEGORIES$ categorias para descobrir onde um item é vendido.",
+        "description": "Introductory line of the item category searcher box",
+        "placeholders": {
+            "items": {
+                "content": "$1",
+                "example": "1,155"
+            },
+            "categories": {
+                "content": "$2",
+                "example": "49"
+            }
+        }
+    },
+    "itemCategorySearcherLanguageFallback": {
+        "message": "Os nomes dos itens não estão disponíveis no idioma do seu jogo: serão usados os nomes em inglês.",
+        "description": "Shown in the item category searcher box when the game language has no item data"
+    },
+    "itemCategorySearcherSearchLabel": {
+        "message": "Nome do item:",
+        "description": "Label of the search field in the item category searcher box"
+    },
+    "itemCategorySearcherRegexLabel": {
+        "message": "Expressão regular",
+        "description": "Label of the checkbox that makes the item category searcher treat the search text as a regular expression"
+    },
+    "itemCategorySearcherMaxLabel": {
+        "message": "Máx. de resultados:",
+        "description": "Label of the field setting how many results the item category searcher displays"
+    },
+    "itemCategorySearcherMinChars": {
+        "message": "Digite pelo menos $COUNT$ caracteres...",
+        "description": "Shown in the item category searcher box when the search text is too short",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "itemCategorySearcherNoMatches": {
+        "message": "Nenhum item corresponde à sua busca.",
+        "description": "Shown in the item category searcher box when nothing matches"
+    },
+    "itemCategorySearcherInvalidRegex": {
+        "message": "Expressão regular inválida.",
+        "description": "Shown in the item category searcher box when the regular expression cannot be parsed"
+    },
+    "itemCategorySearcherMatches": {
+        "message": "Mostrando $SHOWN$ de $TOTAL$ itens correspondentes.",
+        "description": "Result summary in the item category searcher box",
+        "placeholders": {
+            "shown": {
+                "content": "$1",
+                "example": "25"
+            },
+            "total": {
+                "content": "$2",
+                "example": "42"
+            }
+        }
+    },
+    "itemCategorySearcherSelectHint": {
+        "message": "Clique em um item para selecioná-lo na busca da loja abaixo.",
+        "description": "Hint above the item category searcher results table"
+    },
+    "itemCategorySearcherColItem": {
+        "message": "Item",
+        "description": "Column header for the item name in the item category searcher results"
+    },
+    "itemCategorySearcherColCategory": {
+        "message": "Categoria",
+        "description": "Column header for the shop category in the item category searcher results"
+    },
+    "itemCategoryDbBuilderTitle": {
+        "message": "Construtor do Banco de Dados de Categorias de Itens (desenvolvedor)",
+        "description": "Title of the developer-only box that builds the item category searcher database"
+    },
+    "itemCategoryDbBuilderInfo": {
+        "message": "Lê todas as categorias da loja no idioma atual do jogo e imprime a entrada do banco de dados no log de depuração, pronta para ser colada em item-category-searcher-data.js.",
+        "description": "Introductory line of the developer-only item category database builder box"
+    },
+    "itemCategoryDbBuilderButton": {
+        "message": "Construir banco de dados",
+        "description": "Button of the developer-only item category database builder box"
+    },
+    "itemCategoryDbBuilderProgress": {
+        "message": "Lendo a categoria $CATEGORY$ ($CURRENT$/$TOTAL$)...",
+        "description": "Progress shown while the item category database builder reads the shop categories",
+        "placeholders": {
+            "category": {
+                "content": "$1",
+                "example": "Animals"
+            },
+            "current": {
+                "content": "$2",
+                "example": "12"
+            },
+            "total": {
+                "content": "$3",
+                "example": "49"
+            }
+        }
+    },
+    "itemCategoryDbBuilderDone": {
+        "message": "Concluído: $ITEMS$ itens em $CATEGORIES$ categorias para $LANGUAGE$ (id $ID$). A entrada do banco de dados está no log de depuração e no console.",
+        "description": "Shown when the item category database builder has finished",
+        "placeholders": {
+            "items": {
+                "content": "$1",
+                "example": "1155"
+            },
+            "categories": {
+                "content": "$2",
+                "example": "49"
+            },
+            "language": {
+                "content": "$3",
+                "example": "US English"
+            },
+            "id": {
+                "content": "$4",
+                "example": "2"
+            }
+        }
+    },
+    "itemCategoryDbBuilderFailed": {
+        "message": "Aviso: $COUNT$ categorias não puderam ser lidas e estão ausentes da saída: $NAMES$",
+        "description": "Shown when some categories failed while the item category database builder was running",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "names": {
+                "content": "$2",
+                "example": "Animals, Weapons"
+            }
+        }
+    },
+    "itemCategoryDbBuilderNoLanguage": {
+        "message": "Não foi possível determinar o idioma do jogo.",
+        "description": "Error shown by the item category database builder when the game language cannot be retrieved"
+    },
+    "itemCategoryDbBuilderAllTitle": {
+        "message": "Todos os idiomas",
+        "description": "Title of the section of the developer-only item category database builder that handles several languages"
+    },
+    "itemCategoryDbBuilderAllInfo": {
+        "message": "Para cada idioma selecionado, o idioma da sua conta é alterado e depois restaurado ao final. Isso afeta todas as abas abertas do Popmundo até que a execução termine. Os idiomas marcados com * estão inativos.",
+        "description": "Explanation shown above the language checklist of the item category database builder"
+    },
+    "itemCategoryDbBuilderBuildAll": {
+        "message": "Construir idiomas selecionados",
+        "description": "Button that builds the item category database for the selected languages"
+    },
+    "itemCategoryDbBuilderDownload": {
+        "message": "Baixar arquivo do banco de dados",
+        "description": "Button that downloads the generated item category database as a JavaScript file"
+    },
+    "itemCategoryDbBuilderRestore": {
+        "message": "Restaurar idioma",
+        "description": "Button that restores the game language after an interrupted item category database build"
+    },
+    "itemCategoryDbBuilderRestoreInfo": {
+        "message": "Uma execução anterior foi interrompida antes de o idioma do seu jogo ser restaurado.",
+        "description": "Warning shown by the item category database builder after an interrupted multi-language run"
+    },
+    "itemCategoryDbBuilderLoadingLanguages": {
+        "message": "Carregando idiomas...",
+        "description": "Shown while the item category database builder reads the available game languages"
+    },
+    "itemCategoryDbBuilderNoneSelected": {
+        "message": "Selecione pelo menos um idioma.",
+        "description": "Shown when the item category database builder is started without any selected language"
+    },
+    "itemCategoryDbBuilderLanguageProgress": {
+        "message": "Idioma $LANGUAGE$ ($CURRENT$/$TOTAL$): $DETAIL$",
+        "description": "Progress shown while the item category database builder reads several languages",
+        "placeholders": {
+            "language": {
+                "content": "$1",
+                "example": "Italian"
+            },
+            "current": {
+                "content": "$2",
+                "example": "3"
+            },
+            "total": {
+                "content": "$3",
+                "example": "19"
+            },
+            "detail": {
+                "content": "$4",
+                "example": "Reading category Animals (12/49)..."
+            }
+        }
+    },
+    "itemCategoryDbBuilderAllDone": {
+        "message": "Concluído: $COUNT$ idiomas estão prontos para download (ids: $IDS$). O idioma da sua conta foi restaurado.",
+        "description": "Shown when the item category database builder has finished reading several languages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "19"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "2, 19"
+            }
+        }
+    },
+    "itemCategoryDbBuilderLanguagesFailed": {
+        "message": "Idiomas que não puderam ser lidos por completo e foram deixados de fora: $NAMES$",
+        "description": "Shown when some languages failed while the item category database builder was running",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "itemCategoryDbBuilderSkipKnown": {
+        "message": "Ignorar idiomas já conhecidos",
+        "description": "Checkbox of the item category database builder: languages already present in the database are not read again"
+    },
+    "itemCategoryDbBuilderMerge": {
+        "message": "Mesclar dados",
+        "description": "Checkbox of the item category database builder: the downloaded file includes the existing database, overridden by the newly read languages"
+    },
+    "itemCategoryDbBuilderAllKnown": {
+        "message": "Todos os idiomas selecionados já estão no banco de dados: nada para ler.",
+        "description": "Shown when the item category database builder skips every selected language because they are already known"
+    },
+    "itemCategoryDbBuilderLanguagesSkipped": {
+        "message": "Ignorados (já conhecidos): $NAMES$.",
+        "description": "Shown when the item category database builder skipped some languages because they are already known",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "US English, Turkish"
+            }
+        }
+    },
+    "itemCategoryDbBuilderRestoreFailed": {
+        "message": "Não foi possível restaurar o idioma original do seu jogo: use o botão Restaurar idioma ou defina-o nas configurações de idioma.",
+        "description": "Error shown when the item category database builder cannot restore the game language"
+    },
+    "achievementDbBuilderTitle": {
+        "message": "Construtor do Banco de Dados de Conquistas (desenvolvedor)",
+        "description": "Title of the developer-only box that builds the achievement tracker database"
+    },
+    "achievementDbBuilderInfo": {
+        "message": "Lê as conquistas exibidas nesta página no idioma atual do jogo e imprime a entrada do banco de dados no log de depuração, pronta para ser colada em achievement-tracker-data.js.",
+        "description": "Introductory line of the developer-only achievement database builder box"
+    },
+    "achievementDbBuilderButton": {
+        "message": "Construir banco de dados",
+        "description": "Button of the developer-only achievement database builder box"
+    },
+    "achievementDbBuilderDone": {
+        "message": "Concluído: $COUNT$ conquistas para $LANGUAGE$ (id $ID$). A entrada do banco de dados está no log de depuração e no console.",
+        "description": "Shown when the achievement database builder has finished",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "313"
+            },
+            "language": {
+                "content": "$2",
+                "example": "US English"
+            },
+            "id": {
+                "content": "$3",
+                "example": "2"
+            }
+        }
+    },
+    "achievementDbBuilderNewIds": {
+        "message": "Aviso: $COUNT$ conquistas ainda não estão nos dados do rastreador e foram adicionadas como GENERIC, verifique a categoria delas: $IDS$",
+        "description": "Shown when the achievement database builder found achievements that are missing from the language independent data",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "445, 446"
+            }
+        }
+    },
+    "achievementDbBuilderNoRows": {
+        "message": "Nenhuma conquista encontrada na página.",
+        "description": "Error shown by the achievement database builder when the achievements table is empty or missing"
+    },
+    "achievementDbBuilderNoLanguage": {
+        "message": "Não foi possível determinar o idioma do jogo.",
+        "description": "Error shown by the achievement database builder when the game language cannot be retrieved"
+    },
+    "achievementDbBuilderAllTitle": {
+        "message": "Todos os idiomas",
+        "description": "Title of the section of the developer-only achievement database builder that handles several languages"
+    },
+    "achievementDbBuilderAllInfo": {
+        "message": "Para cada idioma selecionado, o idioma da sua conta é alterado e depois restaurado ao final. Isso afeta todas as abas abertas do Popmundo até que a execução termine. Os idiomas marcados com * estão inativos. Somente as conquistas que este personagem possui podem ser lidas.",
+        "description": "Explanation shown above the language checklist of the achievement database builder"
+    },
+    "achievementDbBuilderBuildAll": {
+        "message": "Construir idiomas selecionados",
+        "description": "Button that builds the achievement database for the selected languages"
+    },
+    "achievementDbBuilderDownload": {
+        "message": "Baixar arquivo do banco de dados",
+        "description": "Button that downloads the generated achievement database as a JavaScript file"
+    },
+    "achievementDbBuilderRestore": {
+        "message": "Restaurar idioma",
+        "description": "Button that restores the game language after an interrupted achievement database build"
+    },
+    "achievementDbBuilderRestoreInfo": {
+        "message": "Uma execução anterior foi interrompida antes de o idioma do seu jogo ser restaurado.",
+        "description": "Warning shown by the achievement database builder after an interrupted multi-language run"
+    },
+    "achievementDbBuilderLoadingLanguages": {
+        "message": "Carregando idiomas...",
+        "description": "Shown while the achievement database builder reads the available game languages"
+    },
+    "achievementDbBuilderNoneSelected": {
+        "message": "Selecione pelo menos um idioma.",
+        "description": "Shown when the achievement database builder is started without any selected language"
+    },
+    "achievementDbBuilderLanguageProgress": {
+        "message": "Idioma $LANGUAGE$ ($CURRENT$/$TOTAL$): $DETAIL$",
+        "description": "Progress shown while the achievement database builder reads several languages",
+        "placeholders": {
+            "language": {
+                "content": "$1",
+                "example": "Italian"
+            },
+            "current": {
+                "content": "$2",
+                "example": "3"
+            },
+            "total": {
+                "content": "$3",
+                "example": "19"
+            },
+            "detail": {
+                "content": "$4",
+                "example": "Character 3/78: Deion (id 3436235, Popmundo)..."
+            }
+        }
+    },
+    "achievementDbBuilderAllDone": {
+        "message": "Concluído: $COUNT$ idiomas estão prontos para download (ids: $IDS$). O idioma da sua conta foi restaurado.",
+        "description": "Shown when the achievement database builder has finished reading several languages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "19"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "2, 19"
+            }
+        }
+    },
+    "achievementDbBuilderLanguagesFailed": {
+        "message": "Idiomas que não puderam ser lidos e foram deixados de fora: $NAMES$",
+        "description": "Shown when some languages failed while the achievement database builder was running",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "achievementDbBuilderSkipKnown": {
+        "message": "Ignorar idiomas já conhecidos",
+        "description": "Checkbox of the achievement database builder: languages already present in the database are not read again"
+    },
+    "achievementDbBuilderMerge": {
+        "message": "Mesclar dados",
+        "description": "Checkbox of the achievement database builder: the downloaded file includes the existing database, completed by the newly read names"
+    },
+    "achievementDbBuilderAllKnown": {
+        "message": "Todos os idiomas selecionados já estão no banco de dados: nada para ler.",
+        "description": "Shown when the achievement database builder skips every selected language because they are already known"
+    },
+    "achievementDbBuilderLanguagesSkipped": {
+        "message": "Ignorados (já conhecidos): $NAMES$.",
+        "description": "Shown when the achievement database builder skipped some languages because they are already known",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "US English, Turkish"
+            }
+        }
+    },
+    "achievementDbBuilderRestoreFailed": {
+        "message": "Não foi possível restaurar o idioma original do seu jogo: use o botão Restaurar idioma ou defina-o nas configurações de idioma.",
+        "description": "Error shown when the achievement database builder cannot restore the game language"
+    },
+    "achievementDbBuilderCategoriesChanged": {
+        "message": "Categoria alterada para $COUNT$ conquistas por estarem na tabela de Outras Conquistas, verifique-as: $CHANGES$",
+        "description": "Shown when the achievement database builder changed the category of known achievements, according to the Other Achievements table",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "changes": {
+                "content": "$2",
+                "example": "33: GENERIC -> TGH, 73: PPM -> TGH"
+            }
+        }
+    },
+    "achievementDbBuilderCategoryGuard": {
+        "message": "Aviso: a tabela de Outras Conquistas contradiz a categoria conhecida da maioria das suas conquistas, então o jogo deste personagem provavelmente foi detectado incorretamente. Nenhuma categoria foi alterada.",
+        "description": "Shown when the achievement database builder does not trust the game detected for the character and leaves the categories unchanged"
+    },
+    "achievementDbBuilderGameUnknown": {
+        "message": "Aviso: não foi possível detectar o jogo de $COUNT$ personagens, então as Outras Conquistas deles não foram usadas para as categorias.",
+        "description": "Shown when the achievement database builder cannot tell if some characters play Popmundo or The Great Heist and leaves the categories unchanged for them",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
+    "achievementDbBuilderPointsChanged": {
+        "message": "Pontos alterados para $COUNT$ conquistas conforme os da página, verifique-as: $CHANGES$",
+        "description": "Shown when the achievement database builder replaced the known points of some achievements with the ones shown by the game",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "changes": {
+                "content": "$2",
+                "example": "142: 10 -> 20, 431: 10 -> 20"
+            }
+        }
+    },
+    "achievementDbBuilderPointsGuard": {
+        "message": "Aviso: os pontos da página diferem dos conhecidos para a maioria das conquistas, então a página provavelmente foi lida de forma incorreta. Nenhum ponto foi alterado.",
+        "description": "Shown when the achievement database builder does not trust the points read from the page and leaves the known points unchanged"
+    },
+    "achievementDbBuilderBulk": {
+        "message": "Ler os personagens do ranking de Mais Pontos de Conquistas (todos os seus filtros) em vez de apenas este personagem",
+        "description": "Checkbox of the achievement database builder: the achievements are read from all the characters of the chart, for every filter value, instead of only from the character of the page"
+    },
+    "achievementDbBuilderCharactersPerChart": {
+        "message": "Personagens por filtro do ranking:",
+        "description": "Label of the number of characters the achievement database builder takes from each filter value of the Most Achievement Points chart"
+    },
+    "achievementDbBuilderLoadingChart": {
+        "message": "Lendo o ranking de Mais Pontos de Conquistas (filtro $CURRENT$/$TOTAL$)...",
+        "description": "Progress shown while the achievement database builder reads the characters of the chart",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "2"
+            },
+            "total": {
+                "content": "$2",
+                "example": "3"
+            }
+        }
+    },
+    "achievementDbBuilderChartEmpty": {
+        "message": "Nenhum personagem encontrado no ranking de Mais Pontos de Conquistas.",
+        "description": "Error shown by the achievement database builder when the chart gives no character"
+    },
+    "achievementDbBuilderDetectingGame": {
+        "message": "Detectando o jogo do personagem $CURRENT$/$TOTAL$ ($NAME$)...",
+        "description": "Progress shown while the achievement database builder detects the game of the characters",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "12"
+            },
+            "total": {
+                "content": "$2",
+                "example": "78"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Deion Cupcake Peanutbutter"
+            }
+        }
+    },
+    "achievementDbBuilderCharacterProgress": {
+        "message": "Personagem $CURRENT$/$TOTAL$: $NAME$ (id $ID$, $GAME$)...",
+        "description": "Progress shown while the achievement database builder reads the achievements of each character",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "12"
+            },
+            "total": {
+                "content": "$2",
+                "example": "78"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Deion Cupcake Peanutbutter"
+            },
+            "id": {
+                "content": "$4",
+                "example": "3436235"
+            },
+            "game": {
+                "content": "$5",
+                "example": "Popmundo"
+            }
+        }
+    },
+    "achievementDbBuilderEstimate": {
+        "message": "$CHARACTERS$ personagens, $LANGUAGES$ idiomas: cerca de $REQUESTS$ requisições, no mínimo $MINUTES$ minutos.",
+        "description": "Estimate shown by the achievement database builder before reading the characters in the selected languages",
+        "placeholders": {
+            "characters": {
+                "content": "$1",
+                "example": "78"
+            },
+            "languages": {
+                "content": "$2",
+                "example": "19"
+            },
+            "requests": {
+                "content": "$3",
+                "example": "1620"
+            },
+            "minutes": {
+                "content": "$4",
+                "example": "21"
+            }
+        }
+    },
+    "achievementDbBuilderStop": {
+        "message": "Parar",
+        "description": "Button that stops a run of the achievement database builder; what was read is kept and the game language is restored"
+    },
+    "achievementDbBuilderStopping": {
+        "message": "Parando...",
+        "description": "Shown when the achievement database builder was asked to stop and is finishing the request in progress"
+    },
+    "achievementDbBuilderStopped": {
+        "message": "A execução foi interrompida: apenas o que foi lido até agora está disponível.",
+        "description": "Shown when a run of the achievement database builder was stopped before the end"
+    },
+    "achievementDbBuilderLanguagesInterrupted": {
+        "message": "Idiomas interrompidos após erros repetidos, seus nomes estão incompletos: $NAMES$.",
+        "description": "Shown when the achievement database builder gave up on some languages because several characters in a row could not be read",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "achievementDbBuilderCharactersFailed": {
+        "message": "$COUNT$ páginas de conquistas não puderam ser lidas, veja o log de depuração.",
+        "description": "Shown when the achievement database builder could not read some achievements pages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "achievementDbBuilderUncovered": {
+        "message": "$COUNT$ conquistas conhecidas não pertencem a nenhum dos personagens lidos, então não têm nome nesta execução: $IDS$",
+        "description": "Shown by the achievement database builder after reading many characters: the known achievements that none of them owns",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "17"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "43, 44, 46"
+            }
+        }
+    },
+    "achievementDbBuilderCategoryConflicts": {
+        "message": "Categorias não definidas para $COUNT$ conquistas porque os personagens divergem: $LIST$",
+        "description": "Shown when the characters read by the achievement database builder suggest different categories for the same achievement",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "1"
+            },
+            "list": {
+                "content": "$2",
+                "example": "205: PPM / TGH"
+            }
+        }
+    },
+    "achievementDbBuilderPointsConflicts": {
+        "message": "Pontos não alterados para $COUNT$ conquistas porque os personagens divergem: $LIST$",
+        "description": "Shown when the characters read by the achievement database builder show different points for the same achievement",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "1"
+            },
+            "list": {
+                "content": "$2",
+                "example": "142: 10 / 20"
+            }
+        }
+    },
+    "achievementDbBuilderContradictions": {
+        "message": "$COUNT$ categorias são contraditas pelas conquistas dos personagens (uma conquista exclusiva do Popmundo pertencente a um personagem do Great Heist, ou o contrário), verifique-as: $LIST$",
+        "description": "Shown when the achievement database builder finds an achievement whose category says it belongs to one game, but a character of the other game owns it",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "list": {
+                "content": "$2",
+                "example": "27: PPM, 28: PPM"
+            }
+        }
+    },
+    "achievementDbBuilderGamePpm": {
+        "message": "Popmundo",
+        "description": "Name of the Popmundo game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameTgh": {
+        "message": "The Great Heist",
+        "description": "Name of the Great Heist game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameNone": {
+        "message": "jogo não detectado",
+        "description": "Shown by the achievement database builder instead of the game name when the game of the character cannot be detected"
+    }
+}
