@@ -2262,32 +2262,6 @@
         "message": "Build database",
         "description": "Button of the developer-only achievement database builder box"
     },
-    "achievementDbBuilderProgress": {
-        "message": "Reading the achievements of character $ID$ ($GAME$)...",
-        "description": "Progress shown while the achievement database builder reads the achievements page, with the game of the character",
-        "placeholders": {
-            "id": {
-                "content": "$1",
-                "example": "3436235"
-            },
-            "game": {
-                "content": "$2",
-                "example": "Popmundo"
-            }
-        }
-    },
-    "achievementDbBuilderGamePpm": {
-        "message": "Popmundo",
-        "description": "Name of the Popmundo game, shown by the achievement database builder for the game of the character"
-    },
-    "achievementDbBuilderGameTgh": {
-        "message": "The Great Heist",
-        "description": "Name of the Great Heist game, shown by the achievement database builder for the game of the character"
-    },
-    "achievementDbBuilderGameNone": {
-        "message": "game not detected",
-        "description": "Shown by the achievement database builder instead of the game name when the game of the character cannot be detected"
-    },
     "achievementDbBuilderDone": {
         "message": "Done: $COUNT$ achievements for $LANGUAGE$ (id $ID$). The database entry is in the debug log and in the console.",
         "description": "Shown when the achievement database builder has finished",
@@ -2378,7 +2352,7 @@
             },
             "detail": {
                 "content": "$4",
-                "example": "Reading the achievements of character 3436235 (Popmundo)..."
+                "example": "Character 3/78: Deion (id 3436235, Popmundo)..."
             }
         }
     },
@@ -2451,8 +2425,14 @@
         "description": "Shown when the achievement database builder does not trust the game detected for the character and leaves the categories unchanged"
     },
     "achievementDbBuilderGameUnknown": {
-        "message": "Warning: the game of this character could not be detected, so no category was set from the Other Achievements table.",
-        "description": "Shown when the achievement database builder cannot tell if the character plays Popmundo or The Great Heist and leaves the categories unchanged"
+        "message": "Warning: the game of $COUNT$ characters could not be detected, so their Other Achievements were not used for the categories.",
+        "description": "Shown when the achievement database builder cannot tell if some characters play Popmundo or The Great Heist and leaves the categories unchanged for them",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
     },
     "achievementDbBuilderPointsChanged": {
         "message": "Points changed for $COUNT$ achievements to the ones of the page, check them: $CHANGES$",
@@ -2471,5 +2451,197 @@
     "achievementDbBuilderPointsGuard": {
         "message": "Warning: the points of the page differ from the known ones for most achievements, so the page was probably misread. No points were changed.",
         "description": "Shown when the achievement database builder does not trust the points read from the page and leaves the known points unchanged"
+    },
+    "achievementDbBuilderBulk": {
+        "message": "Read the characters of the Most Achievement Points chart (all its filters) instead of only this character",
+        "description": "Checkbox of the achievement database builder: the achievements are read from all the characters of the chart, for every filter value, instead of only from the character of the page"
+    },
+    "achievementDbBuilderCharactersPerChart": {
+        "message": "Characters per chart filter:",
+        "description": "Label of the number of characters the achievement database builder takes from each filter value of the Most Achievement Points chart"
+    },
+    "achievementDbBuilderLoadingChart": {
+        "message": "Reading the Most Achievement Points chart (filter $CURRENT$/$TOTAL$)...",
+        "description": "Progress shown while the achievement database builder reads the characters of the chart",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "2"
+            },
+            "total": {
+                "content": "$2",
+                "example": "3"
+            }
+        }
+    },
+    "achievementDbBuilderChartEmpty": {
+        "message": "No character found in the Most Achievement Points chart.",
+        "description": "Error shown by the achievement database builder when the chart gives no character"
+    },
+    "achievementDbBuilderDetectingGame": {
+        "message": "Detecting the game of character $CURRENT$/$TOTAL$ ($NAME$)...",
+        "description": "Progress shown while the achievement database builder detects the game of the characters",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "12"
+            },
+            "total": {
+                "content": "$2",
+                "example": "78"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Deion Cupcake Peanutbutter"
+            }
+        }
+    },
+    "achievementDbBuilderCharacterProgress": {
+        "message": "Character $CURRENT$/$TOTAL$: $NAME$ (id $ID$, $GAME$)...",
+        "description": "Progress shown while the achievement database builder reads the achievements of each character",
+        "placeholders": {
+            "current": {
+                "content": "$1",
+                "example": "12"
+            },
+            "total": {
+                "content": "$2",
+                "example": "78"
+            },
+            "name": {
+                "content": "$3",
+                "example": "Deion Cupcake Peanutbutter"
+            },
+            "id": {
+                "content": "$4",
+                "example": "3436235"
+            },
+            "game": {
+                "content": "$5",
+                "example": "Popmundo"
+            }
+        }
+    },
+    "achievementDbBuilderEstimate": {
+        "message": "$CHARACTERS$ characters, $LANGUAGES$ languages: about $REQUESTS$ requests, at least $MINUTES$ minutes.",
+        "description": "Estimate shown by the achievement database builder before reading the characters in the selected languages",
+        "placeholders": {
+            "characters": {
+                "content": "$1",
+                "example": "78"
+            },
+            "languages": {
+                "content": "$2",
+                "example": "19"
+            },
+            "requests": {
+                "content": "$3",
+                "example": "1620"
+            },
+            "minutes": {
+                "content": "$4",
+                "example": "21"
+            }
+        }
+    },
+    "achievementDbBuilderStop": {
+        "message": "Stop",
+        "description": "Button that stops a run of the achievement database builder; what was read is kept and the game language is restored"
+    },
+    "achievementDbBuilderStopping": {
+        "message": "Stopping...",
+        "description": "Shown when the achievement database builder was asked to stop and is finishing the request in progress"
+    },
+    "achievementDbBuilderStopped": {
+        "message": "The run was stopped: only what was read so far is available.",
+        "description": "Shown when a run of the achievement database builder was stopped before the end"
+    },
+    "achievementDbBuilderLanguagesInterrupted": {
+        "message": "Languages interrupted after repeated errors, their names are partial: $NAMES$.",
+        "description": "Shown when the achievement database builder gave up on some languages because several characters in a row could not be read",
+        "placeholders": {
+            "names": {
+                "content": "$1",
+                "example": "Italian, Dutch"
+            }
+        }
+    },
+    "achievementDbBuilderCharactersFailed": {
+        "message": "$COUNT$ achievements pages could not be read, see the debug log.",
+        "description": "Shown when the achievement database builder could not read some achievements pages",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "3"
+            }
+        }
+    },
+    "achievementDbBuilderUncovered": {
+        "message": "$COUNT$ known achievements are not owned by any character read, so they have no name from this run: $IDS$",
+        "description": "Shown by the achievement database builder after reading many characters: the known achievements that none of them owns",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "17"
+            },
+            "ids": {
+                "content": "$2",
+                "example": "43, 44, 46"
+            }
+        }
+    },
+    "achievementDbBuilderCategoryConflicts": {
+        "message": "Categories not set for $COUNT$ achievements because the characters disagree: $LIST$",
+        "description": "Shown when the characters read by the achievement database builder suggest different categories for the same achievement",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "1"
+            },
+            "list": {
+                "content": "$2",
+                "example": "205: PPM / TGH"
+            }
+        }
+    },
+    "achievementDbBuilderPointsConflicts": {
+        "message": "Points not changed for $COUNT$ achievements because the characters disagree: $LIST$",
+        "description": "Shown when the characters read by the achievement database builder show different points for the same achievement",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "1"
+            },
+            "list": {
+                "content": "$2",
+                "example": "142: 10 / 20"
+            }
+        }
+    },
+    "achievementDbBuilderContradictions": {
+        "message": "$COUNT$ categories are contradicted by the achievements of the characters (a Popmundo-only achievement owned by a Great Heist character, or the opposite), check them: $LIST$",
+        "description": "Shown when the achievement database builder finds an achievement whose category says it belongs to one game, but a character of the other game owns it",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            },
+            "list": {
+                "content": "$2",
+                "example": "27: PPM, 28: PPM"
+            }
+        }
+    },
+    "achievementDbBuilderGamePpm": {
+        "message": "Popmundo",
+        "description": "Name of the Popmundo game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameTgh": {
+        "message": "The Great Heist",
+        "description": "Name of the Great Heist game, shown by the achievement database builder for the game of the character"
+    },
+    "achievementDbBuilderGameNone": {
+        "message": "game not detected",
+        "description": "Shown by the achievement database builder instead of the game name when the game of the character cannot be detected"
     }
 }

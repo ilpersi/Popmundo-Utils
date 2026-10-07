@@ -103,7 +103,7 @@
     async function crawlLanguage(onProgress) {
         const doc = await fetchDocument(SHOPPING_ASSISTANT_PATH);
         const categorySelect = new CssSelectorHelper(CATEGORY_SELECT_SELECTOR).getSingle(doc);
-        const form = categorySelect && categorySelect.closest('form');
+        const form = categorySelect && new CssSelectorHelper(DbBuilderHelper.FORM_SELECTOR).getSingle(doc);
         if (!form) throw new Error('Shopping Assistant form not found');
 
         const categories = readCategories(categorySelect);

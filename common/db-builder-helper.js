@@ -9,6 +9,8 @@ class DbBuilderHelper {
     static LANGUAGE_SELECT_SELECTOR = 'select[id$="ddlLanguage"]';
     static LANGUAGE_SAVE_BUTTON_SELECTOR = 'input[id$="btnSetLocale"]';
     static LANGUAGE_SETTINGS_PATH = '/User/Popmundo.aspx/User/LanguageSettings';
+    // Every game page has a single ASP.NET form, the one replayed by the builders to post the page selects
+    static FORM_SELECTOR = 'form#aspnetForm';
 
     /**
      * chrome.storage.local key holding the language to restore if a multi-language run is interrupted.
@@ -122,7 +124,7 @@ class DbBuilderHelper {
         const doc = await DbBuilderHelper.fetchDocument(settingsPath);
         const select = new CssSelectorHelper(DbBuilderHelper.LANGUAGE_SELECT_SELECTOR).getSingle(doc);
         const saveButton = new CssSelectorHelper(DbBuilderHelper.LANGUAGE_SAVE_BUTTON_SELECTOR).getSingle(doc);
-        const form = select && select.closest('form');
+        const form = new CssSelectorHelper(DbBuilderHelper.FORM_SELECTOR).getSingle(doc);
         if (!form || !saveButton) throw new Error('Language settings form not found');
 
         if (DbBuilderHelper.readLanguages(doc).currentId !== languageId) {

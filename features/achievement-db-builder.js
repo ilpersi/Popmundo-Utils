@@ -9,11 +9,15 @@
  *     pasted in features/achievement-tracker-data.js;
  *   - for several languages: the account language is switched for each selected language
  *     (and restored at the end), the entries are printed in the debug log and the whole
- *     data file can be downloaded as a stand-alone JavaScript file.
+ *     data file can be downloaded as a stand-alone JavaScript file. The run can read just the
+ *     character of the page, or all the characters of the "Most Achievement Points" chart:
+ *     for each value of its filter (all achievements, all Great Heist ones, Great Heist core
+ *     ones) the listed characters are collected once, their game is detected once, and then
+ *     their achievements pages are read in every selected language. It can be stopped.
  *
- * A character only shows the achievements it owns, so the names of a language are partial.
- * When merging, the existing names of a language are kept and the newly read ones are added
- * to them (or override the same ids).
+ * A character only shows the achievements it owns, so the names of a language are partial: the
+ * more characters are read, the more achievements get a name. When merging, the existing names of
+ * a language are kept and the newly read ones are added to them (or override the same ids).
  *
  * The page has no category, but its "Other Achievements" table lists the achievements earned in
  * the other game, which are exclusive to it: TGH for a Popmundo character, PPM for a Great Heist
@@ -24,6 +28,7 @@
  * of the known achievements are updated from the page, unless they differ for most of them, which
  * means that the page was misread.
  *
+ * Every request goes through TimedFetch (DbBuilderHelper.fetchDocument), to avoid being logged out.
  * The language switching helpers are shared with the item category builder (DbBuilderHelper).
  */
 (function () {
@@ -40,6 +45,19 @@
     const BOX_ID = 'pm-achievement-db-builder';
     const ACHIEVEMENTS_PATH = '/World/Popmundo.aspx/Character/Achievements';
     const CHARACTER_PATH = '/World/Popmundo.aspx/Character';
+    const CHART_PATH = '/World/Popmundo.aspx/Charts/MostAchievementPoints';
+    const CHART_SORT_SELECTOR = 'select[id$="ddlSortCriteria"]';
+    const CHART_ROW_SELECTOR = '#tablechart tbody tr';
+    const CHARACTER_LINK_SELECTOR = 'a[href*="/Character/"]';
+    const CHARACTER_LINK_RE = /\/Character\/(\d+)\/?$/;
+    // Values of the chart filter, in the order they are read: all the achievements, all the Great
+    // Heist ones, the Great Heist core ones. A character found by a view is not collected again.
+    const CHART_FILTER_VALUES = ['3', '2', '1'];
+    const MAX_CHARACTERS_PER_CHART = 50;
+    // A language is interrupted after this many characters in a row that cannot be read
+    const MAX_CONSECUTIVE_FAILURES = 3;
+    // Requests needed to switch the language: the form, the post and the check
+    const SWITCH_LANGUAGE_REQUESTS = 3;
     const ORIGINAL_LANGUAGE_KEY = DbBuilderHelper.ORIGINAL_LANGUAGE_KEY;
     const LANGUAGE_SETTINGS_PATH = DbBuilderHelper.LANGUAGE_SETTINGS_PATH;
     const DOWNLOAD_FILE_NAME = 'achievement-tracker-data.generated.js';
@@ -135,14 +153,25 @@
     }
 
     /**
+     * Describes a character for the progress messages.
+     *
+     * @param {{id: number, name: string}} character
+     * @return {string} The name, or the id when the name is not known
+     */
+    function describeCharacter(character) {
+        return character.name || `#${character.id}`;
+    }
+
+    /**
      * Reads the achievements of the rows matching a selector.
      *
      * @param {Document} doc The parsed achievements page
      * @param {string} rowSelector
-     * @param {string|null} category The category the rows are known to have, or null
-     * @return {Array<{id: number, name: string, points: number|null, category: string|null}>} Points are null when the cell cannot be read
+     * @param {string|null} game The game of the character, null when it is not known
+     * @param {boolean} other Whether the rows are the "Other Achievements" ones
+     * @return {Array<{id: number, name: string, points: number|null, game: string|null, other: boolean}>} Points are null when the cell cannot be read
      */
-    function readRows(doc, rowSelector, category) {
+    function readRows(doc, rowSelector, game, other) {
         const achievements = [];
         new CssSelectorHelper(rowSelector).getAll(doc).forEach(row => {
             const icon = new CssSelectorHelper(ICON_SELECTOR).getSingle(row);
@@ -156,23 +185,23 @@
 
             // An unreadable value is null, so that it can never replace a known one
             const points = parseInt(row.cells[2].textContent, 10);
-            achievements.push({ id: Number(match[1]), name, points: Number.isFinite(points) ? points : null, category });
+            achievements.push({ id: Number(match[1]), name, points: Number.isFinite(points) ? points : null, game, other });
         });
         return achievements;
     }
 
     /**
-     * Reads the owned achievements from the achievements tables of a page. The ones of the
-     * "Other Achievements" table carry the category of the other game, the others have none.
+     * Reads the owned achievements from the achievements tables of a page: the ones of the game the
+     * character plays, and the "Other Achievements" ones, which belong to the other game.
      *
      * @param {Document} doc The parsed achievements page
-     * @param {string} otherCategory The category of the "Other Achievements" table
-     * @return {Array<{id: number, name: string, points: number, category: string|null}>}
+     * @param {string|null} game The game of the character, null when it is not known
+     * @return {Array<{id: number, name: string, points: number|null, game: string|null, other: boolean}>}
      */
-    function readAchievements(doc, otherCategory) {
+    function readAchievements(doc, game) {
         return [
-            ...readRows(doc, OWN_ROW_SELECTOR, null),
-            ...readRows(doc, OTHER_ROW_SELECTOR, otherCategory),
+            ...readRows(doc, OWN_ROW_SELECTOR, game, false),
+            ...readRows(doc, OTHER_ROW_SELECTOR, game, true),
         ];
     }
 
@@ -181,15 +210,177 @@
      *
      * @param {number} characterId
      * @param {string|null} game The game of the character, as returned by detectCharacterGame()
-     * @param {function(string): void} onProgress Called with the progress message
-     * @return {Promise<Array<{id: number, name: string, points: number, category: string|null}>>}
+     * @return {Promise<Array<{id: number, name: string, points: number|null, game: string|null, other: boolean}>>}
      * @throws {Error} When no achievement is found on the page
      */
-    async function crawlLanguage(characterId, game, onProgress) {
-        onProgress(chrome.i18n.getMessage('achievementDbBuilderProgress', [String(characterId), describeGame(game)]));
-        const achievements = readAchievements(await fetchDocument(`${ACHIEVEMENTS_PATH}/${characterId}`), getOtherGameCategory(game));
+    async function crawlCharacter(characterId, game) {
+        const achievements = readAchievements(await fetchDocument(`${ACHIEVEMENTS_PATH}/${characterId}`), game);
         if (!achievements.length) throw new Error(chrome.i18n.getMessage('achievementDbBuilderNoRows'));
         return achievements;
+    }
+
+    /**
+     * Reads the achievements of several characters in the current game language. The result is
+     * compacted: a read that tells nothing new (same id, points, game and table) is kept once.
+     * A character that cannot be read is skipped; after MAX_CONSECUTIVE_FAILURES in a row the
+     * language is interrupted (the session may be logged out or throttled).
+     *
+     * @param {Array<{id: number, name: string}>} characters
+     * @param {Map<number, string|null>} games The game of every character
+     * @param {function(string): void} onProgress Called with the progress message of every character
+     * @param {function(): boolean} isStopRequested
+     * @return {Promise<{achievements: Array, failed: number[], aborted: boolean, stopped: boolean}>}
+     * @throws {Error} The last error, when not a single character could be read
+     */
+    async function crawlCharacters(characters, games, onProgress, isStopRequested) {
+        const achievements = new Map();
+        const failed = [];
+        let consecutiveFailures = 0;
+        let aborted = false;
+        let stopped = false;
+        let lastError = null;
+
+        for (let i = 0; i < characters.length; i++) {
+            if (isStopRequested()) {
+                stopped = true;
+                break;
+            }
+
+            const character = characters[i];
+            const game = games.get(character.id) ?? null;
+            onProgress(chrome.i18n.getMessage('achievementDbBuilderCharacterProgress',
+                [String(i + 1), String(characters.length), describeCharacter(character), String(character.id), describeGame(game)]));
+
+            try {
+                (await crawlCharacter(character.id, game)).forEach(item => {
+                    const key = `${item.id}|${item.game}|${item.other}|${item.points}`;
+                    const known = achievements.get(key);
+                    if (!known) achievements.set(key, item);
+                    else if (known.name !== item.name) Logger.warn(`Achievement Database Builder: achievement ${item.id} has two names: ${JSON.stringify(known.name)} and ${JSON.stringify(item.name)}`);
+                });
+                consecutiveFailures = 0;
+            } catch (error) {
+                lastError = error;
+                failed.push(character.id);
+                Logger.warn(`Achievement Database Builder: unable to read the achievements of character ${character.id}`, error);
+                if (++consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+                    aborted = true;
+                    break;
+                }
+            }
+        }
+
+        if (!achievements.size && lastError) throw lastError;
+        return { achievements: Array.from(achievements.values()), failed, aborted, stopped };
+    }
+
+    // ── The chart of the characters ────────────────────────────────────────
+
+    /**
+     * Tells if an option of a select is the selected one. A document built by DOMParser has no live
+     * selection state, so the selected attribute is looked at first.
+     *
+     * @param {HTMLSelectElement} select
+     * @param {string} value
+     * @return {boolean}
+     */
+    function isOptionSelected(select, value) {
+        const selected = new CssSelectorHelper('option[selected]').getSingle(select)
+            || new CssSelectorHelper('option:checked').getSingle(select);
+        return !!selected && selected.value === value;
+    }
+
+    /**
+     * Reads the characters listed by a chart page.
+     *
+     * @param {Document} doc The parsed chart page
+     * @return {Array<{id: number, name: string}>}
+     */
+    function readChartCharacters(doc) {
+        const characters = [];
+        new CssSelectorHelper(CHART_ROW_SELECTOR).getAll(doc).forEach(row => {
+            const link = new CssSelectorHelper(CHARACTER_LINK_SELECTOR).getSingle(row);
+            const match = link && CHARACTER_LINK_RE.exec(link.getAttribute('href') || '');
+            if (match) characters.push({ id: Number(match[1]), name: link.textContent.trim() });
+        });
+        return characters;
+    }
+
+    /**
+     * Reads the characters of the chart with one value of its filter. Choosing a value in the game
+     * is an ASP.NET postback, which is replayed with the form of the page.
+     *
+     * @param {string} value A value of the filter combo
+     * @return {Promise<Array<{id: number, name: string}>>}
+     * @throws {Error} When the page has no such filter value
+     */
+    async function readChartView(value) {
+        const doc = await fetchDocument(CHART_PATH);
+        const select = new CssSelectorHelper(CHART_SORT_SELECTOR).getSingle(doc);
+        const form = new CssSelectorHelper(DbBuilderHelper.FORM_SELECTOR).getSingle(doc);
+        if (!select || !form) throw new Error('Chart filter not found');
+        if (!new CssSelectorHelper(`option[value="${value}"]`).getSingle(select)) throw new Error(`Chart filter value ${value} not available`);
+        if (isOptionSelected(select, value)) return readChartCharacters(doc);
+
+        const body = new URLSearchParams(new FormData(form));
+        body.set('__EVENTTARGET', select.name);
+        body.set('__EVENTARGUMENT', '');
+        body.set(select.name, value);
+        const viewDoc = await fetchDocument(CHART_PATH, { method: 'POST', body });
+
+        const viewSelect = new CssSelectorHelper(CHART_SORT_SELECTOR).getSingle(viewDoc);
+        if (!viewSelect || !isOptionSelected(viewSelect, value)) throw new Error(`Chart filter value ${value} not applied`);
+        return readChartCharacters(viewDoc);
+    }
+
+    /**
+     * Collects the characters of the chart with every value of its filter. A character that an earlier
+     * value already listed is not collected again. A value that cannot be read is skipped.
+     *
+     * @param {number} limitPerChart How many characters to take from every value
+     * @param {HTMLElement} status
+     * @param {function(): boolean} isStopRequested
+     * @return {Promise<Array<{id: number, name: string}>>}
+     * @throws {Error} When no character could be collected
+     */
+    async function loadChartCharacters(limitPerChart, status, isStopRequested) {
+        const characters = new Map();
+
+        for (let i = 0; i < CHART_FILTER_VALUES.length; i++) {
+            if (isStopRequested()) break;
+            const value = CHART_FILTER_VALUES[i];
+            status.textContent = chrome.i18n.getMessage('achievementDbBuilderLoadingChart',
+                [String(i + 1), String(CHART_FILTER_VALUES.length)]);
+            try {
+                (await readChartView(value)).slice(0, limitPerChart).forEach(character => {
+                    if (!characters.has(character.id)) characters.set(character.id, character);
+                });
+            } catch (error) {
+                Logger.warn(`Achievement Database Builder: unable to read the chart with the filter value ${value}`, error);
+            }
+        }
+
+        if (!characters.size && !isStopRequested()) throw new Error(chrome.i18n.getMessage('achievementDbBuilderChartEmpty'));
+        return Array.from(characters.values());
+    }
+
+    /**
+     * Detects the game of every character, once: it does not change with the game language.
+     *
+     * @param {Array<{id: number, name: string}>} characters
+     * @param {HTMLElement} status
+     * @param {function(): boolean} isStopRequested
+     * @return {Promise<Map<number, string|null>>}
+     */
+    async function detectGames(characters, status, isStopRequested) {
+        const games = new Map();
+        for (let i = 0; i < characters.length; i++) {
+            if (isStopRequested()) break;
+            status.textContent = chrome.i18n.getMessage('achievementDbBuilderDetectingGame',
+                [String(i + 1), String(characters.length), describeCharacter(characters[i])]);
+            games.set(characters[i].id, await detectCharacterGame(characters[i].id));
+        }
+        return games;
     }
 
     // ── Known data ─────────────────────────────────────────────────────────
@@ -221,17 +412,47 @@
     }
 
     /**
-     * Builds the language independent data: the known one, completed with the achievements read from
-     * the pages. The category of the "Other Achievements" ones is applied (new ids are added with it,
-     * known ids get it if they have another one), unless it contradicts most of the known data, which
-     * means the game of the character was detected wrong: then no category is changed. The other new
-     * ids get the placeholder category. The points of the known achievements are replaced by the ones
-     * of the page, unless they differ for most of them (at least POINTS_GUARD_MIN_SAMPLE were read),
-     * which means that the page was misread: then no points are changed. Points that could not be read
-     * (null) never replace a known value, and are 0 for a new id.
+     * Collects, for every achievement id, what the read pages tell about it: the points, the categories
+     * suggested by the "Other Achievements" tables (a Popmundo character lists Great Heist achievements
+     * there and the other way round) and the games of the characters that own it in their own table.
      *
-     * @param {Array<{achievements: Array<{id: number, points: number|null, category: string|null}>}>} scraped The read languages
-     * @return {{info: Map<number, [string, number]>, added: number[], changed: Array<{id: number, from: string, to: string}>, placeholders: number[], pointsChanged: Array<{id: number, from: number, to: number}>, guarded: boolean, pointsGuarded: boolean}}
+     * @param {Array<{achievements: Array<{id: number, points: number|null, game: string|null, other: boolean}>}>} scraped The read languages
+     * @return {Map<number, {points: Set<number>, categories: Set<string>, mainGames: Set<string>}>}
+     */
+    function collectAchievementFacts(scraped) {
+        const facts = new Map();
+        scraped.forEach(language => language.achievements.forEach(({ id, points, game, other }) => {
+            if (!facts.has(id)) facts.set(id, { points: new Set(), categories: new Set(), mainGames: new Set() });
+            const fact = facts.get(id);
+            if (points !== null) fact.points.add(points);
+            if (other) {
+                const category = getOtherGameCategory(game);
+                if (category) fact.categories.add(category);
+            } else if (game) {
+                fact.mainGames.add(game);
+            }
+        }));
+        return facts;
+    }
+
+    /**
+     * Builds the language independent data: the known one, completed with the achievements read from
+     * the pages, which can come from many characters (see collectAchievementFacts()).
+     *
+     * The category suggested by the "Other Achievements" tables is applied (new ids are added with it,
+     * known ids get it if they have another one), unless it contradicts most of the known data, which
+     * means the game of the characters was detected wrong: then no category is changed. The other new
+     * ids get the placeholder category. The points of the known achievements are replaced by the ones
+     * of the pages, unless they differ for most of them (at least POINTS_GUARD_MIN_SAMPLE were read),
+     * which means that the pages were misread: then no points are changed. Points that could not be
+     * read never replace a known value, and are 0 for a new id.
+     *
+     * When the characters disagree about the category or the points of an id, nothing is changed for it
+     * and it is reported. A category that is contradicted by the own table of the characters (a
+     * Popmundo-only achievement owned by a Great Heist character, or the opposite) is only reported.
+     *
+     * @param {Array<{achievements: Array<{id: number, points: number|null, game: string|null, other: boolean}>}>} scraped The read languages
+     * @return {{info: Map<number, [string, number]>, added: number[], changed: Array<{id: number, from: string, to: string}>, placeholders: number[], pointsChanged: Array<{id: number, from: number, to: number}>, categoryConflicts: Array<{id: number, values: string[]}>, pointsConflicts: Array<{id: number, values: number[]}>, contradictions: Array<{id: number, category: string}>, guarded: boolean, pointsGuarded: boolean}}
      */
     function buildInfo(scraped) {
         const info = getKnownInfo();
@@ -239,20 +460,34 @@
         const changed = [];
         const placeholders = [];
         const pointsChanged = [];
+        const categoryConflicts = [];
+        const pointsConflicts = [];
+        const contradictions = [];
 
-        const achievements = new Map();
-        scraped.forEach(language => language.achievements.forEach(item => achievements.set(item.id, item)));
-        const all = Array.from(achievements.values());
+        // The value the pages agree on, null when there is none or when they disagree
+        const facts = collectAchievementFacts(scraped);
+        const ids = Array.from(facts.keys()).sort((a, b) => a - b);
+        const resolved = new Map();
+        ids.forEach(id => {
+            const { points, categories } = facts.get(id);
+            if (categories.size > 1) categoryConflicts.push({ id, values: Array.from(categories) });
+            if (points.size > 1) pointsConflicts.push({ id, values: Array.from(points) });
+            resolved.set(id, {
+                category: categories.size === 1 ? Array.from(categories)[0] : null,
+                points: points.size === 1 ? Array.from(points)[0] : null,
+            });
+        });
 
-        const known = all.filter(item => item.category && info.has(item.id));
-        const contradicting = known.filter(item => info.get(item.id)[0] !== item.category);
-        const guarded = contradicting.length * 2 > known.length;
+        const withCategory = ids.filter(id => resolved.get(id).category && info.has(id));
+        const contradicting = withCategory.filter(id => info.get(id)[0] !== resolved.get(id).category);
+        const guarded = contradicting.length * 2 > withCategory.length;
 
-        const withPoints = all.filter(item => item.points !== null && info.has(item.id));
-        const differing = withPoints.filter(item => info.get(item.id)[1] !== item.points);
+        const withPoints = ids.filter(id => resolved.get(id).points !== null && info.has(id));
+        const differing = withPoints.filter(id => info.get(id)[1] !== resolved.get(id).points);
         const pointsGuarded = withPoints.length >= POINTS_GUARD_MIN_SAMPLE && differing.length * 2 > withPoints.length;
 
-        all.sort((a, b) => a.id - b.id).forEach(({ id, points, category }) => {
+        ids.forEach(id => {
+            const { category, points } = resolved.get(id);
             const current = info.get(id);
             if (!current) {
                 if (category && !guarded) {
@@ -275,7 +510,16 @@
             }
         });
 
-        return { info, added, changed, placeholders, pointsChanged, guarded, pointsGuarded };
+        // Whatever the category is now, a game-only achievement cannot be in the own table of the other game
+        ids.forEach(id => {
+            const { mainGames } = facts.get(id);
+            const category = info.get(id)[0];
+            if ((category === 'PPM' && mainGames.has('tgh')) || (category === 'TGH' && mainGames.has('ppm'))) {
+                contradictions.push({ id, category });
+            }
+        });
+
+        return { info, added, changed, placeholders, pointsChanged, categoryConflicts, pointsConflicts, contradictions, guarded, pointsGuarded };
     }
 
     // ── Formatting ─────────────────────────────────────────────────────────
@@ -397,7 +641,7 @@
      * newly read ones are added to them, overriding the same ids; otherwise only the newly read
      * languages are written.
      *
-     * @param {Array<{id: number, name: string, achievements: Array<{id: number, name: string, points: number|null, category: string|null}>}>} scraped
+     * @param {Array<{id: number, name: string, achievements: Array<{id: number, name: string, points: number|null, game: string|null, other: boolean}>}>} scraped
      * @param {boolean} merge Whether to include the existing names
      * @param {Map<number, string>} languageNames Language names by id, used for the comments of existing languages
      * @return {string}
@@ -439,19 +683,20 @@
     /**
      * Logs what the language independent data gets from the read achievements and returns the text to
      * add to the status line: the categories and points that were changed, the achievements that could
-     * not be classified (added as GENERIC) and the guard warnings.
+     * not be classified (added as GENERIC), the disagreements, the categories to check and the guard
+     * warnings.
      *
      * @param {Array<{achievements: Array}>} scraped The read languages
-     * @param {string|null} otherCategory The category of the Other Achievements table, null when the game was not detected
+     * @param {number} [undetected=0] How many characters had a game that could not be detected
      * @return {string} The text, or '' when there is nothing to report
      */
-    function reportInfo(scraped, otherCategory) {
-        const { info, added, changed, placeholders, pointsChanged, guarded, pointsGuarded } = buildInfo(scraped);
+    function reportInfo(scraped, undetected = 0) {
+        const { info, added, changed, placeholders, pointsChanged, categoryConflicts, pointsConflicts, contradictions, guarded, pointsGuarded } = buildInfo(scraped);
         const messages = [];
 
-        if (!otherCategory) {
-            Logger.warn('Achievement Database Builder: the game of the character could not be detected, no category was set from the Other Achievements table');
-            messages.push(chrome.i18n.getMessage('achievementDbBuilderGameUnknown'));
+        if (undetected) {
+            Logger.warn(`Achievement Database Builder: the game of ${undetected} characters could not be detected, their Other Achievements were not used for the categories`);
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderGameUnknown', [String(undetected)]));
         }
 
         if (added.length || changed.length || pointsChanged.length) {
@@ -475,6 +720,21 @@
             Logger.warn(`Achievement Database Builder: achievements not in the tracker data yet: ${placeholders.join(', ')}`);
             messages.push(chrome.i18n.getMessage('achievementDbBuilderNewIds', [String(placeholders.length), placeholders.join(', ')]));
         }
+        if (categoryConflicts.length) {
+            const list = categoryConflicts.map(({ id, values }) => `${id}: ${values.join(' / ')}`).join(', ');
+            Logger.warn(`Achievement Database Builder: the characters disagree about the category of: ${list}`);
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderCategoryConflicts', [String(categoryConflicts.length), list]));
+        }
+        if (pointsConflicts.length) {
+            const list = pointsConflicts.map(({ id, values }) => `${id}: ${values.join(' / ')}`).join(', ');
+            Logger.warn(`Achievement Database Builder: the characters disagree about the points of: ${list}`);
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderPointsConflicts', [String(pointsConflicts.length), list]));
+        }
+        if (contradictions.length) {
+            const list = contradictions.map(({ id, category }) => `${id}: ${category}`).join(', ');
+            Logger.warn(`Achievement Database Builder: categories contradicted by the achievements of the characters: ${list}`);
+            messages.push(chrome.i18n.getMessage('achievementDbBuilderContradictions', [String(contradictions.length), list]));
+        }
         if (guarded) {
             Logger.warn('Achievement Database Builder: the Other Achievements table contradicts most of the known categories, no category was changed');
             messages.push(chrome.i18n.getMessage('achievementDbBuilderCategoryGuard'));
@@ -487,7 +747,20 @@
     }
 
     /**
-     * Builds the entry for the current game language and prints it in the debug log.
+     * Gets the known achievements that none of the read characters owns, so that no language got their name.
+     *
+     * @param {Array<{achievements: Array<{id: number}>}>} scraped The read languages
+     * @return {number[]} Sorted
+     */
+    function findUncoveredIds(scraped) {
+        const seen = new Set();
+        scraped.forEach(language => language.achievements.forEach(({ id }) => seen.add(id)));
+        return Array.from(buildInfo(scraped).info.keys()).filter(id => !seen.has(id)).sort((a, b) => a - b);
+    }
+
+    /**
+     * Builds the entry for the current game language, from the character of the page, and prints it in
+     * the debug log.
      *
      * @param {HTMLElement} status
      */
@@ -499,35 +772,37 @@
             return;
         }
 
-        const game = await detectCharacterGame(characterId);
-        const achievements = await crawlLanguage(characterId, game, message => { status.textContent = message; });
+        const characters = [{ id: characterId, name: '' }];
+        const games = await detectGames(characters, status, () => false);
+        const { achievements } = await crawlCharacters(characters, games, message => { status.textContent = message; }, () => false);
         const names = new Map(achievements.map(({ id, name }) => [id, name]));
         Logger.debug(`Achievement database for ${language.name} (id ${language.id}):\n${formatNamesEntry(language, names)}`);
 
         status.textContent = chrome.i18n.getMessage('achievementDbBuilderDone',
-            [String(achievements.length), language.name, String(language.id)]);
-        const infoReport = reportInfo([{ achievements }], getOtherGameCategory(game));
+            [String(names.size), language.name, String(language.id)]);
+        const infoReport = reportInfo([{ achievements }], games.get(characterId) ? 0 : 1);
         if (infoReport) status.textContent += ' ' + infoReport;
     }
 
     /**
      * Reads the achievements in the selected languages, switching the account language for each one
-     * and restoring it at the end, and prepares the stand-alone file for download.
+     * and restoring it at the end, and prepares the stand-alone file for download. The characters are
+     * the one of the page or, in bulk mode, the ones of the chart; they and their game are read once,
+     * before the account language is touched, and then their pages are read in every language.
      *
      * @param {Array<{id: number, name: string}>} selected
-     * @param {boolean} skipKnown Whether to skip the languages already present in the database
-     * @param {HTMLElement} status
-     * @param {HTMLInputElement} downloadButton
-     * @param {function(Array): void} setResults Receives the newly read languages
+     * @param {{skipKnown: boolean, bulk: boolean, limitPerChart: number}} options Whether to skip the languages already present in the database, to read the characters of the chart, and how many to take from each view of it
+     * @param {{status: HTMLElement, estimate: HTMLElement, downloadButton: HTMLInputElement, setResults: function(Array): void, isStopRequested: function(): boolean}} ui
      */
-    async function buildLanguages(selected, skipKnown, status, downloadButton, setResults) {
+    async function buildLanguages(selected, options, ui) {
+        const { status, estimate, downloadButton, isStopRequested } = ui;
         if (!selected.length) {
             status.textContent = chrome.i18n.getMessage('achievementDbBuilderNoneSelected');
             return;
         }
 
         let skippedLanguages = [];
-        if (skipKnown) {
+        if (options.skipKnown) {
             const knownIds = getKnownLanguageIds();
             skippedLanguages = selected.filter(language => knownIds.includes(language.id));
             selected = selected.filter(language => !knownIds.includes(language.id));
@@ -537,32 +812,62 @@
             }
         }
 
-        const characterId = getCharacterId();
         const original = await Utils.getGameLanguage();
         if (!original) {
             status.textContent = chrome.i18n.getMessage('achievementDbBuilderNoLanguage');
             return;
         }
 
-        const game = await detectCharacterGame(characterId);
+        const characters = options.bulk
+            ? await loadChartCharacters(options.limitPerChart, status, isStopRequested)
+            : [{ id: getCharacterId(), name: '' }];
+        const games = await detectGames(characters, status, isStopRequested);
+        if (isStopRequested()) {
+            status.textContent = chrome.i18n.getMessage('achievementDbBuilderStopped');
+            return;
+        }
+
+        const requests = characters.length + selected.length * (SWITCH_LANGUAGE_REQUESTS + characters.length);
+        const minutes = Math.ceil(requests * new TimedFetch().delay / 60000);
+        estimate.textContent = chrome.i18n.getMessage('achievementDbBuilderEstimate',
+            [String(characters.length), String(selected.length), String(requests), String(minutes)]);
+        Logger.debug(estimate.textContent);
 
         downloadButton.style.display = 'none';
         const results = [];
         const failedLanguages = [];
+        const interruptedLanguages = [];
+        let failedReads = 0;
+        let stopped = false;
 
         // Remembered so the language can be restored even if this run is interrupted
         await chrome.storage.local.set({ [ORIGINAL_LANGUAGE_KEY]: original.id });
         try {
             for (let i = 0; i < selected.length; i++) {
+                if (isStopRequested()) {
+                    stopped = true;
+                    break;
+                }
+
                 const language = selected[i];
                 const prefix = message => chrome.i18n.getMessage('achievementDbBuilderLanguageProgress',
                     [language.name, String(i + 1), String(selected.length), message]);
                 try {
                     status.textContent = prefix('...');
                     await switchLanguage(language.id);
-                    const achievements = await crawlLanguage(characterId, game, message => { status.textContent = prefix(message); });
-                    Logger.debug(`Achievement database for ${language.name} (id ${language.id}):\n${formatNamesEntry(language, new Map(achievements.map(({ id, name }) => [id, name])))}`);
-                    results.push({ id: language.id, name: language.name, achievements });
+                    const read = await crawlCharacters(characters, games, message => { status.textContent = prefix(message); }, isStopRequested);
+
+                    failedReads += read.failed.length;
+                    if (read.aborted) interruptedLanguages.push(language.name);
+                    if (read.achievements.length) {
+                        const names = new Map(read.achievements.map(({ id, name }) => [id, name]));
+                        Logger.debug(`Achievement database for ${language.name} (id ${language.id}), ${names.size} achievements from ${characters.length - read.failed.length} characters:\n${formatNamesEntry(language, names)}`);
+                        results.push({ id: language.id, name: language.name, achievements: read.achievements });
+                    }
+                    if (read.stopped) {
+                        stopped = true;
+                        break;
+                    }
                 } catch (error) {
                     Logger.warn(`Achievement Database Builder: language ${language.name} (${language.id}) skipped`, error);
                     failedLanguages.push(language.name);
@@ -575,16 +880,17 @@
                 Logger.error('Achievement Database Builder: unable to restore the game language', error);
                 status.textContent = chrome.i18n.getMessage('achievementDbBuilderRestoreFailed');
                 // The marker is kept: the Restore button is shown at the next visit
-                setResults(results);
+                ui.setResults(results);
                 downloadButton.style.display = results.length ? '' : 'none';
                 return;
             }
         }
 
-        setResults(results);
+        ui.setResults(results);
         downloadButton.style.display = results.length ? '' : 'none';
         status.textContent = chrome.i18n.getMessage('achievementDbBuilderAllDone',
             [String(results.length), results.map(item => item.id).join(', ')]);
+        if (stopped) status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderStopped');
         if (skippedLanguages.length) {
             status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderLanguagesSkipped',
                 [skippedLanguages.map(language => language.name).join(', ')]);
@@ -593,8 +899,24 @@
             status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderLanguagesFailed',
                 [failedLanguages.join(', ')]);
         }
-        const infoReport = reportInfo(results, getOtherGameCategory(game));
+        if (interruptedLanguages.length) {
+            status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderLanguagesInterrupted',
+                [interruptedLanguages.join(', ')]);
+        }
+        if (failedReads) {
+            status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderCharactersFailed', [String(failedReads)]);
+        }
+
+        const infoReport = reportInfo(results, characters.filter(character => !games.get(character.id)).length);
         if (infoReport) status.textContent += ' ' + infoReport;
+
+        // Only interesting when many characters were read: with one, most of the achievements are not owned
+        const uncovered = options.bulk && results.length ? findUncoveredIds(results) : [];
+        if (uncovered.length) {
+            Logger.debug(`Achievement Database Builder: no character owns ${uncovered.length} known achievements: ${uncovered.join(', ')}`);
+            status.textContent += ' ' + chrome.i18n.getMessage('achievementDbBuilderUncovered',
+                [String(uncovered.length), uncovered.join(', ')]);
+        }
     }
 
     /**
@@ -678,15 +1000,34 @@
         };
         const skipKnownCheckbox = addOption(chrome.i18n.getMessage('achievementDbBuilderSkipKnown'), false);
         const mergeCheckbox = addOption(chrome.i18n.getMessage('achievementDbBuilderMerge'), true);
+        const bulkCheckbox = addOption(chrome.i18n.getMessage('achievementDbBuilderBulk'), false);
+
+        const limitInput = el('input');
+        limitInput.type = 'number';
+        limitInput.id = `${BOX_ID}-limit`;
+        limitInput.className = 'round';
+        limitInput.min = '1';
+        limitInput.max = String(MAX_CHARACTERS_PER_CHART);
+        limitInput.value = String(MAX_CHARACTERS_PER_CHART);
+        limitInput.style.width = '4em';
+        const limitLabel = el('label', chrome.i18n.getMessage('achievementDbBuilderCharactersPerChart') + ' ');
+        limitLabel.htmlFor = limitInput.id;
+        const limitParagraph = el('p');
+        limitParagraph.append(limitLabel, limitInput);
+        box.appendChild(limitParagraph);
 
         const allButton = createButton(chrome.i18n.getMessage('achievementDbBuilderBuildAll'));
+        const stopButton = createButton(chrome.i18n.getMessage('achievementDbBuilderStop'));
+        stopButton.disabled = true;
         const downloadButton = createButton(chrome.i18n.getMessage('achievementDbBuilderDownload'));
         downloadButton.style.display = 'none';
         const restoreButton = createButton(chrome.i18n.getMessage('achievementDbBuilderRestore'));
         const allParagraph = el('p');
-        allParagraph.append(allButton, ' ', downloadButton);
+        allParagraph.append(allButton, ' ', stopButton, ' ', downloadButton);
         box.appendChild(allParagraph);
 
+        const estimate = el('p');
+        box.appendChild(estimate);
         const status = el('p');
         box.appendChild(status);
 
@@ -696,18 +1037,40 @@
             box.insertBefore(restoreParagraph, box.children[1]);
         }
 
-        const buttons = [currentButton, allButton, restoreButton, skipKnownCheckbox, mergeCheckbox];
+        // The stop button is not here: it is the only one that works while a run is going
+        const buttons = [currentButton, allButton, restoreButton, skipKnownCheckbox, mergeCheckbox, bulkCheckbox, limitInput];
         const languageNames = new Map();
         let readResults = [];
+        let stopRequested = false;
 
         currentButton.addEventListener('click', () => runExclusive(buttons, status, () => buildCurrentLanguage(status)));
 
-        allButton.addEventListener('click', () => runExclusive(buttons, status, () => {
+        allButton.addEventListener('click', () => runExclusive(buttons, status, async () => {
             const selected = Array.from(new CssSelectorHelper('input[type="checkbox"]').getAll(languageList))
                 .filter(checkbox => checkbox.checked)
                 .map(checkbox => ({ id: parseInt(checkbox.dataset.languageId), name: checkbox.dataset.languageName }));
-            return buildLanguages(selected, skipKnownCheckbox.checked, status, downloadButton, results => { readResults = results; });
+
+            let limitPerChart = parseInt(limitInput.value, 10);
+            if (isNaN(limitPerChart) || limitPerChart < 1) limitPerChart = MAX_CHARACTERS_PER_CHART;
+            limitPerChart = Math.min(limitPerChart, MAX_CHARACTERS_PER_CHART);
+
+            stopRequested = false;
+            stopButton.disabled = false;
+            estimate.textContent = '';
+            try {
+                await buildLanguages(selected,
+                    { skipKnown: skipKnownCheckbox.checked, bulk: bulkCheckbox.checked, limitPerChart },
+                    { status, estimate, downloadButton, setResults: results => { readResults = results; }, isStopRequested: () => stopRequested });
+            } finally {
+                stopButton.disabled = true;
+            }
         }));
+
+        stopButton.addEventListener('click', () => {
+            stopRequested = true;
+            stopButton.disabled = true;
+            status.textContent = chrome.i18n.getMessage('achievementDbBuilderStopping');
+        });
 
         // The merge option is read here, so it can be changed after a run
         downloadButton.addEventListener('click', () => {
