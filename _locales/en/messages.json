@@ -59,6 +59,10 @@
         "message": "Tour Bus Helper",
         "description": "Sidebar navigation label for the Tour Bus Helper section"
     },
+    "optGGFTitle": {
+        "message": "Autograph Collector",
+        "description": "Title of the Autograph Collector card in the options page"
+    },
     "optGGFDescription": {
         "message": "Options for the Autograph collector feature.",
         "description": "Autograph Collector section description"

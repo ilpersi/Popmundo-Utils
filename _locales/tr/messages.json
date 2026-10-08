@@ -59,6 +59,10 @@
         "message": "Tur Otobüsü Yardımcısı",
         "description": "Sidebar navigation label for the Tour Bus Helper section"
     },
+    "optGGFTitle": {
+        "message": "İmza Toplayıcı",
+        "description": "Title of the Autograph Collector card in the options page"
+    },
     "optGGFDescription": {
         "message": "İmza Toplayıcı özelliğinin seçenekleri.",
         "description": "Autograph Collector section description"

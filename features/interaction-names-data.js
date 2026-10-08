@@ -23,11 +23,342 @@ const INTERACTION_GROUP_NAMES = {
         19: 'Telefon', 23: 'Telefon', 24: 'Phone', 33: 'Telefonos', 36: 'Telefon', 39: 'Telefonske', 43: 'Телефон',
         50: 'Telefônicas', 51: 'Telefónicas', 56: 'Telefoninis', 60: 'Telefónica', 106: '电话'
     },
+    special: {
+        1: 'Speciellt', 2: 'Special', 3: 'Spezial', 4: 'Speciali', 5: 'Spéciales', 6: 'Especial', 7: 'Spesielt',
+        8: 'Speciel', 9: 'Erikoinen', 10: 'Speciaal', 11: 'Especiais', 13: 'Specjalne', 14: 'Особые', 19: 'Özel',
+        23: 'Special', 24: 'Special', 33: 'Speciális', 36: 'Eriline', 39: 'Posebne', 43: 'Специални', 50: 'Especiais',
+        51: 'Especiales', 56: 'Ypatingas', 60: 'Especial', 106: '特殊类'
+    },
+    physical: {
+        1: 'Fysiskt', 2: 'Physical', 3: 'Körperlich', 4: 'Fisiche', 5: 'Physiques', 6: 'Física', 7: 'Fysisk',
+        8: 'Fysisk', 9: 'Fyysinen', 10: 'Fysiek', 11: 'Físicas', 13: 'Fizyczne', 14: 'Физические', 19: 'Fiziksel',
+        23: 'Fizic', 24: 'Physical', 33: 'Fizikai', 36: 'Füüsiline', 39: 'Fizičke', 43: 'Физически', 50: 'Físicas',
+        51: 'Físicas', 56: 'Fizinis', 60: 'Física', 106: '身体行为'
+    },
+    closePhysical: {
+        1: 'Intimt', 2: 'Close Physical', 3: 'Eng körperlich', 4: 'Fisiche intime', 5: 'Physiquement intimes',
+        6: 'Física, cercana', 7: 'Nært fysisk', 8: 'Tæt fysisk', 9: 'Fyysinen läheisyys', 10: 'Intiem',
+        11: 'Físicas Íntimas', 13: 'Bliskie fizyczne', 14: 'Физическая близость', 19: 'Yakın Temas',
+        23: 'Apropiere Fizică', 24: 'Close Physical', 33: 'Szoros fizikai', 36: 'Intiimne', 39: 'Bliske fizičke',
+        43: 'Физически (близки)', 50: 'Íntimas', 51: 'Directamente físicas', 56: 'Glaudus fizinis',
+        60: 'Física cercana', 106: '亲密身体行为'
+    },
     medical: {
         1: 'Medicinskt', 2: 'Medical', 3: 'Medizinisch', 4: 'Mediche', 5: 'Médicales', 6: 'Médica', 7: 'Medisinsk',
         8: 'Medicinsk', 9: 'Lääketieteellinen', 10: 'Medisch', 11: 'Médicas', 13: 'Medyczne', 14: 'Медицинские',
         19: 'Tıbbî', 23: 'Medical', 24: 'Medical', 33: 'Gyógyászati', 36: 'Meditsiiniline', 39: 'Medicinske',
         43: 'Здравни', 50: 'Médicas', 51: 'Medicinales', 56: 'Medicininis', 60: 'Médica', 106: '医学的'
+    }
+};
+
+// The game group of each interaction id, as a language-independent key (the English group name, in camelCase).
+// Read from the Interact page dropdowns of related characters and of characters present in the same locale.
+// Only the interactions the dropdown offered at the time are listed: the others are unlocked by the relationship
+// level and are expected to be added by the community collection.
+const INTERACTION_GROUP_BY_ID = {
+    1: 'basic', 15: 'basic', 54: 'basic', 161: 'basic',
+    3: 'verbal', 5: 'verbal', 71: 'verbal', 79: 'verbal', 119: 'verbal', 154: 'verbal', 156: 'verbal', 166: 'verbal',
+    4: 'special', 33: 'special',
+    24: 'phone', 26: 'phone', 46: 'phone', 58: 'phone', 61: 'phone', 73: 'phone', 74: 'phone', 80: 'phone', 121: 'phone',
+    162: 'phone', 171: 'phone',
+    32: 'medical',
+    55: 'physical', 124: 'physical',
+    56: 'closePhysical'
+};
+
+// The game groups in the order the dropdown showed them (provisional, to be confirmed with the full data).
+const INTERACTION_GROUP_ORDER = ['basic', 'verbal', 'special', 'phone', 'medical', 'physical', 'closePhysical'];
+
+// The game's name of each interaction, per game language id: { langId: { options: { interactionId: name } } }.
+// Read from the Interact page dropdowns in each of the 25 game languages. Only the interactions the dropdown offered
+// for the scraped characters are listed (29 so far, the others are unlocked by the relationship level): the options
+// page falls back to the extension's own label for the missing ones.
+const INTERACTION_NAMES_DB = {
+    1: {
+        options: {
+            1: 'Säg hej!', 3: 'Prata med', 4: 'Dra ett skämt', 5: 'Retas', 15: 'Förolämpa', 24: 'Kolla läget',
+            26: 'Busringning', 32: 'Ge första hjälpen', 33: 'Gör ett roligt trick', 46: 'Kyss-mig-i-röven-samtal',
+            54: 'Le', 55: 'Skaka hand', 56: 'Kyss på kinden', 58: 'Skicka rolig bild', 61: 'Skicka ett vänligt SMS',
+            71: 'Hej snygging, hur mår du?', 73: 'Flörtigt telefonsamtal', 74: 'Flörtigt textmeddelande',
+            79: 'Dra dit pepparn växer!', 80: 'Skicka förolämpning', 119: 'Öh!', 121: 'Ring upp och skvallra',
+            124: 'Kasta boll', 154: 'Snälla, sluta flörta med mig.', 156: 'Jag vill inte vara vän med dig.',
+            161: 'Blinka', 162: 'Födelsedagssamtal', 166: 'Säg förlåt', 171: 'Thank You call'
+        }
+    },
+    2: {
+        options: {
+            1: 'Greet', 3: 'Talk to', 4: 'Tell joke', 5: 'Tease', 15: 'Insult', 24: 'Wazzup call', 26: 'Prank call',
+            32: 'Give first aid', 33: 'Do funny magic', 46: 'Kiss my ass call', 54: 'Smile', 55: 'Shake hands',
+            56: 'Kiss Cheeks', 58: 'SMS funny pic', 61: 'SMS friendly text', 71: 'Hey sexy, how you doin\'?',
+            73: 'Flirty Phone call', 74: 'Flirty SMS', 79: 'Get lost!', 80: 'SMS insult', 119: 'Yo!',
+            121: 'Gossip on phone', 124: 'Play catch', 154: 'Please stop flirting with me.',
+            156: 'I don\'t want to be friends.', 161: 'Wink', 162: 'Birthday call', 166: 'Say I\'m sorry',
+            171: 'Thank You call'
+        }
+    },
+    3: {
+        options: {
+            1: 'Begrüßen', 3: 'Unterhalten', 4: 'Witz erzählen', 5: 'Necken', 15: 'Beleidigen', 24: 'Durchklingeln',
+            26: 'Telefonstreich', 32: 'Erste Hilfe leisten', 33: 'Einen lustigen Zaubertrick machen',
+            46: '"Leck mich!"-Anruf', 54: 'Lächeln', 55: 'Hand schütteln', 56: 'Wangen küssen',
+            58: 'Lustiges Bild simsen', 61: 'Freundlichen Text simsen', 71: 'Hey Süße(r), wie geht\'s denn so?',
+            73: 'Per Telefon flirten', 74: 'Per SMS flirten', 79: 'Zieh Leine!', 80: 'SMS-Beleidigung', 119: 'Hey!',
+            121: 'Am Telefon tratschen', 124: 'Ball spielen', 154: 'Hör bitte auf, mit mir zu flirten.',
+            156: 'Ich möchte nicht befreundet sein.', 161: 'Zuzwinkern', 162: 'Geburtstagsanruf',
+            166: 'Es tut mir leid sagen', 171: 'Dankeschönanruf'
+        }
+    },
+    4: {
+        options: {
+            1: 'Saluta', 3: 'Attacca bottone', 4: 'Fai una battuta', 5: 'Stuzzica', 15: 'Insulta',
+            24: 'Telefonata informale', 26: 'Scherzo telefonico', 32: 'Presta primo soccorso',
+            33: 'Fai un gioco di prestigio', 46: '"Baciami il culo!"', 54: 'Sorridi', 55: 'Stringetevi la mano',
+            56: 'Bacia sulle guance', 58: 'Immagine buffa via MMS', 61: 'Invia SMS amichevole',
+            71: 'Hey sexy, come va?', 73: 'Flirta al telefono', 74: 'Flirta con un SMS', 79: 'Levati dalle palle!',
+            80: 'Insulta con un SMS', 119: 'Yo!', 121: 'Spettegola al telefono', 124: 'Gioca ad acchiapparello',
+            154: 'Per favore, smetti di flirtare con me.', 156: 'Non voglio che continuiamo ad essere amici.',
+            161: 'Ammicca', 162: 'Telefonata di buon compleanno', 166: 'Di\' che ti dispiace',
+            171: 'Chiamata di ringraziamento'
+        }
+    },
+    5: {
+        options: {
+            1: 'Saluer', 3: 'Parler', 4: 'Blaguer', 5: 'Taquiner', 15: 'Insulter', 24: 'Appel d\'un ami',
+            26: 'Blague', 32: 'Apporter un premier secours', 33: 'Faire un tour de magie', 46: 'Appel injurieux',
+            54: 'Sourire', 55: 'Serrer la main', 56: 'Faire la bise', 58: 'Envoyer une image marrante',
+            61: 'Envoyer un texto amical', 71: 'Hé toi, t\'as de beaux yeux tu sais ?', 73: 'Appel dragueur',
+            74: 'Texto dragueur', 79: 'Allez-vous-en !', 80: 'Envoyer un message d\'insulte', 119: 'Yo !',
+            121: 'Échanger des ragots au téléphone', 124: 'Jouer à la balle', 154: 'Veuillez ne plus me draguer.',
+            156: 'Je ne veux pas que l\'on soit ami(e)s.', 161: 'Clin d\'œil', 162: 'Appel d\'anniversaire',
+            166: 'Demander pardon', 171: 'Appel de remerciement'
+        }
+    },
+    6: {
+        options: {
+            1: 'Saludar', 3: 'Conversar', 4: 'Bromear', 5: 'Provocar', 15: 'Insultar', 24: '¿Qué tal?',
+            26: 'Llamada de broma', 32: 'Dar los primeros auxilios', 33: 'Hacer magia divertida',
+            46: 'Llamada de "bésame el culo"', 54: 'Sonreír', 55: 'Dar un apretón de manos',
+            56: 'Besar en las mejillas', 58: 'Enviar una foto divertida', 61: 'Enviar un mensaje amistoso',
+            71: 'Hola, ¿cómo va eso?', 73: 'Llamada de flirteo', 74: 'Mensaje de flirteo', 79: '¡Mandar a la porra!',
+            80: 'Enviar mensaje insultante', 119: '¡Oye!', 121: 'Cotillear por teléfono', 124: 'Jugar al pilla-pilla',
+            154: 'Por favor, no tontees conmigo.', 156: 'No quiero que seamos amigos.', 161: 'Guiñar el ojo',
+            162: 'Llamada de cumpleaños', 166: 'Decir lo siento', 171: 'Llamada de agradecimiento'
+        }
+    },
+    7: {
+        options: {
+            1: 'Hils', 3: 'Snakk med', 4: 'Fortell en vits', 5: 'Ert', 15: 'Fornærm', 24: 'Hvaskjera telefon',
+            26: 'Tulleringe', 32: 'Gi førstehjelp', 33: 'Gjør et triks', 46: '"Kiss my ass"-telefon', 54: 'Smil',
+            55: 'Håndhilse', 56: 'Kyss kinnet', 58: 'MMS morsomt bilde', 61: 'SMS vennlig melding',
+            71: 'Hei sexy! Hva skjer\'a?', 73: 'Flørtete telefonsamtale', 74: 'Flørtete SMS', 79: 'Stikk av!',
+            80: 'SMS fornærmelse', 119: 'Yo!', 121: 'Sladre på telefonen', 124: 'Kaste ball',
+            154: 'Slutt å flørt med meg.', 156: 'Jeg vil ikke være venner.', 161: 'Blunke', 162: 'Bursdagshilsen',
+            166: 'Si at jeg er lei meg', 171: 'Tusen takk telefonsamtale'
+        }
+    },
+    8: {
+        options: {
+            1: 'Hils', 3: 'Snak med', 4: 'Fortæl vittighed', 5: 'Dril', 15: 'Fornærm', 24: 'Hva\' sååå opkald',
+            26: 'Telefonfis', 32: 'Giv førstehjælp', 33: 'Lav sjov magi', 46: 'Rend mig i røven-opkald', 54: 'Smil',
+            55: 'Giv hånden', 56: 'Kys kind', 58: 'MMS sjovt billede', 61: 'SMS venlig besked',
+            71: 'Hej frække, hvor\'n skær\'n?', 73: 'Flirtende opkald', 74: 'Flirtende SMS', 79: 'Forsvind!',
+            80: 'Fornærmende SMS', 119: 'Yo!', 121: 'Sladder over telefonen', 124: 'Leg fange',
+            154: 'Lad være med at flirte med mig.', 156: 'Jeg vil ikke være venner.', 161: 'Blink',
+            162: 'Fødselsdagsopkald', 166: 'Sig du er ked af det', 171: 'Ring og sig tak'
+        }
+    },
+    9: {
+        options: {
+            1: 'Tervehdi', 3: 'Juttele', 4: 'Kerro vitsi', 5: 'Kiusoittele', 15: 'Loukkaa', 24: 'Wazzup-puhelu',
+            26: 'Pilasoitto', 32: 'Anna ensiapua', 33: 'Tee taikatemppu', 46: 'Haista home -puhelu', 54: 'Hymyile',
+            55: 'Kättele', 56: 'Suutele poskia', 58: 'Lähetä hauska multimediaviesti',
+            61: 'Lähetä ystävällinen tekstiviesti', 71: 'Hei seksikäs, käyt sä usein täällä?',
+            73: 'Flirttaileva puhelinsoitto', 74: 'Flirttaileva tekstiviesti', 79: 'Suksi kuuseen!',
+            80: 'Loukkaava tekstiviesti', 119: 'Yo!', 121: 'Juorua puhelimessa', 124: 'Kopittele pallolla',
+            154: 'Lopeta tuo flirttailu.', 156: 'En halua, että me olisimme ystäviä.', 161: 'Iske silmää',
+            162: 'Syntymäpäiväpuhelu', 166: 'Pyydä anteeksi', 171: 'Kiitospuhelu'
+        }
+    },
+    10: {
+        options: {
+            1: 'Groet', 3: 'Maak praatje', 4: 'Vertel grap', 5: 'Plaag', 15: 'Beledig',
+            24: '"Hoe gaat ie?" telefoontje', 26: 'Plaag telefoontje', 32: 'Verleen eerste hulp',
+            33: 'Doe grappige goocheltruc', 46: 'Lik m\'n reet telefoontje', 54: 'Lach', 55: 'Schud de hand',
+            56: 'Kus op de wangen', 58: 'SMS grappige foto', 61: 'SMS iets aardigs',
+            71: 'Hoi sexy, hoe gaat het ermee?', 73: 'Flirt per telefoon', 74: 'Flirt per SMS', 79: 'Rot op',
+            80: 'SMS belediging', 119: 'Yo!', 121: 'Roddel per telefoon', 124: 'Speel pakkertje',
+            154: 'Houd alsjeblieft op met me te flirten', 156: 'Ik wil niet met je bevriend zijn', 161: 'Knipoog',
+            162: 'Verjaardagstelefoontje', 166: 'Bied je excuses aan', 171: 'Bedankt telefoontje'
+        }
+    },
+    11: {
+        options: {
+            1: 'Cumprimentar', 3: 'Falar com', 4: 'Contar anedota', 5: 'Provocar', 15: 'Insultar',
+            24: 'Chamada para dizer olá', 26: 'Chamada de travessura', 32: 'Prestar primeiros-socorros',
+            33: 'Fazer uma Magia', 46: 'Chamada insultuosa', 54: 'Sorrir', 55: 'Dar aperto de mão',
+            56: 'Beijar as bochechas', 58: 'Foto engraçada MMS', 61: 'Texto simpático SMS',
+            71: 'Olá sexy, como é que estás?', 73: 'Chamada de engate', 74: 'SMS de engate', 79: 'Põe-te a milhas!',
+            80: 'SMS insultuosa', 119: 'Yo!', 121: 'Cuscar ao telefone', 124: 'Jogar à apanhada',
+            154: 'Pára de me tentar seduzir por favor.', 156: 'Não quero que sejamos amigos.', 161: 'Piscar o olho',
+            162: 'Chamada de feliz aniversário', 166: 'Pedir desculpa', 171: 'Chamada de Agradecimento'
+        }
+    },
+    13: {
+        options: {
+            1: 'Pozdrów', 3: 'Porozmawiaj', 4: 'Opowiedz kawał', 5: 'Podrocz się', 15: 'Obraź', 24: 'Co słychać?',
+            26: 'Żart telefoniczny', 32: 'Udziel pierwszej pomocy', 33: 'Zrób magiczną sztuczkę',
+            46: 'Pocałuj mnie gdzieś!', 54: 'Uśmiechnij się', 55: 'Podaj rękę', 56: 'Całuj w policzki',
+            58: 'Wyślij śmieszny obrazek SMS-em', 61: 'Wyślij przyjaznego SMS-a', 71: 'Jak się masz, słodziaku?',
+            73: 'Flirt przez telefon', 74: 'SMS-owy flirt', 79: 'Odwal się!', 80: 'Obraźliwy SMS', 119: 'Joł!',
+            121: 'Plotki przez telefon', 124: 'Baw się w ganianego', 154: 'Przestań ze mną flirtować.',
+            156: 'Nie chcę Cię znać.', 161: 'Mrugnij', 162: 'Urodzinowa rozmowa telefoniczna', 166: 'Przeproś',
+            171: 'Telefoniczne podziękowania'
+        }
+    },
+    14: {
+        options: {
+            1: 'Приветствовать', 3: 'Поговорить', 4: 'Рассказать анекдот', 5: 'Дразнить', 15: 'Оскорбить',
+            24: 'Узнать, как дела', 26: 'Приколоться', 32: 'Оказать первую помощь', 33: 'Показать смешные фокусы',
+            46: 'Послать в жопу', 54: 'Улыбнуться', 55: 'Пожать руку', 56: 'Поцеловать в щёчку',
+            58: 'Отправить смешную MMS-картинку', 61: 'Отправить дружескую смску', 71: 'Эй секси, как поживаешь?',
+            73: 'Позвонить и пофлиртовать', 74: 'Отправить кокетливую смс', 79: 'Отвали!',
+            80: 'Отправить смс с оскорблением', 119: 'Эй!', 121: 'Посплетничать', 124: 'Поиграть в мяч',
+            154: 'Попросить перестать со мной флиртовать.', 156: 'Я не хочу с тобой дружить.', 161: 'Подмигнуть',
+            162: 'Поздравить с днём рождения', 166: 'Извиниться', 171: 'Позвонить и поблагодарить'
+        }
+    },
+    19: {
+        options: {
+            1: 'Selamla', 3: 'Konuş', 4: 'Fıkra anlat', 5: 'Şakalaş', 15: 'Hakaret et', 24: 'N\'aber demek için ara',
+            26: 'İşletmek için ara', 32: 'İlk yardımda bulun', 33: 'Komik büyü yap', 46: 'Aç telefonu saydır',
+            54: 'Gülümse', 55: 'El sıkış', 56: 'Yanaklarından öp', 58: 'Komik resimli SMS at',
+            61: 'Dostane bir SMS at', 71: 'Hey seksi şey, n\'aber?', 73: 'Telefonda yaz', 74: 'Asılmak için SMS at',
+            79: 'S*ktir lan!', 80: 'Aşağılayıcı bir SMS gönder', 119: 'N\'aber!', 121: 'Telefonda dedikodu et',
+            124: 'Elim sende oyna', 154: 'Lütfen bana asılmayı kes.', 156: 'Arkadaş olmak falan istemiyorum.',
+            161: 'Göz kırp', 162: 'Doğum gününü kutlamak için ara', 166: 'Özür dile', 171: 'Teşekkür etmek için ara'
+        }
+    },
+    23: {
+        options: {
+            1: 'Salută', 3: 'Discutaţi', 4: 'Spune banc', 5: 'Tachinează', 15: 'Insultă', 24: 'Telefon de bineţe',
+            26: 'Farsă', 32: 'Oferă primul ajutor', 33: 'Scamatorie haioasă', 46: 'Pupă-mă-n fund!', 54: 'Zâmbeşte',
+            55: 'Dă mâna', 56: 'Sărută obrajii', 58: 'SMS poză amuzantă', 61: 'SMS amical',
+            71: 'Hei sexy, ce mai faci?', 73: 'Telefon de flirt', 74: 'SMS de flirt', 79: 'Du-te naiba!',
+            80: 'SMS de insultă', 119: 'Yo!', 121: 'Bârfeşte la telefon', 124: 'Joacă prinselea',
+            154: 'Te rog, nu mai flirta cu mine', 156: 'Nu vreau să fim prieteni.', 161: 'Fă cu ochiul',
+            162: 'Apel zi de naștere', 166: 'Spune "Îmi pare rău"', 171: 'Apel de mulțumire'
+        }
+    },
+    24: {
+        options: {
+            1: 'Greet', 3: 'Talk to', 4: 'Tell joke', 5: 'Tease', 15: 'Insult', 24: 'Wazzup call', 26: 'Prank call',
+            32: 'Give first aid', 33: 'Do funny magic', 46: 'Kiss my arse call', 54: 'Smile', 55: 'Shake hands',
+            56: 'Kiss cheeks', 58: 'Send funny pic MMS', 61: 'Send friendly text', 71: 'Hey sexy, how you doin\'?',
+            73: 'Flirty phone call', 74: 'Flirty text', 79: 'Piss off!', 80: 'Send insulting text', 119: 'Yo!',
+            121: 'Gossip on phone', 124: 'Play catch', 154: 'Please stop flirting with me.',
+            156: 'I don\'t want to be friends.', 161: 'Wink', 162: 'Birthday call', 166: 'Say I\'m sorry',
+            171: 'Thank You call'
+        }
+    },
+    33: {
+        options: {
+            1: 'Üdvözlés', 3: 'Beszélgetés', 4: 'Viccmesélés', 5: 'Ugratás', 15: 'Inzultálás', 24: 'Mizujs hívás',
+            26: 'Vicces hívás', 32: 'Elsősegélynyújtás', 33: 'Vicces varázslat', 46: 'Csókold meg a seggem!',
+            54: 'Mosolygás', 55: 'Kézfogás', 56: 'Puszi az arcra', 58: 'Vicces mms küldés', 61: 'Baráti sms küldés',
+            71: 'Na mi a helyzet, szexi?', 73: 'Flörtölős hívás', 74: 'Flörtölős sms', 79: 'Kopj le!',
+            80: 'Sértő sms küldés', 119: 'Hé!', 121: 'Telefonon pletykálkodás', 124: 'Fogócskázás',
+            154: 'Kérlek, fejezd be a flörtölést!', 156: 'Nem akarok a barátod lenni.', 161: 'Kacsintás',
+            162: 'Születésnapi hívás', 166: 'Kérj bocsánatot', 171: 'Köszönő hívás'
+        }
+    },
+    36: {
+        options: {
+            1: 'Tervita', 3: 'Räägi', 4: 'Naljata', 5: 'Õrrita', 15: 'Solva', 24: '"Kuidas läheb"-kõne',
+            26: 'Tüngakõne', 32: 'Anna esmaabi', 33: 'Tee naljakas trikk', 46: '\'Mine perse\'-kõne', 54: 'Naerata',
+            55: 'Suru kätt', 56: 'Suudle põsele', 58: 'SMSi naljakas pilt', 61: 'SMSi sõbralik jutt',
+            71: 'Hei, kaunitar, kuidas läheb?', 73: 'Flirtiv telefonikõne', 74: 'Flirtiv SMS', 79: 'Tõmba uttu!',
+            80: 'SMS-solvang', 119: 'Yo!', 121: 'Klatši telefonitsi', 124: 'Mängi kulli',
+            154: 'Palun, lõpeta see flirt', 156: 'Ma ei soovi su sõber olla', 161: 'Pilguta silma',
+            162: 'Sünnipäevakõne', 166: 'Palu andestust', 171: 'Tänukõne'
+        }
+    },
+    39: {
+        options: {
+            1: 'Pozdravi', 3: 'Razgovaraj', 4: 'Ispričaj šalu', 5: 'Zadirkuj', 15: 'Uvrijedi', 24: 'Alo, di si poziv',
+            26: 'Šaljivi poziv', 32: 'Ukaži prvu pomoć', 33: 'Izvedi magičan trik', 46: '"Poljubi me u dupe" poziv',
+            54: 'Nasmiješi se', 55: 'Rukuj se', 56: 'Poljubi obraze', 58: 'SMSaj smiješnu sliku',
+            61: 'SMSaj prijateljski tekst', 71: 'Hej seksi, kak\' si?', 73: 'Flertujući poziv', 74: 'Flertujući SMS',
+            79: 'Marš od mene!', 80: 'SMSaj uvredu', 119: 'Yo!', 121: 'Tračaj preko telefona', 124: 'Igraj se lovice',
+            154: 'Molim te prestani flertovati sa mnom.', 156: 'Ne želim ti biti prijatelj', 161: 'Namigni',
+            162: 'Rođendanski Poziv', 166: 'Reci "oprosti"', 171: '"Hvala ti" poziv'
+        }
+    },
+    43: {
+        options: {
+            1: 'Поздрави', 3: 'Разговаряй', 4: 'Кажи виц', 5: 'Пошегувай се', 15: 'Обиди', 24: 'Как е хавата?',
+            26: 'Шеговито обаждане', 32: 'Окажи първа помощ', 33: 'Направи смешна магия', 46: 'Цуни ме отзад!',
+            54: 'Усмихни се', 55: 'Здрависай се', 56: 'Целуни по бузите', 58: 'Смешна снимка на MMS',
+            61: 'Изпрати приятелски SMS', 71: 'Хей секси, какво правиш?', 73: 'Флиртувай по телефона',
+            74: 'Флиртувай с SMS', 79: 'Разкарай се!', 80: 'SMS обида', 119: 'Йо!', 121: 'Клюкарствай по телефона',
+            124: 'Хвърляй топка', 154: 'Моля те, спри да флиртуваш с мен!', 156: 'Не искам да сме приятели.',
+            161: 'Намигни', 162: 'Обаждане за рожден ден', 166: 'Извини се', 171: 'Обади се да благодариш'
+        }
+    },
+    50: {
+        options: {
+            1: 'Cumprimentar', 3: 'Conversar', 4: 'Contar piada', 5: 'Fazer graça', 15: 'Insultar',
+            24: 'Ligar para papear', 26: 'Passar trote', 32: 'Fazer primeiros socorros',
+            33: 'Fazer uma mágica divertida', 46: 'Ligar para xingar', 54: 'Sorrir', 55: 'Aperto de mão',
+            56: 'Beijar o rosto', 58: 'Mandar foto engraçada por MMS', 61: 'Mandar mensagem no celular',
+            71: 'Você vem sempre aqui?', 73: 'Ligar para flertar', 74: 'Flertar por SMS', 79: 'Vai se ferrar!',
+            80: 'Insultar por SMS', 119: 'Ae!', 121: 'Fofocar ao telefone', 124: 'Brincar de pega-pega',
+            154: 'Pare de flertar comigo, por favor.', 156: 'Eu não quero amizade com você.', 161: 'Piscar',
+            162: 'Ligação de aniversário', 166: 'Pedir desculpas', 171: 'Ligar para agradecer'
+        }
+    },
+    51: {
+        options: {
+            1: 'Saludar', 3: 'Conversar', 4: 'Contar un chiste', 5: 'Bromear', 15: 'Insultar', 24: '¿Qué tal?',
+            26: 'Llamada bromista', 32: 'Dar los primeros auxilios', 33: 'Hacer un truco de magia',
+            46: 'Vete al carajo', 54: 'Sonreír', 55: 'Estrechar la mano', 56: 'Besar mejillas',
+            58: 'Mensaje de fotos graciosas', 61: 'Mensaje de texto amigable', 71: 'Hola sexy, ¿cómo estás?',
+            73: 'Llamada de coqueteo', 74: 'Mensaje de coqueteo', 79: '¡Cállate!', 80: 'Mensaje de texto ofensivo',
+            119: '¡Yo!', 121: 'Chismear por teléfono', 124: 'Jugar a atrapar',
+            154: 'Deja de coquetear conmigo, por favor.', 156: 'No quiero que seamos amigos.', 161: 'Guiño',
+            162: 'Llamada de cumpleaños', 166: 'Decir “Lo siento”', 171: 'Llamada de agradecimiento'
+        }
+    },
+    56: {
+        options: {
+            1: 'Pasisveikinti', 3: 'Pasikalbėti', 4: 'Suskelti juokelį', 5: 'Paerzinti', 15: 'Įžeisti',
+            24: '„Kaip sekasi?“ skambutis', 26: 'Skambutis-pokštas', 32: 'Suteikti pirmąją pagalbą',
+            33: 'Atlikti triuką', 46: '„Pabučiuok į užpakalį!“ skambutis', 54: 'Nusišypsoti', 55: 'Paspausti ranką',
+            56: 'Pabučiuoti į skruostą', 58: 'Nusiųsti linksmą MMS žinutę', 61: 'Nusiųsti draugišką žinutę',
+            71: '„Labas, mažut, kaip sekasi?..“', 73: 'Koketiškas skambutis', 74: 'SMS flirtas',
+            79: 'Liepti nešdintis', 80: 'Nusiųsti įžeidžiančią žinutę', 119: '„Ei!“', 121: 'Liežuvauti telefonu',
+            124: 'Žaisti gaudynių', 154: '„Nebeflirtuok su manimi...“', 156: '„Nebenoriu draugauti...“',
+            161: 'Mirktelėti', 162: 'Gimtadienio skambutis', 166: 'Atsiprašyti', 171: 'Padėkos skambutis'
+        }
+    },
+    60: {
+        options: {
+            1: 'Saludar', 3: 'Conversar', 4: 'Bromear', 5: 'Burlar', 15: 'Insultar', 24: '¿Cómo va?',
+            26: 'Llamada de broma', 32: 'Dar primeros auxilios', 33: 'Hacer magia divertida',
+            46: 'Llamada de besame el culo', 54: 'Sonreir', 55: 'Apretón de manos', 56: 'Besar en las mejillas',
+            58: 'Foto divertida por MMS', 61: 'SMS amistoso', 71: 'Hey sexy, ¿cómo te va?', 73: 'Llamada de flirteo',
+            74: 'SMS de flirteo', 79: '¡Mandar a la mierda!', 80: 'SMS con insultos', 119: '¡Che!',
+            121: 'Chusmear por teléfono', 124: 'Jugar a atrapar la pelota',
+            154: 'Por favor dejá de flirtear conmigo.', 156: 'No quiero que seamos amigos.', 161: 'Guiñar un ojo',
+            162: 'Llamada de cumpleaños', 166: 'Decir lo siento', 171: 'Llamada de agradecimiento'
+        }
+    },
+    106: {
+        options: {
+            1: '问候', 3: '聊天', 4: '说个笑话', 5: '取笑', 15: '侮辱', 24: '询问近况', 26: '恶作剧', 32: '进行急救', 33: '表演有趣的魔术',
+            46: '挑衅电话', 54: '微笑', 55: '握手', 56: '亲吻脸颊', 58: '用手机发送趣图', 61: '手机发送友好短信', 71: '嗨宝贝儿，最近怎样？', 73: '打电话调情',
+            74: '发短信调情', 79: '滚开！', 80: '短信侮辱', 119: '哟！', 121: '打电话闲聊', 124: '打球', 154: '请停止与我调情。', 156: '我不想与你做朋友。',
+            161: '抛媚眼', 162: '生日祝福电话', 166: '说对不起', 171: '致谢电话'
+        }
     }
 };
 

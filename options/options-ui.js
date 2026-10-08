@@ -358,6 +358,67 @@ const MASS_INTERACT_GROUPS = [
     }
 ];
 
+// Game language id of the account, as last seen by a game page (Utils.setGameLanguage). Null while unknown: the
+// options page cannot read the game itself, so everything below falls back to the extension's own wording.
+let gameLanguageId = null;
+
+// The groups currently rendered: [{ key, title, chips }], see buildMassInteractLayout().
+let massInteractLayout = [];
+
+// The game's name of an interaction in the user's game language, if the community collection has it.
+function getGameInteractionName(interactionId) {
+    const language = INTERACTION_NAMES_DB[gameLanguageId];
+    return (language && language.options && language.options[interactionId]) || null;
+}
+
+function getGameGroupTitle(groupKey) {
+    const names = INTERACTION_GROUP_NAMES[groupKey] || {};
+    // 2 is US English, the language every group is known in
+    return names[gameLanguageId] || names[2] || groupKey;
+}
+
+// The chips are grouped like the game does only when the game's grouping covers every chip: mixing it with the
+// extension's own groups would show two schemes side by side. Until the data is complete the own groups are kept.
+function buildMassInteractLayout() {
+    const chips = MASS_INTERACT_GROUPS.flatMap(group => group.chips);
+    const gameGroupsComplete = chips.every(chip => INTERACTION_GROUP_BY_ID[chip.value] !== undefined);
+
+    if (!gameGroupsComplete) {
+        return MASS_INTERACT_GROUPS.map(group => ({
+            key: group.key,
+            title: chrome.i18n.getMessage(group.titleKey) || group.titleFallback,
+            chips: group.chips
+        }));
+    }
+
+    return INTERACTION_GROUP_ORDER
+        .map(key => ({
+            key,
+            title: getGameGroupTitle(key),
+            chips: chips.filter(chip => INTERACTION_GROUP_BY_ID[chip.value] === key)
+        }))
+        .filter(group => group.chips.length > 0);
+}
+
+// The game language is read asynchronously, while the chips must exist synchronously (see the DOMContentLoaded
+// handler). So we render first and render again, restoring the saved chip state, only if the language changes the result.
+async function applyGameLanguageToMassInteractChips() {
+    const { game_language_last: language } = await chrome.storage.local.get('game_language_last');
+    if (!language || !language.id || language.id === gameLanguageId) return;
+
+    // What the user sees: the groups with their titles, and the label of every chip
+    const layoutSignature = () => JSON.stringify(buildMassInteractLayout().map(group => [
+        group.key, group.title, group.chips.map(chip => getGameInteractionName(chip.value))
+    ]));
+
+    const before = layoutSignature();
+    gameLanguageId = language.id;
+    if (before === layoutSignature()) return;
+
+    renderMassInteractChips();
+    restore_options();
+}
+
 function renderMassInteractChips() {
     const container = document.getElementById('mass-interact-chip-groups');
     if (!container) return;
@@ -366,12 +427,14 @@ function renderMassInteractChips() {
     const allLabel  = chrome.i18n.getMessage('optMiSelectAll')  || 'All';
     const noneLabel = chrome.i18n.getMessage('optMiSelectNone') || 'None';
 
-    MASS_INTERACT_GROUPS.forEach(group => {
+    massInteractLayout = buildMassInteractLayout();
+
+    massInteractLayout.forEach(group => {
         const section = document.createElement('div');
         section.className = 'pm-chip-section';
         section.dataset.groupKey = group.key;
 
-        const groupTitle = chrome.i18n.getMessage(group.titleKey) || group.titleFallback;
+        const groupTitle = group.title;
 
         // Header row: "GROUP TITLE  X / Y  ─── [All] [None]"
         const head = document.createElement('div');
@@ -421,7 +484,7 @@ function renderMassInteractChips() {
             button.className = 'pm-chip';
             button.dataset.chipId = chip.name;
             button.dataset.groupKey = group.key;
-            const labelText = chrome.i18n.getMessage(chip.i18n) || chip.fallback;
+            const labelText = getGameInteractionName(chip.value) || chrome.i18n.getMessage(chip.i18n) || chip.fallback;
             // Group title is included so a search like "physical" surfaces
             // every chip in that group, not just chips whose name contains it.
             button.dataset.search = (labelText + ' ' + groupTitle).toLowerCase();
@@ -450,7 +513,7 @@ function renderMassInteractChips() {
 }
 
 function updateMassInteractGroupCounts() {
-    MASS_INTERACT_GROUPS.forEach(group => {
+    massInteractLayout.forEach(group => {
         const countEl = document.querySelector(`[data-group-count="${group.key}"]`);
         const grid = document.querySelector(`[data-group-grid="${group.key}"]`);
         if (!countEl || !grid) return;
@@ -1094,6 +1157,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //    fires (loadCheckBox finds chips by id and applies saved is-on state).
     renderMassInteractChips();
     renderEnhancedLinksChips();
+    applyGameLanguageToMassInteractChips();
 
     // Chip click + per-group "All / None" buttons (document-level so it
     // covers chips from any tab — currently Mass Interact and Enhanced Links).

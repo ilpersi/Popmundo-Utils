@@ -59,6 +59,10 @@
         "message": "Assistente do Ônibus de Turnê",
         "description": "Sidebar navigation label for the Tour Bus Helper section"
     },
+    "optGGFTitle": {
+        "message": "Coletor de Autógrafos",
+        "description": "Title of the Autograph Collector card in the options page"
+    },
     "optGGFDescription": {
         "message": "Opções do recurso Coletor de Autógrafos.",
         "description": "Autograph Collector section description"

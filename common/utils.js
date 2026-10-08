@@ -163,6 +163,23 @@ class Utils {
             'payload': 'set',
             'param': { 'game_language': language },
         });
+        await Utils.#rememberGameLanguage(language);
+    }
+
+    /**
+     * Keeps the last known game language in local storage. The options page cannot use it from the session cache
+     * (cleared when the browser closes) and cannot fetch the game, so it relies on this copy.
+     *
+     * @static
+     * @param {{id: number, name: string}} language
+     * @memberof Utils
+     */
+    static async #rememberGameLanguage(language) {
+        try {
+            await chrome.storage.local.set({ 'game_language_last': language });
+        } catch (e) {
+            Logger.warn('Unable to remember the game language', e);
+        }
     }
 
     /**
@@ -191,7 +208,11 @@ class Utils {
                 'param': ['game_language'],
             });
             const cached = items && items['game_language'];
-            if (cached && cached.id && cached.name) return cached;
+            if (cached && cached.id && cached.name) {
+                // A session cache hit never goes through setGameLanguage, so the local copy is refreshed here too
+                await Utils.#rememberGameLanguage(cached);
+                return cached;
+            }
         } catch (_) {
             // Service worker unavailable: fall through to fetching the page.
         }
