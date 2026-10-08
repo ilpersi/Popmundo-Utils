@@ -1301,6 +1301,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // ── Developer: export the interaction names collected from the Interact pages ──
+    const exportNamesBtn = new CssSelectorHelper('#export_interaction_names').getSingle();
+    exportNamesBtn?.addEventListener('click', async () => {
+        const statusEl = new CssSelectorHelper('#export_interaction_names_status').getSingle();
+        const { interaction_names_collected: collected } = await chrome.storage.local.get('interaction_names_collected');
+        const languages = (collected && collected.languages) || {};
+        const languageCount = Object.keys(languages).length;
+
+        if (languageCount === 0) {
+            statusEl.textContent = chrome.i18n.getMessage('optDevExportInteractionNamesEmpty');
+            return;
+        }
+
+        const url = URL.createObjectURL(new Blob([JSON.stringify(collected, null, 2)], { type: 'application/json;charset=utf-8' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'interaction-names.collected.json';
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        statusEl.textContent = chrome.i18n.getMessage('optDevExportInteractionNamesDone', [String(languageCount)]);
+    });
+
     // ── Reminders ──
     document.getElementById('add-reminder-btn')?.addEventListener('click', () => openReminderModal());
     document.getElementById('save-reminder-btn')?.addEventListener('click', validateAndSaveReminder);

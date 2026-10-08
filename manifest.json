@@ -217,7 +217,16 @@
             ],
             "js": [
                 "common/notifications.js",
+                "features/interaction-names-data.js",
                 "features/mass-interact.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.popmundo.com/World/Popmundo.aspx/Interact/*"
+            ],
+            "js": [
+                "features/interaction-collector.js"
             ]
         },
         {

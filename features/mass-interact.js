@@ -402,7 +402,8 @@ async function onSubmitClick(submitBtn) {
                         let value = parseInt(interactionOption.getAttribute('value'));
                         let dataGroup = interactionOption.hasAttribute('data-group') ? String(interactionOption.getAttribute('data-group')) : '';
 
-                        if (value !== 0 && dataGroup !== 'Phone') {
+                        // The data-group is localized by the game, so we compare it with the Phone name in every language
+                        if (value !== 0 && !INTERACTION_PHONE_GROUP_LABELS.has(dataGroup)) {
                             availableInteractions.push(value);
                         }
 

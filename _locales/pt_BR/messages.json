@@ -779,6 +779,24 @@
         "message": "Ativar o Construtor do Banco de Dados de Conquistas",
         "description": "Label for the checkbox that shows the Achievement Database Builder box in the character achievements page"
     },
+    "optDevExportInteractionNames": {
+        "message": "Exportar nomes de interações coletados",
+        "description": "Label for the developer button that downloads the interaction names collected from the game's Interact pages as a JSON file"
+    },
+    "optDevExportInteractionNamesEmpty": {
+        "message": "Nada coletado ainda. Visite primeiro uma página de Interação.",
+        "description": "Status shown next to the export interaction names button when no interaction names have been collected"
+    },
+    "optDevExportInteractionNamesDone": {
+        "message": "$COUNT$ idioma(s) exportado(s).",
+        "description": "Status shown after the interaction names export. COUNT is the number of game languages in the file",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
     "optDevLogLevel": {
         "message": "Nível de Log",
         "description": "Label for the log level select in the developer section"

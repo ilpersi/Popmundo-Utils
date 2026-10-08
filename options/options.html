@@ -774,6 +774,11 @@
                                             data-i18n="optDevAchievementDbBuilder">Enable Achievement Database Builder</label>
                                     </div>
                                 </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="export_interaction_names"
+                                        data-i18n="optDevExportInteractionNames">Export collected interaction names</button>
+                                    <span class="text-muted small ms-2" id="export_interaction_names_status"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -897,6 +902,7 @@
         </div>
     </div>
 
+    <script src="../common/css-helper.js"></script>
     <script src="../common/logger.js"></script>
     <script src="../common/utils.js"></script>
     <script src="options.js"></script>

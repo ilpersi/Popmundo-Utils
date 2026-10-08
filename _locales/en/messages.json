@@ -779,6 +779,24 @@
         "message": "Enable Achievement Database Builder",
         "description": "Label for the checkbox that shows the Achievement Database Builder box in the character achievements page"
     },
+    "optDevExportInteractionNames": {
+        "message": "Export collected interaction names",
+        "description": "Label for the developer button that downloads the interaction names collected from the game's Interact pages as a JSON file"
+    },
+    "optDevExportInteractionNamesEmpty": {
+        "message": "Nothing collected yet. Visit an Interact page first.",
+        "description": "Status shown next to the export interaction names button when no interaction names have been collected"
+    },
+    "optDevExportInteractionNamesDone": {
+        "message": "Exported $COUNT$ language(s).",
+        "description": "Status shown after the interaction names export. COUNT is the number of game languages in the file",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
     "optDevLogLevel": {
         "message": "Log Level",
         "description": "Label for the log level select in the developer section"

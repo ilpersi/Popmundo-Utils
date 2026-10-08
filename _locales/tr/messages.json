@@ -779,6 +779,24 @@
         "message": "Başarım Veritabanı Oluşturucu'yu etkinleştir",
         "description": "Label for the checkbox that shows the Achievement Database Builder box in the character achievements page"
     },
+    "optDevExportInteractionNames": {
+        "message": "Toplanan etkileşim adlarını dışa aktar",
+        "description": "Label for the developer button that downloads the interaction names collected from the game's Interact pages as a JSON file"
+    },
+    "optDevExportInteractionNamesEmpty": {
+        "message": "Henüz bir şey toplanmadı. Önce bir Etkileşim sayfasını ziyaret edin.",
+        "description": "Status shown next to the export interaction names button when no interaction names have been collected"
+    },
+    "optDevExportInteractionNamesDone": {
+        "message": "$COUNT$ dil dışa aktarıldı.",
+        "description": "Status shown after the interaction names export. COUNT is the number of game languages in the file",
+        "placeholders": {
+            "count": {
+                "content": "$1",
+                "example": "2"
+            }
+        }
+    },
     "optDevLogLevel": {
         "message": "Günlük Düzeyi",
         "description": "Label for the log level select in the developer section"
