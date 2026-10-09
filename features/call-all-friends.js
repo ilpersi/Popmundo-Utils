@@ -6,6 +6,11 @@ async function onSubmitClick(submitBtn) {
     const statusPElem = document.getElementById('call-all-status-p');
     if (submitBtn) submitBtn.disabled = true;
 
+    // Hands over to the community the game's names of the interactions that we read in the pages we fetch (no new request)
+    const interactionCollector = new InteractionCollector();
+    // The collector keeps what it read in memory: we store it now and then, so that a run stopped half way loses little
+    const COLLECT_FLUSH_EVERY = 20;
+
     try {
         const optionsGet = {
             'call_all_wazzup': true,   // 24
@@ -116,6 +121,7 @@ async function onSubmitClick(submitBtn) {
 
                 // Parse the text
                 let doc = parser.parseFromString(html, "text/html");
+                interactionCollector.add(doc);
 
                 // This CSS Selector makes sure that the Wazzup call option is there
                 let wazzupHelper = new CssSelectorHelper('select#ctl00_cphTopColumn_ctl00_ddlInteractionTypes > option[value="24"]', doc);
@@ -176,6 +182,8 @@ async function onSubmitClick(submitBtn) {
             } catch (error) {
                 Logger.error(`Failed to check ${friendDict.name}:`, error);
             }
+
+            if ((friendIndex + 1) % COLLECT_FLUSH_EVERY === 0) await interactionCollector.flush();
         }
 
         // We filter so to have only callable friends
@@ -223,6 +231,7 @@ async function onSubmitClick(submitBtn) {
         new Notifications().notifyError(null, String(error));
     } finally {
         if (submitBtn) submitBtn.disabled = false;
+        await interactionCollector.flush();
     }
 }
 

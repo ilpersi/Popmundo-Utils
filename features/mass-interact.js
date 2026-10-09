@@ -2,6 +2,11 @@ async function onSubmitClick(submitBtn) {
     const statusPElem = document.getElementById('mass-interact-status-p');
     if (submitBtn) submitBtn.disabled = true;
 
+    // Hands over to the community the game's names of the interactions that we read in the pages we fetch (no new request)
+    const interactionCollector = new InteractionCollector();
+    // The collector keeps what it read in memory: we store it now and then, so that a run stopped half way loses little
+    const COLLECT_FLUSH_EVERY = 20;
+
     try {
         const optionsGet = {
             "mass_interact_greet": true,
@@ -378,6 +383,7 @@ async function onSubmitClick(submitBtn) {
 
                 // Parse the text
                 let doc = parser.parseFromString(html, "text/html");
+                interactionCollector.add(doc);
 
                 // This CSS Selector makes sure that the Interact Select is there
                 let interactSelectHelper = new CssSelectorHelper(INTERACT_SELECT_SELECTOR, doc);
@@ -444,6 +450,7 @@ async function onSubmitClick(submitBtn) {
                     // We update the parser content so to make sure the while does not go in infinite loop
                     parser = new DOMParser();
                     doc = parser.parseFromString(html, "text/html");
+                    interactionCollector.add(doc);
                     // As we are updating the parser content, we also need to update the CssSelectorHelper
                     interactSelectHelper = new CssSelectorHelper(INTERACT_SELECT_SELECTOR, doc);
                     interactOptions = interactSelectHelper.getAll();
@@ -452,6 +459,8 @@ async function onSubmitClick(submitBtn) {
                     interactionCnt++;
                     totalInteractionsCnt++;
                 }
+
+                if ((charIndex + 1) % COLLECT_FLUSH_EVERY === 0) await interactionCollector.flush();
             }
 
         }
@@ -477,6 +486,7 @@ async function onSubmitClick(submitBtn) {
         new Notifications().notifyError(null, String(error));
     } finally {
         if (submitBtn) submitBtn.disabled = false;
+        await interactionCollector.flush();
     }
 }
 
