@@ -70,6 +70,37 @@ The votes are turned into a pull request by `../scripts/sync-interaction-names.m
 `../.github/workflows/sync-interaction-names.yml`). It needs the Worker's `EXPORT_TOKEN` as the GitHub secret
 `NAMES_EXPORT_TOKEN`: see `../scripts/README.md`.
 
+## If you lose or forget the EXPORT_TOKEN
+
+Nobody can read the token back: Cloudflare only keeps the secret for the Worker, and GitHub only keeps it for the
+workflow. If you do not have the value any more (or you think it leaked), make a new one and set **both** copies to
+the same new value. The old token stops working as soon as the Worker's secret changes, and nothing else needs to
+change: the extension does not use this token, only the sync workflow and your own `curl` checks do.
+
+Run it in this folder. It needs `npx wrangler login` and `gh auth login` to have been done once (`gh` needs the `repo` scope).
+
+```sh
+TOKEN=$(openssl rand -hex 24)                                                         # a new random value, never typed or shown
+printf '%s' "$TOKEN" | npx wrangler secret put EXPORT_TOKEN -c wrangler.local.toml    # the Worker's copy (no deploy needed: Wrangler makes a new version by itself)
+printf '%s' "$TOKEN" | gh secret set NAMES_EXPORT_TOKEN --repo ilpersi/Popmundo-Utils # the GitHub copy, used by the sync workflow
+unset TOKEN                                                                           # forget it; add `echo "$TOKEN"` before this line if you want to keep it, e.g. to try /export with curl
+```
+
+Always use `printf`, not `echo`: `echo` adds a newline to the secret and then no token ever matches.
+
+Check that it worked:
+
+```sh
+npx wrangler secret list -c wrangler.local.toml           # must list EXPORT_TOKEN
+gh secret list --repo ilpersi/Popmundo-Utils              # must list NAMES_EXPORT_TOKEN with a new date
+gh workflow run "Sync interaction names" --repo ilpersi/Popmundo-Utils
+gh run list --repo ilpersi/Popmundo-Utils --workflow "Sync interaction names" --limit 1   # wait for "completed success"
+```
+
+A successful run proves that both copies match: the script fails with `The Worker answered 401` when they differ.
+If the first command works and the second fails, run the whole snippet again, the Worker and GitHub must always
+hold the same value. If you use a `.dev.vars` file for `wrangler dev`, put the new value there too.
+
 ## Everyday commands
 
 ```sh
