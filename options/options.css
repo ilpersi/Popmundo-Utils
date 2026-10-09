@@ -1113,3 +1113,35 @@ body.pm-searching .pm-search-hidden { display: none !important; }
 #unsaved-warning {
     display: none !important;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   COMMUNITY TRANSLATIONS: dialog showing the exact last submission
+   ────────────────────────────────────────────────────────────────────────── */
+
+.pm-dialog {
+    width: min(720px, 92vw);
+    padding: 16px;
+    background: var(--pm-surface);
+    color: var(--pm-ink);
+    border: 1px solid var(--pm-border);
+    border-radius: 8px;
+}
+
+.pm-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.pm-dialog__content {
+    max-height: 55vh;
+    overflow: auto;
+    margin: 8px 0 12px;
+    padding: 10px;
+    background: var(--pm-surface-2);
+    color: var(--pm-ink);
+    border: 1px solid var(--pm-border);
+    border-radius: 6px;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

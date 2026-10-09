@@ -594,6 +594,34 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- ── Community translations ── -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0" data-i18n="optTranslationsTitle">Community translations</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3" data-i18n="optTranslationsDescription">Helps translate the extension: the game's own names of interactions and their groups, together with your game language, are sent anonymously. No character, account or personal data is ever shared.</p>
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" id="contribute_translations">
+                                <label class="form-check-label" for="contribute_translations"
+                                    data-i18n="optTranslationsContribute">Share interaction names with the community</label>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small" id="translations-status" aria-live="polite"></span>
+                                <button type="button" class="btn btn-link btn-sm ms-2 p-0" id="view-last-submission-btn" data-no-dirty
+                                    data-i18n="optTranslationsViewBtn">View last submission</button>
+                            </div>
+                            <dialog id="last-submission-dialog" class="pm-dialog">
+                                <h6 data-i18n="optTranslationsDialogTitle">Last submission</h6>
+                                <pre id="last-submission-content" class="pm-dialog__content"></pre>
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="last-submission-close-btn" data-no-dirty
+                                        data-i18n="optTranslationsDialogClose">Close</button>
+                                </div>
+                            </dialog>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ── Popup Options ── -->

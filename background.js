@@ -183,8 +183,143 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             } else if (request.payload === 'remove') {
                 return chrome.storage.session.remove(request.param);
             }
+        } else if (request.type === 'interaction-names') {
+            // The collector found interaction names that were not sent yet
+            if (request.payload === 'pending') scheduleInteractionNamesSubmission(TRANSLATIONS_DELAY_MINUTES);
         }
 
 
     }
 });
+
+// ---------------------------------------------------------------------------
+// Community translations
+//
+// features/interaction-collector.js keeps the game's names of the interactions it has not sent yet in
+// chrome.storage.local (interaction_names_pending) and tells us. We send them anonymously to a small Cloudflare
+// Worker (see worker/), unless the user turned the contribute_translations option off.
+// ---------------------------------------------------------------------------
+
+// Full URL of the Worker /submit route. While it is empty nothing is ever sent.
+const TRANSLATIONS_ENDPOINT = 'https://popmundo-utils-names.ilpersi.workers.dev/submit';
+const TRANSLATIONS_ALARM = 'submit-interaction-names';
+// Short delay, so that several Interact pages visited in a row go out as one batch (Chrome alarms honour 0.5 minutes at least)
+const TRANSLATIONS_DELAY_MINUTES = 1;
+const TRANSLATIONS_RETRY_MINUTES = 30;
+// Maximum entries per request, the Worker refuses more
+const TRANSLATIONS_CHUNK_SIZE = 80;
+const TRANSLATIONS_SCHEMA = 1;
+const TRANSLATIONS_KINDS = { names: 'name', groups: 'group' };
+
+function scheduleInteractionNamesSubmission(delayInMinutes) {
+    chrome.alarms.get(TRANSLATIONS_ALARM, alarm => {
+        if (!alarm) chrome.alarms.create(TRANSLATIONS_ALARM, { delayInMinutes });
+    });
+}
+
+chrome.alarms.onAlarm.addListener(alarm => {
+    if (alarm.name === TRANSLATIONS_ALARM) submitInteractionNames();
+});
+
+// Alarms may be lost when the browser restarts, so every time the service worker starts we make sure pending names are not forgotten
+chrome.storage.local.get({ interaction_names_pending: {} }, ({ interaction_names_pending }) => {
+    if (Object.keys(interaction_names_pending).length > 0) scheduleInteractionNamesSubmission(TRANSLATIONS_DELAY_MINUTES);
+});
+
+/**
+ * Sends the pending interaction names to the Worker. Entries are removed from the pending ones and remembered as
+ * sent only once the server answered. A network error or a server error keeps them pending and tries again later.
+ * An answer in the 4xx range (apart from "too many requests") means the server refuses those entries: sending them again
+ * would not help, so they are remembered as sent too.
+ */
+async function submitInteractionNames() {
+    const { contribute_translations } = await chrome.storage.sync.get({ contribute_translations: true });
+    if (!contribute_translations || !TRANSLATIONS_ENDPOINT) return;
+
+    const local = await chrome.storage.local.get({ interaction_names_pending: {}, interaction_names_install_id: null });
+    const pending = local.interaction_names_pending;
+    if (Object.keys(pending).length === 0) return;
+
+    // Random id, only used by the server to count how many different installs agree on a name
+    let installId = local.interaction_names_install_id;
+    if (!installId) {
+        installId = crypto.randomUUID();
+        await chrome.storage.local.set({ interaction_names_install_id: installId });
+    }
+
+    const handled = []; // [languageId, kind, id, value] done with, sent or refused
+    const payloads = [];
+    const responses = [];
+    let sentCount = 0;
+    let retryLater = false;
+
+    languages:
+    for (const [languageId, languageData] of Object.entries(pending)) {
+        const entries = [];
+        for (const [kind, serverKind] of Object.entries(TRANSLATIONS_KINDS)) {
+            for (const [id, value] of Object.entries(languageData[kind] || {})) {
+                entries.push({ kind: serverKind, id: Number(id), value });
+            }
+        }
+
+        for (let i = 0; i < entries.length; i += TRANSLATIONS_CHUNK_SIZE) {
+            const chunk = entries.slice(i, i + TRANSLATIONS_CHUNK_SIZE);
+            const payload = { schema: TRANSLATIONS_SCHEMA, lang: Number(languageId), install: installId, entries: chunk };
+
+            let response;
+            try {
+                response = await fetch(TRANSLATIONS_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.warn('Unable to send the interaction names', e);
+                retryLater = true;
+                break languages;
+            }
+
+            const body = (await response.text()).slice(0, 500);
+            const refused = response.status >= 400 && response.status < 500 && response.status !== 429 && response.status !== 408;
+            if (!response.ok && !refused) {
+                console.warn('The interaction names were not accepted', response.status, body);
+                retryLater = true;
+                break languages;
+            }
+
+            if (response.ok) {
+                sentCount += chunk.length;
+                payloads.push(payload);
+                responses.push({ status: response.status, body });
+            } else {
+                console.warn('The interaction names were refused', response.status, body);
+            }
+            chunk.forEach(entry => handled.push([languageId, entry.kind === 'name' ? 'names' : 'groups', String(entry.id), entry.value]));
+        }
+    }
+
+    if (handled.length > 0) {
+        // The collector may have added pending names while we were sending: we read them again before writing
+        const fresh = await chrome.storage.local.get({ interaction_names_pending: {}, interaction_names_sent: {} });
+        for (const [languageId, kind, id, value] of handled) {
+            const sentLanguage = fresh.interaction_names_sent[languageId] || (fresh.interaction_names_sent[languageId] = { names: {}, groups: {} });
+            sentLanguage[kind][id] = value;
+
+            const pendingLanguage = fresh.interaction_names_pending[languageId];
+            if (pendingLanguage && pendingLanguage[kind][id] === value) delete pendingLanguage[kind][id];
+            if (pendingLanguage && Object.keys(pendingLanguage.names).length === 0 && Object.keys(pendingLanguage.groups).length === 0) {
+                delete fresh.interaction_names_pending[languageId];
+            }
+        }
+        await chrome.storage.local.set(fresh);
+    }
+
+    if (sentCount > 0) {
+        // What the options page shows as the last submission
+        await chrome.storage.local.set({
+            last_translation_submission: { time: Date.now(), count: sentCount, endpoint: TRANSLATIONS_ENDPOINT, payloads, responses }
+        });
+    }
+
+    if (retryLater) scheduleInteractionNamesSubmission(TRANSLATIONS_RETRY_MINUTES);
+}

@@ -145,6 +145,9 @@ const optionDetails = [
     { 'name': 'user_reminders', 'default': [], 'save_cb': saveReminders, 'load_cb': loadReminders },
     { 'name': 'dismissed_reminders', 'default': [], 'save_cb': saveReminderPassthrough, 'load_cb': loadReminderPassthrough },
 
+    // community translations: sends the game's names of the interactions (see background.js), on by default
+    { 'name': 'contribute_translations', 'default': true, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },
+
     // developer options (only shown in development builds)
     { 'name': 'log_level', 'default': 3, 'save_cb': saveInteger, 'load_cb': loadInteger },
     { 'name': 'item_category_db_builder', 'default': false, 'save_cb': saveCheckBox, 'load_cb': loadCheckBox },

@@ -59,6 +59,52 @@
         "message": "Tur Otobüsü Yardımcısı",
         "description": "Sidebar navigation label for the Tour Bus Helper section"
     },
+    "optTranslationsTitle": {
+        "message": "Topluluk çevirileri",
+        "description": "Title of the Community translations card in the options page"
+    },
+    "optTranslationsDescription": {
+        "message": "Uzantının çevirisine yardımcı olur: oyunun etkileşimler ve gruplar için kullandığı adlar, oyun diliniz ile birlikte anonim olarak gönderilir. Karakter, hesap veya kişisel hiçbir veri paylaşılmaz.",
+        "description": "Explains what the Community translations option shares. It must state that no personal data is sent"
+    },
+    "optTranslationsContribute": {
+        "message": "Etkileşim adlarını toplulukla paylaş",
+        "description": "Label of the toggle that enables sending the game interaction names to the community"
+    },
+    "optTranslationsNeverSent": {
+        "message": "Henüz bir şey gönderilmedi.",
+        "description": "Status shown when no interaction names were ever sent"
+    },
+    "optTranslationsLastSent": {
+        "message": "Son gönderim: $DATE$ ($COUNT$ kayıt)",
+        "description": "Status with the date of the last submission of interaction names. DATE is a localized date and time, COUNT the number of names and groups sent",
+        "placeholders": {
+            "date": {
+                "content": "$1",
+                "example": "10/8/2026, 9:30 AM"
+            },
+            "count": {
+                "content": "$2",
+                "example": "12"
+            }
+        }
+    },
+    "optTranslationsViewBtn": {
+        "message": "Son gönderimi görüntüle",
+        "description": "Button that opens a dialog with the exact data of the last submission"
+    },
+    "optTranslationsDialogTitle": {
+        "message": "Son gönderim",
+        "description": "Title of the dialog that shows the last submission of interaction names"
+    },
+    "optTranslationsDialogEmpty": {
+        "message": "Henüz bir şey gönderilmedi.",
+        "description": "Text of the last submission dialog when nothing was ever sent"
+    },
+    "optTranslationsDialogClose": {
+        "message": "Kapat",
+        "description": "Close button of the last submission dialog"
+    },
     "optGGFTitle": {
         "message": "İmza Toplayıcı",
         "description": "Title of the Autograph Collector card in the options page"

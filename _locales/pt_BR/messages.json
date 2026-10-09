@@ -59,6 +59,52 @@
         "message": "Assistente do Ônibus de Turnê",
         "description": "Sidebar navigation label for the Tour Bus Helper section"
     },
+    "optTranslationsTitle": {
+        "message": "Traduções da comunidade",
+        "description": "Title of the Community translations card in the options page"
+    },
+    "optTranslationsDescription": {
+        "message": "Ajuda a traduzir a extensão: os nomes das interações e dos seus grupos no próprio jogo, junto com o idioma do seu jogo, são enviados de forma anônima. Nenhum dado de personagem, conta ou pessoal é compartilhado.",
+        "description": "Explains what the Community translations option shares. It must state that no personal data is sent"
+    },
+    "optTranslationsContribute": {
+        "message": "Compartilhar nomes de interações com a comunidade",
+        "description": "Label of the toggle that enables sending the game interaction names to the community"
+    },
+    "optTranslationsNeverSent": {
+        "message": "Nada enviado ainda.",
+        "description": "Status shown when no interaction names were ever sent"
+    },
+    "optTranslationsLastSent": {
+        "message": "Último envio: $DATE$ ($COUNT$ entradas)",
+        "description": "Status with the date of the last submission of interaction names. DATE is a localized date and time, COUNT the number of names and groups sent",
+        "placeholders": {
+            "date": {
+                "content": "$1",
+                "example": "10/8/2026, 9:30 AM"
+            },
+            "count": {
+                "content": "$2",
+                "example": "12"
+            }
+        }
+    },
+    "optTranslationsViewBtn": {
+        "message": "Ver o último envio",
+        "description": "Button that opens a dialog with the exact data of the last submission"
+    },
+    "optTranslationsDialogTitle": {
+        "message": "Último envio",
+        "description": "Title of the dialog that shows the last submission of interaction names"
+    },
+    "optTranslationsDialogEmpty": {
+        "message": "Nada foi enviado ainda.",
+        "description": "Text of the last submission dialog when nothing was ever sent"
+    },
+    "optTranslationsDialogClose": {
+        "message": "Fechar",
+        "description": "Close button of the last submission dialog"
+    },
     "optGGFTitle": {
         "message": "Coletor de Autógrafos",
         "description": "Title of the Autograph Collector card in the options page"

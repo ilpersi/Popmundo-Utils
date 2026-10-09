@@ -1,0 +1,19 @@
+# This file is committed, so the real database id is NOT in it. The real id lives in wrangler.local.toml (ignored by
+# git, see README.md) and every Wrangler command must use it: `npx wrangler deploy -c wrangler.local.toml`.
+# Whenever you change a setting here, make the same change in wrangler.local.toml.
+
+name = "popmundo-utils-names"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# The extension reaches the Worker at https://<name>.<account subdomain>.workers.dev, so this URL must stay on
+workers_dev = true
+# Version/preview URLs are extra public addresses of the same Worker (one per uploaded version), nothing needs them
+preview_urls = false
+
+# Create the database with `npx wrangler d1 create popmundo-utils-names` and paste the id it prints into
+# wrangler.local.toml, not here
+[[d1_databases]]
+binding = "DB"
+database_name = "popmundo-utils-names"
+database_id = "<real id: see wrangler.local.toml>"

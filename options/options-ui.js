@@ -358,6 +358,17 @@ const MASS_INTERACT_GROUPS = [
     }
 ];
 
+// Shows when the interaction names were last sent to the community (written by background.js)
+async function renderTranslationsStatus() {
+    const statusEl = new CssSelectorHelper('#translations-status').getSingle();
+    if (!statusEl) return;
+
+    const { last_translation_submission: last } = await chrome.storage.local.get('last_translation_submission');
+    statusEl.textContent = last
+        ? chrome.i18n.getMessage('optTranslationsLastSent', [new Date(last.time).toLocaleString(), String(last.count)])
+        : chrome.i18n.getMessage('optTranslationsNeverSent');
+}
+
 // Game language id of the account, as last seen by a game page (Utils.setGameLanguage). Null while unknown: the
 // options page cannot read the game itself, so everything below falls back to the extension's own wording.
 let gameLanguageId = null;
@@ -416,7 +427,23 @@ async function applyGameLanguageToMassInteractChips() {
     if (before === layoutSignature()) return;
 
     renderMassInteractChips();
-    restore_options();
+    restoreMassInteractChipState();
+}
+
+// Applies the saved state to the freshly rendered chips, and only to them.
+// restore_options() must not be called again: it can still be running from the page load, and its exclusion lists
+// swap their <select> asynchronously (initCharSelect), so two restores together fail on a <select> the other already replaced.
+function restoreMassInteractChipState() {
+    const chipNames = new Set(MASS_INTERACT_GROUPS.flatMap(group => group.chips.map(chip => chip.name)));
+    const defaults = {};
+    optionDetails.filter(option => chipNames.has(option.name)).forEach(option => { defaults[option.name] = option.default; });
+
+    chrome.storage.sync.get(defaults, items => {
+        for (const [name, value] of Object.entries(items)) loadCheckBox(name, value);
+        // Same as what pm:options-restored does after a full restore
+        recomputeTabCounts();
+        updateMassInteractGroupCounts();
+    });
 }
 
 function renderMassInteractChips() {
@@ -1386,6 +1413,23 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         statusEl.textContent = chrome.i18n.getMessage('optDevExportInteractionNamesDone', [String(languageCount)]);
     });
+
+    // ── Community translations: status line and the dialog showing exactly what was last sent ──
+    const lastSubmissionDialog = new CssSelectorHelper('#last-submission-dialog').getSingle();
+    renderTranslationsStatus();
+    chrome.storage.onChanged.addListener((changes, area) => {
+        if (area === 'local' && changes.last_translation_submission) renderTranslationsStatus();
+    });
+
+    new CssSelectorHelper('#view-last-submission-btn').getSingle()?.addEventListener('click', async () => {
+        const { last_translation_submission: last } = await chrome.storage.local.get('last_translation_submission');
+        // textContent only: the content comes from the server answer and must never be parsed as HTML
+        new CssSelectorHelper('#last-submission-content').getSingle().textContent = last
+            ? JSON.stringify(last, null, 2)
+            : chrome.i18n.getMessage('optTranslationsDialogEmpty');
+        lastSubmissionDialog?.showModal();
+    });
+    new CssSelectorHelper('#last-submission-close-btn').getSingle()?.addEventListener('click', () => lastSubmissionDialog?.close());
 
     // ── Reminders ──
     document.getElementById('add-reminder-btn')?.addEventListener('click', () => openReminderModal());
