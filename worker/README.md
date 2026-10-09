@@ -112,6 +112,71 @@ npx wrangler secret list -c wrangler.local.toml
 
 After a deploy, the output must still list `env.DB (popmundo-utils-names)` as a D1 Database binding.
 
+## Useful queries
+
+The table is `submissions(lang, kind, key, value, install, ts)`: one row per install, language, kind (`name` or `group`)
+and interaction id (`key`), holding the last `value` that install sent. `ts` is a time in milliseconds, the queries
+below turn it into a date (UTC). D1 is SQLite, so any SQLite query works.
+
+Run these in this folder. To avoid repeating the long command, define a shortcut once in your terminal:
+
+```sh
+q() { npx wrangler d1 execute popmundo-utils-names --remote -c wrangler.local.toml --command "$1"; }
+```
+
+Add `--json` to the command inside `q` if you want JSON instead of the table. The queries that only read data cannot
+change anything. For long queries, the Cloudflare dashboard (Storage & Databases > D1 > popmundo-utils-names > Console)
+is more comfortable.
+
+**How much is there?**
+
+```sh
+q "SELECT COUNT(*) AS rows_total, COUNT(DISTINCT install) AS installs, COUNT(DISTINCT lang) AS languages, datetime(MIN(ts) / 1000, 'unixepoch') AS first_row, datetime(MAX(ts) / 1000, 'unixepoch') AS last_row FROM submissions"
+q "SELECT lang, COUNT(DISTINCT install) AS installs, COUNT(*) AS rows_total FROM submissions GROUP BY lang ORDER BY installs DESC, lang"   # per game language
+q "SELECT kind, COUNT(*) AS rows_total, COUNT(DISTINCT key) AS interactions FROM submissions GROUP BY kind"   # names against groups
+q "SELECT lang, kind, key, value, datetime(ts / 1000, 'unixepoch') AS received FROM submissions ORDER BY ts DESC LIMIT 20"   # the latest 20 rows
+q "SELECT lang, value AS group_label, COUNT(DISTINCT key) AS interactions, group_concat(DISTINCT key) AS ids FROM submissions WHERE kind = 'group' GROUP BY lang, value ORDER BY lang, interactions DESC"   # the groups as the game shows them
+```
+
+In the `group` rows the `key` is an interaction and the `value` is the label of its group, so a group with five
+interactions has five rows with the same `value` and five different `key`s. That is normal. The last query above
+shows it the other way round: one line per group label, with the interactions that are in it.
+
+**What would the sync workflow do?** It accepts a value when at least 2 installs sent it and no other value has as many
+votes (`../scripts/README.md`). These show the same data from the database side:
+
+```sh
+q "SELECT lang, kind, key, value, COUNT(*) AS votes FROM submissions GROUP BY lang, kind, key, value HAVING COUNT(*) >= 2 ORDER BY lang, kind, key"   # values with at least 2 votes
+q "SELECT lang, COUNT(*) AS values_with_one_vote FROM (SELECT lang, kind, key, value FROM submissions GROUP BY lang, kind, key, value HAVING COUNT(*) = 1) GROUP BY lang ORDER BY lang"   # still waiting for a second install
+q "SELECT lang, kind, key, COUNT(DISTINCT value) AS different_values, group_concat(DISTINCT value) AS values_seen FROM submissions GROUP BY lang, kind, key HAVING COUNT(DISTINCT value) > 1 ORDER BY lang, kind, key"   # installs that disagree
+q "SELECT lang, kind, value, COUNT(*) AS votes FROM submissions WHERE key = 60 GROUP BY lang, kind, value ORDER BY lang, kind, votes DESC"   # everything sent for one interaction: change 60 to its id
+```
+
+**Is something odd?**
+
+```sh
+q "SELECT substr(install, 1, 8) AS install_prefix, COUNT(*) AS rows_total, COUNT(DISTINCT lang) AS languages, datetime(MIN(ts) / 1000, 'unixepoch') AS first_row, datetime(MAX(ts) / 1000, 'unixepoch') AS last_row FROM submissions GROUP BY install ORDER BY rows_total DESC LIMIT 10"   # busiest installs
+q "SELECT name, type FROM sqlite_master WHERE type IN ('table', 'index') ORDER BY name"   # the schema in the database: must list the table submissions (and its automatic index, sqlite_autoindex_submissions_1)
+```
+
+An install with far more rows than the others, or rows in many languages, deserves a look: a normal install sends a
+few dozen rows in one language. Only the first 8 characters of its id are shown, which is enough to find it again with
+`WHERE install LIKE '1a2b3c4d%'`. The size of the database is in `npx wrangler d1 info popmundo-utils-names -c wrangler.local.toml`.
+
+**Changing data (careful, there is no undo)**
+
+Run the matching `SELECT` first, with the same `WHERE`, and check that it returns what you expect.
+
+```sh
+q "SELECT COUNT(*) FROM submissions WHERE key = 9999"   # the rows of the test interaction id 9999
+q "DELETE FROM submissions WHERE key = 9999"            # remove them
+q "DELETE FROM submissions WHERE lang = 4 AND kind = 'name' AND key = 60 AND value = 'the wrong text'"   # one bad value, from every install that sent it
+q "DELETE FROM submissions WHERE ts < (strftime('%s', 'now', '-1 year') * 1000)"   # everything older than a year
+q "DELETE FROM submissions"                              # start over: empties the table, the schema stays
+```
+
+To remove one person's data, see the last section.
+
 ## Try it locally
 
 ```sh
