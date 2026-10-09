@@ -64,6 +64,12 @@ not secret, so never use the token itself as a name.
 Then put `<Worker URL>/submit` in `TRANSLATIONS_ENDPOINT` at the bottom of `../background.js`. While it is empty
 the extension sends nothing.
 
+## Using the votes
+
+The votes are turned into a pull request by `../scripts/sync-interaction-names.mjs` (run by the workflow
+`../.github/workflows/sync-interaction-names.yml`). It needs the Worker's `EXPORT_TOKEN` as the GitHub secret
+`NAMES_EXPORT_TOKEN`: see `../scripts/README.md`.
+
 ## Everyday commands
 
 ```sh

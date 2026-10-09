@@ -1,0 +1,54 @@
+# Reads the interaction names that users of the extension sent anonymously (stored by the Worker in worker/) and opens
+# a pull request that adds the ones that enough installs agree on. It only runs when started by hand from the Actions
+# tab, and nothing is merged without a person reading the pull request. See scripts/README.md.
+name: Sync interaction names
+
+on:
+  workflow_dispatch:
+    inputs:
+      quorum:
+        description: Distinct installs that must send the same value before it is accepted
+        required: true
+        default: '2'
+
+# Needed by peter-evans/create-pull-request to push the branch and open the pull request
+permissions:
+  contents: write
+  pull-requests: write
+
+# Two runs at the same time would fight over the same branch
+concurrency:
+  group: sync-interaction-names
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Read the votes and update the data file
+        id: sync
+        # The inputs go through environment variables, never straight into the shell command
+        env:
+          NAMES_EXPORT_URL: https://popmundo-utils-names.ilpersi.workers.dev/export
+          NAMES_EXPORT_TOKEN: ${{ secrets.NAMES_EXPORT_TOKEN }}
+          QUORUM: ${{ inputs.quorum }}
+          PR_BODY_FILE: ${{ runner.temp }}/pr-body.md
+        run: node scripts/sync-interaction-names.mjs
+
+      # Skipped when nothing changed: the job summary still shows what is waiting for more votes
+      - name: Open the pull request
+        if: steps.sync.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          add-paths: features/interaction-names-data.js
+          branch: sync-interaction-names
+          delete-branch: true
+          commit-message: Update interaction names from the community
+          title: Update interaction names from the community
+          body-path: ${{ runner.temp }}/pr-body.md

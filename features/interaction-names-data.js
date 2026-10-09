@@ -2,14 +2,15 @@
 //
 // The Interact page tags every option with a localized data-group (e.g. "Phone" is "Telefoniche" in Italian), so
 // the group name cannot be compared with an English string. The names below were read from the interaction
-// dropdown of the Interact page in each of the 25 game languages. Only the groups that dropdown showed for the
-// scraped character pair are listed: more are expected to be added by the community collection.
+// dropdown of the Interact page in each of the 25 game languages, and are extended with the names sent by the
+// community (see worker/README.md and scripts/sync-interaction-names.mjs, which rewrites this whole file).
+// Only groups that were seen in the game are listed.
 const INTERACTION_GROUP_NAMES = {
     basic: {
-        1: 'Grundläggande', 2: 'Basic', 3: 'Grundlegend', 4: 'Base', 5: 'Élémentaires', 6: 'Básica', 7: 'Grunnleggende',
-        8: 'Basal', 9: 'Perus', 10: 'Basis', 11: 'Básicas', 13: 'Podstawowe', 14: 'Основные', 19: 'Temel', 23: 'De Bază',
-        24: 'Basic', 33: 'Alap', 36: 'Üldine', 39: 'Osnovne', 43: 'Обикновени', 50: 'Básicas', 51: 'Básicas',
-        56: 'Pradinis', 60: 'Básica', 106: '普通类'
+        1: 'Grundläggande', 2: 'Basic', 3: 'Grundlegend', 4: 'Base', 5: 'Élémentaires', 6: 'Básica',
+        7: 'Grunnleggende', 8: 'Basal', 9: 'Perus', 10: 'Basis', 11: 'Básicas', 13: 'Podstawowe', 14: 'Основные',
+        19: 'Temel', 23: 'De Bază', 24: 'Basic', 33: 'Alap', 36: 'Üldine', 39: 'Osnovne', 43: 'Обикновени',
+        50: 'Básicas', 51: 'Básicas', 56: 'Pradinis', 60: 'Básica', 106: '普通类'
     },
     verbal: {
         1: 'Verbalt', 2: 'Verbal', 3: 'Mündlich', 4: 'Verbali', 5: 'Verbales', 6: 'Verbal', 7: 'Verbalt', 8: 'Verbal',
@@ -17,17 +18,23 @@ const INTERACTION_GROUP_NAMES = {
         24: 'Verbal', 33: 'Szóbeli', 36: 'Suuline', 39: 'Usmene', 43: 'Вербални', 50: 'Verbais', 51: 'Verbales',
         56: 'Žodinis', 60: 'Verbal', 106: '言辞'
     },
-    phone: {
-        1: 'Över telefonen', 2: 'Phone', 3: 'Telefonisch', 4: 'Telefoniche', 5: 'Téléphoniques', 6: 'Telefónica',
-        7: 'Telefon', 8: 'Telefon', 9: 'Puhelin', 10: 'Telefoon', 11: 'Telefónicas', 13: 'Telefoniczne', 14: 'Телефон',
-        19: 'Telefon', 23: 'Telefon', 24: 'Phone', 33: 'Telefonos', 36: 'Telefon', 39: 'Telefonske', 43: 'Телефон',
-        50: 'Telefônicas', 51: 'Telefónicas', 56: 'Telefoninis', 60: 'Telefónica', 106: '电话'
-    },
     special: {
         1: 'Speciellt', 2: 'Special', 3: 'Spezial', 4: 'Speciali', 5: 'Spéciales', 6: 'Especial', 7: 'Spesielt',
         8: 'Speciel', 9: 'Erikoinen', 10: 'Speciaal', 11: 'Especiais', 13: 'Specjalne', 14: 'Особые', 19: 'Özel',
         23: 'Special', 24: 'Special', 33: 'Speciális', 36: 'Eriline', 39: 'Posebne', 43: 'Специални', 50: 'Especiais',
         51: 'Especiales', 56: 'Ypatingas', 60: 'Especial', 106: '特殊类'
+    },
+    phone: {
+        1: 'Över telefonen', 2: 'Phone', 3: 'Telefonisch', 4: 'Telefoniche', 5: 'Téléphoniques', 6: 'Telefónica',
+        7: 'Telefon', 8: 'Telefon', 9: 'Puhelin', 10: 'Telefoon', 11: 'Telefónicas', 13: 'Telefoniczne',
+        14: 'Телефон', 19: 'Telefon', 23: 'Telefon', 24: 'Phone', 33: 'Telefonos', 36: 'Telefon', 39: 'Telefonske',
+        43: 'Телефон', 50: 'Telefônicas', 51: 'Telefónicas', 56: 'Telefoninis', 60: 'Telefónica', 106: '电话'
+    },
+    medical: {
+        1: 'Medicinskt', 2: 'Medical', 3: 'Medizinisch', 4: 'Mediche', 5: 'Médicales', 6: 'Médica', 7: 'Medisinsk',
+        8: 'Medicinsk', 9: 'Lääketieteellinen', 10: 'Medisch', 11: 'Médicas', 13: 'Medyczne', 14: 'Медицинские',
+        19: 'Tıbbî', 23: 'Medical', 24: 'Medical', 33: 'Gyógyászati', 36: 'Meditsiiniline', 39: 'Medicinske',
+        43: 'Здравни', 50: 'Médicas', 51: 'Medicinales', 56: 'Medicininis', 60: 'Médica', 106: '医学的'
     },
     physical: {
         1: 'Fysiskt', 2: 'Physical', 3: 'Körperlich', 4: 'Fisiche', 5: 'Physiques', 6: 'Física', 7: 'Fysisk',
@@ -42,25 +49,18 @@ const INTERACTION_GROUP_NAMES = {
         23: 'Apropiere Fizică', 24: 'Close Physical', 33: 'Szoros fizikai', 36: 'Intiimne', 39: 'Bliske fizičke',
         43: 'Физически (близки)', 50: 'Íntimas', 51: 'Directamente físicas', 56: 'Glaudus fizinis',
         60: 'Física cercana', 106: '亲密身体行为'
-    },
-    medical: {
-        1: 'Medicinskt', 2: 'Medical', 3: 'Medizinisch', 4: 'Mediche', 5: 'Médicales', 6: 'Médica', 7: 'Medisinsk',
-        8: 'Medicinsk', 9: 'Lääketieteellinen', 10: 'Medisch', 11: 'Médicas', 13: 'Medyczne', 14: 'Медицинские',
-        19: 'Tıbbî', 23: 'Medical', 24: 'Medical', 33: 'Gyógyászati', 36: 'Meditsiiniline', 39: 'Medicinske',
-        43: 'Здравни', 50: 'Médicas', 51: 'Medicinales', 56: 'Medicininis', 60: 'Médica', 106: '医学的'
     }
 };
 
 // The game group of each interaction id, as a language-independent key (the English group name, in camelCase).
-// Read from the Interact page dropdowns of related characters and of characters present in the same locale.
-// Only the interactions the dropdown offered at the time are listed: the others are unlocked by the relationship
-// level and are expected to be added by the community collection.
+// Only the interactions that were seen in the game are listed: the others are unlocked by the relationship level
+// and are expected to be added by the community collection.
 const INTERACTION_GROUP_BY_ID = {
     1: 'basic', 15: 'basic', 54: 'basic', 161: 'basic',
     3: 'verbal', 5: 'verbal', 71: 'verbal', 79: 'verbal', 119: 'verbal', 154: 'verbal', 156: 'verbal', 166: 'verbal',
     4: 'special', 33: 'special',
-    24: 'phone', 26: 'phone', 46: 'phone', 58: 'phone', 61: 'phone', 73: 'phone', 74: 'phone', 80: 'phone', 121: 'phone',
-    162: 'phone', 171: 'phone',
+    24: 'phone', 26: 'phone', 46: 'phone', 58: 'phone', 61: 'phone', 73: 'phone', 74: 'phone', 80: 'phone',
+    121: 'phone', 162: 'phone', 171: 'phone',
     32: 'medical',
     55: 'physical', 124: 'physical',
     56: 'closePhysical'
@@ -70,9 +70,8 @@ const INTERACTION_GROUP_BY_ID = {
 const INTERACTION_GROUP_ORDER = ['basic', 'verbal', 'special', 'phone', 'medical', 'physical', 'closePhysical'];
 
 // The game's name of each interaction, per game language id: { langId: { options: { interactionId: name } } }.
-// Read from the Interact page dropdowns in each of the 25 game languages. Only the interactions the dropdown offered
-// for the scraped characters are listed (29 so far, the others are unlocked by the relationship level): the options
-// page falls back to the extension's own label for the missing ones.
+// Only the interactions that were seen in the game are listed: the options page falls back to the extension's own
+// label for the missing ones.
 const INTERACTION_NAMES_DB = {
     1: {
         options: {
