@@ -49,6 +49,22 @@ const INTERACTION_GROUP_NAMES = {
         23: 'Apropiere Fizică', 24: 'Close Physical', 33: 'Szoros fizikai', 36: 'Intiimne', 39: 'Bliske fizičke',
         43: 'Физически (близки)', 50: 'Íntimas', 51: 'Directamente físicas', 56: 'Glaudus fizinis',
         60: 'Física cercana', 106: '亲密身体行为'
+    },
+    sexual: {
+        2: 'Sexual', 19: 'Cinsel', 24: 'Sexual', 50: 'Sexuais', 51: 'Sexuales'
+    },
+    spiritual: {
+        2: 'Spiritual', 19: 'Ruhanî'
+    },
+    bestFriends: {
+        2: 'Best Friends', 19: 'En iyi arkadaş', 24: 'Best Friends', 50: 'Melhores Amigos', 51: 'Mejores amigos',
+        60: 'Mejores amigos'
+    },
+    matrimonial: {
+        2: 'Matrimonial', 19: 'Evlilik', 50: 'Matrimonial', 51: 'Matrimoniales'
+    },
+    pirating: {
+        2: 'Pirating', 19: 'Korsanca', 24: 'Pirating', 50: 'Piratês'
     }
 };
 
@@ -57,17 +73,27 @@ const INTERACTION_GROUP_NAMES = {
 // and are expected to be added by the community collection.
 const INTERACTION_GROUP_BY_ID = {
     1: 'basic', 15: 'basic', 54: 'basic', 161: 'basic',
-    3: 'verbal', 5: 'verbal', 71: 'verbal', 79: 'verbal', 119: 'verbal', 154: 'verbal', 156: 'verbal', 166: 'verbal',
-    4: 'special', 33: 'special',
-    24: 'phone', 26: 'phone', 46: 'phone', 58: 'phone', 61: 'phone', 73: 'phone', 74: 'phone', 80: 'phone',
-    121: 'phone', 162: 'phone', 171: 'phone',
-    32: 'medical',
-    55: 'physical', 124: 'physical',
-    56: 'closePhysical'
+    3: 'verbal', 5: 'verbal', 14: 'verbal', 34: 'verbal', 51: 'verbal', 57: 'verbal', 62: 'verbal', 65: 'verbal',
+    68: 'verbal', 71: 'verbal', 75: 'verbal', 76: 'verbal', 77: 'verbal', 79: 'verbal', 81: 'verbal', 100: 'verbal',
+    119: 'verbal', 154: 'verbal', 155: 'verbal', 156: 'verbal', 160: 'verbal', 166: 'verbal',
+    4: 'special', 21: 'special', 29: 'special', 33: 'special', 78: 'special',
+    24: 'phone', 25: 'phone', 26: 'phone', 46: 'phone', 58: 'phone', 61: 'phone', 73: 'phone', 74: 'phone',
+    80: 'phone', 121: 'phone', 157: 'phone', 162: 'phone', 165: 'phone', 171: 'phone',
+    32: 'medical', 44: 'medical',
+    7: 'physical', 8: 'physical', 12: 'physical', 18: 'physical', 30: 'physical', 35: 'physical', 36: 'physical',
+    55: 'physical', 59: 'physical', 63: 'physical', 66: 'physical', 89: 'physical', 106: 'physical', 124: 'physical',
+    129: 'physical', 158: 'physical',
+    9: 'closePhysical', 10: 'closePhysical', 41: 'closePhysical', 56: 'closePhysical', 60: 'closePhysical',
+    64: 'closePhysical', 67: 'closePhysical',
+    11: 'sexual', 13: 'sexual', 19: 'sexual', 20: 'sexual', 164: 'sexual',
+    39: 'spiritual',
+    69: 'bestFriends', 70: 'bestFriends',
+    144: 'matrimonial', 145: 'matrimonial', 147: 'matrimonial', 149: 'matrimonial', 150: 'matrimonial',
+    167: 'pirating', 168: 'pirating', 169: 'pirating'
 };
 
 // The game groups in the order the dropdown showed them (provisional, to be confirmed with the full data).
-const INTERACTION_GROUP_ORDER = ['basic', 'verbal', 'special', 'phone', 'medical', 'physical', 'closePhysical'];
+const INTERACTION_GROUP_ORDER = ['basic', 'verbal', 'special', 'phone', 'medical', 'physical', 'closePhysical', 'sexual', 'spiritual', 'bestFriends', 'matrimonial', 'pirating'];
 
 // The game's name of each interaction, per game language id: { langId: { options: { interactionId: name } } }.
 // Only the interactions that were seen in the game are listed: the options page falls back to the extension's own
@@ -86,13 +112,24 @@ const INTERACTION_NAMES_DB = {
     },
     2: {
         options: {
-            1: 'Greet', 3: 'Talk to', 4: 'Tell joke', 5: 'Tease', 15: 'Insult', 24: 'Wazzup call', 26: 'Prank call',
-            32: 'Give first aid', 33: 'Do funny magic', 46: 'Kiss my ass call', 54: 'Smile', 55: 'Shake hands',
-            56: 'Kiss Cheeks', 58: 'SMS funny pic', 61: 'SMS friendly text', 71: 'Hey sexy, how you doin\'?',
-            73: 'Flirty Phone call', 74: 'Flirty SMS', 79: 'Get lost!', 80: 'SMS insult', 119: 'Yo!',
-            121: 'Gossip on phone', 124: 'Play catch', 154: 'Please stop flirting with me.',
-            156: 'I don\'t want to be friends.', 161: 'Wink', 162: 'Birthday call', 166: 'Say I\'m sorry',
-            171: 'Thank You call'
+            1: 'Greet', 3: 'Talk to', 4: 'Tell joke', 5: 'Tease', 7: 'Buy a drink', 8: 'Hug', 9: 'Kiss',
+            10: 'Kiss passionately', 11: 'Make Love', 12: 'Tickle', 13: '5 minute quickie', 14: 'Compliment',
+            15: 'Insult', 18: 'Play with', 19: 'Tantric Sex', 20: 'Spank', 21: 'Sing to', 24: 'Wazzup call',
+            25: 'Dirty call', 26: 'Prank call', 29: 'Seek apprenticeship', 30: 'Caress', 32: 'Give first aid',
+            33: 'Do funny magic', 34: 'Have profound discussion', 35: 'Ask for a dance', 36: 'Evil Eye', 39: 'Bless',
+            41: 'Pull hair', 44: 'Give Massage', 46: 'Kiss my ass call', 51: 'Comfort', 54: 'Smile',
+            55: 'Shake hands', 56: 'Kiss Cheeks', 57: 'Fraternize', 58: 'SMS funny pic', 59: 'Rub elbows',
+            60: 'High Five', 61: 'SMS friendly text', 62: 'Share Opinions', 63: 'Pat on back', 64: 'Embrace',
+            65: 'Gossip', 66: 'Braid Hair', 67: 'Arm Wrestle', 68: 'Offer Advice', 69: 'Share secrets',
+            70: 'Hang out', 71: 'Hey sexy, how you doin\'?', 73: 'Flirty Phone call', 74: 'Flirty SMS', 75: 'Praise',
+            76: 'Tell naughty joke', 77: 'Say I love you', 78: 'Serenade', 79: 'Get lost!', 80: 'SMS insult',
+            81: 'Badmouth', 89: 'Flex biceps', 119: 'Yo!', 121: 'Gossip on phone', 124: 'Play catch',
+            129: 'Stroll hand in hand', 144: 'Argue about money', 145: 'Plan future', 147: 'Role-play',
+            149: 'Compliment partner', 150: 'Shave', 154: 'Please stop flirting with me.',
+            155: 'Please don\'t fight with me.', 156: 'I don\'t want to be friends.',
+            157: 'It\'s not you, it\'s me...', 161: 'Wink', 162: 'Birthday call', 164: 'Enjoy Kobe Sutra',
+            165: 'Romantic call', 166: 'Say I\'m sorry', 167: 'Say Arrr!', 168: 'Say Ahoy, me hearty!',
+            169: 'Say Yo ho ho!', 171: 'Thank You call'
         }
     },
     3: {
@@ -228,13 +265,26 @@ const INTERACTION_NAMES_DB = {
     },
     19: {
         options: {
-            1: 'Selamla', 3: 'Konuş', 4: 'Fıkra anlat', 5: 'Şakalaş', 15: 'Hakaret et', 24: 'N\'aber demek için ara',
-            26: 'İşletmek için ara', 32: 'İlk yardımda bulun', 33: 'Komik büyü yap', 46: 'Aç telefonu saydır',
-            54: 'Gülümse', 55: 'El sıkış', 56: 'Yanaklarından öp', 58: 'Komik resimli SMS at',
-            61: 'Dostane bir SMS at', 71: 'Hey seksi şey, n\'aber?', 73: 'Telefonda yaz', 74: 'Asılmak için SMS at',
-            79: 'S*ktir lan!', 80: 'Aşağılayıcı bir SMS gönder', 119: 'N\'aber!', 121: 'Telefonda dedikodu et',
-            124: 'Elim sende oyna', 154: 'Lütfen bana asılmayı kes.', 156: 'Arkadaş olmak falan istemiyorum.',
-            161: 'Göz kırp', 162: 'Doğum gününü kutlamak için ara', 166: 'Özür dile', 171: 'Teşekkür etmek için ara'
+            1: 'Selamla', 3: 'Konuş', 4: 'Fıkra anlat', 5: 'Şakalaş', 7: 'İçki ısmarla', 8: 'Sarıl', 9: 'Öp',
+            10: 'Tutkulu öp', 11: 'Seviş', 12: 'Gıdıkla', 13: 'Ayaküstü bi\' posta', 14: 'İltifat et',
+            15: 'Hakaret et', 18: 'Oyna', 19: 'Tantrik seks', 20: 'Şaplak at', 21: 'Şarkı söyle',
+            24: 'N\'aber demek için ara', 25: 'Açık saçık konuş', 26: 'İşletmek için ara', 29: 'Öğrencilik talep et',
+            30: 'Okşa', 32: 'İlk yardımda bulun', 33: 'Komik büyü yap', 34: 'Ciddi konulardan bahset',
+            35: 'Dansa kaldır', 39: 'Kutsa', 40: 'Lanetle', 44: 'Masaj yap', 46: 'Aç telefonu saydır',
+            47: 'Eski günlerden bahset', 49: 'Dürtükle', 51: 'Yatıştır', 54: 'Gülümse', 55: 'El sıkış',
+            56: 'Yanaklarından öp', 57: 'Arkadaşlık et', 58: 'Komik resimli SMS at', 59: 'Kaynaş',
+            60: 'Çak bi\' beşlik', 61: 'Dostane bir SMS at', 62: 'Fikir alışverişinde bulun', 63: 'Sırtını sıvazla',
+            64: 'Bağrına bas', 65: 'Dedikodu et', 66: 'Saçını ör', 67: 'Bilek güreşi yap', 68: 'Tavsiye ver',
+            69: 'Sırlarını paylaş', 70: 'Takıl', 71: 'Hey seksi şey, n\'aber?', 73: 'Telefonda yaz',
+            74: 'Asılmak için SMS at', 75: 'Öv', 76: 'Belden aşağı bir fıkra anlat', 77: '"Seni seviyorum!" de',
+            78: 'Serenat yap', 79: 'S*ktir lan!', 80: 'Aşağılayıcı bir SMS gönder', 89: 'Bisepslerini aç',
+            119: 'N\'aber!', 121: 'Telefonda dedikodu et', 124: 'Elim sende oyna', 129: 'El ele dolaş',
+            139: 'Notlarını karşılaştır', 145: 'Geleceğe dair planlar yap', 147: 'Rol yap', 149: 'Eşine iltifat et',
+            154: 'Lütfen bana asılmayı kes.', 156: 'Arkadaş olmak falan istemiyorum.',
+            157: 'Sorun sen değilsin, benim...', 161: 'Göz kırp', 162: 'Doğum gününü kutlamak için ara',
+            164: 'Kobe Sutra\'nın Tadını Çıkar', 165: 'Aşk meşk için ara', 166: 'Özür dile',
+            167: '"Arrr!" diye haykır', 168: '"Ahoy, canımın içi!" de', 169: '"Yo ho ho!" de',
+            171: 'Teşekkür etmek için ara'
         }
     },
     23: {
@@ -250,13 +300,21 @@ const INTERACTION_NAMES_DB = {
     },
     24: {
         options: {
-            1: 'Greet', 3: 'Talk to', 4: 'Tell joke', 5: 'Tease', 15: 'Insult', 24: 'Wazzup call', 26: 'Prank call',
-            32: 'Give first aid', 33: 'Do funny magic', 46: 'Kiss my arse call', 54: 'Smile', 55: 'Shake hands',
-            56: 'Kiss cheeks', 58: 'Send funny pic MMS', 61: 'Send friendly text', 71: 'Hey sexy, how you doin\'?',
-            73: 'Flirty phone call', 74: 'Flirty text', 79: 'Piss off!', 80: 'Send insulting text', 119: 'Yo!',
-            121: 'Gossip on phone', 124: 'Play catch', 154: 'Please stop flirting with me.',
-            156: 'I don\'t want to be friends.', 161: 'Wink', 162: 'Birthday call', 166: 'Say I\'m sorry',
-            171: 'Thank You call'
+            1: 'Greet', 3: 'Talk to', 4: 'Tell joke', 5: 'Tease', 7: 'Buy a drink', 8: 'Hug', 9: 'Kiss',
+            10: 'Kiss passionately', 11: 'Make love', 12: 'Tickle', 13: '5 minute quickie', 14: 'Compliment',
+            15: 'Insult', 18: 'Play with', 19: 'Tantric sex', 20: 'Spank', 21: 'Sing to', 24: 'Wazzup call',
+            25: 'Dirty call', 26: 'Prank call', 29: 'Seek apprenticeship', 30: 'Caress', 32: 'Give first aid',
+            33: 'Do funny magic', 34: 'Have profound discussion', 35: 'Ask for a dance', 44: 'Give massage',
+            46: 'Kiss my arse call', 51: 'Comfort', 54: 'Smile', 55: 'Shake hands', 56: 'Kiss cheeks',
+            57: 'Fraternise', 58: 'Send funny pic MMS', 59: 'Rub elbows', 60: 'High five', 61: 'Send friendly text',
+            62: 'Share opinions', 63: 'Pat on back', 64: 'Embrace', 65: 'Gossip', 66: 'Plait hair', 67: 'Arm wrestle',
+            68: 'Offer advice', 69: 'Share secrets', 70: 'Hang out', 71: 'Hey sexy, how you doin\'?',
+            73: 'Flirty phone call', 74: 'Flirty text', 75: 'Praise', 76: 'Tell naughty joke', 77: 'Say I love you',
+            78: 'Serenade', 79: 'Piss off!', 80: 'Send insulting text', 119: 'Yo!', 121: 'Gossip on phone',
+            124: 'Play catch', 154: 'Please stop flirting with me.', 156: 'I don\'t want to be friends.',
+            157: 'It\'s not you, it\'s me...', 158: 'Do the fish slapping dance', 161: 'Wink', 162: 'Birthday call',
+            164: 'Enjoy Kobe Sutra', 165: 'Romantic call', 166: 'Say I\'m sorry', 167: 'Say Arrr!',
+            168: 'Say Ahoy, me hearty!', 169: 'Say Yo ho ho!', 171: 'Thank You call'
         }
     },
     33: {
@@ -305,26 +363,58 @@ const INTERACTION_NAMES_DB = {
     },
     50: {
         options: {
-            1: 'Cumprimentar', 3: 'Conversar', 4: 'Contar piada', 5: 'Fazer graça', 15: 'Insultar',
-            24: 'Ligar para papear', 26: 'Passar trote', 32: 'Fazer primeiros socorros',
-            33: 'Fazer uma mágica divertida', 46: 'Ligar para xingar', 54: 'Sorrir', 55: 'Aperto de mão',
-            56: 'Beijar o rosto', 58: 'Mandar foto engraçada por MMS', 61: 'Mandar mensagem no celular',
-            71: 'Você vem sempre aqui?', 73: 'Ligar para flertar', 74: 'Flertar por SMS', 79: 'Vai se ferrar!',
-            80: 'Insultar por SMS', 119: 'Ae!', 121: 'Fofocar ao telefone', 124: 'Brincar de pega-pega',
-            154: 'Pare de flertar comigo, por favor.', 156: 'Eu não quero amizade com você.', 161: 'Piscar',
-            162: 'Ligação de aniversário', 166: 'Pedir desculpas', 171: 'Ligar para agradecer'
+            1: 'Cumprimentar', 3: 'Conversar', 4: 'Contar piada', 5: 'Fazer graça', 6: 'Gugu-dadá',
+            7: 'Oferecer bebida', 8: 'Abraçar', 9: 'Beijar', 10: 'Beijar apaixonadamente', 11: 'Fazer amor',
+            12: 'Fazer cócegas', 13: 'Rapidinha', 14: 'Elogiar', 15: 'Insultar', 18: 'Brincar com',
+            19: 'Sexo tântrico', 20: 'Dar uns tapinhas...', 21: 'Cantar para', 24: 'Ligar para papear',
+            25: 'Ligação safadinha', 26: 'Passar trote', 29: 'Buscar aprendizagem', 30: 'Acariciar',
+            32: 'Fazer primeiros socorros', 33: 'Fazer uma mágica divertida', 34: 'Ter uma discussão profunda',
+            35: 'Tirar para dançar', 44: 'Fazer massagem', 46: 'Ligar para xingar', 51: 'Consolar', 52: 'Acalmar',
+            54: 'Sorrir', 55: 'Aperto de mão', 56: 'Beijar o rosto', 57: 'Fraternizar',
+            58: 'Mandar foto engraçada por MMS', 59: 'Passar um tempo junto', 60: 'High Five',
+            61: 'Mandar mensagem no celular', 62: 'Dizer o que pensa', 63: 'Tapinha nas costas', 64: 'Envolver',
+            65: 'Fofocar', 66: 'Trançar o cabelo', 67: 'Queda de braço', 68: 'Dar conselhos', 69: 'Contar segredos',
+            70: 'Dar uma volta', 71: 'Você vem sempre aqui?', 73: 'Ligar para flertar', 74: 'Flertar por SMS',
+            75: 'Louvar', 76: 'Contar piada safada', 77: 'Dizer "eu amo você"', 78: 'Fazer serenata',
+            79: 'Vai se ferrar!', 80: 'Insultar por SMS', 89: 'Mostrar os músculos', 93: 'Pegar no colo',
+            94: 'Auxiliar', 100: 'Perguntar coisas', 101: 'Explicar coisas', 102: 'Bagunçar o cabelo',
+            103: 'Beijinho na testa', 104: 'Contar conto-de-fadas', 106: 'Admirar', 119: 'Ae!',
+            121: 'Fofocar ao telefone', 124: 'Brincar de pega-pega', 127: 'Guerra de travesseiros',
+            129: 'Caminhar de mãos dadas', 144: 'Discutir sobre dinheiro', 145: 'Planejar o futuro',
+            146: 'Lavar a louça', 147: 'Brincar de médico', 149: 'Elogiar a aparência', 150: 'Depilar/Barbear',
+            151: 'Beliscar as gordurinhas', 154: 'Pare de flertar comigo, por favor.',
+            156: 'Eu não quero amizade com você.', 157: 'Não é você, o problema é comigo...',
+            158: 'Dançar o fish slapping', 160: 'Gritar', 161: 'Piscar', 162: 'Ligação de aniversário',
+            164: 'Desfrutar do Kobe Sutra', 165: 'Ligação romântica', 166: 'Pedir desculpas', 167: 'Dizer "Arrr!"',
+            168: 'Dizer "Saudações, marujos!"', 169: 'Dizer "Yo ho ho!"', 171: 'Ligar para agradecer'
         }
     },
     51: {
         options: {
-            1: 'Saludar', 3: 'Conversar', 4: 'Contar un chiste', 5: 'Bromear', 15: 'Insultar', 24: '¿Qué tal?',
-            26: 'Llamada bromista', 32: 'Dar los primeros auxilios', 33: 'Hacer un truco de magia',
-            46: 'Vete al carajo', 54: 'Sonreír', 55: 'Estrechar la mano', 56: 'Besar mejillas',
-            58: 'Mensaje de fotos graciosas', 61: 'Mensaje de texto amigable', 71: 'Hola sexy, ¿cómo estás?',
-            73: 'Llamada de coqueteo', 74: 'Mensaje de coqueteo', 79: '¡Cállate!', 80: 'Mensaje de texto ofensivo',
-            119: '¡Yo!', 121: 'Chismear por teléfono', 124: 'Jugar a atrapar',
-            154: 'Deja de coquetear conmigo, por favor.', 156: 'No quiero que seamos amigos.', 161: 'Guiño',
-            162: 'Llamada de cumpleaños', 166: 'Decir “Lo siento”', 171: 'Llamada de agradecimiento'
+            1: 'Saludar', 3: 'Conversar', 4: 'Contar un chiste', 5: 'Bromear', 6: 'Cuchi cuchi',
+            7: 'Invitar una bebida', 8: 'Abrazar', 9: 'Besar', 10: 'Besar apasionadamente', 11: 'Hacer el amor',
+            12: 'Hacer cosquillas', 13: 'Aventura de una noche', 14: 'Hacer un cumplido', 15: 'Insultar', 18: 'Jugar',
+            19: 'Sexo tántrico', 20: 'Azotar', 21: 'Cantar', 24: '¿Qué tal?', 25: 'Llamada pícara',
+            26: 'Llamada bromista', 27: 'Guiñar un ojo', 29: 'Pedir enseñanza', 30: 'Acariciar',
+            32: 'Dar los primeros auxilios', 33: 'Hacer un truco de magia', 34: 'Tener una charla interesante',
+            35: 'Invitar a bailar', 44: 'Hacer un masaje', 46: 'Vete al carajo', 51: 'Confortar', 52: 'Calmar',
+            54: 'Sonreír', 55: 'Estrechar la mano', 56: 'Besar mejillas', 57: 'Fraternizar',
+            58: 'Mensaje de fotos graciosas', 59: 'Codearse', 60: 'Dame los cinco', 61: 'Mensaje de texto amigable',
+            62: 'Compartir opiniones', 63: 'Palmada en la espalda', 64: 'Abrazar apasionadamente', 65: 'Chismear',
+            66: 'Trenzar cabello', 67: 'Jugar una pulseada', 68: 'Ofrecer consejo', 69: 'Compartir secretos',
+            70: 'Salir un rato', 71: 'Hola sexy, ¿cómo estás?', 73: 'Llamada de coqueteo', 74: 'Mensaje de coqueteo',
+            75: 'Elogiar', 76: 'Contar un chiste picante', 77: 'Decir "Te amo"', 78: 'Dar una serenata',
+            79: '¡Cállate!', 80: 'Mensaje de texto ofensivo', 89: 'Flexionar los bíceps', 93: 'Cargar',
+            97: 'Hablar mal de los padres', 98: 'Hablar sobre los pasatiempos', 99: 'Jugar al escondite',
+            100: 'Preguntar acerca de cosas', 101: 'Explicar cosas', 102: 'Despeinar pelo', 103: 'Besar la frente',
+            104: 'Contar cuentos de hadas', 105: 'Cuando yo era joven...', 106: 'Admirar', 117: 'Jugar a las canicas',
+            119: '¡Yo!', 120: 'Dar un vistazo previo', 121: 'Chismear por teléfono', 122: 'Pellizcar',
+            123: 'Mirar fijamente a los ojos', 124: 'Jugar a atrapar', 125: 'Besuquear', 126: 'Acariciar',
+            127: 'Pelea de almohadas', 129: 'Pasear de la mano', 144: 'Discutir sobre dinero',
+            145: 'Hacer planes para el futuro', 147: 'Rolear', 149: 'Piropear', 151: 'Apretar los rollitos',
+            154: 'Deja de coquetear conmigo, por favor.', 156: 'No quiero que seamos amigos.',
+            157: 'No eres tú, soy yo...', 160: 'Chillar', 161: 'Guiño', 162: 'Llamada de cumpleaños',
+            164: 'Disfrutar del Kobe Sutra', 166: 'Decir “Lo siento”', 171: 'Llamada de agradecimiento'
         }
     },
     56: {
@@ -341,14 +431,21 @@ const INTERACTION_NAMES_DB = {
     },
     60: {
         options: {
-            1: 'Saludar', 3: 'Conversar', 4: 'Bromear', 5: 'Burlar', 15: 'Insultar', 24: '¿Cómo va?',
-            26: 'Llamada de broma', 32: 'Dar primeros auxilios', 33: 'Hacer magia divertida',
-            46: 'Llamada de besame el culo', 54: 'Sonreir', 55: 'Apretón de manos', 56: 'Besar en las mejillas',
-            58: 'Foto divertida por MMS', 61: 'SMS amistoso', 71: 'Hey sexy, ¿cómo te va?', 73: 'Llamada de flirteo',
-            74: 'SMS de flirteo', 79: '¡Mandar a la mierda!', 80: 'SMS con insultos', 119: '¡Che!',
-            121: 'Chusmear por teléfono', 124: 'Jugar a atrapar la pelota',
-            154: 'Por favor dejá de flirtear conmigo.', 156: 'No quiero que seamos amigos.', 161: 'Guiñar un ojo',
-            162: 'Llamada de cumpleaños', 166: 'Decir lo siento', 171: 'Llamada de agradecimiento'
+            1: 'Saludar', 3: 'Conversar', 4: 'Bromear', 5: 'Burlar', 7: 'Invitar un trago', 8: 'Abrazar', 9: 'Besar',
+            10: 'Besar apasionadamente', 12: 'Hacer cosquillas', 14: 'Halagar', 15: 'Insultar', 18: 'Jugar',
+            21: 'Cantar', 24: '¿Cómo va?', 26: 'Llamada de broma', 29: 'Pedir aprendizaje', 30: 'Acariciar',
+            32: 'Dar primeros auxilios', 33: 'Hacer magia divertida', 34: 'Tener una discusión profunda',
+            35: 'Pedir un baile', 46: 'Llamada de besame el culo', 47: 'Hablar sobre los viejos tiempos',
+            51: 'Reconfortar', 54: 'Sonreir', 55: 'Apretón de manos', 56: 'Besar en las mejillas', 57: 'Fraternizar',
+            58: 'Foto divertida por MMS', 59: 'Codearse', 60: 'Chocar los cinco', 61: 'SMS amistoso',
+            62: 'Compartir opiniones', 63: 'Palmadita en la espalda', 64: 'Manosear', 65: 'Chusmear',
+            66: 'Hacer trenzas', 67: 'Pulseada', 68: 'Dar consejo', 69: 'Compartir secretos', 70: 'Pasar el rato',
+            71: 'Hey sexy, ¿cómo te va?', 73: 'Llamada de flirteo', 74: 'SMS de flirteo', 75: 'Alabar',
+            76: 'Contar un chiste verde', 77: 'Decir te amo', 78: 'Serenata', 79: '¡Mandar a la mierda!',
+            80: 'SMS con insultos', 119: '¡Che!', 121: 'Chusmear por teléfono', 124: 'Jugar a atrapar la pelota',
+            154: 'Por favor dejá de flirtear conmigo.', 156: 'No quiero que seamos amigos.',
+            158: 'Hacer el baile del abofeteo del pescado.', 161: 'Guiñar un ojo', 162: 'Llamada de cumpleaños',
+            166: 'Decir lo siento', 171: 'Llamada de agradecimiento'
         }
     },
     106: {
