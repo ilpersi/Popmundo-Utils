@@ -177,6 +177,74 @@ q "DELETE FROM submissions"                              # start over: empties t
 
 To remove one person's data, see the last section.
 
+## Cleaning stored data
+
+Some browsers have other extensions or scripts that add text to the names before the extension reads them (for example
+`[1] Greet` or `Kiss (❤️+5%)`). The extension and the sync script now remove that text (`cleanName` and
+`cleanInteractionName`), but rows stored before that stay as they were. To clean them in the database, with a backup and
+an undo file. Nothing is deleted: only `value` changes, and the row count and the primary keys stay the same.
+
+Run it in this folder. The backup and the SQL files contain install ids, so keep them outside the repository (`/tmp`).
+
+**1. Backup, and note the Time Travel bookmark:**
+
+```sh
+npx wrangler d1 time-travel info popmundo-utils-names -c wrangler.local.toml
+npx wrangler d1 export popmundo-utils-names --remote -c wrangler.local.toml --output=/tmp/names-backup.sql
+```
+
+**2. Build `fix.sql` and `undo.sql` from the backup.** Save this as `/tmp/clean-names.mjs`. It uses the same function as the sync script, and every update
+only matches a row that still has the exact old text, so a row that was re-sent meanwhile is left alone:
+
+```js
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { DatabaseSync } from 'node:sqlite';
+
+const [backup, outDir] = process.argv.slice(2);
+const { cleanInteractionName } = await import(pathToFileURL(path.resolve('../scripts/sync-interaction-names.mjs')).href);
+const db = new DatabaseSync(':memory:');
+db.exec(fs.readFileSync(backup, 'utf8'));
+
+const q = s => "'" + String(s).replaceAll("'", "''") + "'";
+const where = (r, expect) => `WHERE lang = ${Number(r.lang)} AND kind = ${q(r.kind)} AND key = ${Number(r.key)} AND install = ${q(r.install)} AND value = ${q(expect)}`;
+const fix = [], undo = [];
+const candidates = db.prepare("SELECT lang, kind, key, install, value FROM submissions WHERE kind = 'name' AND (value LIKE '[%' OR instr(value, '%') > 0) ORDER BY lang, kind, key, install").all();
+for (const r of candidates) {
+    const clean = cleanInteractionName(r.value, r.key);
+    if (clean === r.value) continue;
+    fix.push(`UPDATE submissions SET value = ${q(clean)} ${where(r, r.value)};`);
+    undo.push(`UPDATE submissions SET value = ${q(r.value)} ${where(r, clean)};`);
+}
+fs.writeFileSync(path.join(outDir, 'fix.sql'), fix.join('\n') + '\n');
+fs.writeFileSync(path.join(outDir, 'undo.sql'), undo.join('\n') + '\n');
+console.log(`${fix.length} rows to change`);
+```
+
+```sh
+node --no-warnings /tmp/clean-names.mjs /tmp/names-backup.sql /tmp
+head -n 3 /tmp/fix.sql        # read a few lines: only UPDATE statements, one row each
+```
+
+The number of rows must match what you expect: the decorated rows found by
+`q "SELECT COUNT(*) FROM submissions WHERE kind = 'name' AND (value LIKE '[' || key || ']%' OR instr(value, '%') > 0)"`.
+
+**3. Apply it, and check:**
+
+```sh
+npx wrangler d1 execute popmundo-utils-names --remote -c wrangler.local.toml --file=/tmp/fix.sql
+q "SELECT COUNT(*) AS rows_total, COUNT(DISTINCT install) AS installs FROM submissions"   # the same as before, apart from new submissions
+q "SELECT COUNT(*) FROM submissions WHERE kind = 'name' AND (value LIKE '[' || key || ']%' OR instr(value, '%') > 0)"   # must be 0
+```
+
+`q` is the shortcut from "Useful queries". D1 does not say whether a file run is atomic, but the updates are guarded, so running `fix.sql` again is
+always safe and changes nothing once it has worked.
+
+**Undo:** `npx wrangler d1 execute popmundo-utils-names --remote -c wrangler.local.toml --file=/tmp/undo.sql` puts the old
+text back, row by row, without touching submissions that arrived in the meantime. `wrangler d1 time-travel restore` (7 days on the Free plan) is the
+last resort: it overwrites the whole database in place and loses everything submitted after the bookmark.
+
 ## Try it locally
 
 ```sh
