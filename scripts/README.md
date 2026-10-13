@@ -36,6 +36,16 @@ installs that must send the same value.
   few votes, accepts nothing and is listed in the pull request.
 - Only **missing** values are added. If an accepted value differs from the one already in the file, it is listed under
   "not applied": change it by hand only if you are sure.
+- **Names are cleaned before the votes are counted.** Some users have another extension or script that changes the
+  text of the dropdown (the effect after the name comes from the "Social" userscript, greasyfork.org/scripts/567869,
+  which keeps the original name in a `data-ih-base` attribute that the extension now reads first), and older versions of
+  this extension sent that text as the name. Two kinds of added text are
+  removed, and nothing else: the interaction's own id in front (`[1] Cumprimentar` becomes `Cumprimentar`, but
+  `[5] Cumprimentar` on interaction 1 is left alone) and a trailing bracket that contains a `%`, the effect on the
+  relationship (`Öp (❤️+5%)` becomes `Öp`). Names with other brackets, such as `ami(e)s`, are never touched, and a name is
+  never emptied. The votes of the decorated and of the clean text are added together, and the pull request lists
+  what was cleaned. The same rule runs in the extension (`InteractionCollector.cleanName` in
+  `../common/interaction-collector.js`), so new versions stop sending the added text: keep the two functions identical.
 - Group names are matched between languages through the interaction id. The English name of the group is the
   language-independent key (`Close Physical` becomes `closePhysical`). A group the file does not know yet is created
   from its English name and added at the end of `INTERACTION_GROUP_ORDER`.
@@ -52,8 +62,10 @@ installs that must send the same value.
 2. New groups are appended to `INTERACTION_GROUP_ORDER` in the order they were found, which is not the game's order.
    Fix the order by hand if you know it. The options page switches to the game's own groups only once every Mass
    Interact chip belongs to one, so wrong group data would show there.
-3. Skim the diff for names that look wrong. A name is only 60 characters of plain text, but it comes from strangers.
-4. Merge, then publish a new version of the extension: the names reach users with the next release.
+3. Look at "Names cleaned before voting": it shows what the rule removed. If a real name was cut, the rule needs fixing:
+   it is meant to match only the two patterns above.
+4. Skim the diff for names that look wrong. A name is only 60 characters of plain text, but it comes from strangers.
+5. Merge, then publish a new version of the extension: the names reach users with the next release.
 
 ### Trying it on your machine without changing the repository
 

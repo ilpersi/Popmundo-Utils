@@ -15,6 +15,10 @@
 //    listed as "not applied", and changing it is a decision for the maintainer.
 //  - Group names are matched between languages by interaction id: the English group name of an interaction gives
 //    the language-independent key, the other languages only provide the wording.
+//  - Some users have other extensions or scripts that add text to the dropdown, and the extension used to send it as
+//    part of the name: the interaction id in front ("[1] Greet") or the effect after it ("Kiss (❤️+5%)"). That is not
+//    the game's name. It is removed before the votes are counted (see cleanInteractionName), so the decorated and the
+//    clean votes of the same name are added together, and the pull request says how many values were cleaned.
 //  - Everything that comes from the Worker is untrusted text. It is checked again here, written to the data file
 //    only through quote(), and written to the pull request text only inside code spans.
 
@@ -56,6 +60,30 @@ export function parseDataFile(source) {
 // Reading the votes
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * The game's name of an interaction, without what other extensions or scripts add to the dropdown text:
+ * a leading "[<id of this interaction>]" and a trailing bracket that contains a "%" (the effect on the relationship).
+ * Nothing else is removed, and a name is never emptied. Cleaning a clean name changes nothing.
+ * Keep it identical to InteractionCollector.cleanName() in common/interaction-collector.js.
+ */
+export function cleanInteractionName(text, id) {
+    let name = String(text ?? '').replace(/\s+/g, ' ').trim();
+
+    const prefix = `[${id}]`;
+    if (name.startsWith(prefix)) {
+        const rest = name.slice(prefix.length).trim();
+        if (rest) name = rest;
+    }
+
+    for (let i = 0; i < 3; i++) {
+        const rest = name.replace(/\s*\([^()]*%[^()]*\)\s*$/, '').trim();
+        if (!rest || rest === name) break;
+        name = rest;
+    }
+
+    return name;
+}
+
 /** @return {string|null} Why the row is not usable, null when it is. */
 export function rowProblem(row) {
     if (!row || typeof row !== 'object') return 'not an object';
@@ -72,17 +100,32 @@ export function rowProblem(row) {
 
 /**
  * Decides, for every (language, kind, interaction id), which value the votes accept.
- * @return {{accepted: Array, tied: Array, waiting: Array, outvoted: Array, invalid: number}}
+ * Names are cleaned first (cleanInteractionName), so that the votes for the decorated and the clean text of the same
+ * name are added together: one install has one row per name, so no install is counted twice.
+ * @return {{accepted: Array, tied: Array, waiting: Array, outvoted: Array, invalid: number, cleaned: {rows: number, votes: number, examples: Array}}}
  */
 export function decideVotes(rows, quorum) {
     const byKey = new Map();
     let invalid = 0;
+    const cleaned = { rows: 0, votes: 0, examples: [] };
     for (const row of rows) {
         if (rowProblem(row)) { invalid++; continue; }
+
+        let value = row.value;
+        if (row.kind === 'name') {
+            const clean = cleanInteractionName(value, row.key);
+            if (clean !== value) {
+                cleaned.rows++;
+                cleaned.votes += row.votes;
+                if (cleaned.examples.length < 8) cleaned.examples.push({ lang: String(row.lang), id: String(row.key), from: value, to: clean, votes: row.votes });
+                value = clean;
+            }
+        }
+
         const id = `${row.lang}|${row.kind}|${row.key}`;
         if (!byKey.has(id)) byKey.set(id, { lang: String(row.lang), kind: row.kind, id: String(row.key), values: new Map() });
         const entry = byKey.get(id);
-        entry.values.set(row.value, (entry.values.get(row.value) || 0) + row.votes);
+        entry.values.set(value, (entry.values.get(value) || 0) + row.votes);
     }
 
     const accepted = [], tied = [], waiting = [], outvoted = [];
@@ -97,7 +140,7 @@ export function decideVotes(rows, quorum) {
             if (second) outvoted.push({ ...base, winner: top, losers: ranked.slice(1) });
         }
     }
-    return { accepted, tied, waiting, outvoted, invalid };
+    return { accepted, tied, waiting, outvoted, invalid, cleaned };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -337,6 +380,7 @@ export function renderPrBody({ report, decisions, quorum, changed }) {
         `- Group names: **${added.groupLabels.length}**`,
         `- Interactions placed in a group: **${added.groupIds.length}**`,
         `- New groups: **${added.newGroups.length}**`,
+        `- Names cleaned before voting: **${decisions.cleaned.rows}**`,
         '',
     ];
     if (!changed) lines.push('_No change to the data file._', '');
@@ -351,6 +395,14 @@ export function renderPrBody({ report, decisions, quorum, changed }) {
         t => `${languageLabel(t.lang)}, ${t.kind} ${code(t.id)}: ${t.ranked.map(r => `${code(r.value)} ${r.votes}`).join(' vs ')}`);
     listSection(lines, 'Accepted although other values got votes', decisions.outvoted,
         o => `${languageLabel(o.lang)}, ${o.kind} ${code(o.id)}: ${code(o.winner.value)} ${o.winner.votes}, against ${o.losers.map(r => `${code(r.value)} ${r.votes}`).join(', ')}`);
+    if (decisions.cleaned.rows > 0) {
+        lines.push(`### Names cleaned before voting (${decisions.cleaned.rows} values, ${decisions.cleaned.votes} votes)`, '',
+            'These names had text added to them, most likely by another extension or script that changes the dropdown: the interaction id in front, or the effect on the relationship after the name. The added text was removed and the votes were counted for the clean name.', '');
+        decisions.cleaned.examples.forEach(c =>
+            lines.push(`- ${languageLabel(c.lang)}, name ${code(c.id)}: ${code(c.from)} counted as ${code(c.to)} (${c.votes} votes)`));
+        if (decisions.cleaned.rows > decisions.cleaned.examples.length) lines.push(`- … and ${decisions.cleaned.rows - decisions.cleaned.examples.length} more`);
+        lines.push('');
+    }
     listSection(lines, 'Group names that cannot be placed yet (the English group of the interaction is not known)', report.unaligned,
         u => `${languageLabel(u.lang)}, interaction ${code(u.id)}: ${code(u.label)}`);
 
