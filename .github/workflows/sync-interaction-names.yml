@@ -31,6 +31,24 @@ jobs:
         with:
           node-version: 24
 
+      # "Re-run jobs" runs the commit of the ORIGINAL run again: the old workflow, the old script and the old data file,
+      # however much the repository has changed since. The pull request then rewrites the data file from that old version
+      # and conflicts with the default branch. "Run workflow" always starts from the latest commit, so we stop here
+      # when the checkout is not the tip of the default branch.
+      - name: Make sure this is the latest commit
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          latest=$(git ls-remote origin "refs/heads/${DEFAULT_BRANCH}" | cut -f1)
+          if [ -z "$latest" ]; then
+            echo "::error::Unable to read the latest commit of ${DEFAULT_BRANCH}."
+            exit 1
+          fi
+          if [ "$(git rev-parse HEAD)" != "$latest" ]; then
+            echo "::error::This run uses an old commit ($(git rev-parse --short HEAD)) but ${DEFAULT_BRANCH} is at ${latest:0:7}. Do not use Re-run jobs: start a new run with Run workflow."
+            exit 1
+          fi
+
       - name: Read the votes and update the data file
         id: sync
         # The inputs go through environment variables, never straight into the shell command

@@ -25,6 +25,11 @@ It has no dependencies: it needs Node 18 or newer (the workflow uses 24).
 Actions tab > "Sync interaction names" > Run workflow. The `quorum` input (default 2) is the number of different
 installs that must send the same value.
 
+**Always use "Run workflow", never "Re-run jobs" on an old run.** A re-run executes the commit of the original run
+again, with its old workflow, old script and old data file, so the pull request rewrites the data file from that old
+version and conflicts with the default branch. The workflow now stops with an error when it is not on the latest commit;
+if you see it, start a new run with "Run workflow".
+
 - If something was accepted, the workflow opens (or updates) the pull request `sync-interaction-names`.
 - If nothing changed, no pull request is created. The job summary still shows what is waiting for more votes.
 - If the Worker cannot be reached or the token is wrong, the job fails with a short message. The answer of the
