@@ -293,15 +293,16 @@ const INTERACTION_NAMES_DB = {
             69: 'Sırlarını paylaş', 70: 'Takıl', 71: 'Hey seksi şey, n\'aber?', 73: 'Telefonda yaz',
             74: 'Asılmak için SMS at', 75: 'Öv', 76: 'Belden aşağı bir fıkra anlat', 77: '"Seni seviyorum!" de',
             78: 'Serenat yap', 79: 'S*ktir lan!', 80: 'Aşağılayıcı bir SMS gönder', 89: 'Bisepslerini aç',
-            93: 'Kucağına al', 94: 'Yol göster', 96: 'Ninni söyle', 101: 'Merak ettiği şeyleri açıkla',
-            102: 'Saçlarını karıştır', 103: 'Alnından öp', 104: 'Masal anlat', 119: 'N\'aber!',
+            93: 'Kucağına al', 94: 'Yol göster', 96: 'Ninni söyle', 97: 'Ebeveynlerini çekiştir',
+            100: 'Merak ettiğin şeyleri sor', 101: 'Merak ettiği şeyleri açıkla', 102: 'Saçlarını karıştır',
+            103: 'Alnından öp', 104: 'Masal anlat', 106: 'Hayranlıkla bak', 119: 'N\'aber!',
             121: 'Telefonda dedikodu et', 124: 'Elim sende oyna', 129: 'El ele dolaş', 136: 'Ölülerden bahset',
             137: 'Korkut', 139: 'Notlarını karşılaştır', 145: 'Geleceğe dair planlar yap', 146: 'Bulaşıkları yıka',
             147: 'Rol yap', 149: 'Eşine iltifat et', 150: 'Tıraş et', 154: 'Lütfen bana asılmayı kes.',
-            156: 'Arkadaş olmak falan istemiyorum.', 157: 'Sorun sen değilsin, benim...', 161: 'Göz kırp',
-            162: 'Doğum gününü kutlamak için ara', 164: 'Kobe Sutra\'nın Tadını Çıkar', 165: 'Aşk meşk için ara',
-            166: 'Özür dile', 167: '"Arrr!" diye haykır', 168: '"Ahoy, canımın içi!" de', 169: '"Yo ho ho!" de',
-            171: 'Teşekkür etmek için ara'
+            156: 'Arkadaş olmak falan istemiyorum.', 157: 'Sorun sen değilsin, benim...', 160: 'Bağır',
+            161: 'Göz kırp', 162: 'Doğum gününü kutlamak için ara', 164: 'Kobe Sutra\'nın Tadını Çıkar',
+            165: 'Aşk meşk için ara', 166: 'Özür dile', 167: '"Arrr!" diye haykır', 168: '"Ahoy, canımın içi!" de',
+            169: '"Yo ho ho!" de', 171: 'Teşekkür etmek için ara'
         }
     },
     23: {
