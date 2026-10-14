@@ -2,9 +2,9 @@
 
 ## Data Collection
 
-Popmundo Utils is not collecting any data at all. Since no data is collected, it stands to reason, and is, indeed, the case, that none of your data can be sold to third parties.
+Popmundo Utils does not collect personal data, and none of your data is sold to third parties. The only data that ever leaves your browser is the optional, anonymous sharing of interaction names described in "Community translations" below.
 
-That being said, there are a few other ways your data is used.
+There are also a few other ways your data is used.
 
 ## Community translations (on by default, optional)
 
@@ -15,6 +15,10 @@ What is shared: your game language, the numbers that identify the interactions, 
 What is never shared: character names or ids, your account or login details, your relationships, or anything else from your game.
 
 The data is sent to a small service hosted on Cloudflare and is used to produce the translations included in later versions of the extension. Like any web host, Cloudflare processes the connection itself, the project does not store IP addresses. You can see exactly what was last sent with "View last submission" in the same options card. To have your submissions removed, open an issue on the project's GitHub page and quote the random identifier shown there.
+
+## Browser Storage API
+
+Popmundo Utils stores user options with the browser's extension storage API, whenever they are explicitly changed by the user. In Mozilla Firefox, if Firefox Sync is enabled, the options are synced by Firefox to your other Firefox browsers; if it is disabled they stay on your device. The Chrome details below apply to Google Chrome and other Chromium browsers.
 
 ## Chrome Storage API
 

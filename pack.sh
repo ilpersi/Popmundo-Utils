@@ -22,7 +22,8 @@ zip -r "$OUTPUT" \
     libs \
     options \
     --exclude "*.DS_Store" \
-    --excluce ".cws_credentials.json" \
+    --exclude ".cws_credentials.json" \
+    --exclude ".amo_credentials.json" \
     --exclude "*.md" \
     --exclude "*.ps1" \
     --exclude "*.py" \

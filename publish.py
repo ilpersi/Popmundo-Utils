@@ -1,24 +1,54 @@
 #!/usr/bin/env python3
-"""Pack and publish the Popmundo Utils Chrome extension to the Chrome Web Store.
+"""Pack and publish the Popmundo Utils extension to the Chrome Web Store and
+to addons.mozilla.org (AMO, Firefox).
 
-Uses the Chrome Web Store API v2 (the v1.1 API is retired 2026-10-15).
-Publish visibility (public vs. trusted testers) is no longer settable via
-the API - it must be configured once in the Developer Dashboard under
-Publisher > Distribution settings; `publish` always uses whatever is set
-there.
+Use --target chrome|firefox|all (default: all) to choose the store. With
+`all`, Firefox is skipped with a warning when no AMO credentials are
+configured, and a failure on one store does not prevent the other from being
+attempted.
 
-Pass --skip-review to send skipReview=true with the publish request. Without
-it the request has no body (default behaviour).
+Chrome Web Store
+    Uses the Chrome Web Store API v2 (the v1.1 API is retired 2026-10-15).
+    Publish visibility (public vs. trusted testers) is no longer settable via
+    the API - it must be configured once in the Developer Dashboard under
+    Publisher > Distribution settings; `publish` always uses whatever is set
+    there.
+
+    Pass --skip-review to send skipReview=true with the publish request.
+    Without it the request has no body (default behaviour).
+
+AMO (Firefox)
+    Uses the AMO v5 API. Only NEW VERSIONS of an existing listing can be
+    published: the very first listing must be created by hand in the AMO
+    developer hub. The version is submitted to the listed channel and enters
+    review, like on the Chrome Web Store. --skip-review has no AMO equivalent
+    and is ignored for Firefox.
 
 Dependencies:
     pip install google-auth google-auth-oauthlib requests
+    (the google packages are only needed for the Chrome Web Store)
 
-Credentials setup (one-time):
+Credentials setup (one-time, Chrome Web Store):
     python publish.py --get-token
     This opens a browser OAuth flow and prints the refresh token to store in
     your config file or environment variables.
 
-Credentials (env vars or .cws_credentials.json):
+AMO credentials (env vars or .amo_credentials.json):
+    AMO_JWT_ISSUER     — API key ("JWT issuer"), from
+                         https://addons.mozilla.org/developers/addon/api/key/
+    AMO_JWT_SECRET     — API secret ("JWT secret"), from the same page
+    AMO_ADDON_ID       — optional; add-on id or slug. Defaults to the gecko id
+                         in manifest.json.
+
+.amo_credentials.json format:
+    {
+        "jwt_issuer": "user:...",
+        "jwt_secret": "...",
+        "addon_id": "@popmundo-utils"
+    }
+    Add this file to .gitignore — it contains secrets.
+
+Chrome Web Store credentials (env vars or .cws_credentials.json):
     CWS_EXTENSION_ID   — the extension's Chrome Web Store ID
     CWS_PUBLISHER_ID   — publisher ID, from Developer Dashboard > Publisher > Settings
     CWS_CLIENT_ID      — OAuth 2.0 client ID (from Google Cloud Console)
@@ -37,15 +67,18 @@ Credentials (env vars or .cws_credentials.json):
 """
 
 import argparse
+import base64
+import hashlib
+import hmac
 import json
 import os
 import sys
+import time
+import uuid
 import zipfile
 from pathlib import Path
 
 import requests
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 
 # ---------------------------------------------------------------------------
 # Pack configuration (mirrors pack.py)
@@ -69,6 +102,7 @@ EXCLUDE_NAMES = {
     ".DS_Store",
     "Thumbs.db",
     ".cws_credentials.json",
+    ".amo_credentials.json",
 }
 
 EXCLUDE_EXTENSIONS = {
@@ -87,6 +121,16 @@ CWS_SCOPE = "https://www.googleapis.com/auth/chromewebstore"
 CWS_API_BASE = "https://chromewebstore.googleapis.com/v2"
 CWS_UPLOAD_BASE = "https://chromewebstore.googleapis.com/upload/v2"
 CREDENTIALS_FILE = ".cws_credentials.json"
+
+# ---------------------------------------------------------------------------
+# AMO API
+# ---------------------------------------------------------------------------
+
+AMO_API_BASE = "https://addons.mozilla.org/api/v5"
+AMO_CREDENTIALS_FILE = ".amo_credentials.json"
+AMO_POLL_INTERVAL_SECONDS = 3
+AMO_POLL_TIMEOUT_SECONDS = 300
+AMO_REQUEST_TIMEOUT_SECONDS = 120
 
 
 def item_resource(config: dict) -> str:
@@ -164,6 +208,10 @@ def load_credentials(root: Path) -> dict:
 
 
 def get_access_token(config: dict) -> str:
+    # Imported here so that Firefox-only runs do not need the google packages
+    from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
+
     creds = Credentials(
         token=None,
         refresh_token=config["refresh_token"],
@@ -279,6 +327,190 @@ def get_status(config: dict, access_token: str) -> None:
         print(f"Status ({label}): state={state} {channel_info}")
 
 # ---------------------------------------------------------------------------
+# AMO (addons.mozilla.org) operations
+# ---------------------------------------------------------------------------
+
+def _b64url(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def amo_jwt(config: dict, now: int = None, jti: str = None) -> str:
+    """Build the short-lived HS256 JWT the AMO API expects (hand-rolled to avoid a PyJWT dependency)."""
+    now = int(time.time()) if now is None else now
+    header = {"alg": "HS256", "typ": "JWT"}
+    payload = {
+        "iss": config["jwt_issuer"],
+        "jti": jti or str(uuid.uuid4()),
+        "iat": now,
+        "exp": now + 240,  # AMO accepts at most 5 minutes
+    }
+    signing_input = ".".join(
+        _b64url(json.dumps(part, separators=(",", ":")).encode("utf-8")) for part in (header, payload)
+    )
+    signature = hmac.new(config["jwt_secret"].encode("utf-8"), signing_input.encode("ascii"), hashlib.sha256).digest()
+    return f"{signing_input}.{_b64url(signature)}"
+
+
+def amo_headers(config: dict) -> dict:
+    # A new token for every call: they are cheap, and a slow review poll must not outlive the expiry
+    return {"Authorization": f"JWT {amo_jwt(config)}"}
+
+
+def default_addon_id(root: Path) -> str:
+    with open(root / "manifest.json", encoding="utf-8") as f:
+        manifest = json.load(f)
+    return manifest.get("browser_specific_settings", {}).get("gecko", {}).get("id", "")
+
+
+def load_amo_credentials(root: Path, required: bool) -> dict | None:
+    """Load AMO credentials from environment variables or .amo_credentials.json.
+
+    When they are incomplete, exits if `required`, otherwise returns None so the caller can skip Firefox.
+    """
+    keys = ("jwt_issuer", "jwt_secret", "addon_id")
+    config = {k: os.environ.get(f"AMO_{k.upper()}") for k in keys}
+
+    cred_path = root / AMO_CREDENTIALS_FILE
+    if not all(config.values()) and cred_path.exists():
+        with open(cred_path, encoding="utf-8") as f:
+            file_config = json.load(f)
+        for k in keys:
+            if not config[k]:
+                config[k] = file_config.get(k)
+
+    if not config["addon_id"]:
+        config["addon_id"] = default_addon_id(root)
+
+    missing = [f"AMO_{k.upper()}" for k in keys if not config.get(k)]
+    if missing:
+        message = (f"Missing AMO credentials: {', '.join(missing)}. "
+                   f"Set the environment variables or create {AMO_CREDENTIALS_FILE} "
+                   f"(keys from https://addons.mozilla.org/developers/addon/api/key/).")
+        if required:
+            print(message)
+            sys.exit(1)
+        print(f"Skipping Firefox: {message}")
+        return None
+
+    return config
+
+
+def _amo_error_text(resp: requests.Response) -> str:
+    try:
+        return json.dumps(resp.json())
+    except ValueError:
+        return resp.text[:500]
+
+
+def amo_upload(zip_path: Path, config: dict) -> str:
+    """Upload the zip to AMO, wait for the validation and return the upload uuid."""
+    with open(zip_path, "rb") as f:
+        resp = requests.post(
+            f"{AMO_API_BASE}/addons/upload/",
+            headers=amo_headers(config),
+            data={"channel": "listed"},
+            files={"upload": (zip_path.name, f, "application/zip")},
+            timeout=AMO_REQUEST_TIMEOUT_SECONDS,
+        )
+    if resp.status_code not in (200, 201, 202):
+        print(f"AMO upload failed (HTTP {resp.status_code}): {_amo_error_text(resp)}")
+        sys.exit(1)
+
+    upload_uuid = resp.json()["uuid"]
+    print(f"Uploaded:  {zip_path.name}  (upload {upload_uuid}), waiting for AMO validation...")
+
+    deadline = time.time() + AMO_POLL_TIMEOUT_SECONDS
+    while True:
+        resp = requests.get(
+            f"{AMO_API_BASE}/addons/upload/{upload_uuid}/",
+            headers=amo_headers(config),
+            timeout=AMO_REQUEST_TIMEOUT_SECONDS,
+        )
+        if resp.status_code != 200:
+            print(f"AMO validation check failed (HTTP {resp.status_code}): {_amo_error_text(resp)}")
+            sys.exit(1)
+
+        data = resp.json()
+        if data.get("processed"):
+            break
+        if time.time() > deadline:
+            print("AMO validation did not finish in time; check the developer hub and retry.")
+            sys.exit(1)
+        time.sleep(AMO_POLL_INTERVAL_SECONDS)
+
+    if not data.get("valid"):
+        print("AMO validation failed:")
+        validation = data.get("validation") or {}
+        for message in validation.get("messages", []):
+            print(f"  - [{message.get('type', '')}] {message.get('message', '')}")
+        if not validation.get("messages"):
+            print(f"  {json.dumps(data)}")
+        sys.exit(1)
+
+    print("Validated: AMO accepted the package")
+    return upload_uuid
+
+
+def amo_publish(upload_uuid: str, config: dict, release_notes: str = None) -> None:
+    """Create a new listed version of the add-on from a validated upload."""
+    body = {"upload": upload_uuid}
+    if release_notes:
+        body["release_notes"] = {"en-US": release_notes}
+
+    resp = requests.post(
+        f"{AMO_API_BASE}/addons/addon/{requests.utils.quote(config['addon_id'], safe='')}/versions/",
+        headers=amo_headers(config),
+        json=body,
+        timeout=AMO_REQUEST_TIMEOUT_SECONDS,
+    )
+    if resp.status_code not in (200, 201):
+        print(f"AMO publish failed (HTTP {resp.status_code}): {_amo_error_text(resp)}")
+        if resp.status_code == 404:
+            print("The add-on was not found: the first listing must be created by hand in the AMO developer hub.")
+        sys.exit(1)
+
+    data = resp.json()
+    status = (data.get("file") or {}).get("status", "unknown")
+    print(f"Published: AMO version={data.get('version', 'unknown')} file status={status} (submitted for review)")
+
+
+def amo_get_status(config: dict) -> None:
+    addon_id = requests.utils.quote(config["addon_id"], safe="")
+
+    resp = requests.get(
+        f"{AMO_API_BASE}/addons/addon/{addon_id}/",
+        headers=amo_headers(config),
+        timeout=AMO_REQUEST_TIMEOUT_SECONDS,
+    )
+    if resp.status_code != 200:
+        print(f"AMO status: request failed (HTTP {resp.status_code}): {_amo_error_text(resp)}")
+        return
+
+    addon = resp.json()
+    current = addon.get("current_version") or {}
+    print(
+        f"AMO status: addon status={addon.get('status', 'unknown')} "
+        f"current version={current.get('version', 'none')} "
+        f"file status={(current.get('file') or {}).get('status', 'unknown')}"
+    )
+
+    resp = requests.get(
+        f"{AMO_API_BASE}/addons/addon/{addon_id}/versions/",
+        headers=amo_headers(config),
+        params={"filter": "all_with_unlisted", "page_size": 3},
+        timeout=AMO_REQUEST_TIMEOUT_SECONDS,
+    )
+    if resp.status_code != 200:
+        print(f"AMO versions: request failed (HTTP {resp.status_code}): {_amo_error_text(resp)}")
+        return
+
+    for version in resp.json().get("results", []):
+        print(
+            f"AMO version {version.get('version', '?')}: "
+            f"channel={version.get('channel', '?')} file status={(version.get('file') or {}).get('status', 'unknown')}"
+        )
+
+# ---------------------------------------------------------------------------
 # One-time token helper
 # ---------------------------------------------------------------------------
 
@@ -338,9 +570,19 @@ def run_get_token(root: Path) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
+def run_store(name: str, action, results: dict) -> None:
+    """Run one store's steps. The helpers exit on failure: that is recorded so the other store still gets attempted."""
+    print(f"\n== {name} ==")
+    try:
+        action()
+        results[name] = "ok"
+    except SystemExit as e:
+        results[name] = "failed" if e.code not in (0, None) else "ok"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Pack and publish Popmundo Utils to the Chrome Web Store."
+        description="Pack and publish Popmundo Utils to the Chrome Web Store and/or addons.mozilla.org."
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument(
@@ -353,30 +595,55 @@ def main() -> None:
     )
     mode.add_argument(
         "--get-token", action="store_true",
-        help="Run the OAuth flow to obtain a refresh token (one-time setup).",
+        help="Run the OAuth flow to obtain a Chrome Web Store refresh token (one-time setup).",
     )
     mode.add_argument(
         "--get-status", action="store_true",
-        help="Check the Chrome Web Store draft/published item status and exit.",
+        help="Check the Chrome Web Store and/or AMO status and exit.",
+    )
+    parser.add_argument(
+        "--target", choices=("chrome", "firefox", "all"), default="all",
+        help="Store to publish to (default: all). With 'all', Firefox is skipped when AMO credentials are missing.",
     )
     parser.add_argument(
         "--skip-review", action="store_true",
         help="Ask the Chrome Web Store to skip review when publishing (skipReview=true). "
-             "The store may still reject the request.",
+             "The store may still reject the request. Ignored for Firefox.",
+    )
+    parser.add_argument(
+        "--release-notes", metavar="TEXT",
+        help="Release notes (en-US) shown on the AMO version page. Ignored for Chrome.",
     )
     args = parser.parse_args()
 
     root = Path(__file__).parent.resolve()
+    want_chrome = args.target in ("chrome", "all")
+    want_firefox = args.target in ("firefox", "all")
 
     if args.get_token:
         run_get_token(root)
         return
 
+    # Credentials are checked before packing/uploading anything. A store that is explicitly requested must have them,
+    # with 'all' Firefox is optional so that Chrome-only setups keep working.
+    amo_config = None
+    if want_firefox and not args.pack_only:
+        amo_config = load_amo_credentials(root, required=args.target == "firefox")
+
+    results = {}
+
     if args.get_status:
-        config = load_credentials(root)
-        print("Authenticating...")
-        access_token = get_access_token(config)
-        get_status(config, access_token)
+        def chrome_status():
+            config = load_credentials(root)
+            print("Authenticating...")
+            get_status(config, get_access_token(config))
+
+        if want_chrome:
+            run_store("Chrome Web Store", chrome_status, results)
+        if amo_config:
+            run_store("AMO", lambda: amo_get_status(amo_config), results)
+        if "failed" in results.values():
+            sys.exit(1)
         return
 
     if args.publish_only:
@@ -390,15 +657,34 @@ def main() -> None:
     if args.pack_only:
         return
 
-    config = load_credentials(root)
-    print("Authenticating...")
-    access_token = get_access_token(config)
+    if args.skip_review and want_firefox and amo_config:
+        print("Note: --skip-review only applies to the Chrome Web Store.")
 
-    print(f"Uploading...")
-    upload(zip_path, config, access_token)
+    def chrome_publish():
+        config = load_credentials(root)
+        print("Authenticating...")
+        access_token = get_access_token(config)
 
-    print("Publishing (skipReview=true)..." if args.skip_review else "Publishing...")
-    publish(config, access_token, skip_review=args.skip_review)
+        print("Uploading...")
+        upload(zip_path, config, access_token)
+
+        print("Publishing (skipReview=true)..." if args.skip_review else "Publishing...")
+        publish(config, access_token, skip_review=args.skip_review)
+
+    def firefox_publish():
+        print("Uploading...")
+        upload_uuid = amo_upload(zip_path, amo_config)
+        print("Publishing...")
+        amo_publish(upload_uuid, amo_config, release_notes=args.release_notes)
+
+    if want_chrome:
+        run_store("Chrome Web Store", chrome_publish, results)
+    if amo_config:
+        run_store("AMO", firefox_publish, results)
+
+    print("\nSummary: " +", ".join(f"{name}: {state}" for name, state in results.items()))
+    if "failed" in results.values():
+        sys.exit(1)
 
 
 if __name__ == "__main__":

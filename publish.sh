@@ -1,29 +1,49 @@
 #!/usr/bin/env bash
-# Pack and publish the Popmundo Utils Chrome extension to the Chrome Web Store.
+# Pack and publish the Popmundo Utils extension to the Chrome Web Store and to
+# addons.mozilla.org (AMO, Firefox).
 #
-# Dependencies: curl, zip, jq, python3 (for version parsing)
+# Dependencies: curl, zip, jq, openssl, python3 (for version parsing)
 #   macOS:  brew install jq
 #   Linux:  apt install jq / dnf install jq
 #
-# Uses the Chrome Web Store API v2 (the v1.1 API is retired 2026-10-15).
-# Publish visibility (public vs. trusted testers) is no longer settable via
-# the API - it must be configured once in the Developer Dashboard under
-# Publisher > Distribution settings; publish always uses whatever is set
+# Use --target chrome|firefox|all (default: all) to choose the store. With
+# "all", Firefox is skipped with a warning when no AMO credentials are
+# configured, and a failure on one store does not prevent the other from being
+# attempted.
+#
+# Chrome Web Store: uses the Chrome Web Store API v2 (the v1.1 API is retired
+# 2026-10-15). Publish visibility (public vs. trusted testers) is no longer
+# settable via the API - it must be configured once in the Developer Dashboard
+# under Publisher > Distribution settings; publish always uses whatever is set
 # there.
 #
-# Credentials (env vars or .cws_credentials.json):
+# AMO (Firefox): uses the AMO v5 API. Only NEW VERSIONS of an existing listing
+# can be published: the very first listing must be created by hand in the AMO
+# developer hub. The version is submitted to the listed channel and enters
+# review, like on the Chrome Web Store. --skip-review has no AMO equivalent and
+# is ignored for Firefox.
+#
+# Chrome Web Store credentials (env vars or .cws_credentials.json):
 #   CWS_EXTENSION_ID   — Chrome Web Store extension ID
 #   CWS_PUBLISHER_ID   — publisher ID, from Developer Dashboard > Publisher > Settings
 #   CWS_CLIENT_ID      — OAuth 2.0 client ID
 #   CWS_CLIENT_SECRET  — OAuth 2.0 client secret
 #   CWS_REFRESH_TOKEN  — long-lived refresh token
 #
+# AMO credentials (env vars or .amo_credentials.json, keys: jwt_issuer, jwt_secret, addon_id):
+#   AMO_JWT_ISSUER     — API key ("JWT issuer"), from
+#                        https://addons.mozilla.org/developers/addon/api/key/
+#   AMO_JWT_SECRET     — API secret ("JWT secret"), from the same page
+#   AMO_ADDON_ID       — optional; add-on id or slug. Defaults to the gecko id in manifest.json
+#
 # Usage:
-#   ./publish.sh                        pack + upload + publish
+#   ./publish.sh                        pack + upload + publish to both stores
+#   ./publish.sh --target firefox       only AMO (--target chrome: only the Chrome Web Store)
 #   ./publish.sh --pack-only
 #   ./publish.sh --publish-only file.zip
 #   ./publish.sh --get-status
-#   ./publish.sh --skip-review          publish with skipReview=true
+#   ./publish.sh --skip-review          publish with skipReview=true (Chrome only)
+#   ./publish.sh --release-notes "text" release notes for the AMO version (Firefox only)
 
 set -euo pipefail
 
@@ -35,6 +55,11 @@ CWS_TOKEN_URL="https://oauth2.googleapis.com/token"
 CWS_API_BASE="https://chromewebstore.googleapis.com/v2"
 CWS_UPLOAD_BASE="https://chromewebstore.googleapis.com/upload/v2"
 
+AMO_CREDENTIALS_FILE=".amo_credentials.json"
+AMO_API_BASE="https://addons.mozilla.org/api/v5"
+AMO_POLL_INTERVAL_SECONDS=3
+AMO_POLL_TIMEOUT_SECONDS=300
+
 # ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
@@ -44,17 +69,31 @@ PUBLISH_ONLY=""
 GET_TOKEN=false
 GET_STATUS=false
 SKIP_REVIEW=false
+TARGET="all"
+RELEASE_NOTES=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --pack-only)    PACK_ONLY=true; shift ;;
-        --publish-only) PUBLISH_ONLY="$2"; shift 2 ;;
-        --get-token)    GET_TOKEN=true; shift ;;
-        --get-status)   GET_STATUS=true; shift ;;
-        --skip-review)  SKIP_REVIEW=true; shift ;;
+        --pack-only)     PACK_ONLY=true; shift ;;
+        --publish-only)  PUBLISH_ONLY="$2"; shift 2 ;;
+        --get-token)     GET_TOKEN=true; shift ;;
+        --get-status)    GET_STATUS=true; shift ;;
+        --skip-review)   SKIP_REVIEW=true; shift ;;
+        --target)        TARGET="$2"; shift 2 ;;
+        --release-notes) RELEASE_NOTES="$2"; shift 2 ;;
         *) echo "Unknown option: $1"; exit 1 ;;
     esac
 done
+
+case "$TARGET" in
+    chrome|firefox|all) ;;
+    *) echo "Invalid --target '$TARGET' (use chrome, firefox or all)"; exit 1 ;;
+esac
+
+WANT_CHROME=false
+WANT_FIREFOX=false
+[[ "$TARGET" == "chrome"  || "$TARGET" == "all" ]] && WANT_CHROME=true
+[[ "$TARGET" == "firefox" || "$TARGET" == "all" ]] && WANT_FIREFOX=true
 
 # ---------------------------------------------------------------------------
 # Get refresh token (one-time OAuth flow)
@@ -189,6 +228,7 @@ pack() {
         options \
         --exclude "*.DS_Store" \
         --exclude ".cws_credentials.json" \
+        --exclude ".amo_credentials.json" \
         --exclude "*.md" \
         --exclude "*.ps1" \
         --exclude "*.py" \
@@ -395,6 +435,232 @@ get_status() {
 }
 
 # ---------------------------------------------------------------------------
+# AMO (addons.mozilla.org) operations
+# ---------------------------------------------------------------------------
+
+b64url() {
+    openssl base64 -A | tr '+/' '-_' | tr -d '='
+}
+
+# Short-lived HS256 JWT, as the AMO API expects. A new one is built for every call.
+amo_jwt() {
+    local now header payload signing_input signature
+    now=$(date +%s)
+    header=$(printf '%s' '{"alg":"HS256","typ":"JWT"}' | b64url)
+    payload=$(jq -cn --arg iss "$AMO_JWT_ISSUER" --arg jti "$(openssl rand -hex 16)" --argjson iat "$now" \
+        '{iss: $iss, jti: $jti, iat: $iat, exp: ($iat + 240)}' | tr -d '\n' | b64url)
+    signing_input="${header}.${payload}"
+    signature=$(printf '%s' "$signing_input" | openssl dgst -sha256 -hmac "$AMO_JWT_SECRET" -binary | b64url)
+    echo "${signing_input}.${signature}"
+}
+
+# Returns 0 when the AMO credentials are complete, 1 (with a message in AMO_CREDENTIALS_ERROR) when they are not.
+load_amo_credentials() {
+    if [[ -z "${AMO_JWT_ISSUER:-}" && -f "$AMO_CREDENTIALS_FILE" ]]; then
+        AMO_JWT_ISSUER=$(jq -r '.jwt_issuer // empty' "$AMO_CREDENTIALS_FILE")
+    fi
+    if [[ -z "${AMO_JWT_SECRET:-}" && -f "$AMO_CREDENTIALS_FILE" ]]; then
+        AMO_JWT_SECRET=$(jq -r '.jwt_secret // empty' "$AMO_CREDENTIALS_FILE")
+    fi
+    if [[ -z "${AMO_ADDON_ID:-}" && -f "$AMO_CREDENTIALS_FILE" ]]; then
+        AMO_ADDON_ID=$(jq -r '.addon_id // empty' "$AMO_CREDENTIALS_FILE")
+    fi
+    if [[ -z "${AMO_ADDON_ID:-}" ]]; then
+        AMO_ADDON_ID=$(jq -r '.browser_specific_settings.gecko.id // empty' manifest.json)
+    fi
+
+    local missing=()
+    [[ -z "${AMO_JWT_ISSUER:-}" ]] && missing+=(AMO_JWT_ISSUER)
+    [[ -z "${AMO_JWT_SECRET:-}" ]] && missing+=(AMO_JWT_SECRET)
+    [[ -z "${AMO_ADDON_ID:-}"   ]] && missing+=(AMO_ADDON_ID)
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        AMO_CREDENTIALS_ERROR="Missing AMO credentials: ${missing[*]}. Set env vars or create ${AMO_CREDENTIALS_FILE} (keys from https://addons.mozilla.org/developers/addon/api/key/)."
+        return 1
+    fi
+
+    AMO_ADDON_PATH=$(jq -rn --arg v "$AMO_ADDON_ID" '$v | @uri')
+}
+
+amo_upload() {
+    local zip_path="$1"
+
+    local response http_code body upload_uuid
+    response=$(curl -s -w '\n%{http_code}' -X POST "${AMO_API_BASE}/addons/upload/" \
+        -H "Authorization: JWT $(amo_jwt)" \
+        -F "channel=listed" \
+        -F "upload=@${zip_path};type=application/zip")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
+
+    if [[ "$http_code" != "200" && "$http_code" != "201" && "$http_code" != "202" ]]; then
+        echo "AMO upload failed (HTTP ${http_code}): ${body}"
+        exit 1
+    fi
+
+    upload_uuid=$(echo "$body" | jq -r '.uuid // empty')
+    if [[ -z "$upload_uuid" ]]; then
+        echo "AMO upload failed: no upload uuid in the answer: ${body}"
+        exit 1
+    fi
+    echo "Uploaded:  $(basename "$zip_path")  (upload ${upload_uuid}), waiting for AMO validation..."
+
+    local deadline=$(( $(date +%s) + AMO_POLL_TIMEOUT_SECONDS ))
+    while true; do
+        response=$(curl -s -w '\n%{http_code}' -X GET "${AMO_API_BASE}/addons/upload/${upload_uuid}/" \
+            -H "Authorization: JWT $(amo_jwt)")
+        http_code=$(echo "$response" | tail -n1)
+        body=$(echo "$response" | sed '$d')
+
+        if [[ "$http_code" != "200" ]]; then
+            echo "AMO validation check failed (HTTP ${http_code}): ${body}"
+            exit 1
+        fi
+
+        [[ "$(echo "$body" | jq -r '.processed // false')" == "true" ]] && break
+
+        if (( $(date +%s) > deadline )); then
+            echo "AMO validation did not finish in time; check the developer hub and retry."
+            exit 1
+        fi
+        sleep "$AMO_POLL_INTERVAL_SECONDS"
+    done
+
+    if [[ "$(echo "$body" | jq -r '.valid // false')" != "true" ]]; then
+        echo "AMO validation failed:"
+        if [[ "$(echo "$body" | jq -r '(.validation.messages // []) | length')" == "0" ]]; then
+            echo "  ${body}"
+        else
+            echo "$body" | jq -r '.validation.messages[] | "  - [" + (.type // "") + "] " + (.message // "")'
+        fi
+        exit 1
+    fi
+
+    echo "Validated: AMO accepted the package"
+    AMO_UPLOAD_UUID="$upload_uuid"
+}
+
+amo_publish() {
+    local upload_uuid="$1"
+
+    local request_body
+    request_body=$(jq -cn --arg upload "$upload_uuid" --arg notes "$RELEASE_NOTES" \
+        '{upload: $upload} + (if $notes != "" then {release_notes: {"en-US": $notes}} else {} end)')
+
+    local response http_code body
+    response=$(curl -s -w '\n%{http_code}' -X POST "${AMO_API_BASE}/addons/addon/${AMO_ADDON_PATH}/versions/" \
+        -H "Authorization: JWT $(amo_jwt)" \
+        -H "Content-Type: application/json" \
+        -d "$request_body")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
+
+    if [[ "$http_code" != "200" && "$http_code" != "201" ]]; then
+        echo "AMO publish failed (HTTP ${http_code}): ${body}"
+        if [[ "$http_code" == "404" ]]; then
+            echo "The add-on was not found: the first listing must be created by hand in the AMO developer hub."
+        fi
+        exit 1
+    fi
+
+    echo "Published: AMO version=$(echo "$body" | jq -r '.version // "unknown"')" \
+         "file status=$(echo "$body" | jq -r '.file.status // "unknown"') (submitted for review)"
+}
+
+amo_get_status() {
+    local response http_code body
+    response=$(curl -s -w '\n%{http_code}' -X GET "${AMO_API_BASE}/addons/addon/${AMO_ADDON_PATH}/" \
+        -H "Authorization: JWT $(amo_jwt)")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
+
+    if [[ "$http_code" != "200" ]]; then
+        echo "AMO status: request failed (HTTP ${http_code}): ${body}"
+        return
+    fi
+
+    echo "AMO status: addon status=$(echo "$body" | jq -r '.status // "unknown"')" \
+         "current version=$(echo "$body" | jq -r '.current_version.version // "none"')" \
+         "file status=$(echo "$body" | jq -r '.current_version.file.status // "unknown"')"
+
+    response=$(curl -s -w '\n%{http_code}' -G "${AMO_API_BASE}/addons/addon/${AMO_ADDON_PATH}/versions/" \
+        -H "Authorization: JWT $(amo_jwt)" \
+        --data-urlencode "filter=all_with_unlisted" --data-urlencode "page_size=3")
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | sed '$d')
+
+    if [[ "$http_code" != "200" ]]; then
+        echo "AMO versions: request failed (HTTP ${http_code}): ${body}"
+        return
+    fi
+
+    echo "$body" | jq -r '(.results // [])[] | "AMO version " + (.version // "?") + ": channel=" + (.channel // "?") + " file status=" + (.file.status // "unknown")'
+}
+
+# ---------------------------------------------------------------------------
+# Per-store steps
+# ---------------------------------------------------------------------------
+
+chrome_status() {
+    load_credentials
+    echo "Authenticating..."
+    local access_token
+    access_token=$(get_access_token)
+    get_status "$access_token"
+}
+
+chrome_publish() {
+    load_credentials
+
+    echo "Authenticating..."
+    local access_token
+    access_token=$(get_access_token)
+
+    echo "Uploading..."
+    upload "$ZIP_PATH" "$access_token"
+
+    if [[ "$SKIP_REVIEW" == true ]]; then
+        echo "Publishing (skipReview=true)..."
+    else
+        echo "Publishing..."
+    fi
+    publish "$access_token"
+}
+
+firefox_publish() {
+    echo "Uploading..."
+    amo_upload "$ZIP_PATH"
+
+    echo "Publishing..."
+    amo_publish "$AMO_UPLOAD_UUID"
+}
+
+# Runs one store's steps in a subshell: the helpers call "exit 1" on failure, which must not stop the other store.
+RESULTS=()
+run_store() {
+    local name="$1" step="$2" rc
+    echo
+    echo "== ${name} =="
+    set +e
+    ( set -e; "$step" )
+    rc=$?
+    set -e
+    if [[ $rc -eq 0 ]]; then
+        RESULTS+=("${name}: ok")
+    else
+        RESULTS+=("${name}: failed")
+    fi
+}
+
+any_failed() {
+    local result
+    for result in ${RESULTS[@]+"${RESULTS[@]}"}; do
+        [[ "$result" == *": failed" ]] && return 0
+    done
+    return 1
+}
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -403,11 +669,24 @@ if [[ "$GET_TOKEN" == true ]]; then
     exit 0
 fi
 
+# Credentials are checked before packing/uploading anything. A store that is explicitly requested must have them,
+# with "all" Firefox is optional so that Chrome-only setups keep working.
+AMO_READY=false
+if [[ "$WANT_FIREFOX" == true && "$PACK_ONLY" != true ]]; then
+    if load_amo_credentials; then
+        AMO_READY=true
+    elif [[ "$TARGET" == "firefox" ]]; then
+        echo "$AMO_CREDENTIALS_ERROR"
+        exit 1
+    else
+        echo "Skipping Firefox: $AMO_CREDENTIALS_ERROR"
+    fi
+fi
+
 if [[ "$GET_STATUS" == true ]]; then
-    load_credentials
-    echo "Authenticating..."
-    ACCESS_TOKEN=$(get_access_token)
-    get_status "$ACCESS_TOKEN"
+    [[ "$WANT_CHROME" == true ]] && run_store "Chrome Web Store" chrome_status
+    [[ "$AMO_READY" == true ]] && run_store "AMO" amo_get_status
+    any_failed && exit 1
     exit 0
 fi
 
@@ -425,17 +704,14 @@ if [[ "$PACK_ONLY" == true ]]; then
     exit 0
 fi
 
-load_credentials
-
-echo "Authenticating..."
-ACCESS_TOKEN=$(get_access_token)
-
-echo "Uploading..."
-upload "$ZIP_PATH" "$ACCESS_TOKEN"
-
-if [[ "$SKIP_REVIEW" == true ]]; then
-    echo "Publishing (skipReview=true)..."
-else
-    echo "Publishing..."
+if [[ "$SKIP_REVIEW" == true && "$AMO_READY" == true ]]; then
+    echo "Note: --skip-review only applies to the Chrome Web Store."
 fi
-publish "$ACCESS_TOKEN"
+
+[[ "$WANT_CHROME" == true ]] && run_store "Chrome Web Store" chrome_publish
+[[ "$AMO_READY" == true ]] && run_store "AMO" firefox_publish
+
+echo
+echo "Summary: $(IFS=,; echo "${RESULTS[*]}" | sed 's/,/, /g')"
+any_failed && exit 1
+exit 0
