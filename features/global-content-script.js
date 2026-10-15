@@ -368,7 +368,7 @@ async function updateCurrentCharacter(charactersDB) {
 
         // UUID changes over time and we want to avoid storing an increasing amount of data over time.
         // For this reason we make sure to empty the DB before adding new values.
-        if (charactersUUIDs.length > 0) charactersDB["name-uuid"] = {};
+        if (charactersUUIDs.length > 0) charactersDB["uuid-name"] = {};
 
         charactersUUIDs.forEach(option => {
             if (option.value != "0") {
