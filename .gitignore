@@ -6,6 +6,9 @@
 # Force Include README file
 !README.md
 
+# Force Include PERMISSIONS-JUSTIFICATION file
+!PERMISSIONS-JUSTIFICATION.md
+
 # Template issues force inclusion
 !.github/ISSUE_TEMPLATE/bug_report.md
 !.github/ISSUE_TEMPLATE/call_all_mass_interact_report.md
