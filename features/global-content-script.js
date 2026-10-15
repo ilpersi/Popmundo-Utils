@@ -365,6 +365,11 @@ async function updateCurrentCharacter(charactersDB) {
 
         // Let's also update all characters uuids in local storage.
         let charactersUUIDs = new CssSelectorHelper("#ctl00_ctl08_ucCharacterBar_ddlCurrentCharacter > option").getAll();
+
+        // UUID changes over time and we want to avoid storing an increasing amount of data over time.
+        // For this reason we make sure to empty the DB before adding new values.
+        if (charactersUUIDs.length > 0) charactersDB["name-uuid"] = {};
+
         charactersUUIDs.forEach(option => {
             if (option.value != "0") {
                 charactersDB["uuid-name"][option.value] = option.textContent;
