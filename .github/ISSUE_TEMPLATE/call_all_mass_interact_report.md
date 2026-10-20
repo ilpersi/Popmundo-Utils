@@ -30,19 +30,19 @@ Tick (just type a 'x' character inside the square brackets) the closest match to
 Tick if it applies:
 
 - [ ] It breaks after I **shut down / restart my computer**
-- [ ] It breaks after I **close and reopen Chrome**
+- [ ] It breaks after I **close and reopen the browser**
 - [ ] It breaks after **leaving the browser open for a long time** (hours)
 - [ ] It seems to break **at random**
 - [ ] **Reloading the Popmundo page** (F5) brings it back
-- [ ] **Clicking the reload icon on the extension card** at `chrome://extensions/` brings it back
+- [ ] **Reloading the extension** brings it back (reload icon on the extension card at `chrome://extensions/` in Chrome; **Reload** at `about:debugging` if you loaded it as a temporary add-on in Firefox)
 - [ ] **Disabling and re-enabling Popmundo Utils** brings it back
 - [ ] **Only fully uninstalling and reinstalling** brings it back
 - [ ] Even reinstalling does not fix it
 
 ## 3. Profile / sync info
 
-- Are you signed into **Chrome Sync** with a Google account? (Yes / No)
-- Do you use **multiple Chrome profiles** with the same Google account? (Yes / No)
+- Are you signed into **Chrome Sync** (Google account) or **Firefox Sync** (Firefox account)? (Yes / No)
+- Do you use **multiple browser profiles** with the same account? (Yes / No)
 - If yes: does the issue happen on **all** profiles or only **some**? Which?
 - Have you ever installed **Tampermonkey, Greasemonkey, Violentmonkey** or any **Popmundo userscript** (e.g. from greasyfork.org)? (Yes / No / Not sure)
 - If yes, are any of those still installed/enabled now? Please list them:
@@ -52,8 +52,8 @@ Tick if it applies:
 The extension has a button that gathers everything we need into one block of text — no DevTools required.
 
 1. **Reproduce the bug first** so the most recent errors are captured in the log.
-2. Right-click the **Popmundo Utils** icon in the Chrome toolbar → **Options**.
-   (Or go to `chrome://extensions/`, find Popmundo Utils, and click **Details → Extension options**.)
+2. Right-click the **Popmundo Utils** icon in the browser toolbar → **Options**.
+   (Or open the extensions page — `chrome://extensions/` in Chrome, `about:addons` in Firefox — find Popmundo Utils, and open its options: **Details → Extension options** in Chrome, **⋯ → Preferences** in Firefox.)
 3. Click the **Misc** tab in the left sidebar.
 4. Scroll down to the **Diagnostics** card.
 5. Click **Copy diagnostics**. You should see "Copied to clipboard."
@@ -91,7 +91,7 @@ If the Copy diagnostics button didn't work or the resulting blob looks empty:
 
 ## 8. Other extensions
 
-1. At `chrome://extensions/`, **temporarily disable every extension except Popmundo Utils**.
+1. At `chrome://extensions/` (Chrome) or `about:addons` (Firefox), **temporarily disable every extension except Popmundo Utils**.
 2. Reload Popmundo and try again.
 3. Did the bug still happen with everything else off? (Yes / No / Didn't try)
 

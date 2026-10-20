@@ -29,8 +29,8 @@ If applicable, add screenshots to help explain your problem.
 The extension can gather most of what we need into one block of text — no DevTools required.
 
 1. **Reproduce the bug first** so the most recent errors are captured.
-2. Right-click the **Popmundo Utils** icon in the Chrome toolbar → **Options**.
-   (Or go to `chrome://extensions/`, find Popmundo Utils, and click **Details → Extension options**.)
+2. Right-click the **Popmundo Utils** icon in the browser toolbar → **Options**.
+   (Or open the extensions page — `chrome://extensions/` in Chrome, `about:addons` in Firefox — find Popmundo Utils, and open its options: **Details → Extension options** in Chrome, **⋯ → Preferences** in Firefox.)
 3. Click the **Misc** tab in the left sidebar.
 4. Scroll down to the **Diagnostics** card.
 5. Click **Copy diagnostics**. You should see "Copied to clipboard."
@@ -44,7 +44,7 @@ paste here
 
 **Desktop (please complete the following information):**
  - OS: [e.g. macOS 14, Windows 11]
- - Browser: [e.g. Chrome, Edge]
+ - Browser: [e.g. Chrome, Firefox, Edge]
  - Browser version: [e.g. 138]
 
 *(The Popmundo Utils version is already included in the diagnostic blob — no need to repeat.)*

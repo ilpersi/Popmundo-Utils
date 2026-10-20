@@ -1,19 +1,21 @@
 # Popmundo Utils
 
-A Chrome extension that adds quality-of-life improvements to the [Popmundo](https://www.popmundo.com) browser game. Install it once and it works automatically in the background — no setup required to get started.
+A browser extension for **Google Chrome** and **Mozilla Firefox** that adds quality-of-life improvements to the [Popmundo](https://www.popmundo.com) browser game. Install it once and it works automatically in the background — no setup required to get started.
 
 # Why Popmundo Utils?
 Back in 2007, when it was initally released, I used to be an avid Popmundo player and I remember I always using an amazing extension for the Firefox browser (called popomungo)
 
 After a very long break, I started playing popmundo again and I really missed some of the features that were originally available with the popmungo extension and the more close thing I could find is the [chromemundo](https://github.com/lahunoxnaakal/chromomundo) extension that has not been updated for many years and it is no longer working.
 
-Rather that making chromemungo work again, I decided to create my own extension with a limited set of features that I like. This way I can have the features I miss and get some experience with Chrome Extension development eco-system.
+Rather that making chromemungo work again, I decided to create my own extension with a limited set of features that I like. This way I can have the features I miss and get some experience with the browser extension development eco-system.
 
 ---
 
 ## Installation
 
-1. Search for "Popmundo Utils" in Chrome Web Store page and click **Add to Chrome**.
+1. Install it from your browser's extension store:
+   - **Google Chrome** (and other Chromium browsers such as Edge): search for "Popmundo Utils" in the Chrome Web Store and click **Add to Chrome**.
+   - **Mozilla Firefox**: search for "Popmundo Utils" on Firefox Add-ons (addons.mozilla.org) and click **Add to Firefox**.
 2. Navigate to any Popmundo page and the extension activates immediately.
 3. To customise which features are on or off, open the in-game **Popmundo Utils** menu in the sidebar and click **Options**.
 
@@ -201,7 +203,7 @@ Displays a notification banner on your Character home page on specific in-game c
 
 ## Configuration
 
-Open the **Options** page from the Popmundo Utils menu in the game sidebar. Every feature can be toggled on or off, and the options sync automatically across your devices via your Chrome profile.
+Open the **Options** page from the Popmundo Utils menu in the game sidebar. Every feature can be toggled on or off, and the options sync automatically across your devices via your browser account (Chrome Sync or Firefox Sync), when syncing is enabled in your browser.
 
 ---
 
