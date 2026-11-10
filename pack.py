@@ -25,6 +25,7 @@ EXCLUDE_NAMES = {
     "Thumbs.db",
     ".cws_credentials.json",
     ".amo_credentials.json",
+    ".edge_credentials.json",
 }
 
 EXCLUDE_EXTENSIONS = {

@@ -24,6 +24,7 @@ zip -r "$OUTPUT" \
     --exclude "*.DS_Store" \
     --exclude ".cws_credentials.json" \
     --exclude ".amo_credentials.json" \
+    --exclude ".edge_credentials.json" \
     --exclude "*.md" \
     --exclude "*.ps1" \
     --exclude "*.py" \

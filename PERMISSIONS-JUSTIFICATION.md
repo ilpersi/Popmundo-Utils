@@ -1,6 +1,6 @@
 # Permission justifications
 
-Text for the "permission justification" fields of the Chrome Web Store and addons.mozilla.org (AMO) listings. Each block is under 1000 characters. Keep it in sync with `manifest.json` and `background.js`.
+Text for the "permission justification" fields of the Chrome Web Store, addons.mozilla.org (AMO) and Microsoft Edge Add-ons listings. Each block is under 1000 characters. Keep it in sync with `manifest.json` and `background.js`.
 
 ## alarms
 

@@ -20,6 +20,8 @@ The data is sent to a small service hosted on Cloudflare and is used to produce 
 
 Popmundo Utils stores user options with the browser's extension storage API, whenever they are explicitly changed by the user. In Mozilla Firefox, if Firefox Sync is enabled, the options are synced by Firefox to your other Firefox browsers; if it is disabled they stay on your device. The Chrome details below apply to Google Chrome and other Chromium browsers.
 
+In Microsoft Edge, the same extension storage API is used and, if sync is enabled in Edge, the options are synced by Edge to your other Edge browsers through your Microsoft account; if it is disabled they stay on your device.
+
 ## Chrome Storage API
 
 Popmundo Utils takes advantage of [Google Chrome's Storage API](https://developers.chrome.com/extensions/storage) to store user options whenever they are explicitly changed by the user. Popmundo Utils is making use of the [storage.sync](https://developer.chrome.com/docs/extensions/reference/storage/#property-sync) area. If syncing is enabled, the data is synced to any Chrome browser that the user is logged into. If disabled, it behaves like storage.local. When the browser is offline, Chrome stores the data locally and resumes syncing when it's back online.

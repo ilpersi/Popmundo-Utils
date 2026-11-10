@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Pack and publish the Popmundo Utils extension to the Chrome Web Store and
-to addons.mozilla.org (AMO, Firefox).
+"""Pack and publish the Popmundo Utils extension to the Chrome Web Store, to
+addons.mozilla.org (AMO, Firefox) and to Microsoft Edge Add-ons.
 
-Use --target chrome|firefox|all (default: all) to choose the store. With
-`all`, Firefox is skipped with a warning when no AMO credentials are
-configured, and a failure on one store does not prevent the other from being
+Use --target chrome|firefox|edge|all (default: all) to choose the store. With
+`all`, Firefox and Edge are skipped with a warning when no credentials are
+configured, and a failure on one store does not prevent the others from being
 attempted.
 
 Chrome Web Store
@@ -23,6 +23,15 @@ AMO (Firefox)
     developer hub. The version is submitted to the listed channel and enters
     review, like on the Chrome Web Store. --skip-review has no AMO equivalent
     and is ignored for Firefox.
+
+Microsoft Edge Add-ons
+    Uses the Edge Add-ons API v1.1. Only NEW VERSIONS of an existing listing can
+    be published: the very first listing must be created by hand in Partner
+    Center. The API has no endpoint to read the status of the listing, so
+    --get-status only reminds you to check Partner Center; after a publish the
+    script waits for the answer of the publish operation. --skip-review has no
+    Edge equivalent and is ignored for Edge. --release-notes is sent as the
+    "notes for certification".
 
 Dependencies:
     pip install google-auth google-auth-oauthlib requests
@@ -45,6 +54,19 @@ AMO credentials (env vars or .amo_credentials.json):
         "jwt_issuer": "user:...",
         "jwt_secret": "...",
         "addon_id": "@popmundo-utils"
+    }
+    Add this file to .gitignore — it contains secrets.
+
+Edge credentials (env vars or .edge_credentials.json):
+    EDGE_CLIENT_ID     — Client ID, from Partner Center > Microsoft Edge > Publish API
+    EDGE_API_KEY       — API key, from the same page (it has an expiry date)
+    EDGE_PRODUCT_ID    — Product ID (GUID), shown in the extension overview in Partner Center
+
+.edge_credentials.json format:
+    {
+        "client_id": "...",
+        "api_key": "...",
+        "product_id": "..."
     }
     Add this file to .gitignore — it contains secrets.
 
@@ -103,6 +125,7 @@ EXCLUDE_NAMES = {
     "Thumbs.db",
     ".cws_credentials.json",
     ".amo_credentials.json",
+    ".edge_credentials.json",
 }
 
 EXCLUDE_EXTENSIONS = {
@@ -131,6 +154,16 @@ AMO_CREDENTIALS_FILE = ".amo_credentials.json"
 AMO_POLL_INTERVAL_SECONDS = 3
 AMO_POLL_TIMEOUT_SECONDS = 300
 AMO_REQUEST_TIMEOUT_SECONDS = 120
+
+# ---------------------------------------------------------------------------
+# Edge Add-ons API
+# ---------------------------------------------------------------------------
+
+EDGE_API_BASE = "https://api.addons.microsoftedge.microsoft.com/v1"
+EDGE_CREDENTIALS_FILE = ".edge_credentials.json"
+EDGE_POLL_INTERVAL_SECONDS = 5
+EDGE_POLL_TIMEOUT_SECONDS = 300
+EDGE_REQUEST_TIMEOUT_SECONDS = 120
 
 
 def item_resource(config: dict) -> str:
@@ -511,6 +544,145 @@ def amo_get_status(config: dict) -> None:
         )
 
 # ---------------------------------------------------------------------------
+# Edge Add-ons operations
+# ---------------------------------------------------------------------------
+
+def load_edge_credentials(root: Path, required: bool) -> dict | None:
+    """Load Edge credentials from environment variables or .edge_credentials.json.
+
+    When they are incomplete, exits if `required`, otherwise returns None so the caller can skip Edge.
+    """
+    keys = ("client_id", "api_key", "product_id")
+    config = {k: os.environ.get(f"EDGE_{k.upper()}") for k in keys}
+
+    cred_path = root / EDGE_CREDENTIALS_FILE
+    if not all(config.values()) and cred_path.exists():
+        with open(cred_path, encoding="utf-8") as f:
+            file_config = json.load(f)
+        for k in keys:
+            if not config[k]:
+                config[k] = file_config.get(k)
+
+    missing = [f"EDGE_{k.upper()}" for k in keys if not config.get(k)]
+    if missing:
+        message = (f"Missing Edge credentials: {', '.join(missing)}. "
+                   f"Set the environment variables or create {EDGE_CREDENTIALS_FILE} "
+                   f"(Client ID and API key from Partner Center > Microsoft Edge > Publish API).")
+        if required:
+            print(message)
+            sys.exit(1)
+        print(f"Skipping Edge: {message}")
+        return None
+
+    return config
+
+
+def edge_headers(config: dict, content_type: str = None) -> dict:
+    headers = {"Authorization": f"ApiKey {config['api_key']}", "X-ClientID": config["client_id"]}
+    if content_type:
+        headers["Content-Type"] = content_type
+    return headers
+
+
+def _edge_error_text(resp: requests.Response) -> str:
+    try:
+        return json.dumps(resp.json())
+    except ValueError:
+        return resp.text[:500]
+
+
+def _edge_operation_id(resp: requests.Response) -> str:
+    # The Location header holds the operation id, either alone or as the last part of a path
+    location = resp.headers.get("Location", "")
+    return location.rstrip("/").rsplit("/", 1)[-1]
+
+
+def _edge_wait_for_operation(url: str, config: dict, what: str) -> dict:
+    """Poll an Edge operation until it is no longer in progress and return its answer."""
+    deadline = time.time() + EDGE_POLL_TIMEOUT_SECONDS
+    while True:
+        resp = requests.get(url, headers=edge_headers(config), timeout=EDGE_REQUEST_TIMEOUT_SECONDS)
+        if resp.status_code != 200:
+            print(f"Edge {what} check failed (HTTP {resp.status_code}): {_edge_error_text(resp)}")
+            sys.exit(1)
+
+        data = resp.json()
+        if data.get("status") != "InProgress":
+            return data
+        if time.time() > deadline:
+            print(f"Edge {what} did not finish in time; check Partner Center and retry.")
+            sys.exit(1)
+        time.sleep(EDGE_POLL_INTERVAL_SECONDS)
+
+
+def _edge_report_failure(what: str, data: dict) -> None:
+    print(f"Edge {what} failed [{data.get('errorCode') or 'no error code'}]: {data.get('message', '')}")
+    for error in data.get("errors") or []:
+        print(f"  - {error.get('message', error) if isinstance(error, dict) else error}")
+    if data.get("errorCode") == "NoModulesUpdated":
+        print("Edge refuses a publish with no changes: bump the version in manifest.json and pack again.")
+    if data.get("errorCode") == "InProgressSubmission":
+        print("A previous submission is still in review: wait for its certification before publishing again.")
+
+
+def edge_upload(zip_path: Path, config: dict) -> None:
+    """Upload the zip as the draft package of the product and wait for Edge to process it."""
+    product = config["product_id"]
+    with open(zip_path, "rb") as f:
+        resp = requests.post(
+            f"{EDGE_API_BASE}/products/{product}/submissions/draft/package",
+            headers=edge_headers(config, "application/zip"),
+            data=f,
+            timeout=EDGE_REQUEST_TIMEOUT_SECONDS,
+        )
+    if resp.status_code != 202:
+        print(f"Edge upload failed (HTTP {resp.status_code}): {_edge_error_text(resp)}")
+        if resp.status_code == 404:
+            print("The product was not found: the first listing must be created by hand in Partner Center.")
+        sys.exit(1)
+
+    operation_id = _edge_operation_id(resp)
+    print(f"Uploaded:  {zip_path.name}  (operation {operation_id}), waiting for Edge to process it...")
+
+    data = _edge_wait_for_operation(
+        f"{EDGE_API_BASE}/products/{product}/submissions/draft/package/operations/{operation_id}", config, "upload"
+    )
+    if data.get("status") != "Succeeded":
+        _edge_report_failure("upload", data)
+        sys.exit(1)
+
+    print(f"Processed: {data.get('message', 'Edge accepted the package')}")
+
+
+def edge_publish(config: dict, notes: str = None) -> None:
+    """Submit the draft of the product for certification and wait for the answer of the publish operation."""
+    product = config["product_id"]
+    resp = requests.post(
+        f"{EDGE_API_BASE}/products/{product}/submissions",
+        headers=edge_headers(config, "text/plain; charset=utf-8"),
+        data=(notes or "").encode("utf-8"),
+        timeout=EDGE_REQUEST_TIMEOUT_SECONDS,
+    )
+    if resp.status_code != 202:
+        print(f"Edge publish failed (HTTP {resp.status_code}): {_edge_error_text(resp)}")
+        sys.exit(1)
+
+    operation_id = _edge_operation_id(resp)
+    data = _edge_wait_for_operation(
+        f"{EDGE_API_BASE}/products/{product}/submissions/operations/{operation_id}", config, "publish"
+    )
+    if data.get("status") != "Succeeded":
+        _edge_report_failure("publish", data)
+        sys.exit(1)
+
+    print(f"Published: Edge {data.get('message', 'submitted for certification')} (submitted for review)")
+
+
+def edge_get_status() -> None:
+    print("Edge status: the Edge Add-ons API cannot read the status of a listing, check Partner Center "
+          "(https://partner.microsoft.com/dashboard/microsoftedge/overview).")
+
+# ---------------------------------------------------------------------------
 # One-time token helper
 # ---------------------------------------------------------------------------
 
@@ -582,7 +754,7 @@ def run_store(name: str, action, results: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Pack and publish Popmundo Utils to the Chrome Web Store and/or addons.mozilla.org."
+        description="Pack and publish Popmundo Utils to the Chrome Web Store, addons.mozilla.org and/or Microsoft Edge Add-ons."
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument(
@@ -599,36 +771,42 @@ def main() -> None:
     )
     mode.add_argument(
         "--get-status", action="store_true",
-        help="Check the Chrome Web Store and/or AMO status and exit.",
+        help="Check the Chrome Web Store and/or AMO status and exit (Edge has no status endpoint).",
     )
     parser.add_argument(
-        "--target", choices=("chrome", "firefox", "all"), default="all",
-        help="Store to publish to (default: all). With 'all', Firefox is skipped when AMO credentials are missing.",
+        "--target", choices=("chrome", "firefox", "edge", "all"), default="all",
+        help="Store to publish to (default: all). With 'all', Firefox and Edge are skipped when their credentials are missing.",
     )
     parser.add_argument(
         "--skip-review", action="store_true",
         help="Ask the Chrome Web Store to skip review when publishing (skipReview=true). "
-             "The store may still reject the request. Ignored for Firefox.",
+             "The store may still reject the request. Ignored for Firefox and Edge.",
     )
     parser.add_argument(
         "--release-notes", metavar="TEXT",
-        help="Release notes (en-US) shown on the AMO version page. Ignored for Chrome.",
+        help="Release notes (en-US) shown on the AMO version page, also sent as notes for certification to Edge. "
+             "Ignored for Chrome.",
     )
     args = parser.parse_args()
 
     root = Path(__file__).parent.resolve()
     want_chrome = args.target in ("chrome", "all")
     want_firefox = args.target in ("firefox", "all")
+    want_edge = args.target in ("edge", "all")
 
     if args.get_token:
         run_get_token(root)
         return
 
     # Credentials are checked before packing/uploading anything. A store that is explicitly requested must have them,
-    # with 'all' Firefox is optional so that Chrome-only setups keep working.
+    # with 'all' Firefox and Edge are optional so that Chrome-only setups keep working.
     amo_config = None
     if want_firefox and not args.pack_only:
         amo_config = load_amo_credentials(root, required=args.target == "firefox")
+
+    edge_config = None
+    if want_edge and not args.pack_only:
+        edge_config = load_edge_credentials(root, required=args.target == "edge")
 
     results = {}
 
@@ -642,6 +820,8 @@ def main() -> None:
             run_store("Chrome Web Store", chrome_status, results)
         if amo_config:
             run_store("AMO", lambda: amo_get_status(amo_config), results)
+        if edge_config:
+            run_store("Edge", edge_get_status, results)
         if "failed" in results.values():
             sys.exit(1)
         return
@@ -657,7 +837,7 @@ def main() -> None:
     if args.pack_only:
         return
 
-    if args.skip_review and want_firefox and amo_config:
+    if args.skip_review and (amo_config or edge_config):
         print("Note: --skip-review only applies to the Chrome Web Store.")
 
     def chrome_publish():
@@ -677,10 +857,18 @@ def main() -> None:
         print("Publishing...")
         amo_publish(upload_uuid, amo_config, release_notes=args.release_notes)
 
+    def edge_publish_all():
+        print("Uploading...")
+        edge_upload(zip_path, edge_config)
+        print("Publishing...")
+        edge_publish(edge_config, notes=args.release_notes)
+
     if want_chrome:
         run_store("Chrome Web Store", chrome_publish, results)
     if amo_config:
         run_store("AMO", firefox_publish, results)
+    if edge_config:
+        run_store("Edge", edge_publish_all, results)
 
     print("\nSummary: " +", ".join(f"{name}: {state}" for name, state in results.items()))
     if "failed" in results.values():

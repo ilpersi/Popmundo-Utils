@@ -1,9 +1,9 @@
-# Pack and publish the Popmundo Utils extension to the Chrome Web Store and to
-# addons.mozilla.org (AMO, Firefox).
+# Pack and publish the Popmundo Utils extension to the Chrome Web Store, to
+# addons.mozilla.org (AMO, Firefox) and to Microsoft Edge Add-ons.
 #
-# Use -Target chrome|firefox|all (default: all) to choose the store. With
-# "all", Firefox is skipped with a warning when no AMO credentials are
-# configured, and a failure on one store does not prevent the other from being
+# Use -Target chrome|firefox|edge|all (default: all) to choose the store. With
+# "all", Firefox and Edge are skipped with a warning when no credentials are
+# configured, and a failure on one store does not prevent the others from being
 # attempted.
 #
 # Chrome Web Store: uses the Chrome Web Store API v2 (the v1.1 API is retired
@@ -18,6 +18,14 @@
 # review, like on the Chrome Web Store. -SkipReview has no AMO equivalent and
 # is ignored for Firefox.
 #
+# Microsoft Edge Add-ons: uses the Edge Add-ons API v1.1. Only NEW VERSIONS of an
+# existing listing can be published: the very first listing must be created by
+# hand in Partner Center. The API has no endpoint to read the status of the
+# listing, so -GetStatus only reminds you to check Partner Center; after a
+# publish the script waits for the answer of the publish operation. -SkipReview
+# has no Edge equivalent and is ignored for Edge. -ReleaseNotes is sent as the
+# "notes for certification".
+#
 # Chrome Web Store credentials (env vars or .cws_credentials.json):
 #   CWS_EXTENSION_ID   — Chrome Web Store extension ID
 #   CWS_PUBLISHER_ID   — publisher ID, from Developer Dashboard > Publisher > Settings
@@ -31,14 +39,19 @@
 #   AMO_JWT_SECRET     — API secret ("JWT secret"), from the same page
 #   AMO_ADDON_ID       — optional; add-on id or slug. Defaults to the gecko id in manifest.json
 #
+# Edge credentials (env vars or .edge_credentials.json, keys: client_id, api_key, product_id):
+#   EDGE_CLIENT_ID     — Client ID, from Partner Center > Microsoft Edge > Publish API
+#   EDGE_API_KEY       — API key, from the same page (it has an expiry date)
+#   EDGE_PRODUCT_ID    — Product ID (GUID), shown in the extension overview in Partner Center
+#
 # Usage:
-#   .\publish.ps1                          pack + upload + publish to both stores
-#   .\publish.ps1 -Target firefox          only AMO (-Target chrome: only the Chrome Web Store)
+#   .\publish.ps1                          pack + upload + publish to all the configured stores
+#   .\publish.ps1 -Target firefox          only AMO (-Target chrome: only the Chrome Web Store, -Target edge: only Edge)
 #   .\publish.ps1 -PackOnly
 #   .\publish.ps1 -PublishOnly file.zip
 #   .\publish.ps1 -GetStatus
 #   .\publish.ps1 -SkipReview              publish with skipReview=true (Chrome only)
-#   .\publish.ps1 -ReleaseNotes "text"     release notes for the AMO version (Firefox only)
+#   .\publish.ps1 -ReleaseNotes "text"     release notes for the AMO version, notes for certification for Edge
 
 param(
     [switch]$PackOnly,
@@ -46,7 +59,7 @@ param(
     [switch]$GetToken,
     [switch]$GetStatus,
     [switch]$SkipReview,
-    [ValidateSet("chrome", "firefox", "all")]
+    [ValidateSet("chrome", "firefox", "edge", "all")]
     [string]$Target = "all",
     [string]$ReleaseNotes = ""
 )
@@ -65,6 +78,11 @@ $AmoCredentialsFile      = ".amo_credentials.json"
 $AmoApiBase              = "https://addons.mozilla.org/api/v5"
 $AmoPollIntervalSeconds  = 3
 $AmoPollTimeoutSeconds   = 300
+
+$EdgeCredentialsFile     = ".edge_credentials.json"
+$EdgeApiBase             = "https://api.addons.microsoftedge.microsoft.com/v1"
+$EdgePollIntervalSeconds = 5
+$EdgePollTimeoutSeconds  = 300
 
 # ---------------------------------------------------------------------------
 # Get refresh token (one-time OAuth flow)
@@ -182,7 +200,7 @@ function Invoke-Pack {
 
     $IncludeDirs  = @("_locales", "common", "features", "icons", "libs", "options")
     $IncludeFiles = @("manifest.json", "background.js")
-    $ExcludeNames = @(".DS_Store", "Thumbs.db", ".cws_credentials.json", ".amo_credentials.json")
+    $ExcludeNames = @(".DS_Store", "Thumbs.db", ".cws_credentials.json", ".amo_credentials.json", ".edge_credentials.json")
     $ExcludeExts  = @(".md", ".ps1", ".py", ".sh", ".zip")
 
     $FilesToZip = [System.Collections.Generic.List[string]]::new()
@@ -616,6 +634,130 @@ function Get-AmoStatus($AmoCreds) {
 }
 
 # ---------------------------------------------------------------------------
+# Edge Add-ons operations
+# ---------------------------------------------------------------------------
+
+# Returns $null (with the reason in $script:EdgeCredentialsError) when the Edge credentials are incomplete.
+function Get-EdgeCredentials {
+    $creds = @{
+        ClientId  = $env:EDGE_CLIENT_ID
+        ApiKey    = $env:EDGE_API_KEY
+        ProductId = $env:EDGE_PRODUCT_ID
+    }
+
+    if (Test-Path $EdgeCredentialsFile) {
+        $file = Get-Content $EdgeCredentialsFile -Raw | ConvertFrom-Json
+        if (-not $creds.ClientId)  { $creds.ClientId  = $file.client_id  }
+        if (-not $creds.ApiKey)    { $creds.ApiKey    = $file.api_key    }
+        if (-not $creds.ProductId) { $creds.ProductId = $file.product_id }
+    }
+
+    $missing = @()
+    if (-not $creds.ClientId)  { $missing += "EDGE_CLIENT_ID" }
+    if (-not $creds.ApiKey)    { $missing += "EDGE_API_KEY" }
+    if (-not $creds.ProductId) { $missing += "EDGE_PRODUCT_ID" }
+
+    if ($missing) {
+        $script:EdgeCredentialsError = "Missing Edge credentials: $($missing -join ', '). Set env vars or create $EdgeCredentialsFile (Client ID and API key from Partner Center > Microsoft Edge > Publish API)."
+        return $null
+    }
+
+    return $creds
+}
+
+function Get-EdgeHeaders($EdgeCreds) {
+    return @{ "Authorization" = "ApiKey $($EdgeCreds.ApiKey)"; "X-ClientID" = $EdgeCreds.ClientId }
+}
+
+# Throws with the failed operation (answer of the upload or of the publish operation).
+function Stop-EdgeFailure($What, $Operation) {
+    $ErrorCode = if ($Operation.errorCode) { $Operation.errorCode } else { "no error code" }
+    $Lines = @("Edge $What failed [$ErrorCode]: $($Operation.message)")
+    foreach ($e in @($Operation.errors)) {
+        if ($e) { $Lines += "  - $(if ($e.message) { $e.message } else { $e })" }
+    }
+    if ($Operation.errorCode -eq "NoModulesUpdated") {
+        $Lines += "Edge refuses a publish with no changes: bump the version in manifest.json and pack again."
+    } elseif ($Operation.errorCode -eq "InProgressSubmission") {
+        $Lines += "A previous submission is still in review: wait for its certification before publishing again."
+    }
+    throw ($Lines -join [Environment]::NewLine)
+}
+
+# Polls an Edge operation until it is no longer in progress and returns its answer.
+function Wait-EdgeOperation($Uri, $EdgeCreds, $What) {
+    $deadline = (Get-Date).AddSeconds($EdgePollTimeoutSeconds)
+    while ($true) {
+        try {
+            $operation = Invoke-RestMethod -Method Get -Uri $Uri -Headers (Get-EdgeHeaders $EdgeCreds)
+        } catch {
+            throw "Edge $What check failed ($(Get-HttpErrorText $_))"
+        }
+
+        if ($operation.status -ne "InProgress") { return $operation }
+
+        if ((Get-Date) -gt $deadline) {
+            throw "Edge $What did not finish in time; check Partner Center and retry."
+        }
+        Start-Sleep -Seconds $EdgePollIntervalSeconds
+    }
+}
+
+# POSTs to an Edge endpoint that answers 202 with the operation id in the Location header, and returns that id.
+function Send-EdgeRequest($Uri, $EdgeCreds, $What, $ContentType, $Body = $null, $InFile = $null) {
+    $request = @{
+        Method      = "Post"
+        Uri         = $Uri
+        Headers     = Get-EdgeHeaders $EdgeCreds
+        ContentType = $ContentType
+    }
+    if ($InFile) { $request.InFile = $InFile } else { $request.Body = $Body }
+
+    try {
+        $response = Invoke-WebRequest @request
+    } catch {
+        $Text = Get-HttpErrorText $_
+        $Hint = if ($Text -like "HTTP 404*") { "$([Environment]::NewLine)The product was not found: the first listing must be created by hand in Partner Center." } else { "" }
+        throw "Edge $What failed ($Text)$Hint"
+    }
+
+    if ([int]$response.StatusCode -ne 202) {
+        throw "Edge $What failed (HTTP $([int]$response.StatusCode)): $($response.Content)"
+    }
+
+    # The Location header holds the operation id, either alone or as the last part of a path
+    $location = @($response.Headers["Location"])[0]
+    return ([string]$location).TrimEnd("/").Split("/")[-1]
+}
+
+function Invoke-EdgeUpload($ZipPath, $EdgeCreds) {
+    $product     = $EdgeCreds.ProductId
+    $operationId = Send-EdgeRequest "$EdgeApiBase/products/$product/submissions/draft/package" $EdgeCreds "upload" "application/zip" -InFile "$ZipPath"
+    Write-Host "Uploaded:  $(Split-Path $ZipPath -Leaf)  (operation $operationId), waiting for Edge to process it..."
+
+    $operation = Wait-EdgeOperation "$EdgeApiBase/products/$product/submissions/draft/package/operations/$operationId" $EdgeCreds "upload"
+    if ($operation.status -ne "Succeeded") { Stop-EdgeFailure "upload" $operation }
+
+    $Message = if ($operation.message) { $operation.message } else { "Edge accepted the package" }
+    Write-Host "Processed: $Message"
+}
+
+function Invoke-EdgePublish($EdgeCreds) {
+    $product     = $EdgeCreds.ProductId
+    $operationId = Send-EdgeRequest "$EdgeApiBase/products/$product/submissions" $EdgeCreds "publish" "text/plain; charset=utf-8" -Body ([string]$ReleaseNotes)
+
+    $operation = Wait-EdgeOperation "$EdgeApiBase/products/$product/submissions/operations/$operationId" $EdgeCreds "publish"
+    if ($operation.status -ne "Succeeded") { Stop-EdgeFailure "publish" $operation }
+
+    $Message = if ($operation.message) { $operation.message } else { "submitted for certification" }
+    Write-Host "Published: Edge $Message (submitted for review)"
+}
+
+function Get-EdgeStatus {
+    Write-Host "Edge status: the Edge Add-ons API cannot read the status of a listing, check Partner Center (https://partner.microsoft.com/dashboard/microsoftedge/overview)."
+}
+
+# ---------------------------------------------------------------------------
 # Per-store steps
 # ---------------------------------------------------------------------------
 
@@ -644,9 +786,10 @@ if ($GetToken) {
 
 $WantChrome  = $Target -in @("chrome", "all")
 $WantFirefox = $Target -in @("firefox", "all")
+$WantEdge    = $Target -in @("edge", "all")
 
 # Credentials are checked before packing/uploading anything. A store that is explicitly requested must have them,
-# with "all" Firefox is optional so that Chrome-only setups keep working.
+# with "all" Firefox and Edge are optional so that Chrome-only setups keep working.
 $AmoCreds = $null
 if ($WantFirefox -and -not $PackOnly) {
     $AmoCreds = Get-AmoCredentials
@@ -656,6 +799,18 @@ if ($WantFirefox -and -not $PackOnly) {
             exit 1
         }
         Write-Host "Skipping Firefox: $script:AmoCredentialsError"
+    }
+}
+
+$EdgeCreds = $null
+if ($WantEdge -and -not $PackOnly) {
+    $EdgeCreds = Get-EdgeCredentials
+    if (-not $EdgeCreds) {
+        if ($Target -eq "edge") {
+            Write-Error $script:EdgeCredentialsError
+            exit 1
+        }
+        Write-Host "Skipping Edge: $script:EdgeCredentialsError"
     }
 }
 
@@ -669,6 +824,7 @@ if ($GetStatus) {
         }
     }
     if ($AmoCreds) { Invoke-Store "AMO" { Get-AmoStatus $AmoCreds } }
+    if ($EdgeCreds) { Invoke-Store "Edge" { Get-EdgeStatus } }
     if ($Results.Values -contains "failed") { exit 1 }
     exit 0
 }
@@ -685,7 +841,7 @@ if ($PublishOnly) {
 
 if ($PackOnly) { exit 0 }
 
-if ($SkipReview -and $AmoCreds) {
+if ($SkipReview -and ($AmoCreds -or $EdgeCreds)) {
     Write-Host "Note: -SkipReview only applies to the Chrome Web Store."
 }
 
@@ -711,6 +867,16 @@ if ($AmoCreds) {
 
         Write-Host "Publishing..."
         Invoke-AmoPublish $UploadUuid $AmoCreds
+    }
+}
+
+if ($EdgeCreds) {
+    Invoke-Store "Edge" {
+        Write-Host "Uploading..."
+        Invoke-EdgeUpload $ZipPath $EdgeCreds
+
+        Write-Host "Publishing..."
+        Invoke-EdgePublish $EdgeCreds
     }
 }
 

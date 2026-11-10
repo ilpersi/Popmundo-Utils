@@ -19,6 +19,9 @@
 # Firefox Add-ons (AMO) publish credentials
 .amo_credentials.json
 
+# Microsoft Edge Add-ons publish credentials
+.edge_credentials.json
+
 # Cloudflare Worker local files (worker/)
 # wrangler.local.toml holds the real D1 database id, see worker/README.md
 wrangler.local.toml
