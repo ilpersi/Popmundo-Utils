@@ -320,11 +320,7 @@
                 "https://*.popmundo.com/World/Popmundo.aspx/Character/OfferItem/*"
             ],
             "js": [
-                "libs/jquery-3.6.1.min.js",
-                "common/utils.js",
                 "common/notifications.js",
-                "common/xpath-helper.js",
-                "common/css-helper.js",
                 "features/mass-item-sender.js"
             ]
         },
